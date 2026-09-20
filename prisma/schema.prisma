@@ -1,0 +1,558 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String?  @unique
+  phone           String   @unique
+  fullName        String?
+  shopName        String?
+  passwordHash    String
+  role            String   @default("buyer") // buyer, seller, admin, super_admin, moderator
+  avatarUrl       String?
+  bio             String?
+  isVerified      Boolean  @default(false)
+  addressArea     String?  // New: For user location filtering
+  
+  sellerProfiles   SellerProfile[] @relation("UserSellerProfiles")
+  
+  // Relations
+  products        Product[]
+  ordersBought    Order[]        @relation("BuyerOrders")
+  ordersSold      Order[]        @relation("SellerOrders")
+  demands         Demand[]       @relation("UserDemands")
+  posts           Post[]         @relation("UserPosts")
+  contentItems    ContentItem[]  @relation("UserContent")
+  comments        ContentComment[] @relation("UserComments")
+  stories         Story[]        @relation("UserStories")
+  notifications   Notification[] @relation("UserNotifications")
+  wallets         Wallet[]       @relation("UserWallets")
+  addresses       Address[]      @relation("UserAddresses")
+  vehicles        Vehicle[]      @relation("UserVehicles")
+  rideRequests    RideRequest[]  @relation("UserRideRequests")
+  reviews         Review[]       @relation("UserReviews")
+  fileAssets      FileAsset[]
+  reactions       ContentReaction[]
+  bookmarks       ContentBookmark[]
+  shares          ContentShare[]
+  violations      ViolationLog[]
+  cartItems       CartItem[]
+  
+  // Followers & Following Relationship System
+  followers       FollowRelationship[] @relation("FollowTarget")
+  following       FollowRelationship[] @relation("Follower")
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model SellerProfile {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation("UserSellerProfiles", fields: [userId], references: [id])
+  storeName       String
+  description     String?
+  type            String    @default("retail") // retail, wholesale, factory, nearby_shop
+  verifiedLevel   Int       @default(0) // 0: unverified, 1: basic, 2: premium, 3: official
+  logoUrl         String?
+  bannerUrl       String?
+  tradeLicenseNo  String?
+  address         String?
+  
+  products        Product[] @relation("SellerProducts")
+  orders          Order[]   @relation("SellerBusinessOrders")
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  price         Decimal
+  originalPrice Decimal?
+  images        String[] @default([])
+  stock         Int      @default(0)
+  isPKStore     Boolean  @default(false)
+  type          String   @default("retail") // retail, wholesale, service
+  minOrderQty   Int      @default(1)
+  unit          String   @default("pcs")
+  isActive      Boolean  @default(true)
+  
+  // Category
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  
+  // Seller (Legacy/User fallback)
+  sellerId      String
+  seller        User      @relation(fields: [sellerId], references: [id])
+  
+  // Business Storefront 
+  businessId    String?
+  business      SellerProfile? @relation("SellerProducts", fields: [businessId], references: [id])
+  
+  // Deals
+  exclusiveDeal ExclusiveDeal?
+  
+  // Order Snapshots & Feed
+  orderItems    OrderItem[]
+  posts         Post[]      @relation("ProductPosts")
+  reviews       Review[]
+  cartItems     CartItem[]
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model ExclusiveDeal {
+  id            String   @id @default(uuid())
+  productId     String   @unique
+  product       Product  @relation(fields: [productId], references: [id])
+  dealPrice     Decimal
+  initialStock  Int
+  currentStock  Int
+  startTime     DateTime
+  endTime       DateTime
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Category {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  slug          String   @unique
+  icon          String?
+  description   String?
+  products      Product[]
+  contentItems  ContentItem[]
+  
+  createdAt     DateTime @default(now())
+}
+
+model Order {
+  id                String   @id @default(uuid())
+  orderNo           String   @unique @default(cuid())
+  
+  buyerId           String
+  buyer             User     @relation("BuyerOrders", fields: [buyerId], references: [id])
+  
+  sellerId          String
+  seller            User     @relation("SellerOrders", fields: [sellerId], references: [id])
+  
+  businessId        String?
+  business          SellerProfile? @relation("SellerBusinessOrders", fields: [businessId], references: [id])
+  
+  subtotal          Decimal
+  shippingFee       Decimal  @default(0)
+  total             Decimal
+  
+  deliveryAddress   String?
+  deliveryDistrict  String?
+  status            String   @default("pending") // pending, confirmed, shipped, delivered, cancelled
+  paymentMethod     String   @default("cod") // cod, wallet, bkash, nagad
+  paymentStatus     String   @default("pending") // pending, paid, failed, refunded
+  
+  items             OrderItem[]
+  shipment          Shipment?
+  escrow            Escrow?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  title       String
+  price       Decimal
+  qty         Int      @default(1)
+  
+  createdAt   DateTime @default(now())
+}
+
+model ContentItem {
+  id            String   @id @default(uuid())
+  contentType   String   // PRODUCT, BUSINESS, SERVICE, ANNOUNCEMENT, OFFER
+  title         String
+  content       String
+  mediaUrl      String?
+  
+  authorId      String
+  author        User     @relation("UserContent", fields: [authorId], references: [id])
+  
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  
+  isPromoted    Boolean  @default(false)
+  visibility    String   @default("PUBLIC") // PUBLIC, PRIVATE, FOLLOWERS_ONLY
+  targetArea    String?  // New: For localized content
+  metadata      Json?
+  
+  likeCount     Int      @default(0)
+  commentCount  Int      @default(0)
+  
+  analytics     ContentAnalytics?
+  reactions     ContentReaction[]
+  comments      ContentComment[]  @relation("ContentItemComments")
+  bookmarks     ContentBookmark[]
+  shares        ContentShare[]
+  flags         FlaggedContent[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+}
+
+model ContentAnalytics {
+  id             String      @id @default(uuid())
+  contentItemId  String      @unique
+  contentItem    ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  
+  reachCount     Int         @default(0)
+  viewCount      Int         @default(0)
+  viralityIndex  Float       @default(0)
+  engagementRate Float       @default(0)
+  
+  lastComputedAt DateTime?
+  updatedAt      DateTime    @updatedAt
+}
+
+model FollowRelationship {
+  id            String   @id @default(uuid())
+  followerId    String
+  follower      User     @relation("Follower", fields: [followerId], references: [id])
+  
+  targetId      String
+  targetType    String   // USER, BUSINESS, CATEGORY
+  targetUser    User?     @relation("FollowTarget", fields: [targetId], references: [id])
+  
+  createdAt     DateTime @default(now())
+  deletedAt     DateTime?
+
+  @@unique([followerId, targetId, targetType])
+}
+
+model PlatformEventLog {
+  id        String   @id @default(uuid())
+  eventId   String   @unique
+  type      String
+  payload   Json
+  status    String   @default("processed")
+  createdAt DateTime @default(now())
+}
+
+model PlatformMetric {
+  id        String   @id @default(uuid())
+  name      String
+  value     Float
+  category  String?
+  createdAt DateTime @default(now())
+}
+
+model Demand {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserDemands", fields: [authorUserId], references: [id])
+  title          String
+  description    String
+  budget         Decimal
+  currency       String   @default("BDT")
+  categoryId     String
+  location       String?
+  urgency        String   @default("normal")
+  status         String   @default("open")
+  matchVendorIds String[] @default([]) 
+  createdAt      DateTime @default(now())
+}
+
+model Post {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserPosts", fields: [authorUserId], references: [id])
+  type           String
+  content        String
+  images         String[] @default([])
+  videoUrl       String?
+  productId      String?
+  product        Product? @relation("ProductPosts", fields: [productId], references: [id])
+  likeCount      Int      @default(0)
+  commentCount   Int      @default(0)
+  shareCount     Int      @default(0)
+  targetArea     String?  // New: For localized posts
+  createdAt      DateTime @default(now())
+  comments       ContentComment[]
+}
+
+model ContentComment {
+  id              String       @id @default(uuid())
+  postId          String?
+  post            Post?        @relation(fields: [postId], references: [id])
+  contentItemId   String?
+  contentItem     ContentItem? @relation("ContentItemComments", fields: [contentItemId], references: [id])
+  userId          String?      
+  user            User?        @relation("UserComments", fields: [userId], references: [id])
+  content         String
+  parentCommentId String?
+  createdAt       DateTime     @default(now())
+  deletedAt       DateTime?
+}
+
+model Story {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserStories", fields: [authorUserId], references: [id])
+  imageUrl       String
+  caption        String?
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation("UserNotifications", fields: [userId], references: [id])
+  type           String
+  title          String
+  body           String
+  actorAvatarUrl String?
+  read           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation("UserWallets", fields: [userId], references: [id])
+  type         String        @default("main") // main, bonus, coins
+  balance      Decimal       @default(0.00)
+  coins        Int           @default(0)
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([userId, type])
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  type      String   // inflow, outflow
+  title     String?
+  subtitle  String?
+  amount    Decimal
+  status    String   @default("completed") // completed, pending, failed
+  createdAt DateTime @default(now())
+}
+
+model Escrow {
+  id          String   @id @default(uuid())
+  orderId     String   @unique
+  order       Order    @relation(fields: [orderId], references: [id])
+  amount      Decimal
+  status      String   @default("held") // held, released, disputed, refunded
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  releaseAt   DateTime?
+}
+
+model Address {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation("UserAddresses", fields: [userId], references: [id])
+  type            String   @default("HOME") // HOME, OFFICE, OTHER, PICKUP
+  label           String?  // e.g. "My Home"
+  division        String
+  district        String
+  upazila         String
+  area            String
+  streetAddress   String
+  zipCode         String?
+  isDefault       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Vehicle {
+  id              String   @id @default(uuid())
+  ownerId         String
+  owner           User     @relation("UserVehicles", fields: [ownerId], references: [id])
+  type            String   // BIKE, CAR, TRUCK, PICKUP, VAN
+  model           String
+  licensePlate    String   @unique // Format: DHAKA-METRO-XXXX
+  color           String?
+  status          String   @default("active") // active, inactive, maintenance
+  capacity        String?  // For trucks (e.g. 1 ton, 5 ton)
+  isVerified      Boolean  @default(false)
+  documents       String[] @default([])
+  
+  availability    LogisticsAvailability?
+  rideRequests    RideRequest[]
+  shipments       Shipment[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model LogisticsAvailability {
+  id              String   @id @default(uuid())
+  vehicleId       String   @unique
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  isOnline        Boolean  @default(false)
+  lastLocationLat Float?
+  lastLocationLng Float?
+  lastLocationName String?
+  currentArea     String?
+  updatedAt       DateTime @updatedAt
+}
+
+model RideRequest {
+  id              String   @id @default(uuid())
+  requestId       String   @unique @default(cuid())
+  userId          String
+  user            User     @relation("UserRideRequests", fields: [userId], references: [id])
+  vehicleId       String?
+  vehicle         Vehicle? @relation(fields: [vehicleId], references: [id])
+  
+  pickupLat       Float
+  pickupLng       Float
+  pickupName      String
+  dropLat         Float
+  dropLng         Float
+  dropName        String
+  
+  type            String   // BIKE, CAR, RENT_A_CAR
+  status          String   @default("pending") // pending, accepted, on_way, ongoing, completed, cancelled
+  fare            Decimal
+  distance        Float?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Shipment {
+  id              String   @id @default(uuid())
+  trackingNo      String   @unique @default(cuid())
+  orderId         String?  @unique
+  order           Order?   @relation(fields: [orderId], references: [id])
+  
+  vehicleId       String?
+  vehicle         Vehicle? @relation(fields: [vehicleId], references: [id])
+  
+  senderName      String
+  senderPhone     String
+  senderAddress   String
+  receiverName    String
+  receiverPhone   String
+  receiverAddress String
+  
+  type            String   // DOCUMENT, PARCEL, HEAVY, B2B_BULK
+  status          String   @default("pending") // pending, picked_up, in_transit, out_for_delivery, delivered, returned
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  userId      String
+  user        User     @relation("UserReviews", fields: [userId], references: [id])
+  rating      Int      @default(5)
+  comment     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+}
+
+model FileAsset {
+  id        String   @id @default(uuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  purpose   String?
+  url       String
+  key       String?
+  mimeType  String?
+  size      Int?
+  createdAt DateTime @default(now())
+}
+
+model ContentReaction {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  contentItemId String
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id])
+  type          String   // LIKE, LOVE, WOW, SAD, ANGRY
+  createdAt     DateTime @default(now())
+  deletedAt     DateTime?
+
+  @@unique([userId, contentItemId, type])
+}
+
+model ContentBookmark {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  contentItemId String
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id])
+  createdAt     DateTime @default(now())
+  deletedAt     DateTime?
+
+  @@unique([userId, contentItemId])
+}
+
+model ContentShare {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  contentItemId String
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id])
+  platform      String?  // INTERNAL, FACEBOOK, WHATSAPP
+  createdAt     DateTime @default(now())
+}
+
+model ViolationLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  severity  String
+  createdAt DateTime @default(now())
+}
+
+model FlaggedContent {
+  id            String   @id @default(uuid())
+  contentItemId String
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id])
+  status        String   @default("pending") // pending, reviewed, dismissed
+  reason        String?
+  createdAt     DateTime @default(now())
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  qty       Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+}

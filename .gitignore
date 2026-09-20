@@ -1,0 +1,30 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel & build tools
+.vercel/
+.next/
+.serverless/
+
+# Databases & local stores
+*.db
+*.sqlite
+prisma/*.db
+prisma/*.sqlite
+*.local
+

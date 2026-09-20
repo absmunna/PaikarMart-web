@@ -1,0 +1,35 @@
+
+:root {
+  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: Menlo, monospace;
+  --radius: 0.75rem;
+
+  /* Premium Design Tokens */
+  --pm-bg: #04070f;
+  --pm-card: rgba(255, 255, 255, 0.03);
+  --pm-border: rgba(255, 255, 255, 0.05);
+  --pm-accent: #22d3ee;
+  --pm-secondary: #f59e0b;
+  --pm-cyan: #22d3ee;
+  
+  --success: #06b6d4;
+  --success-foreground: #ffffff;
+  --success-light: #cffafe;
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-foreground: #ffffff;
+  --info-light: #dbeafe;
+  --verified: #06b6d4;
+  --verified-foreground: #ffffff;
+  --trust-badge: #2563eb;
+  --price: #030213;
+  --price-sale: #dc2626;
+  --price-discount: #dc2626;
+  --price-original: #9ca3af;
+  --price-wholesale: #0369a1;
+  --rating-star: #fbbf24;
+  --rating-empty: #e5e7eb;
+}
