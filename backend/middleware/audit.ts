@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
 export const auditMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // Only audit API routes
-  if (!req.url.startsWith('/api/v1/')) {
-    return next();
-  }
-
   const isSensitive = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method);
   const logPrefix = isSensitive ? '[SENSITIVE-AUDIT]' : '[AUDIT]';
   const timestamp = new Date().toISOString();

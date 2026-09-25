@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "module": "ESNext",
@@ -20,27 +18,16 @@
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"],
-      "@modules/*": ["./src/modules/*"],
-      "@portals/*": ["./src/portals/*"],
-      "@shared/*": ["./src/shared/*"],
-      "@ui/*": ["./src/components/ui/*"],
-      "@app/*": ["./src/app/*"],
-      "@lib/*": ["./src/lib/*"],
       "@backend/*": ["./backend/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@workspace/api-client-react": ["./src/modules/app/api/client/index.ts"]
+      "@shared/*": ["./src/shared/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@ui/*": ["./src/components/ui/*"]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "noImplicitAny": false,
-    "strict": false
+    "noEmit": true
   },
-  "include": [
-    "src",
-    "backend",
-    "vite.config.ts",
-    "server.ts"
-  ],
+  "include": ["src", "vite.config.ts"],
   "exclude": [
     "node_modules",
     "dist"

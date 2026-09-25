@@ -1,219 +1,208 @@
-import { cn } from "@/lib/utils";
-import { motion } from 'motion/react';
-import { useLanguage } from "@/features/language/LanguageContext";
-import { useTheme } from "@/features/theme/ThemeContext";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { 
   ChevronLeft, Settings2, ShieldCheck, HelpCircle, Bell, Info, 
-  Palette, Check, User, Lock, Eye, Link2, 
-  Trash2, LogOut, ChevronRight, Smartphone, Mail
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { toast } from "sonner";
+  Palette, Check, User, Lock, Eye, Trash2, LogOut, ChevronRight, 
+  Smartphone, Mail, Globe, Moon, Sun, Shield
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../providers/ThemeProvider';
+import { useAppStore } from '../store/appStore';
+import { useAuthStore } from '../modules/auth/store/authStore';
+import { useTranslation } from '../lib/i18n';
 
-export default function SettingsPage() {
-  const { t } = useLanguage();
+export const SettingsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { mode, setMode, presets } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const { lang, setLang } = useAppStore();
+  const { user, isAuthenticated, logout, updateProfile } = useAuthStore();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-    toast.success("Logged out successfully");
-  };
-
-  const accountSections = [
-    {
-      title: "Account Security",
-      items: [
-        { icon: Lock, label: "Change Password", desc: "Update your login password", color: "text-amber-500" },
-        { icon: ShieldCheck, label: "Two-Factor Auth", desc: "Add extra security layer", color: "text-emerald-500", status: "Off" },
-        { icon: Smartphone, label: "Trusted Devices", desc: "Manage your active sessions", color: "text-blue-500" },
-      ]
-    },
-    {
-      title: "Privacy & Data",
-      items: [
-        { icon: Eye, label: "Profile Visibility", desc: "Control who sees your profile", color: "text-purple-500", status: "Public" },
-        { icon: Mail, label: "Email Notifications", desc: "Manage marketing emails", color: "text-rose-500", status: "On" },
-      ]
-    },
-    {
-      title: "Integrations",
-      items: [
-        { icon: Link2, label: "Linked Accounts", desc: "Google, Facebook, Twitter", color: "text-indigo-500" },
-      ]
-    }
+  const themeList = [
+    { id: 'deepDark', name: 'ডিপ ডার্ক (Dark)', desc: 'ডার্ক মোড' },
+    { id: 'colourful', name: 'কালারফুল (Vibrant)', desc: 'উজ্জ্বল ব্যাকগ্রাউন্ড' },
+    { id: 'nakshiLight', name: 'নকশী লাইট (Light)', desc: 'ঐতিহ্যবাহী আরামদায়ক লাইট' },
+    { id: 'greenField', name: 'সবুজ মাঠ (Emerald)', desc: 'প্রাকৃতিক গ্রিন ফিল্ড' }
   ];
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleToggleLang = (selectedLang: 'bn' | 'en') => {
+    setLang(selectedLang);
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-[var(--pm-bg)] pb-28 pt-4 px-4 max-w-2xl mx-auto">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/10">
-        <div className="max-w-[600px] mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--pm-border)]">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-2xl bg-card border border-white/10 flex items-center justify-center hover:bg-card transition-all cursor-pointer"
+            className="w-10 h-10 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] flex items-center justify-center hover:bg-[var(--pm-surface-hover)] transition-all cursor-pointer text-[var(--pm-text)]"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-sm font-black uppercase tracking-[0.3em] flex items-center gap-2">
-            <Settings2 className="w-4 h-4 text-primary" />
-            {t('profile.settings') || "Settings"}
-          </h1>
-          <div className="w-10" />
+          <div>
+            <h1 className="text-xl font-black text-[var(--pm-text)]">সেটিংস ও নিরাপত্তা</h1>
+            <p className="text-xs text-[var(--pm-text-muted)]">অ্যাপ প্রিফারেন্স ও অ্যাকাউন্ট কন্ট্রোল</p>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-[600px] mx-auto px-4 pt-6 space-y-10">
-        {/* User Profile Summary */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-6 rounded-[2.5rem] bg-gradient-to-br from-card to-zinc-900 border border-border flex items-center gap-5 shadow-xl shadow-black/20"
-        >
-          <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center text-2xl font-black text-primary-foreground">
-            {user?.name?.[0] || "U"}
-          </div>
-          <div className="flex-1">
-            <h2 className="text-lg font-black text-white">{user?.name}</h2>
-            <p className="text-xs font-bold text-zinc-500 tracking-tight">{user?.email}</p>
-          </div>
-          <button 
-            onClick={() => navigate("/profile")}
-            className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-wider hover:bg-white/10 transition-all"
-          >
-            Edit Profile
-          </button>
-        </motion.div>
-
-        {/* Dynamic Account Sections */}
-        {accountSections.map((section, idx) => (
-          <motion.div 
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * idx }}
-            className="space-y-4"
-          >
-            <div className="flex items-center gap-3 px-2">
-              <h2 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">{section.title}</h2>
-              <div className="h-[1px] flex-1 bg-zinc-800" />
-            </div>
-            <div className="space-y-2">
-              {section.items.map((item, i) => (
-                <button key={i} className="w-full flex items-center justify-between p-4 rounded-3xl bg-card border border-border hover:bg-zinc-800/50 transition-all group">
-                  <div className="flex items-center gap-4">
-                    <div className={cn("p-2.5 rounded-2xl bg-zinc-900", item.color)}>
-                      <item.icon className="h-5 w-5" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-bold text-white">{item.label}</p>
-                      <p className="text-[10px] text-zinc-500 font-medium">{item.desc}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {item.status && <span className="text-[10px] font-black text-zinc-600 uppercase">{item.status}</span>}
-                    <ChevronRight className="h-4 w-4 text-zinc-700 group-hover:text-white transition-colors" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-
-        {/* 🎨 Theme Presets Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="space-y-6"
-        >
-          <div className="flex items-center gap-3 px-2">
-             <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-1.5">
-               <Palette className="w-3.5 h-3.5" />
-               Visual Experience
-             </h2>
-             <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/20 to-transparent" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {presets.map((preset) => {
-              const isSelected = mode === preset.id;
-              return (
-                <button
-                  key={preset.id}
-                  onClick={() => {
-                    setMode(preset.id as any);
-                    toast.success(
-                      `Theme set to ${preset.label}!`
-                    );
-                  }}
-                  className={cn(
-                    "flex flex-col items-start gap-2.5 p-4 rounded-2xl bg-card border text-left transition-all relative cursor-pointer group hover:bg-accent/40",
-                    isSelected 
-                      ? "border-primary shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.15)] ring-1 ring-primary" 
-                      : "border-border hover:border-border-hover"
-                  )}
-                >
-                  {/* Swatch color indicators */}
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex gap-1">
-                      {preset.swatch.map((color, i) => (
-                        <div 
-                          key={i} 
-                          className="w-3.5 h-3.5 rounded-full border border-black/20" 
-                          style={{ backgroundColor: color }} 
-                        />
-                      ))}
-                    </div>
-                    {isSelected && (
-                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-black block text-foreground group-hover:text-primary transition-colors">
-                      {preset.label}
-                    </span>
-                    <p className="text-[9px] text-muted-foreground/80 leading-snug mt-1">
-                      {preset.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* Danger Zone */}
-        <div className="pt-6 space-y-4 pb-24">
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center justify-between p-4 rounded-3xl bg-rose-500/5 border border-rose-500/10 text-rose-500 hover:bg-rose-500/10 transition-all font-bold text-sm group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-2.5 rounded-2xl bg-rose-500/10">
-                <LogOut className="h-5 w-5" />
+      <div className="space-y-6">
+        {/* User Card */}
+        {isAuthenticated && user ? (
+          <div className="p-4 bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-2xl border-2 border-[var(--pm-accent)] overflow-hidden">
+                <img
+                  src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <span>Sign Out from PaikarMart</span>
-            </div>
-            <ChevronRight className="h-4 w-4" />
-          </button>
-
-          <button className="w-full flex items-center justify-between p-4 rounded-3xl bg-zinc-900 border border-zinc-800 text-zinc-600 hover:text-rose-600 hover:bg-rose-500/5 hover:border-rose-500/20 transition-all font-bold text-sm group">
-            <div className="flex items-center gap-4">
-              <div className="p-2.5 rounded-2xl bg-zinc-800 group-hover:bg-rose-500/10 transition-all">
-                <Trash2 className="h-5 w-5" />
+              <div>
+                <h3 className="font-black text-sm text-[var(--pm-text)]">{user.name}</h3>
+                <p className="text-xs text-[var(--pm-text-muted)]">{user.email || user.phone}</p>
+                <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] text-[10px] font-black uppercase">
+                  রোল: {user.role}
+                </span>
               </div>
-              <span>Delete Account Permanently</span>
             </div>
-          </button>
+            <button
+              onClick={() => navigate('/profile')}
+              className="text-xs font-bold text-[var(--pm-accent)] hover:underline"
+            >
+              প্রোফাইল
+            </button>
+          </div>
+        ) : (
+          <div className="p-4 bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl flex items-center justify-between shadow-xs">
+            <div>
+              <h3 className="font-bold text-sm text-[var(--pm-text)]">গেস্ট ইউজার হিসেবে আছেন</h3>
+              <p className="text-xs text-[var(--pm-text-muted)]">অ্যাকাউন্টে সাইন ইন করে সম্পূর্ণ সুবিধা নিন</p>
+            </div>
+            <button
+              onClick={() => navigate('/login')}
+              className="px-4 py-2 bg-[var(--pm-accent)] text-white text-xs font-bold rounded-xl shadow-xs"
+            >
+              লগইন করুন
+            </button>
+          </div>
+        )}
+
+        {/* Theme Settings */}
+        <div className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-5 shadow-xs">
+          <div className="flex items-center gap-2 mb-3">
+            <Palette className="w-5 h-5 text-[var(--pm-accent)]" />
+            <h2 className="font-black text-sm text-[var(--pm-text)]">থিম এবং কালার মোড</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {themeList.map((tItem) => (
+              <button
+                key={tItem.id}
+                onClick={() => setTheme(tItem.id as any)}
+                className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  theme === tItem.id
+                    ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10'
+                    : 'border-[var(--pm-border)] bg-[var(--pm-bg)] hover:border-[var(--pm-border)]/80'
+                }`}
+              >
+                <div>
+                  <h4 className="font-bold text-xs text-[var(--pm-text)]">{tItem.name}</h4>
+                  <p className="text-[10px] text-[var(--pm-text-muted)]">{tItem.desc}</p>
+                </div>
+                {theme === tItem.id && <Check className="w-4 h-4 text-[var(--pm-accent)]" />}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Language Selection */}
+        <div className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-5 shadow-xs">
+          <div className="flex items-center gap-2 mb-3">
+            <Globe className="w-5 h-5 text-[var(--pm-accent)]" />
+            <h2 className="font-black text-sm text-[var(--pm-text)]">ভাষা পরিবর্তন (Language)</h2>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => handleToggleLang('bn')}
+              className={`flex-1 py-3 rounded-2xl font-black text-xs border transition-all cursor-pointer ${
+                lang === 'bn'
+                  ? 'bg-[var(--pm-accent)] text-white border-[var(--pm-accent)] shadow-sm'
+                  : 'bg-[var(--pm-bg)] text-[var(--pm-text-muted)] border-[var(--pm-border)]'
+              }`}
+            >
+              বাংলা (Bengali)
+            </button>
+            <button
+              onClick={() => handleToggleLang('en')}
+              className={`flex-1 py-3 rounded-2xl font-black text-xs border transition-all cursor-pointer ${
+                lang === 'en'
+                  ? 'bg-[var(--pm-accent)] text-white border-[var(--pm-accent)] shadow-sm'
+                  : 'bg-[var(--pm-bg)] text-[var(--pm-text-muted)] border-[var(--pm-border)]'
+              }`}
+            >
+              English
+            </button>
+          </div>
+        </div>
+
+        {/* Security & Notification Controls */}
+        <div className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-5 shadow-xs space-y-4">
+          <div className="flex items-center gap-2">
+            <Shield className="w-5 h-5 text-[var(--pm-accent)]" />
+            <h2 className="font-black text-sm text-[var(--pm-text)]">নিরাপত্তা ও নোটিফিকেশন</h2>
+          </div>
+
+          <div className="flex items-center justify-between py-2 border-b border-[var(--pm-border)]/50">
+            <div>
+              <p className="text-xs font-bold text-[var(--pm-text)]">পুশ নোটিফিকেশন</p>
+              <p className="text-[10px] text-[var(--pm-text-muted)]">অর্ডার ও দামের আপডেট এসএমএস/ইন-অ্যাপ পাবেন</p>
+            </div>
+            <button
+              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${
+                notificationsEnabled ? 'bg-[var(--pm-accent)]' : 'bg-zinc-600'
+              }`}
+            >
+              <div
+                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                  notificationsEnabled ? 'translate-x-6' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="text-xs font-bold text-[var(--pm-text)]">টু-ফ্যাক্টর অথেনটিকেশন (2FA)</p>
+              <p className="text-[10px] text-[var(--pm-text-muted)]">এসএমএস ওটিপি ভিত্তিক নিরাপদ সুরক্ষা</p>
+            </div>
+            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-md">
+              সক্রিয় রয়েছে
+            </span>
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        {isAuthenticated && (
+          <button
+            onClick={handleLogout}
+            className="w-full py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            অ্যাকাউন্ট থেকে লগআউট করুন
+          </button>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default SettingsPage;

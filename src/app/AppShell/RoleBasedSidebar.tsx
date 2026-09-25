@@ -179,14 +179,14 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
 
   return (
     <div className={cn(
-      "fixed left-0 top-[64px] h-[calc(100dvh-64px)] bg-[#030906]/98 backdrop-blur-xl border-r border-cyan-500/10 transition-all duration-300 z-[450] flex flex-col shadow-2xl lg:shadow-none",
+      "fixed left-0 top-[64px] h-[calc(100dvh-64px)] bg-[#030906]/98 backdrop-blur-xl border-r border-[var(--pm-accent)]/10 transition-all duration-300 z-[450] flex flex-col shadow-2xl lg:shadow-none",
       isCollapsed ? "w-[80px]" : "w-[280px]",
       isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
       className
     )}>
       {/* User Identity Pill Section - Compact & styled */}
       <div className={cn(
-        "p-4 border-b border-cyan-500/10 bg-[#040d07]/40 flex flex-col shrink-0 transition-all",
+        "p-4 border-b border-[var(--pm-accent)]/10 bg-[#040d07]/40 flex flex-col shrink-0 transition-all",
         isCollapsed ? "justify-center px-2" : "px-4"
       )}>
         <div className="flex items-center gap-3.5 w-full">
@@ -195,22 +195,22 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
             className="flex items-center gap-3 w-full text-left cursor-pointer group active:scale-98"
           >
             <div className="relative shrink-0">
-              <Avatar className="h-10 w-10 border border-cyan-500/30 shadow-md transition-transform group-hover:scale-105">
+              <Avatar className="h-10 w-10 border border-[var(--pm-accent)]/30 shadow-md transition-transform group-hover:scale-105">
                 <AvatarImage src={isSeller ? profile.avatarUrl : user?.avatarUrl} className="object-cover" />
-                <AvatarFallback className="bg-[#051a0e] text-cyan-400 font-black text-xs">
+                <AvatarFallback className="bg-[#051a0e] text-[var(--pm-accent)] font-black text-xs">
                   {(isSeller ? profile.shopName : user?.name)?.[0] ?? "U"}
                 </AvatarFallback>
               </Avatar>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-cyan-500 border-2 border-[#030906] rounded-full shadow-lg" />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[var(--pm-accent)] border-2 border-[#030906] rounded-full shadow-lg" />
             </div>
 
             {!isCollapsed && (
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-xs font-black text-white truncate leading-none group-hover:text-cyan-400 transition-colors">
+                  <p className="text-xs font-black text-white truncate leading-none group-hover:text-[var(--pm-accent)] transition-colors">
                     {isSeller ? profile.shopName : (user?.name || user?.fullName || "Guest User")}
                   </p>
-                  <ShieldCheck className={cn("w-3.5 h-3.5 shrink-0", isSeller ? "text-cyan-400" : "text-zinc-500")} />
+                  <ShieldCheck className={cn("w-3.5 h-3.5 shrink-0", isSeller ? "text-[var(--pm-accent)]" : "text-zinc-500")} />
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={cn(
@@ -245,17 +245,17 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
           <div className="mt-4 px-1 w-full">
             <div className="flex items-center justify-between text-[8px] font-black text-zinc-500 uppercase tracking-wider mb-1">
               <span className="flex items-center gap-1">
-                <Sparkles className="w-2.5 h-2.5 text-cyan-400 animate-pulse" />
+                <Sparkles className="w-2.5 h-2.5 text-[var(--pm-accent)] animate-pulse" />
                 Trust Score / ট্রাস্ট স্কোর
               </span>
-              <span className="text-cyan-400">85%</span>
+              <span className="text-[var(--pm-accent)]">85%</span>
             </div>
             <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: "85%" }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 shadow-[0_0_8px_rgba(0,230,118,0.5)]"
+                className="h-full bg-gradient-to-r from-orange-600 to-[var(--pm-accent)] shadow-[0_0_8px_rgba(255,122,0,0.5)]"
               />
             </div>
           </div>
@@ -264,7 +264,7 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
 
       {/* ━━━ MENUS SEARCH BAR ━━━ */}
       {!isCollapsed && (
-        <div className="px-3.5 py-2.5 border-b border-cyan-500/5 shrink-0 bg-[#040c07]/20">
+        <div className="px-3.5 py-2.5 border-b border-[var(--pm-accent)]/5 shrink-0 bg-[#040c07]/20">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
             <input 
@@ -272,7 +272,7 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
               placeholder="Search features... / খুঁজুন..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#050e09] border border-white/[0.04] focus:border-cyan-500/20 focus:bg-black/40 rounded-xl pl-9 pr-8 py-2 text-[10px] font-black text-white placeholder-zinc-600 focus:outline-none transition-all shadow-inner"
+              className="w-full bg-[#050e09] border border-white/[0.04] focus:border-[var(--pm-accent)]/20 focus:bg-black/40 rounded-xl pl-9 pr-8 py-2 text-[10px] font-black text-white placeholder-zinc-600 focus:outline-none transition-all shadow-inner"
             />
             {searchQuery && (
               <button 
@@ -295,21 +295,21 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
             <div key={section.id} className="space-y-1">
               {/* Accordion Trigger (Expanded View only, Collapsed view has a subtitle divider) */}
               {isCollapsed ? (
-                <div className="w-full h-px bg-cyan-500/10 my-4" />
+                <div className="w-full h-px bg-[var(--pm-accent)]/10 my-4" />
               ) : (
                 <button
                   onClick={() => toggleAccordion(section.id)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-zinc-500 hover:text-cyan-400 transition-all text-left group hover:bg-cyan-500/[0.02]"
+                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-zinc-500 hover:text-[var(--pm-accent)] transition-all text-left group hover:bg-[var(--pm-accent)]/[0.02]"
                 >
-                  <div className="text-[9px] font-black uppercase tracking-widest flex items-center gap-2 text-zinc-500 group-hover:text-cyan-400 transition-colors">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/40 group-hover:bg-cyan-400 transition-all" />
+                  <div className="text-[9px] font-black uppercase tracking-widest flex items-center gap-2 text-zinc-500 group-hover:text-[var(--pm-accent)] transition-colors">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--pm-accent)]/40 group-hover:bg-[var(--pm-accent)] transition-all" />
                     <span>{section.titleEn}</span>
                     <span className="text-zinc-600 font-bold">/ {section.titleBn}</span>
                   </div>
                   {isSectionOpen ? (
-                    <ChevronUp className="w-3.5 h-3.5 text-zinc-600 group-hover:text-cyan-400 transition-colors" />
+                    <ChevronUp className="w-3.5 h-3.5 text-zinc-600 group-hover:text-[var(--pm-accent)] transition-colors" />
                   ) : (
-                    <ChevronDown className="w-3.5 h-3.5 text-zinc-600 group-hover:text-cyan-400 transition-colors" />
+                    <ChevronDown className="w-3.5 h-3.5 text-zinc-600 group-hover:text-[var(--pm-accent)] transition-colors" />
                   )}
                 </button>
               )}
@@ -337,13 +337,13 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
                       className={cn(
                         "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 border text-left group relative cursor-pointer",
                         isActive
-                          ? "bg-gradient-to-r from-cyan-500/15 to-cyan-500/5 text-cyan-400 border-cyan-500/30 shadow-md shadow-cyan-950/20"
+                          ? "bg-gradient-to-r from-orange-500/15 to-orange-500/5 text-[var(--pm-accent)] border-[var(--pm-accent)]/30 shadow-md shadow-orange-950/20"
                           : "text-zinc-400 hover:text-white bg-transparent border-transparent hover:bg-white/[0.015]"
                       )}
                     >
                       <IconComponent className={cn(
                         "w-4 h-4 shrink-0 transition-transform group-hover:scale-105",
-                        isActive ? "text-cyan-400" : "text-zinc-500 group-hover:text-zinc-300"
+                        isActive ? "text-[var(--pm-accent)]" : "text-zinc-500 group-hover:text-zinc-300"
                       )} />
 
                       {!isCollapsed ? (
@@ -357,8 +357,8 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
                         </div>
                       ) : (
                         /* Beautiful tooltip for collapsed desktop mode */
-                        <div className="group-hover:opacity-100 group-hover:translate-x-0 opacity-0 -translate-x-2 pointer-events-none absolute left-14 bg-[#051108]/95 backdrop-blur-md text-white border border-cyan-500/20 text-[10px] px-3.5 py-2.5 rounded-xl font-bold whitespace-nowrap z-50 transition-all shadow-2xl shadow-black/80 flex flex-col gap-0.5 text-left leading-normal">
-                          <span className="text-cyan-400 font-extrabold uppercase">{item.labelEn}</span>
+                        <div className="group-hover:opacity-100 group-hover:translate-x-0 opacity-0 -translate-x-2 pointer-events-none absolute left-14 bg-[#051108]/95 backdrop-blur-md text-white border border-[var(--pm-accent)]/20 text-[10px] px-3.5 py-2.5 rounded-xl font-bold whitespace-nowrap z-50 transition-all shadow-2xl shadow-black/80 flex flex-col gap-0.5 text-left leading-normal">
+                          <span className="text-[var(--pm-accent)] font-extrabold uppercase">{item.labelEn}</span>
                           <span className="text-zinc-400 text-[9px]">{item.labelBn}</span>
                           <p className="text-[8px] text-zinc-500 font-semibold mt-1 leading-none">{item.descEn}</p>
                         </div>
@@ -366,8 +366,8 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
                       
                       {!isCollapsed && isActive && (
                         <span className="absolute right-3.5 flex h-1.5 w-1.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-400"></span>
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-400"></span>
                         </span>
                       )}
                     </motion.button>
@@ -387,16 +387,16 @@ export const RoleBasedSidebar: React.FC<SidebarProps> = ({ userRole, className, 
       </div>
 
       {/* Logout & Panel Toggle Footing Panel */}
-      <div className="p-3 border-t border-cyan-500/10 bg-[#040e08]/30 flex flex-col gap-1.5 shrink-0">
+      <div className="p-3 border-t border-[var(--pm-accent)]/10 bg-[#040e08]/30 flex flex-col gap-1.5 shrink-0">
         {/* Toggle Collapse Button for Desktop */}
         <button
           onClick={triggerCollapseToggle}
           className="hidden lg:flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.02] border border-transparent transition-all cursor-pointer text-left group"
         >
           {isCollapsed ? (
-            <PanelLeft className="w-4 h-4 text-cyan-400 shrink-0" />
+            <PanelLeft className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />
           ) : (
-            <PanelLeftClose className="w-4 h-4 text-zinc-500 shrink-0 group-hover:text-cyan-400 transition-colors" />
+            <PanelLeftClose className="w-4 h-4 text-zinc-500 shrink-0 group-hover:text-[var(--pm-accent)] transition-colors" />
           )}
           {!isCollapsed && (
             <div className="min-w-0">

@@ -4,20 +4,19 @@ import { useAuth } from "../context/AuthContext";
 import { SearchBar } from "./SearchBar";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useCartStore } from "../modules/cart/store/useCartStore";
+import { useCartStore } from "../modules/cart/cartStore";
 import { SideNavDrawer } from "./common/AppNavigation";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/features/language/LanguageContext";
 
 export default function Header() {
   const { user, isAuthenticated, hasRole } = useAuth();
-  const { i18n } = useTranslation();
+  const { language, setLanguage } = useLanguage();
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const cartItemCount = useCartStore((state) => state.getTotalItems());
 
   const toggleLanguage = () => {
-    const nextLng = i18n.language === 'en' ? 'bn' : 'en';
-    i18n.changeLanguage(nextLng);
+    setLanguage(language === 'en' ? 'bn' : 'en');
   };
 
   const getInitials = (name: string) => {
@@ -64,7 +63,7 @@ export default function Header() {
               title="Change Language"
             >
               <Languages className="h-4 w-4" />
-              {i18n.language === 'bn' ? 'ENG' : 'বাংলা'}
+              {language === 'bn' ? 'ENG' : 'বাংলা'}
             </button>
             
             <button 

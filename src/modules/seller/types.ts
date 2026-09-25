@@ -1,4 +1,4 @@
-﻿export interface SellerProduct {
+export interface SellerProduct {
   id: string;
   title: string;
   description?: string;
@@ -9,10 +9,18 @@
   minOrderQty?: number;
   unit?: string;
   category?: string;
-  type?: 'retail' | 'wholesale';
+  categoryId?: string;
+  categoryName?: string;
+  status?: 'in_stock' | 'low_stock' | 'out_of_stock' | string;
+  type?: 'retail' | 'wholesale' | 'homemade' | 'nearby' | string;
   isActive?: boolean;
   sellerId: string;
+  sellerName?: string;
+  location?: string;
+  tags?: string[];
+  views?: number;
   createdAt?: string;
+  [key: string]: any;
 }
 
 export interface SellerOrder {
@@ -21,6 +29,7 @@ export interface SellerOrder {
   buyerPhone?: string;
   items: { productId: string; name: string; qty: number; price: number }[];
   totalAmount: number;
+  total?: number;
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   createdAt?: string;
   deliveryAddress?: string;
@@ -51,8 +60,26 @@ export interface ReturnRequest {
   id: string;
   orderId: string;
   reason: string;
-  status: 'open' | 'reviewing' | 'approved' | 'rejected';
+  status: 'open' | 'reviewing' | 'approved' | 'rejected' | 'pending';
   createdAt?: string;
+}
+
+export interface SellerProfile {
+  id: string;
+  sellerId?: string;
+  storeName?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  status?: string;
+  avatar?: string;
+  tradeLicense?: string;
+  nidNumber?: string;
+  address?: any;
+  verified?: boolean;
+  tier?: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface SellerVerificationPayload {

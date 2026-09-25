@@ -1,27 +1,16 @@
-import { Toaster } from "@/components/ui/sonner";
-import { AppProviders } from "@/providers/AppProviders";
-import { AppShell } from "@/app/AppShell/AppShell";
-import { orderTrackingService } from "@/modules/orders/services/orderTrackingService";
-import { useEffect } from "react";
-import { GlobalBoundary } from "@/app/AppShell/GlobalBoundary";
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+import { ThemeProvider } from './providers/ThemeProvider';
+import { AppRoutes } from './routes/AppRoutes';
+import { ToastContainer } from './components/common/ToastContainer';
 
-function App() {
-  useEffect(() => {
-    try {
-      orderTrackingService.initEventListener();
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
+export default function App() {
   return (
-    <GlobalBoundary>
-      <AppProviders>
-        <AppShell />
-        <Toaster />
-      </AppProviders>
-    </GlobalBoundary>
+    <>
+      <AppRoutes />
+      <ToastContainer />
+    </>
   );
 }
-
-export default App;

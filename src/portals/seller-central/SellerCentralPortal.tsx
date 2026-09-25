@@ -138,13 +138,16 @@ export function SellerCentralPortal() {
   const [isStorefrontPreview, setIsStorefrontPreview] = useState(false);
   const [pricingInput, setPricingInput] = useState({ title: "", price: "", stock: "", category: "home" });
 
-  // Destructure missing items from useSeller
+  // Destructure items from useSeller
   const { 
     products, 
     orders, 
     serviceBookings, 
+    setServiceBookings = () => {},
     deliveryTasks, 
+    setDeliveryTasks = () => {},
     returnsRequests,
+    setReturnsRequests = () => {},
     createProduct, 
     updateProduct, 
     deleteProduct, 

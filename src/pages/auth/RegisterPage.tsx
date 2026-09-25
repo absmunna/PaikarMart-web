@@ -1,5 +1,5 @@
-import AuthPage from "../../modules/auth/AuthPage";
+import { Register } from "../../modules/auth/pages/Register";
 
 export default function RegisterPage() {
-  return <AuthPage />;
+  return <Register />;
 }

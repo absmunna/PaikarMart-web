@@ -39,7 +39,7 @@ export const getDemands = async (req: Request, res: Response) => {
       include: {
         author: {
           select: {
-            fullName: true,
+            name: true,
             role: true
           }
         }
@@ -57,7 +57,7 @@ export const getDemands = async (req: Request, res: Response) => {
 
 export const getDemandById = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const { id } = req.params;
 
     if (!process.env.DATABASE_URL) {
       return res.json({
@@ -80,7 +80,7 @@ export const getDemandById = async (req: Request, res: Response) => {
       include: {
         author: {
           select: {
-            fullName: true,
+            name: true,
             role: true
           }
         }
@@ -124,10 +124,9 @@ export const createDemand = async (req: Request, res: Response) => {
     if (!user) {
       user = await prisma.user.create({
         data: {
-          phone: "01900000000",
           email: 'demo-buyer@paikarmart.com',
-          fullName: 'Demo Buyer',
-          passwordHash: 'hashedpassword',
+          name: 'Demo Buyer',
+          password: 'hashedpassword',
           role: 'buyer'
         }
       });

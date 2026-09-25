@@ -1,5 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import helmet from 'helmet';
 
-export const helmetMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  next();
-};
+export const helmetMiddleware = helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: false,
+  crossOriginResourcePolicy: false,
+  frameguard: false,
+});

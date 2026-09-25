@@ -54,7 +54,7 @@ export class GlobalBoundary extends Component<Props, State> {
             <div className="flex flex-col gap-4">
               <button 
                 onClick={this.handleRetry}
-                className="w-full h-14 bg-cyan-400 rounded-2xl flex items-center justify-center gap-3 text-black font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-cyan-400/20"
+                className="w-full h-14 bg-[var(--pm-accent)] rounded-2xl flex items-center justify-center gap-3 text-black font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[var(--pm-accent)]/20"
               >
                 <RefreshCw className="w-5 h-5" />
                 Initialize Recovery

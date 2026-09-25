@@ -5,30 +5,28 @@ import { filterXSS } from 'xss';
  * Middleware to sanitize user input to prevent XSS attacks.
  */
 export const sanitizeMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const sanitizeValue = (val: any): any => {
-    if (typeof val === 'string') return filterXSS(val);
-    if (Array.isArray(val)) return val.map(sanitizeValue);
-    if (val !== null && typeof val === 'object') {
-      const sanitized: any = {};
-      for (const k in val) {
-        sanitized[k] = sanitizeValue(val[k]);
-      }
-      return sanitized;
-    }
-    return val;
-  };
-
-  const sanitizedBody = req.body ? sanitizeValue(req.body) : {};
-  const sanitizedQuery = req.query ? sanitizeValue(req.query) : {};
-  const sanitizedParams = req.params ? sanitizeValue(req.params) : {};
-
-  // Attach sanitized data to res.locals for safe downstream access
-  res.locals.sanitized = {
-    body: sanitizedBody,
-    query: sanitizedQuery,
-    params: sanitizedParams
-  };
-
+  if (req.body) {
+    req.body = sanitizeObject(req.body);
+  }
+  if (req.query) {
+    req.query = sanitizeObject(req.query);
+  }
+  if (req.params) {
+    req.params = sanitizeObject(req.params);
+  }
   next();
 };
 
+function sanitizeObject(obj: any): any {
+  if (typeof obj !== 'object' || obj === null) {
+    return typeof obj === 'string' ? filterXSS(obj) : obj;
+  }
+
+  const sanitized: any = Array.isArray(obj) ? [] : {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      sanitized[key] = sanitizeObject(obj[key]);
+    }
+  }
+  return sanitized;
+}

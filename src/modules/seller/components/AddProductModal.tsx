@@ -135,7 +135,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
       <DialogContent className="sm:max-w-[600px] bg-[var(--pm-surface)]/95 border-[var(--pm-border)] text-white backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-2">
-            {isEditing ? <Edit3 className="w-5 h-5 text-amber-400" /> : <Plus className="w-5 h-5 text-cyan-400" />}
+            {isEditing ? <Edit3 className="w-5 h-5 text-amber-400" /> : <Plus className="w-5 h-5 text-[var(--pm-accent)]" />}
             {isEditing ? 'পণ্য আপডেট করুন (Update Product)' : 'নতুন পণ্য যোগ করুন (List New Product)'}
           </DialogTitle>
           <DialogDescription className="text-zinc-400">
@@ -295,7 +295,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
               </Button>
               <Button 
                 type="submit" 
-                className={isEditing ? "bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 shadow-[0_0_20px_rgba(251,191,36,0.3)]" : "bg-cyan-400 hover:bg-cyan-500 text-black font-bold px-8 shadow-[0_0_20px_rgba(34,211,238,0.3)]"}
+                className={isEditing ? "bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 shadow-[0_0_20px_rgba(251,191,36,0.3)]" : "bg-[var(--pm-accent)] hover:bg-[#FF8A00] text-black font-bold px-8 shadow-[0_0_20px_var(--pm-accent)]/30"}
                 disabled={isLoading}
               >
                 {isLoading ? (

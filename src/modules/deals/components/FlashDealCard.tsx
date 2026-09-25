@@ -49,12 +49,12 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "group relative flex flex-col md:flex-row glass p-2 rounded-[2rem] border-white/5 overflow-hidden transition-all duration-500 hover:border-violet-500/30",
+        "group relative flex flex-col md:flex-row glass p-2 rounded-[2rem] border-white/5 overflow-hidden transition-all duration-500 hover:border-orange-500/30",
         className
       )}
     >
       {/* Background Glow */}
-      <div className="absolute -inset-2 bg-gradient-to-tr from-violet-600/10 via-fuchsia-500/5 to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+      <div className="absolute -inset-2 bg-gradient-to-tr from-orange-600/10 via-amber-500/5 to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
       {/* Image Section */}
       <div className="relative w-full md:w-56 h-56 md:h-64 rounded-3xl overflow-hidden shrink-0">
@@ -66,12 +66,12 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
         
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <div className="bg-violet-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl shadow-violet-600/20">
+          <div className="bg-orange-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl shadow-orange-600/20">
             <Zap className="w-3 h-3 fill-white" />
             Exclusive Deal
           </div>
           <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 border border-white/10">
-            <ShieldCheck className="w-3 h-3 text-cyan-400" />
+            <ShieldCheck className="w-3 h-3 text-[var(--pm-accent)]" />
             Verified PK Store
           </div>
         </div>
@@ -80,7 +80,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
         <div className="absolute bottom-4 left-4 right-4 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className="w-3 h-3 text-violet-400" />
+              <Clock className="w-3 h-3 text-orange-400" />
               <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Ends In</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -104,7 +104,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
         <div className="space-y-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-black text-violet-400 uppercase tracking-widest">
+              <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest">
                 {typeof deal.product.category === 'string' ? deal.product.category : 'General'}
               </span>
               <span className="w-1 h-1 rounded-full bg-zinc-700" />
@@ -112,7 +112,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
                 {(deal.product as any).seller?.shopName || 'Verified Partner'}
               </span>
             </div>
-            <h3 className="text-xl font-black text-white leading-tight tracking-tight group-hover:text-violet-200 transition-colors">
+            <h3 className="text-xl font-black text-white leading-tight tracking-tight group-hover:text-orange-200 transition-colors">
               {deal.product.title}
             </h3>
           </div>
@@ -128,7 +128,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
               <p className="text-xs font-bold text-zinc-500 line-through">
                 {formatBDT(Number(deal.product.oldPrice || deal.product.price))}
               </p>
-              <div className="inline-block bg-cyan-500/10 text-cyan-500 text-[10px] font-black px-2 py-0.5 rounded-md mt-1">
+              <div className="inline-block bg-orange-500/10 text-orange-500 text-[10px] font-black px-2 py-0.5 rounded-md mt-1">
                 Save {Math.round((1 - deal.dealPrice / Number(deal.product.oldPrice || deal.product.price)) * 100)}%
               </div>
             </div>
@@ -151,7 +151,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
                 animate={{ width: `${stockPercentage}%` }}
                 className={cn(
                   "h-full rounded-full transition-colors duration-500",
-                  isUrgent ? "bg-amber-500" : "bg-violet-500"
+                  isUrgent ? "bg-red-500" : "bg-orange-500"
                 )}
               />
             </div>

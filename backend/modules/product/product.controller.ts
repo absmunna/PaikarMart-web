@@ -1,182 +1,110 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../config/database';
-import { eventBus } from '../../services/eventBus';
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const { category, type, portal, search } = req.query;
-
     if (!process.env.DATABASE_URL) {
-      // Dev mode: return fallback products (simulating filtering if search parameter is present)
-      const DEV_PRODUCTS = FALLBACK_PRODUCTS;
-      let filtered = [...DEV_PRODUCTS];
-      if (category) {
-        filtered = filtered.filter((p: any) => p.category?.toLowerCase() === String(category).toLowerCase());
-      }
-      if (portal) {
-        filtered = filtered.filter((p: any) => p.portal === portal);
-      }
-      if (search) {
-        filtered = filtered.filter((p: any) => p.name.toLowerCase().includes(String(search).toLowerCase()));
-      }
-      return res.json(filtered);
-    }
-
-    const whereClause: any = { isActive: true };
-    if (category) {
-      whereClause.categoryId = String(category);
-    }
-    if (type) {
-      whereClause.type = String(type);
-    }
-    if (portal === 'pk-shop' || portal === 'pk-store') {
-      whereClause.isPKStore = true;
-    } else if (portal === 'b2b') {
-      whereClause.type = 'wholesale';
-    }
-
-    if (search) {
-      whereClause.title = {
-        contains: String(search),
-        mode: 'insensitive'
-      };
-    }
-
-    const products = await prisma.product.findMany({
-      where: whereClause,
-      include: {
-        category: true,
-        seller: {
-          select: {
-            id: true,
-            fullName: true,
-            shopName: true
-          }
+      // Return mock products catalog in dev mode
+      const mockProducts = [
+        // PK Shop (isPKStore: true)
+        {
+          id: "pk-01",
+          name: "Premium Crafted Leather Wallet",
+          description: "Hand-stitched genuine leather wallet with RFID blocking and multiple card slots. Pure elegance.",
+          price: 2499,
+          originalPrice: 3500,
+          images: ["https://images.unsplash.com/photo-1627123424574-724758594e93?w=500&h=400&fit=crop"],
+          category: "accessories",
+          stock: 25,
+          isPKStore: true,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
         },
-        reviews: true
-      },
-      orderBy: { createdAt: 'desc' }
-    });
+        {
+          id: "pk-02",
+          name: "Royal Rajshahi Silk Sari",
+          description: "Premium pure silk sari from Rajshahi, traditional motifs woven with metallic zari borders.",
+          price: 8500,
+          originalPrice: 12000,
+          images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&h=400&fit=crop"],
+          category: "fashion",
+          stock: 12,
+          isPKStore: true,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        // B2C Retail Products (isPKStore: false, category !== 'wholesale')
+        {
+          id: "b2c-01",
+          name: "Acoustix Pro Wireless Earbuds",
+          description: "Active Noise Cancelling (ANC), 30-hour playback time, Bluetooth 5.3, splash proof.",
+          price: 1899,
+          originalPrice: 2499,
+          images: ["https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&h=400&fit=crop"],
+          category: "electronics",
+          stock: 50,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "b2c-02",
+          name: "NeoFit Smart Watch Series X",
+          description: "Heart rate monitor, blood oxygen tracker, built-in GPS, multi-sport mode, AMOLED screen.",
+          price: 3200,
+          originalPrice: 4500,
+          images: ["https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&h=400&fit=crop"],
+          category: "electronics",
+          stock: 30,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        // B2B Wholesale Products (isPKStore: false, category === 'wholesale')
+        {
+          id: "b2b-05",
+          name: "Wholesale Cotton Polo Shirts (Pack of 50)",
+          description: "100% combed cotton pique fabric, retail quality polo shirts in mixed sizes and colors.",
+          price: 7500,
+          originalPrice: 10000,
+          images: ["https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500&h=400&fit=crop"],
+          category: "wholesale",
+          stock: 200,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "b2b-06",
+          name: "Factory Direct Leather Footwear (20 Pairs)",
+          description: "Genuine export quality formal leather shoes. Assorted sizes 40-44, wholesale lot.",
+          price: 18000,
+          originalPrice: 24000,
+          images: ["https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=500&h=400&fit=crop"],
+          category: "wholesale",
+          stock: 80,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        }
+      ];
+      return res.json(mockProducts);
+    }
 
-    // Match store interface structure
-    const mapped = products.map((p: any) => ({
-      id: p.id,
-      name: p.title,
-      price: Number(p.price),
-      originalPrice: p.originalPrice ? Number(p.originalPrice) : Number(p.price),
-      description: p.description,
-      images: p.images,
-      image: p.images?.[0] || 'https://via.placeholder.com/300',
-      stock: p.stock,
-      minOrderQty: p.minOrderQty,
-      unit: p.unit,
-      portal: p.isPKStore ? 'pk-shop' : (p.type === 'wholesale' ? 'b2b' : 'b2c'),
-      isPKShop: p.isPKStore,
-      category: p.category?.name || 'General',
-      vendor: {
-        id: p.sellerId,
-        name: p.seller?.shopName || p.seller?.fullName || 'Paikar Mart Partner'
-      },
-      rating: p.reviews && p.reviews.length > 0 
-        ? p.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / p.reviews.length 
-        : 4.5,
-      reviews: p.reviews?.length || 0,
-      createdAt: p.createdAt
-    }));
-
-    res.json(mapped);
+    const products = await prisma.product.findMany();
+    res.json(products);
   } catch (error) {
     console.error('Fetch Products Error:', error);
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    if (!process.env.DATABASE_URL) {
-      const p = FALLBACK_PRODUCTS.find((prod: any) => prod.id === id);
-      if (!p) return res.status(404).json({ error: 'Product not found' });
-      return res.json(p);
-    }
-
-    const product = await (prisma as any).product.findUnique({
-      where: { id },
-      include: {
-        category: true,
-        seller: {
-          select: {
-            id: true,
-            fullName: true
-          }
-        },
-        business: true,
-        reviews: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                fullName: true,
-                avatarUrl: true
-              }
-            }
-          }
-        }
-      }
-    });
-
-    if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    const p = product as any;
-
-    const mapped = {
-      id: p.id,
-      name: p.title,
-      price: Number(p.price),
-      originalPrice: p.originalPrice ? Number(p.originalPrice) : Number(p.price),
-      description: p.description,
-      images: p.images,
-      image: p.images?.[0] || 'https://via.placeholder.com/300',
-      stock: p.stock,
-      minOrderQty: p.minOrderQty,
-      unit: p.unit,
-      portal: p.isPKStore ? 'pk-shop' : (p.type === 'wholesale' ? 'b2b' : 'b2c'),
-      isPKShop: p.isPKStore,
-      category: p.category?.name || 'General',
-      vendor: {
-        id: p.sellerId,
-        name: p.business?.storeName || p.seller?.fullName || 'Paikar Mart Partner'
-      },
-      rating: p.reviews && p.reviews.length > 0 
-        ? p.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / p.reviews.length 
-        : 4.5,
-      reviews: p.reviews?.length || 0,
-      reviewsList: (p.reviews || []).map((r: any) => ({
-        id: r.id,
-        rating: r.rating,
-        comment: r.comment,
-        createdAt: r.createdAt,
-        user: {
-          name: r.user?.fullName || 'Customer',
-          avatar: r.user?.avatarUrl
-        }
-      })),
-      createdAt: p.createdAt
-    };
-
-    res.json(mapped);
-  } catch (error) {
-    console.error('Fetch Product Detail Error:', error);
-    res.status(500).json({ error: 'Failed to fetch product detail' });
-  }
-};
-
 export const addProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, price, originalPrice, images, isPKStore, category, stock, type, minOrderQty, unit } = req.body;
+    const { name, description, price, originalPrice, images, isPKStore, category, stock } = req.body;
+    
+    // In a real application, you would attach the sellerId from the logged-in user's token.
+    // Assuming 'dev-seller-id' as a fallback seller id.
     const sellerId = req.headers['x-user-id'] as string || 'dev-seller-id';
 
     if (!process.env.DATABASE_URL) {
@@ -186,56 +114,40 @@ export const addProduct = async (req: Request, res: Response) => {
         description,
         price,
         originalPrice,
-        images: images || [],
-        isPKStore: !!isPKStore,
-        category: category || 'General',
-        stock: stock || 100,
-        type: type || 'retail',
-        minOrderQty: minOrderQty || 1,
-        unit: unit || 'pcs',
+        images,
+        isPKStore,
+        category,
+        stock,
         sellerId
       });
     }
 
-    let user = await prisma.user.findFirst({ where: { id: sellerId } });
-    if (!user) {
-      user = await prisma.user.findFirst();
-    }
+    // Ensure the dummy seller user exists or link to one.
+    // For demo robustness, if no robust user, handle gracefully.
+    let user = await prisma.user.findFirst();
     if (!user) {
       user = await prisma.user.create({
         data: {
-          phone: "01700000001",
           email: 'demo-seller@paikarmart.com',
-          fullName: 'Demo Seller',
-          passwordHash: 'hashedpassword',
-          role: 'seller',
-          shopName: 'Super Trading BD'
+          name: 'Demo Seller',
+          password: 'hashedpassword',
+          role: 'seller'
         }
       });
     }
 
     const product = await prisma.product.create({
       data: {
-        title: name,
+        name,
         description: description || name,
         price,
         originalPrice,
         images: images || [],
         isPKStore: !!isPKStore,
-        categoryId: category || null, 
-        stock: stock || 10,
-        type: type || 'retail',
-        minOrderQty: minOrderQty || 1,
-        unit: unit || 'pcs',
+        category: category || null,
+        stock: stock || 0,
         sellerId: user.id
       }
-    });
-
-    // Emit event: PRODUCT_ADDED
-    await eventBus.emitEvent('PRODUCT_ADDED', {
-      productId: product.id,
-      title: product.title,
-      sellerId: product.sellerId
     });
 
     res.status(201).json(product);
@@ -245,46 +157,9 @@ export const addProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id as string;
-    const { name, description, price, originalPrice, stock, minOrderQty, isActive, type } = req.body;
-
-    if (!process.env.DATABASE_URL) {
-      return res.json({ id, name, description, price, originalPrice, stock, minOrderQty, isActive, type, message: 'Updated in dev mode' });
-    }
-
-    const updated = await prisma.product.update({
-      where: { id },
-      data: {
-        title: name,
-        description,
-        price,
-        originalPrice,
-        stock,
-        minOrderQty,
-        isActive,
-        type
-      }
-    });
-
-    // Emit event: PRODUCT_UPDATED
-    await eventBus.emitEvent('PRODUCT_UPDATED', {
-      productId: updated.id,
-      title: updated.title,
-      stock: updated.stock
-    });
-
-    res.json(updated);
-  } catch (error) {
-    console.error('Update Product Error:', error);
-    res.status(500).json({ error: 'Failed to update product' });
-  }
-};
-
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
+    const { id } = req.params;
 
     if (!process.env.DATABASE_URL) {
       return res.json({ message: 'Product deleted in dev mode' });
@@ -298,64 +173,120 @@ export const deleteProduct = async (req: Request, res: Response) => {
   }
 };
 
-// Robust localized fallback products for dev mode
-const FALLBACK_PRODUCTS = [
-  {
-    id: "p1",
-    name: "Wireless Earbuds Pro (Active Noise Cancelling)",
-    price: 2499,
-    originalPrice: 3200,
-    portal: "b2c",
-    category: "Electronics",
-    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?fit=crop&w=400&h=400&q=80",
-    images: ["https://images.unsplash.com/photo-1590658268037-6bf12165a8df?fit=crop&w=400&h=400&q=80"],
-    rating: 4.5,
-    reviews: 128,
-    vendor: { id: "seller-1", name: "Dhaka Electronics" },
-    description: "Premium Bluetooth TWS earbuds with deep bass and high fidelity voice quality."
-  },
-  {
-    id: "p2",
-    name: "Premium Cotton Panjabi for Men (Regular Fit)",
-    price: 1450,
-    originalPrice: 2200,
-    portal: "b2c",
-    category: "Fashion",
-    image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?fit=crop&w=400&h=400&q=80",
-    images: ["https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?fit=crop&w=400&h=400&q=80"],
-    rating: 4.8,
-    reviews: 84,
-    vendor: { id: "seller-2", name: "Chittagong Fashion House" },
-    description: "Authentic comfort and classic look for eid festivals and formal wear."
-  },
-  {
-    id: "p3",
-    name: "Fresh Padma Hilsa Fish (Sized 1.2kg - 1.5kg)",
-    price: 1850,
-    originalPrice: 2400,
-    portal: "b2c",
-    category: "Grocery",
-    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?fit=crop&w=400&h=400&q=80",
-    images: ["https://images.unsplash.com/photo-1553279768-865429fa0078?fit=crop&w=400&h=400&q=80"],
-    rating: 4.9,
-    reviews: 210,
-    vendor: { id: "seller-3", name: "Sylhet Fresh Fish Outlet" },
-    description: "Pure organic chemical-free fresh fish directly caught from the Padma river."
-  },
-  {
-    id: "pk-polo",
-    name: "PK Premium Signature Polo Shirt",
-    price: 850,
-    originalPrice: 1500,
-    portal: "pk-store",
-    coinCashback: 50,
-    category: "Fashion",
-    image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?fit=crop&w=400&h=400&q=80",
-    images: ["https://images.unsplash.com/photo-1581655353564-df123a1eb820?fit=crop&w=400&h=400&q=80"],
-    rating: 4.9,
-    reviews: 320,
-    vendor: { id: "pk-store-ex", name: "PK Store Exclusive" },
-    description: "Elite 100% combed cotton fabric with custom luxury stitch and buttons. Designed by PK designers."
+export const getProductById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!process.env.DATABASE_URL) {
+      // Look up in dev list
+      const defaultProduct = {
+        id,
+        name: "প্রিমিয়াম কোয়ালিটি প্রোডাক্ট",
+        description: "অরিজিনাল গ্যারান্টিযুক্ত প্রিমিয়াম পণ্য। পাইকার মার্ট ভেরিফায়েড বিক্রেতা দ্বারা সরবরাহকৃত।",
+        price: 2499,
+        originalPrice: 3200,
+        images: ["https://images.unsplash.com/photo-1627123424574-724758594e93?w=500&h=400&fit=crop"],
+        category: "electronics",
+        stock: 50,
+        rating: 4.8,
+        reviewsCount: 124,
+        isPKStore: false,
+        sellerId: "seller-01"
+      };
+      return res.json(defaultProduct);
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { seller: true }
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('Fetch Product Detail Error:', error);
+    res.status(500).json({ error: 'Failed to fetch product details' });
   }
-];
+};
+
+export const getProductSeller = async (req: Request, res: Response) => {
+  try {
+    return res.json({
+      id: "seller-01",
+      name: "মেসার্স আলম ব্রাদার্স ট্রেডার্স",
+      rating: 4.9,
+      reviewsCount: 380,
+      joinedYear: "২০২২",
+      location: "চকবাজার, ঢাকা",
+      isVerified: true,
+      badge: "টপ রেটেড হোলসেলার",
+      responseRate: "৯৮%",
+      totalProducts: 45
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch seller details' });
+  }
+};
+
+export const getProductReviews = async (req: Request, res: Response) => {
+  try {
+    return res.json([
+      {
+        id: "rev-1",
+        userName: "সাকিব আল হাসান",
+        userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+        rating: 5,
+        comment: "প্রোডাক্ট কোয়ালিটি অনেক ভালো। ডেলিভারিও দ্রুত পেয়েছি। ধন্যবাদ পাইকার মার্ট।",
+        createdAt: "২ দিন আগে"
+      },
+      {
+        id: "rev-2",
+        userName: "মাহমুদুল হাসান",
+        userAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&h=100&fit=crop",
+        rating: 4.5,
+        comment: "প্যাকেজিং খুব শক্ত ছিল। পাইকারি দাম অনুযায়ী জিনিসটি উপযুক্ত।",
+        createdAt: "৫ দিন আগে"
+      }
+    ]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+};
+
+export const getProductQnA = async (req: Request, res: Response) => {
+  try {
+    return res.json([
+      {
+        id: "q-1",
+        question: "৫০ পিসের বেশি নিলে কি অতিরিক্ত ডিসকাউন্ট পাওয়া যাবে?",
+        answer: "হ্যাঁ, ৫০ পিসের বেশি অর্ডারে স্পেশাল লট রেট পাবেন। মেসেজ করুন।",
+        author: "আকরাম ট্রেডার্স"
+      },
+      {
+        id: "q-2",
+        question: "ঢাকার বাইরে কুরিয়ারে ক্যাশ অন ডেলিভারি দেওয়া যাবে?",
+        answer: "হ্যাঁ, সুন্দরবন ও রেডেক্স কুরিয়ারে ক্যাশ অন ডেলিভারি এভেইলেবল।",
+        author: "বিক্রেতা"
+      }
+    ]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch Q&A' });
+  }
+};
+
+export const addQuestion = async (req: Request, res: Response) => {
+  try {
+    const { question } = req.body;
+    return res.status(201).json({
+      id: `q-${Date.now()}`,
+      question,
+      message: 'প্রশ্নটি সফলভাবে পাঠানো হয়েছে। বিক্রেতা উত্তর দিলে জানানো হবে।'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to submit question' });
+  }
+};
 

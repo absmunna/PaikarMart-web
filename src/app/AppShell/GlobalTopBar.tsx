@@ -3,6 +3,7 @@ import {
   Search,
   ShoppingCart,
   Bell,
+  MessageSquare,
   MoreVertical,
   Filter,
   ChevronDown,
@@ -23,6 +24,7 @@ import { useLocation as useGeoLocation } from "@/modules/location/hooks/useLocat
 import { Button } from "@ui/button";
 import { cn } from "@/lib/utils";
 import { MegaSearch } from "@/features/search/components/MegaSearch";
+import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
 
 interface GlobalTopBarProps {
   onToggleSidebar?: () => void;
@@ -119,7 +121,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
       
       <header className="fixed top-0 left-0 right-0 z-[500] mx-auto w-full max-w-[1440px] bg-[var(--pm-bg)]/94 backdrop-blur-3xl border-b border-white/[0.03] flex flex-col justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-2 lg:px-6 h-[64px]">
         {/* Minimal dynamic header */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[1px] bg-gradient-to-r from-transparent via-[var(--pm-accent)]/30 to-transparent" />
         
         <div className="w-full h-full flex items-center justify-between gap-4 relative z-10">
           {/* Left section: Dynamic Responsive Branding */}
@@ -127,7 +129,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => onToggleSidebar?.()}
-              className="lg:hidden w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-cyan-400 transition-colors bg-white/[0.03] border border-white/[0.04] rounded-xl relative overflow-hidden"
+              className="lg:hidden w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-[var(--pm-accent)] transition-colors bg-white/[0.03] border border-white/[0.04] rounded-xl relative overflow-hidden"
             >
               <AnimatePresence mode="wait">
                 {isSidebarOpen ? (
@@ -183,29 +185,28 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
             </div>
           </div>
 
-          {/* Center section: Search Trigger (Desktop) */}
-          <div className="flex-1 max-w-lg px-4 hidden md:block">
-            <motion.div 
-              whileHover={{ scale: 1.01 }}
-              onClick={() => setIsMegaSearchOpen(true)}
-              className="w-full h-10 bg-white/[0.02] border border-white/[0.04] rounded-full flex items-center px-4 gap-3 cursor-pointer group hover:bg-white/[0.05] transition-all duration-300"
-            >
-              <Search className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-cyan-400" />
-              <span className="text-[11px] font-bold text-[var(--pm-text-muted)] uppercase tracking-widest group-hover:text-zinc-300">Find anything...</span>
-              <div className="ml-auto flex items-center gap-2">
-                <kbd className="h-5 flex items-center px-1.5 bg-black/40 border border-[var(--pm-border)] rounded text-[8px] font-mono text-zinc-600">
-                  ⌘ K
-                </kbd>
-              </div>
-            </motion.div>
+      <div className="flex-1 max-w-lg px-4 hidden md:block">
+        <motion.div 
+          whileHover={{ scale: 1.01 }}
+          onClick={() => setIsMegaSearchOpen(true)}
+          className="w-full h-10 bg-white/[0.02] border border-white/[0.04] rounded-full flex items-center px-4 gap-3 cursor-pointer group hover:bg-white/[0.05] transition-all duration-300"
+        >
+          <Search className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-accent)]" />
+          <span className="text-[11px] font-bold text-[var(--pm-text-muted)] uppercase tracking-widest group-hover:text-zinc-300">Find anything...</span>
+          <div className="ml-auto flex items-center gap-2">
+            <kbd className="h-5 flex items-center px-1.5 bg-black/40 border border-[var(--pm-border)] rounded text-[8px] font-mono text-zinc-600">
+              ⌘ K
+            </kbd>
           </div>
+        </motion.div>
+      </div>
 
           {/* Right section: Clean Global Actions */}
           <div className="flex items-center gap-1.5 shrink-0">
             <div className="hidden sm:flex items-center gap-1 bg-white/[0.02] border border-white/[0.03] px-2.5 py-1.5 rounded-full mr-1.5">
               <button
                 onClick={() => setIsLocationDrawerOpen(true)}
-                className="flex items-center gap-1.5 hover:text-cyan-400 transition-all pr-2.5 border-r border-[var(--pm-border)]"
+                className="flex items-center gap-1.5 hover:text-[var(--pm-accent)] transition-all pr-2.5 border-r border-[var(--pm-border)]"
               >
                 <MapPin className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
                 <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest truncate max-w-[80px]">
@@ -214,7 +215,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
               </button>
               <button
                 onClick={() => setIsFilterOpen(true)}
-                className="flex items-center gap-1.5 hover:text-cyan-400 transition-all ml-1"
+                className="flex items-center gap-1.5 hover:text-[var(--pm-accent)] transition-all ml-1"
               >
                 <Filter className="w-3.5 h-3.5 text-[var(--pm-accent)]/80" />
                 <ChevronDown className="w-3 h-3 text-zinc-600" />
@@ -240,11 +241,19 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
 
               <motion.button
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/messages")}
+                className="w-10 h-10 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] relative"
+              >
+                <MessageSquare className="w-5 h-5" strokeWidth={2} />
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 onClick={() => navigate("/notifications")}
                 className="w-10 h-10 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] relative"
               >
                 <Bell className="w-5 h-5" strokeWidth={2} />
-                <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[var(--pm-accent)] rounded-full shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
+                <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[var(--pm-accent)] rounded-full shadow-[0_0_8px_var(--pm-accent)]" />
               </motion.button>
 
               <motion.button
@@ -259,6 +268,10 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
                   </span>
                 )}
               </motion.button>
+
+              <div className="ml-1">
+                <ThemeSwitcher />
+              </div>
             </div>
           </div>
         </div>
@@ -343,7 +356,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
                   </div>
                 </div>
 
-                <Button onClick={() => setIsFilterOpen(false)} className="w-full bg-[var(--pm-accent)] hover:bg-cyan-400 text-black font-black h-12 rounded-2xl">
+                <Button onClick={() => setIsFilterOpen(false)} className="w-full bg-[var(--pm-accent)] hover:bg-[#FF8A00] text-black font-black h-12 rounded-2xl">
                   Apply Filters
                 </Button>
               </div>

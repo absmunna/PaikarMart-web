@@ -152,5 +152,42 @@ export const productService = {
   submitQuestion: async (productId: string, question: string): Promise<any> => {
     const response = await axios.post(`/api/v1/products/${productId}/questions`, { question });
     return response.data;
+  },
+
+  subscribeToSearch: (query: string, callback: (products: any[]) => void) => {
+    const delay = setTimeout(() => {
+      const mockSearchProducts = [
+        {
+          id: "prod-demo-1",
+          title: "Premium Handloom Jamdani Saree - Exclusive Royal Red",
+          price: 8500,
+          originalPrice: 12000,
+          category: { name: "Traditional Handloom" },
+          imageUrl: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=300",
+          moq: 1,
+          isWholesale: false,
+          storeName: "Royal Dhaka Weavers Ltd."
+        },
+        {
+          id: "prod-demo-2",
+          title: "Export Quality Cotton T-Shirt Bulk Pack",
+          price: 180,
+          originalPrice: 250,
+          category: { name: "Apparel" },
+          imageUrl: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=300",
+          moq: 50,
+          isWholesale: true,
+          storeName: "Style Bangladesh Garments"
+        }
+      ];
+      
+      const filtered = query.trim() 
+        ? mockSearchProducts.filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
+        : [];
+      
+      callback(filtered);
+    }, 200);
+
+    return () => clearTimeout(delay);
   }
 };

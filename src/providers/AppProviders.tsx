@@ -1,32 +1,23 @@
 import React from 'react';
 import { QueryProvider } from './QueryProvider';
+import { ThemeProvider } from './ThemeProvider';
 import { RouterProvider } from './RouterProvider';
-import { ThemeProvider as FeatureThemeProvider } from '@/features/theme/ThemeContext';
+import { AuthProvider } from '@/features/auth/AuthContext';
 import { LanguageProvider } from '@/features/language/LanguageContext';
-import { AppAuthProvider } from '@/features/auth/AuthContext';
-import { LocationProvider } from '@/features/location/LocationContext';
-import { VideoUnlockProvider } from '@/features/digital-content/VideoUnlockContext';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { SellerProvider } from '@/modules/seller';
+import { SellerProvider } from '@/modules/seller/SellerContext';
 
 export const AppProviders = ({ children }: { children: React.ReactNode }) => (
   <QueryProvider>
-    <FeatureThemeProvider>
+    <ThemeProvider>
       <LanguageProvider>
-        <AppAuthProvider>
-          <LocationProvider>
-            <VideoUnlockProvider>
-              <TooltipProvider>
-                <SellerProvider>
-                  <RouterProvider>
-                    {children}
-                  </RouterProvider>
-                </SellerProvider>
-              </TooltipProvider>
-            </VideoUnlockProvider>
-          </LocationProvider>
-        </AppAuthProvider>
+        <AuthProvider>
+          <SellerProvider>
+            <RouterProvider>
+              {children}
+            </RouterProvider>
+          </SellerProvider>
+        </AuthProvider>
       </LanguageProvider>
-    </FeatureThemeProvider>
+    </ThemeProvider>
   </QueryProvider>
 );

@@ -1,57 +1,84 @@
-import { useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useLocationStore } from './locationStore';
 
 export const useGeolocation = () => {
-  const { setLocation, setAutoDetected, updateLiveLocation } = useLocationStore();
+  const { setLocation, setAutoDetected } = useLocationStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const detectLocation = () => {
-    if (typeof window === "undefined" || typeof navigator === "undefined" || !navigator.geolocation) {
-      console.warn('Geolocation is not supported by your browser');
+  const detectLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
       return;
     }
 
-    try {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
+    setIsLoading(true);
+    setError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        try {
+          // OpenStreetMap Nominatim reverse geocoding
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const data = await response.json();
+          const city = data.address?.city || data.address?.town || data.address?.suburb || data.address?.village || data.name;
           
-          try {
-            const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
-            const data = await response.json();
-            
-            if (data.city || data.locality || data.principalSubdivision) {
-              setLocation(data.city || data.locality || data.principalSubdivision, latitude, longitude);
+          if (city) {
+            setLocation(city, latitude, longitude);
+            setAutoDetected(true);
+          } else {
+            const bdResponse = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+            );
+            const bdData = await bdResponse.json();
+            if (bdData.city || bdData.locality) {
+              setLocation(bdData.city || bdData.locality, latitude, longitude);
               setAutoDetected(true);
             }
-          } catch (error) {
-            console.error('Error fetching location name:', error);
-            setLocation('Detected Location', latitude, longitude);
           }
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-        },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-      );
-    } catch (e) {
-      console.warn('Geolocation access denied or restricted context:', e);
-    }
-  };
-
-  const watchLocation = () => {
-    if (typeof window === "undefined" || typeof navigator === "undefined" || !navigator.geolocation) return null;
-
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        updateLiveLocation(latitude, longitude);
+        } catch (err) {
+          console.error('Error fetching location name:', err);
+          try {
+            const bdResponse = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+            );
+            const bdData = await bdResponse.json();
+            if (bdData.city || bdData.locality) {
+              setLocation(bdData.city || bdData.locality, latitude, longitude);
+              setAutoDetected(true);
+            }
+          } catch {
+            setError('Failed to fetch location name');
+          }
+        } finally {
+          setIsLoading(false);
+        }
       },
-      (error) => console.error('WatchPosition error:', error),
+      (err) => {
+        console.error('Geolocation error:', err);
+        setError(err.message);
+        setIsLoading(false);
+      },
+      { timeout: 8000 }
+    );
+  }, [setLocation, setAutoDetected]);
+
+  const watchLocation = useCallback((callback?: (coords: { lat: number; lng: number }) => void): number | null => {
+    if (!navigator.geolocation) return null;
+    const id = navigator.geolocation.watchPosition(
+      (pos) => {
+        setLocation('Current Location', pos.coords.latitude, pos.coords.longitude);
+        callback?.({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      (err) => console.warn('watchLocation error:', err),
       { enableHighAccuracy: true }
     );
+    return id;
+  }, [setLocation]);
 
-    return watchId;
-  };
-
-  return { detectLocation, watchLocation };
+  return { detectLocation, watchLocation, isLoading, error };
 };

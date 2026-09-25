@@ -50,7 +50,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ mode = 'floating' }) => 
           <div>
             <h3 className="text-sm font-black text-white">Paikar Mart Assistant</h3>
             <div className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[var(--pm-accent)] shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
               <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Online</span>
             </div>
           </div>
@@ -82,7 +82,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ mode = 'floating' }) => 
         {activeSession?.messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center p-6">
             <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4">
-              <Sparkles className="w-8 h-8 text-orange-500/50" />
+              <Sparkles className="w-8 h-8 text-[var(--pm-accent)]/50" />
             </div>
             <h4 className="text-white font-bold mb-2">আসসালামু আলাইকুম!</h4>
             <p className="text-xs text-zinc-400 line-height-relaxed">
@@ -98,7 +98,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ mode = 'floating' }) => 
                 <button
                   key={suggestion}
                   onClick={() => handleSend(suggestion)}
-                  className="text-[11px] text-zinc-500 hover:text-orange-400 hover:bg-orange-500/10 border border-white/5 bg-white/5 px-4 py-2.5 rounded-xl transition-all text-left"
+                  className="text-[11px] text-zinc-500 hover:text-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/10 border border-white/5 bg-white/5 px-4 py-2.5 rounded-xl transition-all text-left"
                 >
                   {suggestion}
                 </button>
@@ -123,7 +123,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ mode = 'floating' }) => 
             <div className={cn(
               "max-w-[80%] p-3 rounded-2xl text-[13px] leading-relaxed",
               msg.role === 'user' 
-                ? "bg-orange-500 text-white rounded-tr-none" 
+                ? "bg-[var(--pm-accent)] text-white rounded-tr-none" 
                 : "bg-white/5 text-zinc-200 rounded-tl-none border border-white/5"
             )}>
               {msg.content}
@@ -174,7 +174,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ mode = 'floating' }) => 
           "fixed bottom-20 right-4 z-[9999] w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all",
           isOpen 
             ? "bg-zinc-900 border border-white/10 rotate-90" 
-            : "bg-gradient-to-tr from-orange-500 to-amber-400"
+            : "bg-gradient-to-tr from-[var(--pm-accent)] to-amber-500"
         )}
       >
         {isOpen ? (
@@ -183,7 +183,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ mode = 'floating' }) => 
           <div className="relative">
             <MessageSquare className="w-6 h-6 text-white" />
             <motion.div 
-              className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-orange-500"
+              className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-[var(--pm-accent)]"
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
             />

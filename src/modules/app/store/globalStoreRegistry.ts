@@ -1,4 +1,4 @@
-export { usePortalStore } from '@/modules/portal/portalStore';
+export { usePortalStore } from '@/portals/store/usePortalStore';
 export { useCartStore } from '@/modules/cart/useCartStore';
 export { useWalletStore } from '@/modules/wallet/useWalletStore';
 export { useAppStore } from '@/modules/app/appStore';

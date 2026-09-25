@@ -34,7 +34,7 @@ export const SellerDealManager: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-            <Zap className="w-8 h-8 text-violet-400 fill-violet-400/20" />
+            <Zap className="w-8 h-8 text-[var(--pm-accent)] fill-[var(--pm-accent)]/20" />
             Exclusive Deal Manager
           </h2>
           <p className="text-zinc-500 text-sm font-medium mt-1">
@@ -43,7 +43,7 @@ export const SellerDealManager: React.FC = () => {
         </div>
         <Button 
           onClick={() => setIsCreating(true)}
-          className="bg-violet-600 hover:bg-violet-500 text-white font-black uppercase tracking-tight gap-2 h-12 px-6 rounded-2xl transition-all active:scale-95"
+          className="bg-[var(--pm-accent)] hover:opacity-90 text-white font-black uppercase tracking-tight gap-2 h-12 px-6 rounded-2xl transition-all active:scale-95"
         >
           <Plus className="w-5 h-5" />
           Create New Drop
@@ -55,7 +55,7 @@ export const SellerDealManager: React.FC = () => {
           <GlassCard key={deal.id} className="relative overflow-hidden group">
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">
-                <div className="px-2 py-1 rounded-md bg-violet-500/10 border border-violet-500/20 text-[10px] font-black text-violet-400 uppercase tracking-widest">
+                <div className="px-2 py-1 rounded-md bg-[var(--pm-accent)]/10 border border-[var(--pm-accent)]/20 text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-widest">
                   Active Flash Sale
                 </div>
                 <button className="text-zinc-500 hover:text-red-400 transition-colors">
@@ -70,7 +70,7 @@ export const SellerDealManager: React.FC = () => {
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="p-3 rounded-xl bg-white/5 border border-white/5">
                   <p className="text-[10px] text-zinc-500 font-bold uppercase mb-1">Deal Price</p>
-                  <p className="text-lg font-black text-cyan-400">{formatBDT(deal.dealPrice)}</p>
+                  <p className="text-lg font-black text-[var(--pm-accent)]">{formatBDT(deal.dealPrice)}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-white/5 border border-white/5">
                   <p className="text-[10px] text-zinc-500 font-bold uppercase mb-1">Remaining</p>
@@ -83,7 +83,7 @@ export const SellerDealManager: React.FC = () => {
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${(deal.currentStock / deal.initialStock) * 100}%` }}
-                      className="h-full bg-violet-500 rounded-full" 
+                      className="h-full bg-[var(--pm-accent)] rounded-full" 
                     />
                  </div>
                  <div className="flex items-center justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest">
@@ -91,14 +91,14 @@ export const SellerDealManager: React.FC = () => {
                       <Clock className="w-3 h-3" />
                       Expires in 4h 20m
                     </span>
-                    <span className="text-violet-400">{Math.round((deal.currentStock / deal.initialStock) * 100)}% Available</span>
+                    <span className="text-[var(--pm-accent)]">{Math.round((deal.currentStock / deal.initialStock) * 100)}% Available</span>
                  </div>
               </div>
             </div>
             
             <div className="p-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-cyan-500" />
+                <TrendingUp className="w-4 h-4 text-[var(--pm-accent)]" />
                 <span className="text-xs font-bold text-white">Active</span>
               </div>
               <ChevronRight className="w-4 h-4 text-zinc-600" />

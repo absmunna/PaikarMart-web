@@ -10,9 +10,9 @@ interface SellerAIInsightsPanelProps {
 
 const TYPE_CONFIG: Record<SellerAIInsight['type'], { icon: any; color: string; bg: string }> = {
   trending: { icon: TrendingUp, color: 'text-indigo-400', bg: 'bg-indigo-400/10' },
-  price_demand: { icon: DollarSign, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
+  price_demand: { icon: DollarSign, color: 'text-[var(--pm-accent)]', bg: 'bg-[var(--pm-accent)]/10' },
   refund_risk: { icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-400/10' },
-  suggestion: { icon: Sparkles, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
+  suggestion: { icon: Sparkles, color: 'text-amber-400', bg: 'bg-amber-400/10' },
 };
 
 export const SellerAIInsightsPanel: React.FC<SellerAIInsightsPanelProps> = ({ insights }) => {

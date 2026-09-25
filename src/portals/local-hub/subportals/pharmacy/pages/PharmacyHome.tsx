@@ -1,210 +1,268 @@
-import * as React from "react";
-import { useState, useRef } from "react";
-import { Pill, Search, Stethoscope, FileUp, ShieldAlert, X, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
-import { motion, AnimatePresence } from "motion/react";
-import { useListProducts, getListProductsQueryKey } from "@/modules/app/api/client/hooks";
-import { ProductGrid } from "@/features/product/components/ProductGrid";
-import { StoryBar } from "@shared/StoryBar";
-import { CategoryNavBar } from "@shared/CategoryNavBar";
-import { useLanguage } from "@/features/language/LanguageContext";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  HeartPulse, Search, UploadCloud, ShieldCheck, 
+  Plus, Check, FileText, AlertCircle, PhoneCall, CheckCircle2 
+} from 'lucide-react';
+import { useCartStore } from '@/modules/cart/cartStore';
 
-const DRUG_CATS = [
-  { id: "all", label: "All Items", emoji: "💊" },
-  { id: "pain relief", label: "Pain Relief", emoji: "🌡️" },
-  { id: "cardiac", label: "Cardiac", emoji: "❤️" },
-  { id: "diabetes", label: "Diabetes", emoji: "🩺" },
-  { id: "eye care", label: "Eye Care", emoji: "👁️" },
-  { id: "baby care", label: "Baby Care", emoji: "👶" },
-  { id: "vitamins", label: "Vitamins", emoji: "🍃" },
-  { id: "allergy", label: "Allergy", emoji: "🤧" },
+interface MedicineItem {
+  id: string;
+  name: string;
+  generic: string;
+  manufacturer: string;
+  price: number;
+  originalPrice: number;
+  packSize: string;
+  type: 'otc' | 'prescription' | 'firstaid';
+  image: string;
+  inStock: boolean;
+}
+
+const MEDICINE_ITEMS: MedicineItem[] = [
+  {
+    id: 'med_1',
+    name: 'Napa Extra 500mg/65mg',
+    generic: 'Paracetamol + Caffeine',
+    manufacturer: 'Beximco Pharmaceuticals Ltd.',
+    price: 30,
+    originalPrice: 35,
+    packSize: '১০টি ট্যাবলেটের ১ পাতা (Strip)',
+    type: 'otc',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&fit=crop',
+    inStock: true
+  },
+  {
+    id: 'med_2',
+    name: 'Sergel 20mg Capsule',
+    generic: 'Esomeprazole Magnesium',
+    manufacturer: 'Healthcare Pharmaceuticals Ltd.',
+    price: 70,
+    originalPrice: 80,
+    packSize: '১০টি ক্যাপসুলের স্ট্রিপ',
+    type: 'otc',
+    image: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=500&fit=crop',
+    inStock: true
+  },
+  {
+    id: 'med_3',
+    name: 'One Touch Select Plus টেস্ট স্ট্রিপস',
+    generic: 'Blood Glucose Test Strips (25 pcs)',
+    manufacturer: 'LifeScan Diagnostics',
+    price: 1150,
+    originalPrice: 1300,
+    packSize: '২৫টি স্ট্রিপের প্যাক',
+    type: 'firstaid',
+    image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=500&fit=crop',
+    inStock: true
+  },
+  {
+    id: 'med_4',
+    name: 'Savlon Antiseptic Liquid (500ml)',
+    generic: 'Chlorhexidine + Cetrimide',
+    manufacturer: 'ACI Limited',
+    price: 185,
+    originalPrice: 200,
+    packSize: '৫০০ মিলি বোতল',
+    type: 'firstaid',
+    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=500&fit=crop',
+    inStock: true
+  },
+  {
+    id: 'med_5',
+    name: 'Ceevit 250mg Chewable Vitamin C',
+    generic: 'Ascorbic Acid (Vitamin C)',
+    manufacturer: 'Square Pharmaceuticals Ltd.',
+    price: 25,
+    originalPrice: 30,
+    packSize: '১০টি চিবানোর ট্যাবলেট',
+    type: 'otc',
+    image: 'https://images.unsplash.com/photo-1577401239170-897942555fb3?w=500&fit=crop',
+    inStock: true
+  }
 ];
 
-export function PharmacyHome() {
-  const { isBn } = useLanguage();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  // Prescription states
-  const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+export const PharmacyHome: React.FC = () => {
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [prescriptionUploaded, setPrescriptionUploaded] = useState(false);
+  const [addedItem, setAddedItem] = useState<string | null>(null);
+  const addItem = useCartStore((state) => state.addItem);
 
-  const { data: products, isLoading } = useListProducts(
-    { type: "pharmacy" },
-    { query: { queryKey: getListProductsQueryKey({ type: "pharmacy" }) } }
-  );
+  const filtered = MEDICINE_ITEMS.filter((item) => {
+    if (selectedFilter !== 'all' && item.type !== selectedFilter) return false;
+    if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase()) && !item.generic.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
 
-  const filteredProducts = products?.filter((p: any) => {
-    let matches = true;
-    if (activeCategory !== "all") {
-      matches = p.category?.toLowerCase() === activeCategory.toLowerCase();
-    }
-    if (searchQuery) {
-      matches = matches && (
-        p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        p.category?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    return matches;
-  }) || [];
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const simulateUpload = (file: File) => {
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File is too large (max 5MB)");
-      return;
-    }
-    setPrescriptionFile(file);
+  const handleUploadPrescription = () => {
     setIsUploading(true);
-    setUploadProgress(0);
-
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          toast.success("Prescription uploaded successfully!");
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
+    setTimeout(() => {
+      setIsUploading(false);
+      setPrescriptionUploaded(true);
+    }, 1200);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      simulateUpload(e.target.files[0]);
-    }
+  const handleAddToCart = (item: MedicineItem) => {
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      portal: 'b2c',
+      coinCashback: Math.floor(item.price * 0.03)
+    });
+    setAddedItem(item.id);
+    setTimeout(() => setAddedItem(null), 1500);
   };
 
   return (
-    <div className="min-h-screen bg-[var(--pm-bg)] pb-28 pt-0 max-w-7xl mx-auto px-4">
-      <section className="pt-2"><StoryBar context="pharmacy" /></section>
-      
-      <div className="md:sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-[var(--pm-border)]/40 -mx-4 px-4 mt-2">
-        <CategoryNavBar context="pharmacy" />
+    <div className="flex flex-col gap-6 pb-24 w-full mx-auto px-4 max-w-4xl">
+      {/* Header Banner */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-cyan-900 to-blue-900 text-white p-6 sm:p-8 shadow-xl mt-4">
+        <div className="relative z-10 max-w-lg">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-400/30 mb-3">
+            <HeartPulse className="w-3.5 h-3.5" />
+            ডিজিটাল ফার্মেসি ও হেলথকেয়ার
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+            ১০০% জেনুইন ওষুধ ও জরুরি স্বাস্থ্যসেবা সরঞ্জাম
+          </h1>
+          <p className="text-xs sm:text-sm text-cyan-100 mt-2">
+            DGDA নিবন্ধিত ড্রাগ লাইসেন্স প্রাপ্ত ফার্মেসি থেকে সরাসরি দ্রুত হোম ডেলিভারি।
+          </p>
+        </div>
       </div>
 
-      <div className="mt-4">
-        {/* HERO */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-[28px] border border-cyan-500/20 p-5 bg-[#050D08] mb-4 shadow-xl"
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1)_0%,transparent_60%)]" />
-          <div className="relative z-10 flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0 shadow-inner">
-              <Pill className="w-7 h-7 text-cyan-400" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[9px] font-black text-cyan-400 uppercase tracking-widest">Healthcare</span>
-              </div>
-              <h1 className="text-lg font-black text-white leading-tight">
-                {isBn ? "অনলাইন ফার্মেসি" : "Online Pharmacy"}
-              </h1>
-              <p className="text-[11px] text-zinc-500 font-bold mt-0.5">
-                {isLoading ? "Loading..." : (isBn ? `${filteredProducts.length} টি ঔষধ পাওয়া গেছে` : `${filteredProducts.length} medicines available`)}
-              </p>
-            </div>
+      {/* Prescription Upload Card */}
+      <div className="bg-[var(--pm-surface)] border-2 border-dashed border-cyan-500/40 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center shrink-0">
+            <FileText className="w-6 h-6" />
           </div>
-        </motion.div>
+          <div>
+            <h3 className="font-bold text-sm text-[var(--pm-text)]">
+              প্রেসক্রিপশন আপলোড করে সহজে ওষুধ অর্ডার করুন
+            </h3>
+            <p className="text-xs text-[var(--pm-text-muted)] mt-0.5">
+              প্রেসক্রিপশনের ছবি দিলে আমাদের রেজিস্টার্ড ফার্মাসিস্ট যাচাই করে ওষুধ পাঠাবেন।
+            </p>
+          </div>
+        </div>
 
-        {/* Prescription Upload Area */}
-        <div className="mb-6">
-          <input type="file" ref={fileInputRef} className="hidden" accept="image/*,.pdf" onChange={handleFileChange} />
-          <div 
-            onClick={handleUploadClick}
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={(e) => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files?.[0]) simulateUpload(e.dataTransfer.files[0]); }}
-            className={`w-full relative overflow-hidden rounded-3xl border-2 border-dashed transition-all cursor-pointer bg-[#050D08]
-              ${isDragging ? 'border-cyan-400 bg-cyan-500/5' : 'border-white/10 hover:border-cyan-500/30'}
-              ${prescriptionFile && !isUploading ? 'border-cyan-500/50 bg-cyan-500/5' : ''}
-            `}
+        <div>
+          {prescriptionUploaded ? (
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 font-bold text-xs border border-emerald-500/30">
+              <CheckCircle2 className="w-4 h-4" />
+              প্রেসক্রিপশন গ্রহণ করা হয়েছে!
+            </div>
+          ) : (
+            <button
+              onClick={handleUploadPrescription}
+              disabled={isUploading}
+              className="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+            >
+              <UploadCloud className="w-4 h-4" />
+              {isUploading ? 'আপলোড হচ্ছে...' : 'প্রেসক্রিপশন দিন'}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Search & Tabs */}
+      <div className="flex flex-col gap-3">
+        <div className="relative w-full">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="ওষুধের নাম অথবা জেনেরিক নাম দিয়ে খুঁজুন (Napa, Sergel...)"
+            className="w-full bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-2xl py-3 pl-10 pr-4 text-xs text-[var(--pm-text)] outline-none focus:border-cyan-500 shadow-xs"
+          />
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar py-1">
+          {[
+            { id: 'all', label: 'সব প্রোডাক্ট' },
+            { id: 'otc', label: 'OTC সাধারণ ওষুধ' },
+            { id: 'firstaid', label: 'ফার্স্ট এইড ও ডায়াবেটিস' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedFilter(tab.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
+                selectedFilter === tab.id
+                  ? 'bg-cyan-600 text-white shadow-sm'
+                  : 'bg-[var(--pm-surface)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] border border-[var(--pm-border)]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Medicine Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map((item) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[var(--pm-surface)] rounded-2xl border border-[var(--pm-border)] p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
           >
-            <div className="p-6 flex flex-col items-center justify-center text-center gap-3">
-              {isUploading ? (
-                <div className="w-full max-w-[200px] flex flex-col items-center gap-3 py-2">
-                  <div className="text-[11px] font-black text-cyan-400 uppercase tracking-widest">Scanning... {uploadProgress}%</div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-cyan-500 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
-                  </div>
-                </div>
-              ) : prescriptionFile ? (
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center mb-1">
-                    <CheckCircle2 className="w-6 h-6 text-cyan-400" />
-                  </div>
-                  <p className="text-[11px] font-black text-cyan-400 uppercase tracking-widest">Prescription Accepted</p>
-                  <p className="text-[10px] text-zinc-400 font-medium">Our pharmacists are reviewing: {prescriptionFile.name}</p>
-                  <button onClick={(e) => { e.stopPropagation(); setPrescriptionFile(null); }} className="mt-2 text-[10px] font-bold text-rose-400 border border-rose-500/30 px-3 py-1 rounded-lg">Remove</button>
-                </div>
-              ) : (
-                <>
-                  <div className="w-14 h-14 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                    <FileUp className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black text-white">Upload Prescription</h3>
-                    <p className="text-[10px] font-bold text-zinc-500 mt-1">Tap or drag your prescription image here</p>
-                  </div>
-                  <div className="text-[9px] font-black uppercase tracking-widest text-cyan-500 bg-cyan-500/10 px-3 py-1.5 rounded-full mt-1">
-                    Get 10% Off
-                  </div>
-                </>
-              )}
+            <div className="flex gap-3">
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-zinc-900 shrink-0">
+                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-xs text-[var(--pm-text)] truncate">{item.name}</h3>
+                <p className="text-[10px] text-cyan-600 font-semibold truncate mt-0.5">{item.generic}</p>
+                <p className="text-[10px] text-[var(--pm-text-muted)] truncate">{item.manufacturer}</p>
+                <span className="inline-block mt-1 text-[9px] bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] px-2 py-0.5 rounded-md">
+                  {item.packSize}
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* SEARCH */}
-        <div className="mb-4">
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-cyan-400 transition-colors" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isBn ? "ঔষধ খুঁজুন..." : "Search medicines or brands..."}
-              className="w-full h-12 bg-[#050D08] rounded-2xl border border-white/5 pl-10 pr-4 text-[12px] text-white placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/40 focus:ring-1 focus:ring-cyan-500/40 transition-all font-semibold shadow-inner"
-            />
-          </div>
-        </div>
+            <div className="pt-3 mt-3 border-t border-[var(--pm-border)]/60 flex items-center justify-between">
+              <div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-black text-[var(--pm-text)]">
+                    ৳{item.price}
+                  </span>
+                  <span className="text-xs text-[var(--pm-text-muted)] line-through">
+                    ৳{item.originalPrice}
+                  </span>
+                </div>
+              </div>
 
-        {/* CATEGORIES */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-2 -mx-4 px-4 snap-x">
-          {DRUG_CATS.map(cat => {
-            const isActive = activeCategory === cat.id;
-            return (
-              <motion.button
-                key={cat.id}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`snap-center shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[11px] font-black transition-all border ${
-                  isActive 
-                    ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
-                    : 'bg-[#050D08] border-white/5 text-zinc-400 hover:bg-white/5'
+              <button
+                onClick={() => handleAddToCart(item)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                  addedItem === item.id
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm'
                 }`}
               >
-                <span>{cat.emoji}</span>
-                <span className="uppercase tracking-widest">{cat.label}</span>
-              </motion.button>
-            );
-          })}
-        </div>
-
-        <ProductGrid 
-          products={filteredProducts} 
-          isLoading={isLoading} 
-          emptyMessage={searchQuery ? "No matching medicines found." : "No medicines available in this category yet."}
-        />
+                {addedItem === item.id ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    যুক্ত হয়েছে
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3.5 h-3.5" />
+                    যোগ করুন
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
-}
+};

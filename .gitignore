@@ -1,30 +1,82 @@
+# Dependencies
 node_modules/
-build/
-dist/
-coverage/
-.DS_Store
-*.log
-.env*
-!.env.example
+.pnp
+.pnp.js
 
-# IDEs and editors
+# Production build outputs
+dist/
+dist-ssr/
+build/
+out/
+.next/
+.output/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment and Local Config files (CRITICAL SECURITY: DO NOT PUSH SECRETS TO GITHUB)
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Private keys, certificates, secrets & service accounts
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*serviceAccountKey*.json
+*service-account*.json
+*credentials*.json
+firebase-adminsdk*.json
+
+# Testing & Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# Editor & OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 .idea/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.sublime-workspace
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# Vercel & build tools
+# Temporary & Cache
+.cache/
+.parcel-cache/
+.turbo/
 .vercel/
-.next/
-.serverless/
+*.tsbuildinfo
+.eslintcache
 
-# Databases & local stores
+# Prisma & Local Databases
 *.db
+*.db-journal
 *.sqlite
+*.sqlite-journal
 prisma/*.db
 prisma/*.sqlite
-*.local
-

@@ -1,0 +1,105 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with commerce role, identity and contact info",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user ID corresponding to Firebase Auth UID",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 256
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name or trade name of the user",
+          "maxLength": 120
+        },
+        "phone": {
+          "type": "string",
+          "description": "Primary phone or mobile number for Bangladesh OTP and delivery",
+          "maxLength": 20
+        },
+        "role": {
+          "type": "string",
+          "description": "Current primary role in Paikar Mart",
+          "enum": [
+            "buyer",
+            "seller",
+            "wholesale_seller",
+            "service_provider",
+            "nearby_shop",
+            "rider",
+            "delivery_agent",
+            "admin"
+          ]
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "Profile photo or business logo URL",
+          "maxLength": 1000
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp or server timestamp when account was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp when account was last updated"
+        }
+      },
+      "required": ["uid", "email", "name", "role"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Commerce order placed on Paikar Mart",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Order identifier",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "The UID of the buyer who placed the order",
+          "maxLength": 128
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Total order amount in BDT"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the order",
+          "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"]
+        },
+        "deliveryAddress": {
+          "type": "string",
+          "description": "Shipping address for delivery",
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["id", "userId", "totalAmount", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Public and private user profiles tied directly to user auth UID"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Orders created by authenticated buyers"
+    }
+  }
+}

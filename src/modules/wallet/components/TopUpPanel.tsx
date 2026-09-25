@@ -15,9 +15,9 @@ export const TopUpPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) 
   const [isLoading, setIsLoading] = useState(false);
 
   const TOP_UP_METHODS = [
-    { id: 'bkash', label: isBn ? 'বিকাশ (bKash)' : 'bKash', icon: Phone, color: 'text-pink-400', sub: isBn ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking' },
-    { id: 'nagad', label: isBn ? 'নগদ (Nagad)' : 'Nagad', icon: Phone, color: 'text-orange-400', sub: isBn ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking' },
-    { id: 'card', label: isBn ? 'কার্ড (Card)' : 'Card', icon: CreditCard, color: 'text-cyan-400', sub: isBn ? 'ভিসা / মাস্টারকার্ড' : 'Visa/Mastercard' },
+    { id: 'bkash', label: isBn ? 'বিকাশ (bKash)' : 'bKash', icon: Phone, color: 'text-[#e2136e]', sub: isBn ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking' },
+    { id: 'nagad', label: isBn ? 'নগদ (Nagad)' : 'Nagad', icon: Phone, color: 'text-[#f37021]', sub: isBn ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking' },
+    { id: 'card', label: isBn ? 'কার্ড (Card)' : 'Card', icon: CreditCard, color: 'text-[var(--pm-accent)]', sub: isBn ? 'ভিসা / মাস্টারকার্ড' : 'Visa/Mastercard' },
   ];
 
   const QUICK_AMOUNTS = [500, 1000, 2000, 5000];

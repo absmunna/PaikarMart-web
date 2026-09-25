@@ -3,15 +3,22 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY || "",
-});
+let aiClient: GoogleGenAI | null = null;
+
+function getAI(): GoogleGenAI {
+  if (!aiClient) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY is not configured");
+    }
+    aiClient = new GoogleGenAI({ apiKey });
+  }
+  return aiClient;
+}
 
 export class GeminiService {
   static async verifyProductWithSearch(query: string) {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not configured");
-    }
+    const ai = getAI();
 
     try {
       const interaction = await ai.interactions.create({
@@ -48,9 +55,7 @@ export class GeminiService {
   }
 
   static async generateChatResponse(messages: { role: string, content: string }[], systemInstruction?: string) {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not configured");
-    }
+    const ai = getAI();
 
     try {
       // In Interactions API, we can use previous_interaction_id or just send the prompt.
@@ -78,9 +83,7 @@ export class GeminiService {
     systemInstruction?: string,
     tools?: any[]
   ) {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not configured");
-    }
+    const ai = getAI();
 
     const lastMessage = messages[messages.length - 1];
 

@@ -1,88 +1,90 @@
 import React from 'react';
-import { useParams, useNavigate } from "react-router-dom";
-import { useGetDemand, getGetDemandQueryKey } from "@/modules/app/api/client/hooks";
-import { UnifiedPostDetail } from "@/components/common/UnifiedPostDetail";
-import { mapDemandToFeedItem } from "@/modules/social/utils/mappers";
-import { Tag, Calendar, CheckCircle2, Gavel } from "lucide-react";
-import { toast } from 'sonner';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Share2, AlertCircle, Clock, MapPin, Building2, Phone, MessageCircle, Send } from 'lucide-react';
 
-export default function DemandDetail() {
-  const { id } = useParams<{ id: string }>();
+export default function DemandDetailPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { data: demand, isLoading } = useGetDemand(id ?? '', { 
-    query: { 
-      queryKey: getGetDemandQueryKey(id ?? ''), 
-      enabled: !!id 
-    } 
-  });
 
-  if (isLoading) return <div className="p-8 text-center text-zinc-500 font-black animate-pulse">Loading Demand...</div>;
-  if (!demand) return <div className="p-8 text-center text-zinc-500 font-black">Demand Not Found</div>;
+  return (
+    <div className="flex flex-col gap-6 pb-24 w-full max-w-2xl mx-auto px-4 pt-4">
+      <div className="flex items-center justify-between">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] active:scale-95 transition-all">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <button className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] active:scale-95 transition-all">
+          <Share2 className="w-5 h-5" />
+        </button>
+      </div>
 
-  const feedItem = mapDemandToFeedItem(demand);
-
-  const customFields = (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-2xl bg-orange-500/5 border border-orange-500/10 space-y-2">
-          <div className="flex items-center gap-2 text-orange-400">
-            <Calendar className="w-4 h-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Deadline</span>
-          </div>
-          <p className="text-xs font-black text-white">{demand.deadline || ' June 30, 2026'}</p>
+      <div className="bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] p-6 shadow-xl">
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black uppercase">Fashion</span>
+          <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-[10px] font-black uppercase flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" /> Urgent
+          </span>
         </div>
-        <div className="p-4 rounded-2xl bg-cyan-500/5 border border-cyan-500/10 space-y-2">
-          <div className="flex items-center gap-2 text-cyan-400">
-            <Gavel className="w-4 h-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Status</span>
+
+        <h1 className="text-2xl font-black leading-tight text-[var(--pm-text)] mb-4">
+          ১০০০ পিস কটন টি-শার্ট দরকার (পাইকারি)
+        </h1>
+
+        <div className="grid grid-cols-2 gap-4 mb-6 pt-6 border-t border-[var(--pm-border)]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-[10px] text-[var(--pm-text-muted)]">সময়সীমা</p>
+              <p className="text-xs font-bold text-[var(--pm-text)]">৩ দিন বাকি</p>
+            </div>
           </div>
-          <p className="text-xs font-black text-white uppercase">{demand.status || 'OPEN'}</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-[10px] text-[var(--pm-text-muted)]">বাজেট</p>
+              <p className="text-xs font-bold text-[var(--pm-text)]">৳ ১,৫০,০০০ পর্যন্ত</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-sm font-black text-[var(--pm-text)]">বিস্তারিত বিবরণ:</h3>
+          <p className="text-sm text-[var(--pm-text-muted)] leading-relaxed">
+            আসসালামু আলাইকুম। আমাদের ই-কমার্স স্টোরের জন্য ১০০০ পিস প্রিমিয়াম কোয়ালিটি কটন টি-শার্ট প্রয়োজন। 
+            কাপড় ১৮০ জিএসএম হতে হবে। সাইজ এস, এম, এল, এক্সএল মিক্স থাকতে হবে। 
+            যারা সরাসরি ম্যানুফ্যাকচারার এবং দ্রুত সরবরাহ করতে পারবেন তারা যোগাযোগ করুন।
+          </p>
+        </div>
+
+        <div className="mt-8 p-4 rounded-2xl bg-zinc-50 border border-dashed border-zinc-200">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-zinc-200 overflow-hidden">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Tamim" alt="Author" />
+            </div>
+            <div>
+              <p className="text-sm font-black text-zinc-900">তামীম এন্টারপ্রাইজ</p>
+              <p className="text-[10px] text-zinc-500 flex items-center gap-1">
+                <MapPin className="w-3 h-3" /> উত্তরা, ঢাকা · ভেরিফাইড বায়ার
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 space-y-4">
-        <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Matched Vendors ({(demand.matches ?? []).length})</h4>
-        {demand.matches && demand.matches.length > 0 ? (
-          <div className="space-y-3">
-             {demand.matches.slice(0, 3).map((match: any) => (
-               <div key={match.id} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
-                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-lg bg-zinc-800" />
-                   <span className="text-[10px] font-bold text-white">{match.name || match.vendorName}</span>
-                 </div>
-                 <button className="text-[8px] font-black uppercase text-primary">View Match</button>
-               </div>
-             ))}
-          </div>
-        ) : (
-          <p className="text-[10px] text-zinc-600 italic">No vendors matched this demand yet.</p>
-        )}
-      </div>
-
-      <div className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 space-y-3">
-        <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Requirements</h4>
-        <ul className="space-y-2.5">
-          {['Compliance Documents Required', 'Sample Verification Needed', 'Bulk Packaging Capacity', 'Logistics Partnership'].map((req) => (
-            <li key={req} className="flex items-center gap-2.5 text-[10px] text-zinc-400 font-medium">
-              <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-              {req}
-            </li>
-          ))}
-        </ul>
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-zinc-100 sm:relative sm:bg-transparent sm:border-0 sm:p-0">
+        <div className="max-w-2xl mx-auto flex gap-3">
+          <button className="flex-1 bg-emerald-600 text-white h-14 rounded-2xl font-black text-sm shadow-lg shadow-emerald-600/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <Send className="w-4 h-4" /> অফার জমা দিন
+          </button>
+          <button className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
+            <MessageCircle className="w-6 h-6" />
+          </button>
+        </div>
       </div>
     </div>
   );
-
-  return (
-    <UnifiedPostDetail 
-      item={feedItem} 
-      onBack={() => navigate(-1)}
-      customFields={customFields}
-      actionButtonLabel={`Submit Proposal (Budget: ${demand.budget} BDT)`}
-      onAction={() => {
-        toast.success("Bidding process started!");
-      }}
-    />
-  );
 }
-

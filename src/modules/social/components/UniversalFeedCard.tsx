@@ -24,10 +24,10 @@ interface UniversalFeedCardProps {
 }
 
 const DOMAIN_STYLE: Record<PortalDomain, { label: string, color: string, bg: string, border: string, icon: any }> = {
-  RETAIL: { label: 'Retail', color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', icon: ShoppingBag },
+  RETAIL: { label: 'Retail', color: 'text-[var(--pm-accent)]', bg: 'bg-[var(--pm-accent)]/10', border: 'border-[var(--pm-accent)]/20', icon: ShoppingBag },
   WHOLESALE: { label: 'Wholesale', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: Briefcase },
   B2B: { label: 'B2B Hub', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', icon: Gavel },
-  SERVICES: { label: 'Services', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: Navigation },
+  SERVICES: { label: 'Services', color: 'text-[var(--pm-accent)]', bg: 'bg-[var(--pm-accent)]/10', border: 'border-[var(--pm-accent)]/20', icon: Navigation },
   LOCAL: { label: 'Nearby', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: MapPin },
   SOCIAL: { label: 'Public', color: 'text-zinc-400', bg: 'bg-white/5', border: 'border-white/10', icon: Globe },
 };
@@ -65,8 +65,8 @@ const ProductContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: ()
         
         {item.content.price && (
           <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-xl px-4 py-2 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-1.5 z-10">
-            <Tag className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-[12px] font-black text-cyan-400">৳{item.content.price.toLocaleString()}</span>
+            <Tag className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
+            <span className="text-[12px] font-black text-[var(--pm-accent)]">৳{item.content.price.toLocaleString()}</span>
           </div>
         )}
         
@@ -86,12 +86,12 @@ const DemandContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: () 
   const seed = item.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const gradients = [
     "from-indigo-600 via-indigo-900 to-slate-900",
-    "from-cyan-600 via-teal-900 to-black",
+    "from-orange-600 via-orange-900 to-black",
     "from-rose-600 via-rose-900 to-stone-900",
     "from-amber-500 via-orange-900 to-zinc-900",
-    "from-cyan-500 via-blue-900 to-slate-900",
+    "from-orange-500 via-blue-900 to-slate-900",
     "from-violet-600 via-purple-900 to-black",
-    "from-lime-500 via-cyan-900 to-slate-900"
+    "from-lime-500 via-orange-900 to-slate-900"
   ];
   const bgGradient = gradients[seed % gradients.length];
 
@@ -106,7 +106,7 @@ const DemandContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: () 
             </h3>
             <div className="mt-6 flex items-center justify-center gap-2">
               <div className="h-[1.5px] w-6 bg-white/20 rounded-full" />
-              <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_cyan-400]" />
+              <div className="w-2 h-2 rounded-full bg-[var(--pm-accent)] shadow-[0_0_10px_var(--pm-accent)]" />
               <div className="h-[1.5px] w-6 bg-white/20 rounded-full" />
             </div>
           </motion.div>
@@ -124,7 +124,7 @@ const DemandContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: () 
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between z-30">
           <div className="flex flex-col">
             <span className="text-[8px] text-white/40 font-black uppercase tracking-[0.2em] mb-1">Estimated Budget</span>
-            <span className="text-sm font-black text-cyan-400 drop-shadow-md">৳{item.content.price?.toLocaleString()}</span>
+            <span className="text-sm font-black text-[var(--pm-accent)] drop-shadow-md">৳{item.content.price?.toLocaleString()}</span>
           </div>
           <div className="w-10 h-10 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white/80 shadow-xl group-hover/visual:scale-110 transition-transform">
             <Gavel className="w-5 h-5" />
@@ -140,19 +140,19 @@ const RideContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: () =>
     <div className="p-8 rounded-[2rem] bg-[#050805] border border-white/[0.06] flex items-center justify-between aspect-square flex-col justify-center gap-6 relative overflow-hidden shadow-inner">
       <div className="space-y-6 flex-1 flex flex-col justify-center items-center text-center">
         <div className="flex flex-col items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_cyan-400]" />
+          <div className="w-3 h-3 rounded-full bg-[var(--pm-accent)] shadow-[0_0_10px_var(--pm-accent)]" />
           <span className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.2em]">Pickup</span>
           <p className="text-sm font-black text-white uppercase tracking-tight">{item.content.location || 'Dhaka'}</p>
         </div>
         <div className="w-[1px] h-10 border-dashed border-zinc-800 border-l" />
         <div className="flex flex-col items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]" />
+          <div className="w-3 h-3 rounded-full bg-[var(--pm-accent)]/80 shadow-[0_0_10px_var(--pm-accent)]" />
           <span className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.2em]">Destination</span>
           <p className="text-sm font-black text-white/70 uppercase tracking-tight">Banani Area</p>
         </div>
       </div>
-      <div className="w-14 h-14 rounded-[1.5rem] bg-orange-500/10 flex items-center justify-center border border-orange-500/10 shadow-xl">
-        <Navigation className="w-6 h-6 text-orange-500 opacity-60" />
+      <div className="w-14 h-14 rounded-[1.5rem] bg-[var(--pm-accent)]/10 flex items-center justify-center border border-[var(--pm-accent)]/10 shadow-xl">
+        <Navigation className="w-6 h-6 text-[var(--pm-accent)] opacity-60" />
       </div>
     </div>
   </div>
@@ -186,7 +186,7 @@ const NewsContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: () =>
         {/* Stats Overlay inside Card */}
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white/60 text-[10px] font-black uppercase tracking-wider">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-cyan-400" />
+            <Clock className="w-4 h-4 text-[var(--pm-accent)]" />
             <span>{item.content.metadata?.readTimeBn || '৩ মিনিট পাঠ'}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -229,13 +229,13 @@ const ServiceContent = ({ item, onClick }: { item: UnifiedFeedItem; onClick?: ()
         <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <div className="px-3 py-1 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-1.5 shadow-lg">
-              <Clock className="w-3 h-3 text-sky-400" />
+              <Clock className="w-3 h-3 text-[var(--pm-accent)]" />
               <span className="text-[9px] font-black text-white/60 uppercase tracking-widest">
                 {item.content.metadata?.duration || '1-2h'}
               </span>
             </div>
             <div className="px-3 py-1 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-1.5 shadow-lg">
-              <CheckCircle2 className="w-3 h-3 text-cyan-400" />
+              <CheckCircle2 className="w-3 h-3 text-[var(--pm-accent)]" />
               <span className="text-[9px] font-black text-white/60 uppercase tracking-widest">
                 Verified
               </span>
@@ -412,7 +412,7 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
       return (
         <button 
           onClick={(e) => { e.stopPropagation(); handleAction(); }}
-          className="h-7 px-2.5 bg-sky-500/10 border border-sky-500/20 text-sky-400 hover:bg-sky-500/20 font-bold text-[9px] rounded-lg flex items-center justify-center gap-1.5 uppercase transition-all"
+          className="h-7 px-2.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 font-bold text-[9px] rounded-lg flex items-center justify-center gap-1.5 uppercase transition-all"
         >
           <Briefcase className="w-3 h-3" />
           <span>অর্ডার দিন / Order {moq || 20}+</span>
@@ -424,7 +424,7 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
       return (
         <button 
           onClick={(e) => { e.stopPropagation(); handleAction(); }}
-          className="h-7 px-2.5 bg-orange-500/10 border border-orange-500/20 text-orange-400 hover:bg-orange-500/20 font-bold text-[9px] rounded-lg flex items-center justify-center gap-1.5 uppercase transition-all"
+          className="h-7 px-2.5 bg-[var(--pm-accent)]/10 border border-[var(--pm-accent)]/20 text-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/20 font-bold text-[9px] rounded-lg flex items-center justify-center gap-1.5 uppercase transition-all"
         >
           <Navigation className="w-3 h-3" />
           <span>বুক করুন / Book Now</span>
@@ -447,7 +447,7 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
     return (
       <button 
         onClick={handleBuyNow}
-        className="h-7 px-3 bg-cyan-400 text-black font-black text-[9px] hover:bg-[#00c853] rounded-lg flex items-center justify-center gap-1.5 uppercase transition-all shadow-[0_0_10px_rgba(0,230,118,0.3)] animate-pulse"
+        className="h-7 px-3 bg-[var(--pm-accent)] text-black font-black text-[9px] hover:bg-[#FF8A00] rounded-lg flex items-center justify-center gap-1.5 uppercase transition-all shadow-[0_0_10px_rgba(255,122,0,0.3)]"
       >
         <ShoppingBag className="w-3 h-3" />
         <span>কিনুন / Buy Now</span>
@@ -470,7 +470,7 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
               <img src={item.author.avatar} alt={item.author.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
             {item.author.isVerified && (
-              <div className="absolute -bottom-1 -right-1 bg-cyan-500 rounded-full p-1 border-2 border-black scale-75 shadow-lg">
+              <div className="absolute -bottom-1 -right-1 bg-[var(--pm-accent)] rounded-full p-1 border-2 border-black scale-75 shadow-lg">
                 <CheckCircle2 className="w-2.5 h-2.5 text-white" />
               </div>
             )}
@@ -479,13 +479,13 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
             <div className="flex items-center gap-2 leading-none">
               <h4 
                 onClick={handleSellerClick}
-                className="text-[12px] font-black text-white hover:text-cyan-400 hover:underline underline-offset-4 decoration-2 transition-all cursor-pointer tracking-tight"
+                className="text-[12px] font-black text-white hover:text-[var(--pm-accent)] hover:underline underline-offset-4 decoration-2 transition-all cursor-pointer tracking-tight"
               >
                 {item.author.name}
               </h4>
               <div className="flex items-center gap-1">
                 {item.author.isVerified && (
-                  <CheckCircle2 className="w-3 h-3 text-cyan-500 fill-cyan-500/10" />
+                  <CheckCircle2 className="w-3 h-3 text-[var(--pm-accent)] fill-[var(--pm-accent)]/10" />
                 )}
                 <span className={cn("text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md border shadow-sm", style.bg, style.color, style.border)}>
                   {style.label}
@@ -562,7 +562,7 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
 
       {/* Content text */}
       <div className="px-4 py-3 cursor-pointer" onClick={handleDetailsClick}>
-        <h3 className="text-[14px] font-black text-white hover:text-cyan-400 transition-colors mb-2 leading-snug tracking-tight">
+        <h3 className="text-[14px] font-black text-white hover:text-[var(--pm-accent)] transition-colors mb-2 leading-snug tracking-tight">
           {item.content.title}
         </h3>
         <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2 font-medium">
@@ -618,7 +618,7 @@ export const UniversalFeedCard = React.memo(({ item, onLike }: UniversalFeedCard
             className={cn(
               "h-8 px-3 flex items-center gap-1.5 rounded-xl transition-all duration-300 cursor-pointer hover:bg-white/5",
               isCommentMenuOpen 
-                ? "text-cyan-400" 
+                ? "text-[var(--pm-accent)]" 
                 : "text-zinc-500 hover:text-white"
             )}
           >

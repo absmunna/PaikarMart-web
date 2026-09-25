@@ -85,7 +85,10 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
   const addNotification = useNotificationStore((state) => state.addNotification);
 
   // Filter store-specific products
-  const storeProducts = products.filter(p => p.sellerId && p.sellerId === storeName);
+  const storeProducts = products.filter(p => 
+    (p.sellerId && p.sellerId === storeName) || 
+    (p.seller && p.seller === storeName)
+  );
 
   const handleFollowToggle = () => {
     if (isFollowing) {

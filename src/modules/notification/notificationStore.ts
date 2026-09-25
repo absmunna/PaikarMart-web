@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserNotificationCategory = 'order' | 'promo' | 'security' | 'b2b' | 'system';
+export type UserNotificationCategory = 'order' | 'promo' | 'security' | 'b2b' | 'system' | 'info' | 'success' | 'warning' | 'error';
 
 export interface UserNotification {
   id: string;
@@ -16,7 +16,11 @@ export interface UserNotification {
 interface NotificationState {
   notifications: UserNotification[];
   unreadCount: number;
-  addNotification: (notif: Omit<UserNotification, 'id' | 'isRead' | 'timestamp'>) => void;
+  addNotification: (
+    notifOrTitle: string | Omit<UserNotification, 'id' | 'isRead' | 'timestamp'>,
+    type?: string,
+    description?: string
+  ) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   removeNotification: (id: string) => void;
@@ -67,9 +71,14 @@ export const useNotificationStore = create<NotificationState>()(
       notifications: INITIAL_NOTIFICATIONS,
       unreadCount: INITIAL_NOTIFICATIONS.filter(n => !n.isRead).length,
       
-      addNotification: (notif) => set((state) => {
+      addNotification: (notifOrTitle, type = 'system', description = '') => set((state) => {
+        const payload: Omit<UserNotification, 'id' | 'isRead' | 'timestamp'> = 
+          typeof notifOrTitle === 'string'
+            ? { title: notifOrTitle, type: type as UserNotificationCategory, description }
+            : notifOrTitle;
+
         const newNotif: UserNotification = {
-          ...notif,
+          ...payload,
           id: `notif-${Date.now()}`,
           isRead: false,
           timestamp: new Date().toISOString()

@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const SellerDashboard: React.FC = () => {
   const { isSeller, profile } = useSeller();
-  const { kpis, products, orders, insights, setProducts, setOrders, setKPIs, setInsights } = useSellerDashboardStore();
+  const { kpis, products, orders, insights, setProducts, setOrders, setKPIs, setInsights, updateOrder } = useSellerDashboardStore();
 
   useEffect(() => {
     // Populate mock data if empty
@@ -33,7 +33,7 @@ export const SellerDashboard: React.FC = () => {
       ]);
 
       setOrders([
-        { id: 'ORD-9912', buyerName: 'Rahim Uddin', amount: 1700, status: 'pending', createdAt: new Date().toISOString(), itemCount: 2 },
+        { id: 'ORD-9912', buyerName: 'Rahim Uddin', amount: 1700, status: 'new', createdAt: new Date().toISOString(), itemCount: 2 },
         { id: 'ORD-9911', buyerName: 'Karim Store', amount: 8500, status: 'processing', createdAt: new Date(Date.now() - 86400000).toISOString(), itemCount: 10 },
         { id: 'ORD-9910', buyerName: 'Nusrat Jahan', amount: 220, status: 'shipped', createdAt: new Date(Date.now() - 172800000).toISOString(), itemCount: 1 },
       ]);
@@ -59,6 +59,9 @@ export const SellerDashboard: React.FC = () => {
     if (value === 'overview') navigate('/seller');
     else navigate(`/seller/${value}`);
   };
+
+  const handleAccept = (id: string) => updateOrder(id, 'processing');
+  const handleShip = (id: string) => updateOrder(id, 'shipped');
 
   if (!isSeller) {
     return (
@@ -87,17 +90,17 @@ export const SellerDashboard: React.FC = () => {
           <TabsContent value="overview" className="mt-0 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <RevenueAnalyticsChart kpis={kpis} />
+                <RevenueAnalyticsChart />
               </div>
               <div className="lg:col-span-1">
                 <SellerAIInsightsPanel insights={insights} />
               </div>
             </div>
-            <SellerOrderPanel orders={orders} />
+            <SellerOrderPanel orders={orders} onAccept={handleAccept} onShip={handleShip} />
           </TabsContent>
 
           <TabsContent value="orders" className="mt-0 space-y-6">
-            <SellerOrderPanel orders={orders} />
+            <SellerOrderPanel orders={orders} onAccept={handleAccept} onShip={handleShip} />
           </TabsContent>
 
           <TabsContent value="products" className="mt-0 space-y-6">
@@ -106,7 +109,7 @@ export const SellerDashboard: React.FC = () => {
           </TabsContent>
           
                     <TabsContent value="analytics" className="mt-0 space-y-6">
-             <RevenueAnalyticsChart kpis={kpis} />
+             <RevenueAnalyticsChart />
              <SellerAIInsightsPanel insights={insights} />
           </TabsContent>
         </Tabs>

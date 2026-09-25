@@ -21,14 +21,14 @@ export const RevenueAnalyticsChart: React.FC = () => {
            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 mb-1">Revenue Stream</h3>
            <div className="flex items-baseline gap-2">
               <span className="text-2xl font-mono font-black text-white">৳ 12,450.00</span>
-              <span className="text-[10px] text-cyan-400 font-bold flex items-center gap-0.5">
+              <span className="text-[10px] text-[var(--pm-accent)] font-bold flex items-center gap-0.5">
                  <ArrowUpRight className="w-3 h-3" /> +12.4%
               </span>
            </div>
         </div>
         
         <div className="flex bg-black/30 p-1 rounded-xl border border-white/5">
-           <button className="px-3 py-1.5 rounded-lg bg-cyan-400 text-black text-[10px] font-black uppercase tracking-wider">7D</button>
+           <button className="px-3 py-1.5 rounded-lg bg-[var(--pm-accent)] text-black text-[10px] font-black uppercase tracking-wider">7D</button>
            <button className="px-3 py-1.5 rounded-lg text-zinc-500 text-[10px] font-black uppercase tracking-wider">30D</button>
         </div>
       </div>
@@ -49,13 +49,13 @@ export const RevenueAnalyticsChart: React.FC = () => {
                  {/* Bar */}
                  <div 
                     style={{ height: item.height }} 
-                    className="w-2 md:w-4 bg-gradient-to-t from-cyan-400/10 to-cyan-400/40 rounded-t-lg transition-all duration-700 group-hover:from-cyan-400/40 group-hover:to-cyan-400"
+                    className="w-2 md:w-4 bg-gradient-to-t from-[var(--pm-accent)]/10 to-[var(--pm-accent)]/40 rounded-t-lg transition-all duration-700 group-hover:from-[var(--pm-accent)]/40 group-hover:to-[var(--pm-accent)]"
                  />
                  
                  {/* Line connection point (decorative) */}
-                 <div className="absolute bottom-full mb-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 rounded-full border border-cyan-400 bg-black z-10" />
+                 <div className="absolute bottom-full mb-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 rounded-full border border-[var(--pm-accent)] bg-black z-10" />
               </div>
-              <span className="text-[10px] font-mono font-bold text-zinc-600 group-hover:text-cyan-400 transition-colors uppercase tracking-widest">{item.day}</span>
+              <span className="text-[10px] font-mono font-bold text-zinc-600 group-hover:text-[var(--pm-accent)] transition-colors uppercase tracking-widest">{item.day}</span>
            </div>
         ))}
       </div>
@@ -63,7 +63,7 @@ export const RevenueAnalyticsChart: React.FC = () => {
       {/* Insight Footer */}
       <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-cyan-400" />
+            <TrendingUp className="w-4 h-4 text-[var(--pm-accent)]" />
             <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wide">Primary Peak on Thursdays</span>
          </div>
          <span className="text-[9px] font-mono text-zinc-600 font-bold uppercase">Real-time settlement data</span>

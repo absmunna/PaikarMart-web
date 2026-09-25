@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { SellerProduct, SellerOrder, SellerVerificationPayload, ServiceBooking, DeliveryTask, ReturnRequest } from "./types";
 
 const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL ?? '/api/v1';
@@ -21,8 +21,11 @@ interface SellerContextValue {
   products: SellerProduct[];
   orders: SellerOrder[];
   serviceBookings: ServiceBooking[];
+  setServiceBookings?: React.Dispatch<React.SetStateAction<ServiceBooking[]>>;
   deliveryTasks: DeliveryTask[];
+  setDeliveryTasks?: React.Dispatch<React.SetStateAction<DeliveryTask[]>>;
   returnsRequests: ReturnRequest[];
+  setReturnsRequests?: React.Dispatch<React.SetStateAction<ReturnRequest[]>>;
   loading: boolean;
   error: string | null;
   fetchProducts: () => Promise<void>;
@@ -31,7 +34,7 @@ interface SellerContextValue {
   updateProduct: (id: string, patch: Partial<SellerProduct>) => Promise<SellerProduct>;
   deleteProduct: (id: string) => Promise<void>;
   setOrderStatus: (id: string, status: SellerOrder["status"]) => Promise<SellerOrder>;
-  submitVerification: (payload: SellerVerificationPayload) => Promise<any>;
+  submitVerification: (payload: any, type?: any, category?: any) => Promise<any>;
   verificationStatus: string;
 }
 
@@ -98,9 +101,12 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
     return updated;
   }, []);
 
-  const submitVerification = useCallback(async (payload: SellerVerificationPayload) => {
-    const res = await apiFetch('/verification', { method: 'POST', body: JSON.stringify(payload) });
-    setProfile(p => ({ ...p, verificationStatus: "pending" }));
+  const submitVerification = useCallback(async (payload: any, type?: any, category?: any) => {
+    const body = typeof payload === 'object' && !Array.isArray(payload) && payload !== null
+      ? payload
+      : { documents: payload, type, category };
+    const res = await apiFetch('/verification', { method: 'POST', body: JSON.stringify(body) });
+    setProfile(p => ({ ...p, verificationStatus: "pending", ...body }));
     return res;
   }, []);
 
@@ -124,8 +130,11 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
     products,
     orders,
     serviceBookings,
+    setServiceBookings,
     deliveryTasks,
+    setDeliveryTasks,
     returnsRequests,
+    setReturnsRequests,
     loading,
     error,
     fetchProducts,
@@ -141,8 +150,31 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
   return <SellerContext.Provider value={value}>{children}</SellerContext.Provider>;
 }
 
+const defaultSellerValue: SellerContextValue = {
+  isSeller: false,
+  becomeSeller: () => {},
+  profile: { verificationStatus: "unsubmitted" },
+  updateProfile: () => {},
+  products: [],
+  orders: [],
+  serviceBookings: [],
+  deliveryTasks: [],
+  returnsRequests: [],
+  loading: false,
+  error: null,
+  fetchProducts: async () => {},
+  fetchOrders: async () => {},
+  createProduct: async () => ({} as any),
+  updateProduct: async () => ({} as any),
+  deleteProduct: async () => {},
+  setOrderStatus: async () => ({} as any),
+  submitVerification: async () => ({}),
+  verificationStatus: "unsubmitted",
+};
+
 export function useSeller() {
   const ctx = useContext(SellerContext);
-  if (!ctx) throw new Error("useSeller must be used within SellerProvider");
-  return ctx;
+  return ctx || defaultSellerValue;
 }
+
+export const useSellerContext = useSeller;

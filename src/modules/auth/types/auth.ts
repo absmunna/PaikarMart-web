@@ -1,30 +1,12 @@
-import type { AppRole as UserRole } from '@/features/auth/permissions/roles';
-
-export interface BusinessProfile {
-  id: string;
-  name: string;
-  type: string;
-  verifiedLevel: number;
-}
+import { UserRole } from '../../../permissions/roles';
 
 export interface User {
   id: string;
   email: string;
-  fullName: string;
-  name?: string; // Legacy/Alias for compatibility
-  roles: UserRole[];   // Replaced single role with array
-  role?: UserRole;     // Legacy fallback
-  businessProfiles?: BusinessProfile[];
-  avatarUrl?: string;
-  avatar?: string; // Legacy/Alias for compatibility
-  phone?: string;
+  name: string;
+  role: UserRole;
+  avatar?: string;
   portals?: string[];
-  isVerified?: boolean;
-  verified?: boolean; // Legacy/Alias
-  handle?: string;
-  location?: string;
-  bio?: string;
-  trustScore?: number;
 }
 
 export interface AuthState {

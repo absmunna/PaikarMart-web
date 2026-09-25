@@ -65,9 +65,9 @@ const ACCOUNT_TYPES: AccountTypeConfig[] = [
     labelEn: "Buyer (Retail & Social)", 
     labelBn: "সাধারণ ক্রেতা (খুচরা ও সামাজিক কমার্স)", 
     icon: User, 
-    color: "text-cyan-400",
-    bgColor: "bg-cyan-500/10",
-    borderColor: "border-cyan-500/20",
+    color: "text-[var(--pm-accent)]",
+    bgColor: "bg-[var(--pm-accent)]/10",
+    borderColor: "border-[var(--pm-accent)]/20",
     securityRequired: false,
     expectedTrustLevel: 1,
     descEn: "Browse feed, buy products, and book localized services.",
@@ -121,9 +121,9 @@ const ACCOUNT_TYPES: AccountTypeConfig[] = [
     labelEn: "Rural Merchant & Hat", 
     labelBn: "গ্রামীণ খামারি ও সাপ্তাহিক হাট ব্যবসায়ী", 
     icon: Store, 
-    color: "text-teal-400",
-    bgColor: "bg-teal-500/10",
-    borderColor: "border-teal-500/20",
+    color: "text-orange-400",
+    bgColor: "bg-orange-500/10",
+    borderColor: "border-orange-500/20",
     securityRequired: false,
     expectedTrustLevel: 4,
     descEn: "Agro crops, organic farming, cottage industry & local hat bazaar.",
@@ -541,8 +541,8 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
   return (
     <div className="min-h-screen bg-[#05070a] text-white flex items-center justify-center p-4 relative">
       {/* Background radial atmosphere */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.08)_0,transparent_55%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.06)_0,transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.08)_0,transparent_55%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.06)_0,transparent_50%)] pointer-events-none" />
 
       <div className="w-full max-w-2xl bg-zinc-900/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative z-10 my-8">
         
@@ -560,11 +560,11 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
               <div key={s.id} className="flex-1 flex flex-col gap-1.5">
                 <div className={cn(
                   "h-1.5 rounded-full transition-all duration-300",
-                  completed ? "bg-cyan-500" : active ? "bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.5)]" : "bg-white/10"
+                  completed ? "bg-orange-500" : active ? "bg-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.5)]" : "bg-white/10"
                 )} />
                 <span className={cn(
                   "text-[10px] font-bold text-center tracking-wider transition-colors",
-                  active ? "text-cyan-400 font-extrabold" : completed ? "text-zinc-400" : "text-zinc-600"
+                  active ? "text-orange-400 font-extrabold" : completed ? "text-zinc-400" : "text-zinc-600"
                 )}>
                   {s.bn}
                 </span>
@@ -593,7 +593,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
                     className={cn(
                       "flex flex-col text-left p-4 rounded-2xl transition-all border relative cursor-pointer group",
                       isSelected 
-                        ? "bg-cyan-500/10 border-cyan-500/60 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-cyan-500/50" 
+                        ? "bg-orange-500/10 border-orange-500/60 shadow-[0_0_20px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/50" 
                         : "bg-white/[0.02] border-white/5 hover:bg-white/[0.05] hover:border-white/15"
                     )}
                   >
@@ -615,13 +615,13 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
             <div className="pt-3 border-t border-white/10">
               <Button 
                 onClick={handleNext} 
-                className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl transition-all cursor-pointer shadow-lg shadow-cyan-500/20"
+                className="w-full bg-orange-500 hover:bg-orange-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl transition-all cursor-pointer shadow-lg shadow-orange-500/20"
               >
                 পরবর্তী ধাপ (Continue) <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <div className="text-center mt-4">
                 <span className="text-xs text-zinc-500">ইতিমধ্যে অ্যাকাউন্ট আছে? </span>
-                <Link to="/auth/login" className="text-cyan-400 hover:underline text-xs font-bold">লগইন করুন (Login)</Link>
+                <Link to="/auth/login" className="text-orange-400 hover:underline text-xs font-bold">লগইন করুন (Login)</Link>
               </div>
             </div>
           </div>
@@ -644,7 +644,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
               </div>
               <div className="text-right hidden sm:block">
                 <span className="text-[10px] text-zinc-500 block uppercase font-bold">নির্বাচিত রোল</span>
-                <span className="text-xs font-black text-cyan-400">{selectedTypeConfig.labelBn}</span>
+                <span className="text-xs font-black text-orange-400">{selectedTypeConfig.labelBn}</span>
               </div>
             </div>
 
@@ -709,7 +709,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
 
             <Button 
               onClick={handleNext} 
-              className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl cursor-pointer shadow-lg shadow-cyan-500/20"
+              className="w-full bg-orange-500 hover:bg-orange-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl cursor-pointer shadow-lg shadow-orange-500/20"
             >
               পরবর্তী ধাপ (Continue) <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -736,9 +736,9 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
             <div className="space-y-5 max-h-[500px] overflow-y-auto pr-1">
               {/* Buyer Notice */}
               {accountType === "buyer" && (
-                <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-2xl p-4 text-xs text-cyan-300 space-y-2">
+                <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 text-xs text-orange-300 space-y-2">
                   <p className="font-bold flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    <Sparkles className="w-4 h-4 text-orange-400" />
                     ক্রেতা প্রোফাইল সেটআপ
                   </p>
                   <p className="text-zinc-400 leading-relaxed">
@@ -772,7 +772,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
                     <select 
                       value={form.category}
                       onChange={(e) => handleInput("category", e.target.value)}
-                      className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-cyan-500"
+                      className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-orange-500"
                     >
                       <option value="electronics">ইলেকট্রনিক্স ও গ্যাজেটস</option>
                       <option value="fashion">ফ্যাশন ও তৈরি পোশাক</option>

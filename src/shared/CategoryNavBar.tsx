@@ -1,20 +1,30 @@
 import React from 'react';
 import { cn } from "@/lib/utils";
 
-interface CategoryNavBarProps {
-  context: string;
-  activeFilter: string;
-  onFilterChange: (id: string) => void;
+export interface CategoryFilterItem {
+  id: string;
+  label: string;
+  labelBn?: string;
+  icon?: any;
+  color?: string;
+}
+
+export interface CategoryNavBarProps {
+  context?: string;
+  activeFilter?: string;
+  onFilterChange?: (id: string) => void;
+  items?: CategoryFilterItem[];
   topOffset?: string;
 }
 
 export const CategoryNavBar: React.FC<CategoryNavBarProps> = ({ 
   context, 
-  activeFilter, 
-  onFilterChange,
+  activeFilter = 'all', 
+  onFilterChange = () => {},
+  items,
   topOffset = '0px'
 }) => {
-  const categories = [
+  const defaultCategories: CategoryFilterItem[] = [
     { id: 'all', label: 'All Feed' },
     { id: 'electronics', label: 'Electronics' },
     { id: 'fashion', label: 'Fashion' },
@@ -22,6 +32,8 @@ export const CategoryNavBar: React.FC<CategoryNavBarProps> = ({
     { id: 'pharmacy', label: 'Pharmacy' },
     { id: 'home', label: 'Home' },
   ];
+
+  const categories = items && items.length > 0 ? items : defaultCategories;
 
   return (
     <div 

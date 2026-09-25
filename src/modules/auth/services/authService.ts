@@ -1,9 +1,24 @@
-import { apiClient } from '@/modules/app/api/client';
-import { ENDPOINTS } from '@/modules/app/api/endpoints';
+import { apiClient } from '../../../api/client';
+import { ENDPOINTS } from '../../../api/endpoints';
 import { LoginCredentials, RegisterData, AuthResponse } from '../types/auth';
-import { safeStorage } from "@/modules/app/utils/storage";
 
 export const authService = {
+  getMe: async (): Promise<{ user: any }> => {
+    try {
+      const { data } = await apiClient.get('/auth/me');
+      return data;
+    } catch {
+      // Fallback in dev if token is local
+      const local = localStorage.getItem('pm-auth-storage') || localStorage.getItem('pm.auth.v2');
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          return { user: parsed.state?.user || parsed };
+        } catch {}
+      }
+      return { user: null };
+    }
+  },
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const { data } = await apiClient.post(ENDPOINTS.AUTH.LOGIN, credentials);
     return data;
@@ -16,22 +31,9 @@ export const authService = {
     const { data } = await apiClient.post(`${ENDPOINTS.AUTH.LOGIN.replace('/login', '/forgot-password')}`, { email });
     return data;
   },
-  getMe: async (): Promise<{ user: any }> => {
-    const { data } = await apiClient.get('/auth/me');
-    return data;
-  },
   logout: () => {
-    safeStorage.removeItem('accessToken');
-    safeStorage.removeItem('refreshToken');
-  },
-  setToken: (token: string) => safeStorage.setItem('pm_token', token),
-  getToken: () => safeStorage.getItem('pm_token'),
-  clearToken: () => safeStorage.removeItem('pm_token'),
-  parseJwt: (token: string) => {
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch {
-      return null;
-    }
-  },
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('pm_token');
+  }
 };

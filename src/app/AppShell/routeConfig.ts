@@ -16,7 +16,7 @@ const UserProfilePage = lazy(() => import('@/features/user-profile/UserProfilePa
 const PortalComingSoon = lazy(() => import('@/pages/PortalComingSoon').then(m => ({ default: m.default })));
 
 // Public Pages
-const Home = lazy(() => import('@/pages/home').then(m => ({ default: m.default })));
+const Home = lazy(() => import('@/pages/Home').then(m => ({ default: m.default })));
 const MarketplaceHome = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/MarketplaceHome').then(m => ({ default: m.default })));
 const MarketplaceSearch = PortalComingSoon;
 const MarketplaceCategory = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/MarketplaceCategory').then(m => ({ default: m.MarketplaceCategoryPage })));
@@ -38,10 +38,10 @@ const Services = PortalComingSoon;
 const ProviderOnboarding = PortalComingSoon;
 const ServiceEscrow = PortalComingSoon;
 const Transport = lazy(() => import('@/portals/logistics-hub/transport/pages/TransportHome').then(m => ({ default: m.default })));
-const DigitalServices = lazy(() => import('@/portals/marketplace-hub/digital/pages/DigitalProductsHome').then(m => ({ default: m.default })));
+const DigitalServices = lazy(() => import('@/portals/marketplace-hub/digital/pages/DigitalHome').then(m => ({ default: m.default })));
 const Travel = lazy(() => import('@/portals/services-hub/travel/pages/TravelHome').then(m => ({ default: m.default })));
 const Portals = lazy(() => import('@/pages/apps/PortalsPage').then(m => ({ default: m.default })));
-const PKStore = PortalComingSoon;
+const PKStore = lazy(() => import('@/portals/marketplace-hub/pk-shop').then(m => ({ default: m.PKShopHome })));
 const Dropship = PortalComingSoon;
 const DropshipStore = lazy(() => import('@/portals/marketplace-hub/dropship/pages/DropshipStore').then(m => ({ default: m.default })));
 const News = PortalComingSoon;
@@ -52,9 +52,9 @@ const B2B = lazy(() => import('@/portals/business-hub/b2b/pages/B2BHub').then(m 
 const Grocery = lazy(() => import('@/portals/local-hub/subportals/grocery/pages/GroceryHome').then(m => ({ default: m.GroceryHome })));
 const Pharmacy = lazy(() => import('@/portals/local-hub/subportals/pharmacy/pages/PharmacyHome').then(m => ({ default: m.PharmacyHome })));
 const Food = PortalComingSoon;
-const Wholesale = PortalComingSoon;
+const Wholesale = lazy(() => import('@/portals/marketplace-hub/wholesale/pages/B2BHome').then(m => ({ default: m.B2BHome })));
 const Export = lazy(() => import('@/portals/business-hub/b2b/pages/export/ExportHome').then(m => ({ default: m.ExportHome })));
-const Ride = lazy(() => import('@/portals/logistics-hub/ride/pages/RideHome').then(m => ({ default: m.RideHome })));
+const Ride = lazy(() => import('@/portals/logistics-hub/ride/pages/RideHome').then(m => ({ default: m.default })));
 const Rent = lazy(() => import('@/portals/logistics-hub/rent/pages/RentHome').then(m => ({ default: m.default })));
 const Emergency = lazy(() => import('@/portals/logistics-hub/emergency/pages/EmergencyHome').then(m => ({ default: m.default })));
 const OfferPortal = lazy(() => import('@/portals/community-hub/offer/pages/OfferHome').then(m => ({ default: m.default })));
@@ -68,7 +68,7 @@ const EducationPortal = PortalComingSoon;
 const FinancePortal = PortalComingSoon;
 const EventsPortal = PortalComingSoon;
 const AutoPortal = lazy(() => import('@/portals/marketplace-hub/auto/pages/AutoHome').then(m => ({ default: m.default })));
-const ElectronicsPortal = PortalComingSoon;
+const ElectronicsPortal = lazy(() => import('@/portals/local-hub/subportals/electronics/pages/ElectronicsHome').then(m => ({ default: m.ElectronicsHome })));
 const FashionPortal = PortalComingSoon;
 const TelecomPortal = PortalComingSoon;
 const WorkspacePortal = PortalComingSoon;
@@ -76,11 +76,7 @@ const WorkspacePortal = PortalComingSoon;
 // Auth
 const Login = lazy(() => import('@/pages/auth/login').then(m => ({ default: m.default })));
 const Register = lazy(() => import('@/pages/auth/register').then(m => ({ default: m.default })));
-const RegistrationWizard = lazy(() => import('@/pages/auth/RegistrationWizard').then(m => ({ default: m.default })));
-const SellerRegister = lazy(() => import('@/pages/auth/seller-register').then(m => ({ default: m.default })));
-const FactoryRegisterAuth = lazy(() => import('@/pages/auth/factory-register').then(m => ({ default: m.default })));
-const WholesaleRegister = lazy(() => import('@/pages/auth/wholesale-register').then(m => ({ default: m.default })));
-const RuralRegister = lazy(() => import('@/pages/auth/rural-register').then(m => ({ default: m.default })));
+const RegistrationWizard = lazy(() => import('@/features/registration/RegistrationWizard').then(m => ({ default: m.default })));
 const ForgotPassword = lazy(() => import('@/pages/auth/forgot-password').then(m => ({ default: m.default })));
 const VendorOnboarding = lazy(() => import('@/portals/seller-central/pages/onboarding').then(m => ({ default: m.default })));
 
@@ -130,12 +126,12 @@ const ExportFactoryDetail = lazy(() => import('@/portals/business-hub/b2b/pages/
 const WholesaleManage = PortalComingSoon;
 
 // Digital Products
-const DigitalProducts = lazy(() => import('@/portals/marketplace-hub/digital/pages/DigitalProductsHome').then(m => ({ default: m.default })));
+const DigitalProducts = lazy(() => import('@/portals/marketplace-hub/digital/pages/DigitalHome').then(m => ({ default: m.default })));
 
 // Video
-const VideoLibrary = PortalComingSoon;
-const VideoDetail = PortalComingSoon;
-const VideoPackage = PortalComingSoon;
+const VideoLibrary = lazy(() => import('@/portals/community-hub/video/VideoHub').then(m => ({ default: m.default })));
+const VideoDetail = lazy(() => import('@/portals/community-hub/video/VideoHub').then(m => ({ default: m.default })));
+const VideoPackage = lazy(() => import('@/portals/community-hub/video/VideoHub').then(m => ({ default: m.default })));
 
 // Order Detail
 const OrderDetail = lazy(() => import('@/portals/orders/pages/OrderDetailPage').then(m => ({ default: m.default })));
@@ -207,10 +203,10 @@ export const ROUTES: RouteItem[] = [
   { path: '/auth/login', component: Login, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/auth/register', component: Register, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/auth/wizard', component: RegistrationWizard, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  { path: '/auth/seller-register', component: SellerRegister, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  { path: '/auth/factory-register', component: FactoryRegisterAuth, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  { path: '/auth/wholesale-register', component: WholesaleRegister, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  { path: '/auth/rural-register', component: RuralRegister, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
+  { path: '/auth/seller-register', component: RegistrationWizard, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
+  { path: '/auth/factory-register', component: RegistrationWizard, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
+  { path: '/auth/wholesale-register', component: RegistrationWizard, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
+  { path: '/auth/rural-register', component: RegistrationWizard, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/auth/forgot-password', component: ForgotPassword, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/seller/onboarding', component: VendorOnboarding, roles: ['seller', 'business', 'admin'], isPublic: false },
   

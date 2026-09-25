@@ -5,39 +5,72 @@ import { prisma } from '../../config/database';
 async function getOrCreateDemoWallet(userId: string) {
   let user = await prisma.user.findUnique({
     where: { id: userId },
-    include: { wallets: true }
+    include: { wallet: true }
   });
 
   if (!user) {
-    user = await prisma.user.create({
-      data: {
-        id: userId,
-        phone: `017${Math.floor(10000000 + Math.random() * 90000000)}`,
-        fullName: 'Demo User',
-        passwordHash: 'dummy',
-        role: 'buyer'
-      },
-      include: { wallets: true }
+    // Attempt to grab any existing user, or create a demo one
+    let firstUser = await prisma.user.findFirst({
+      include: { wallet: true }
     });
+
+    if (firstUser) {
+      user = firstUser;
+    } else {
+      user = await prisma.user.create({
+        data: {
+          id: userId,
+          email: 'munna@paikarmart.com',
+          name: 'MD MUNNA',
+          password: 'demo-password',
+          role: 'seller'
+        },
+        include: { wallet: true }
+      });
+    }
   }
 
-  let wallet = user.wallets.find((w: any) => w.type === 'main');
-  if (!wallet) {
-    wallet = await prisma.wallet.create({
+  if (!user.wallet) {
+    const wallet = await prisma.wallet.create({
       data: {
         userId: user.id,
-        balance: 1000,
-        type: 'main'
+        balance: 45280.00,
+        coins: 2500
       }
+    });
+    
+    // Seed standard initial transactions
+    await prisma.transaction.createMany({
+      data: [
+        {
+          walletId: wallet.id,
+          type: 'inflow',
+          title: 'রেফারেল বোনাস (Referral Bonus)',
+          subtitle: 'পাইকার মার্ট রেফারেল ক্যাম্পেইন',
+          amount: 500.00,
+          status: 'completed'
+        },
+        {
+          walletId: wallet.id,
+          type: 'outflow',
+          title: 'পণ্য ক্রয় (Order Purchase)',
+          subtitle: 'অর্ডার আইডি #PM-88210',
+          amount: 3200.00,
+          status: 'completed'
+        }
+      ]
+    });
+
+    return await prisma.wallet.findUnique({
+      where: { id: wallet.id },
+      include: { transactions: { orderBy: { createdAt: 'desc' } } }
     });
   }
 
-  const fullWallet = await prisma.wallet.findUnique({
-    where: { id: wallet.id },
-    include: { transactions: true }
+  return await prisma.wallet.findUnique({
+    where: { id: user.wallet.id },
+    include: { transactions: { orderBy: { createdAt: 'desc' } } }
   });
-
-  return fullWallet;
 }
 
 export const getWallet = async (req: Request, res: Response) => {
@@ -123,6 +156,8 @@ export const addMoney = async (req: Request, res: Response) => {
       data: {
         walletId: wallet.id,
         type: 'inflow',
+        title: 'অ্যাড মানি (Add Money via bKash)',
+        subtitle: 'bKash Wallet Direct',
         amount: amt,
         status: 'completed'
       }
@@ -160,7 +195,6 @@ export const sendMoney = async (req: Request, res: Response) => {
       });
     }
 
-    /*
     const wallet = await getOrCreateDemoWallet(userId);
     if (!wallet) return res.status(404).json({ error: 'Wallet not found' });
 
@@ -189,8 +223,6 @@ export const sendMoney = async (req: Request, res: Response) => {
     });
 
     res.json({ success: true, wallet: updatedWallet, transaction: txn });
-    */
-    res.json({ success: true });
   } catch (error) {
     console.error('Send Money Error:', error);
     res.status(500).json({ error: 'Failed to process send money' });
@@ -222,7 +254,6 @@ export const rechargeMobile = async (req: Request, res: Response) => {
       });
     }
 
-    /*
     const wallet = await getOrCreateDemoWallet(userId);
     if (!wallet) return res.status(404).json({ error: 'Wallet not found' });
 
@@ -251,8 +282,6 @@ export const rechargeMobile = async (req: Request, res: Response) => {
     });
 
     res.json({ success: true, wallet: updatedWallet, transaction: txn });
-    */
-    res.json({ success: true });
   } catch (error) {
     console.error('Mobile Recharge Error:', error);
     res.status(500).json({ error: 'Failed to process mobile recharge' });

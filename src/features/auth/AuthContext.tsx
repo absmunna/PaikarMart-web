@@ -1,4 +1,4 @@
-﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { 
   onAuthStateChanged, 
   signInWithPopup, 
@@ -60,7 +60,7 @@ export interface AppUser {
   id: string;
   fullName: string;
   name?: string;
-  phone: string;
+  phone?: string;
   email?: string;
   avatarUrl?: string;
   avatar?: string;
@@ -468,8 +468,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     role: user?.role ?? "buyer",
     roles: user?.roles ?? ["buyer"],
     roleGroup: user?.roleGroup ?? getRoleGroup("buyer"),
-    isCustomer: (user?.roleGroup ?? getRoleGroup("buyer")) === "buyer",
-    isVendor: (user?.roleGroup ?? getRoleGroup("buyer")) === "seller" || user?.role === "factory",
+    isCustomer: (user?.roleGroup ?? getRoleGroup("buyer")) === "customer",
+    isVendor: (user?.roleGroup ?? getRoleGroup("buyer")) === "vendor" || user?.role === "factory",
     isAdmin: user?.role === "admin" || user?.role === "super_admin",
     isSeller: user?.role === "seller" || user?.roles?.includes("seller"),
     

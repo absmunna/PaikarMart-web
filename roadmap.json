@@ -1,0 +1,257 @@
+{
+  "appName": "PaikarMart",
+  "version": "2.1",
+  "currentPhase": "Phase 3: Smart Registration & Profile Verification",
+  "overallProgress": "48%",
+  "lastUpdated": "2026-09-21T16:45:50-07:00",
+  "phases": [
+    {
+      "phaseId": "phase-1",
+      "name": "Phase 1: Foundation Unification & Navigation Core",
+      "status": "completed",
+      "progress": "100%",
+      "tasks": [
+        {
+          "id": "p1-t1",
+          "module": "Global Stores",
+          "title": "Cart & Wallet State Consolidation",
+          "titleBn": "কার্ট এবং ওয়ালেট স্টেট একীকরণ",
+          "description": "Unified dual-currency PK Coin and BDT wallet, along with a single source of truth for the cross-portal shopping cart.",
+          "status": "completed",
+          "mappedRoute": "/cart",
+          "notes": "Redundant local stores removed, using unified zustand stores across all portals."
+        },
+        {
+          "id": "p1-t2",
+          "module": "Navigation Shell",
+          "title": "Universal Sticky Bottom Navigation",
+          "titleBn": "সার্বজনীন স্টিকি বটম নেভিগেশন",
+          "description": "Consolidated navigation targeting Home, Marketplace, Apps Launcher, Messages, and Profile.",
+          "status": "completed",
+          "mappedRoute": "AppShell",
+          "notes": "Ensured minimum 44px touch targets with responsive screen-sink."
+        },
+        {
+          "id": "p1-t3",
+          "module": "AI Integration",
+          "title": "Aloop AI Messages Integration",
+          "titleBn": "আলুপ এআই চ্যাট ইন্টিগ্রেশন",
+          "description": "Moved floating chat widgets to a dedicated chat and AI companion module inside the Messages portal.",
+          "status": "completed",
+          "mappedRoute": "/messages",
+          "notes": "Socket-ready UI supporting both client-vendor chats and Aloop AI."
+        }
+      ]
+    },
+    {
+      "phaseId": "phase-2",
+      "name": "Phase 2: Universal Portal Hub & Shared Layouts",
+      "status": "completed",
+      "progress": "100%",
+      "tasks": [
+        {
+          "id": "p2-t1",
+          "module": "Portal Core",
+          "title": "Universal Hub Launcher & Registry",
+          "titleBn": "পোর্টাল লঞ্চার এবং রেজিস্ট্রি",
+          "description": "Data-driven registration config for the 12 Super Portals and category grids.",
+          "status": "completed",
+          "mappedRoute": "/apps",
+          "notes": "Fully dynamic config-driven launchpad."
+        },
+        {
+          "id": "p2-t2",
+          "module": "Shared Templates",
+          "title": "E-Commerce Delivery Portal Layout",
+          "titleBn": "ই-কমার্স ডেলিভারি পোর্টাল লেআউট",
+          "description": "Shared templates for Food, Grocery, and Pharmacy portals containing StoryBar, PortalIconBar, and dynamic product grids.",
+          "status": "completed",
+          "mappedRoute": "/portals/_templates/EcomDeliveryPortal",
+          "notes": "Reduces layout and component redundancy."
+        },
+        {
+          "id": "p2-t3",
+          "module": "Shared Templates",
+          "title": "Listing Portal Engine",
+          "titleBn": "লিস্টিং পোর্টাল ইঞ্জিন",
+          "description": "Shared product search grids and sorting sidebars for Marketplace, Electronics, and Fashion.",
+          "status": "completed",
+          "mappedRoute": "/portals/_templates/ListingPortal",
+          "notes": "Optimized horizontal scrolling on mobile."
+        }
+      ]
+    },
+    {
+      "phaseId": "phase-3",
+      "name": "Phase 3: Smart Registration & Trust Certification",
+      "status": "in_progress",
+      "progress": "75%",
+      "tasks": [
+        {
+          "id": "p3-t1",
+          "module": "Registration",
+          "title": "Unified Smart Registration Wizard",
+          "titleBn": "ইউনিফাইড স্মার্ট রেজিস্ট্রেশন উইজার্ড",
+          "description": "Refactoring the multi-role registration flow for B2B, Wholesale, and Retail roles using a unified interactive stepper.",
+          "status": "in_progress",
+          "mappedRoute": "/register",
+          "notes": "Combines 5 separate authentication pages into one robust, conditional onboarding workflow."
+        },
+        {
+          "id": "p3-t2",
+          "module": "Trust & Verification",
+          "title": "7-Level Cascading Verification Badges",
+          "titleBn": "৭-স্তর বিশিষ্ট ক্যাসকেডিং ভেরিফিকেশন ব্যাজ",
+          "description": "Implementation of trust levels (Email, NID, Trade License, Export License, Enterprise) with associated feature gates.",
+          "status": "completed",
+          "mappedRoute": "/profile",
+          "notes": "Trust levels strictly control checkout limits and B2B/Wholesale capabilities."
+        },
+        {
+          "id": "p3-t3",
+          "module": "Localization & Geography",
+          "title": "BD Address Division-to-ZIP Selector",
+          "titleBn": "বিডি অ্যাড্রেস ডিভিশন-টু-জিপ সিলেক্টর",
+          "description": "Highly customized location input system filtering division, district, upazila, local area, and postal ZIP code.",
+          "status": "completed",
+          "mappedRoute": "/components/common/BDAddressSelector",
+          "notes": "Shares the unified address database across all checkout-enabled hubs."
+        }
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "name": "Phase 4: Social Commerce Features",
+      "status": "planned",
+      "progress": "20%",
+      "tasks": [
+        {
+          "id": "p4-t1",
+          "module": "Social Feed",
+          "title": "Polymorphic Post Card Engine",
+          "titleBn": "পলিমরফিক পোস্ট কার্ড ইঞ্জিন",
+          "description": "Unified feed rendering of products, services, local deals, and buyer requests.",
+          "status": "in_progress",
+          "mappedRoute": "/",
+          "notes": "Provides high performance and seamless CTA actions like Buy Now directly from feed posts."
+        },
+        {
+          "id": "p4-t2",
+          "module": "Product Interaction",
+          "title": "Tabbed Review & Discussion Center",
+          "titleBn": "রিভিউ এবং ডিসকাশন সেন্টার",
+          "description": "A clean, responsive interactive community panel for reviews, verified buyer comments, and Q&A threads.",
+          "status": "planned",
+          "mappedRoute": "/product/:id",
+          "notes": "Encourages commerce-only user interactions."
+        },
+        {
+          "id": "p4-t3",
+          "module": "Social Feed",
+          "title": "Urgency Ticker & Social Ticker",
+          "titleBn": "সোশ্যাল আরজেন্সি টিকার",
+          "description": "Live purchase notifications and dynamic stock counters showing high velocity demand on individual items.",
+          "status": "planned",
+          "mappedRoute": "/product/:id",
+          "notes": "Boosts trust and user engagement dynamically."
+        }
+      ]
+    },
+    {
+      "phaseId": "phase-5",
+      "name": "Phase 5: Sub-Portal Upgrades & Heavy Commerce Hubs",
+      "status": "planned",
+      "progress": "10%",
+      "tasks": [
+        {
+          "id": "p5-t1",
+          "module": "Services Hub",
+          "title": "On-demand Services & Provider Directory",
+          "titleBn": "অন-ডিমান্ড সার্ভিসেস এবং প্রোভাইডার ডিরেক্টরি",
+          "description": "Full portal launch replacing placeholders with real listings, booking slots, and service areas.",
+          "status": "pending",
+          "mappedRoute": "/services",
+          "notes": "Mapped to PortalComingSoon. Requires structural integration with universal checkout and escrow."
+        },
+        {
+          "id": "p5-t2",
+          "module": "B2B Trade Hub",
+          "title": "Factory Capacity & RFQ Portal",
+          "titleBn": "ফ্যাক্টরি ক্যাপাসিটি এবং আরএফকিউ পোর্টাল",
+          "description": "B2B wholesale marketplace, international inquiry forms, and manufacturing plant verification.",
+          "status": "pending",
+          "mappedRoute": "/b2b/factory",
+          "notes": "Mapped to PortalComingSoon. Crucial for Phase 3 advanced seller verifications."
+        },
+        {
+          "id": "p5-t3",
+          "module": "Logistics Hub",
+          "title": "6-Layer Unified Logistics Ecosystem",
+          "titleBn": "৬-স্তর বিশিষ্ট লজিস্টিকস ইকোসিস্টেম",
+          "description": "Full integration of Ride-sharing, Cargo/Truck booking, Courier routing, and Fleet Management dashboards.",
+          "status": "in_progress",
+          "mappedRoute": "/ride",
+          "notes": "Awaiting final maps tracking API and socket layers. Basic dashboards are designed."
+        },
+        {
+          "id": "p5-t4",
+          "module": "Media Hub",
+          "title": "Short Commerce Reels & Videos",
+          "titleBn": "শর্ট কমার্স রিলস এবং ভিডিও",
+          "description": "Dedicated short-video vertical scrolling for product demos and promotional clips linked with checkout hooks.",
+          "status": "pending",
+          "mappedRoute": "/reels",
+          "notes": "Currently mapped to PortalComingSoon. Linked with user activity logs."
+        },
+        {
+          "id": "p5-t5",
+          "module": "Niche Verticals",
+          "title": "Agriculture, Real Estate & Healthcare Portals",
+          "titleBn": "কৃষি, রিয়েল এস্টেট এবং স্বাস্থ্যসেবা পোর্টাল",
+          "description": "Integration of domain-specific listing portals targeting crop trades, home listings, and medical consulting services.",
+          "status": "pending",
+          "mappedRoute": "/verticals",
+          "notes": "Awaiting localized partner onboarding templates. Placeholder routing is set up."
+        }
+      ]
+    },
+    {
+      "phaseId": "phase-6",
+      "name": "Phase 6: Platform Intelligence & Polish",
+      "status": "planned",
+      "progress": "5%",
+      "tasks": [
+        {
+          "id": "p6-t1",
+          "module": "Platform Governance",
+          "title": "Admin AI Moderation & Intelligence Matrix",
+          "titleBn": "অ্যাডমিন এআই মডারেশন ও ইন্টেলিজেন্স ম্যাট্রিক্স",
+          "description": "3-column governance console containing fraud risk reports, product velocity alerts, and automated listing moderation queues.",
+          "status": "pending",
+          "mappedRoute": "/admin",
+          "notes": "Awaiting production database seeding and real server-side telemetry integration."
+        },
+        {
+          "id": "p6-t2",
+          "module": "Localization",
+          "title": "Bilingual Consistency Polish",
+          "titleBn": "দ্বিভাষিক সামঞ্জস্যতা পরিমার্জন",
+          "description": "Universal audits of labels, descriptions, and user feedback strings across all 12 Super Portals.",
+          "status": "pending",
+          "mappedRoute": "all",
+          "notes": "Ensures equal prominence to both Bengali and English labels."
+        },
+        {
+          "id": "p6-t3",
+          "module": "Performance",
+          "title": "Mobile UX Audit & Pull-to-Refresh",
+          "titleBn": "মোবাইল ইউএক্স অডিট ও পুল-টু-রিফ্রেশ",
+          "description": "Systematic optimization of mobile rendering, lazy loading boundaries, safe-areas, and touch target precision.",
+          "status": "pending",
+          "mappedRoute": "all",
+          "notes": "PWA certification ready."
+        }
+      ]
+    }
+  ]
+}

@@ -96,7 +96,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
 ];
 
 function AppsNavIcon(props: any) {
-    return <div className="w-12 h-12 bg-cyan-400 rounded-2xl flex items-center justify-center text-black shadow-lg shadow-cyan-400/20"><Grid3x3 {...props} /></div>;
+    return <div className="w-12 h-12 bg-[var(--pm-accent)] rounded-2xl flex items-center justify-center text-black shadow-lg shadow-[var(--pm-accent)]/20"><Grid3x3 {...props} /></div>;
 }
 
 export const MOBILE_NAV_ITEMS: NavItem[] = [

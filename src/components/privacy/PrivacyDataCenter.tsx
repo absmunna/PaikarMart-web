@@ -29,7 +29,7 @@ import { uploadService } from "../../services/uploadService";
 
 export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  const userId = user?.id || user?.uid || "guest-user";
+  const userId = user?.id || (user as any)?.uid || "guest-user";
 
   const [activeTab, setActiveTab] = useState<"privacy" | "my_content" | "kyc" | "export">("privacy");
   const [settings, setSettings] = useState<PrivacySettings>({

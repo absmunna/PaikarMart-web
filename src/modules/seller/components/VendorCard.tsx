@@ -48,7 +48,7 @@ export function VendorCard({ vendor }: { vendor: Vendor }) {
       <div className="absolute top-2 right-2">
         <button 
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsChatOpen(true); }}
-          className="p-2 bg-black/40 hover:bg-cyan-500/20 text-white rounded-full transition-all"
+          className="p-2 bg-black/40 hover:bg-[var(--pm-accent)]/20 text-white rounded-full transition-all"
         >
           <MessageSquare className="w-4 h-4" />
         </button>

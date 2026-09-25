@@ -1,7 +1,6 @@
 import React from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { UserCapabilities } from "../../types/user";
+import { useAuth } from "@/features/auth/AuthContext";
 import { ShieldAlert, ArrowLeft, RefreshCcw, Lock } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -13,10 +12,9 @@ interface UserGuardProps {
    */
   allowedRoles?: string[];
   /**
-   * Capabilities required to access.
-   * Example: { canSell: true }
+   * Capabilities or permissions required to access.
    */
-  requiredCapabilities?: Partial<UserCapabilities>;
+  requiredCapabilities?: any;
   /**
    * Custom URL to redirect to if authorization fails.
    * If not provided and showFallbackUI is false, redirects to '/'.
@@ -67,7 +65,7 @@ export const UserGuard: React.FC<UserGuardProps> = ({
   }
 
   // Double-verify UID consistency (ensuring session belongs strictly to currently loaded Firestore doc)
-  if (user && firebaseUser && user.uid !== firebaseUser.uid) {
+  if (user && firebaseUser && user.id !== firebaseUser.uid) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
         <RefreshCcw className="h-10 w-10 text-orange-500 animate-spin mb-4" />
@@ -87,11 +85,10 @@ export const UserGuard: React.FC<UserGuardProps> = ({
 
   // 4. Capability-based checks
   let hasCapabilityAccess = true;
-  if (requiredCapabilities && user?.capabilities) {
+  if (requiredCapabilities && user?.permissions) {
     hasCapabilityAccess = Object.entries(requiredCapabilities).every(
       ([key, requiredValue]) => {
-        const userValue = user.capabilities[key as keyof UserCapabilities];
-        return userValue === requiredValue;
+        return user.permissions.includes(key);
       }
     );
   }

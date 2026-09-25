@@ -93,7 +93,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
       ref={ref}
       layout
       className={cn(
-        "group relative overflow-hidden rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-2xl transition-all duration-500 hover:border-cyan-500/30 hover:bg-white/[0.03]",
+        "group relative overflow-hidden rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-2xl transition-all duration-500 hover:border-[var(--pm-accent)]/30 hover:bg-white/[0.03]",
         article.isPremium && "border-amber-500/30 hover:border-amber-500/50"
       )}
     >
@@ -103,7 +103,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
       </div>
 
       <div className="absolute top-0 left-0 w-20 h-20 pointer-events-none opacity-10 group-hover:opacity-30 transition-opacity overflow-hidden p-4">
-        <Sparkles className="w-full h-full text-cyan-500/40 -rotate-12" />
+        <Sparkles className="w-full h-full text-[var(--pm-accent)]/40 -rotate-12" />
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 p-6">
@@ -123,7 +123,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
               "px-3.5 py-1.5 rounded-2xl text-[10px] uppercase font-black tracking-widest backdrop-blur-md shadow-md text-white border border-white/10",
               article.isPremium 
                 ? "bg-gradient-to-r from-amber-500 to-yellow-600 border-amber-400/20" 
-                : "bg-cyan-500/80 border-cyan-400/20"
+                : "bg-[var(--pm-accent)]/80 border-[var(--pm-accent)]/20"
             )}>
               {article.categoryLabelBn}
             </span>
@@ -137,11 +137,11 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
           {/* Quick Metrics Overlay */}
           <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white/90 text-xs font-semibold">
             <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2.5 py-1.5 rounded-xl">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
+              <Clock className="w-3.5 h-3.5 text-[var(--pm-accent)]/80" />
               <span>{article.readTimeBn}</span>
             </div>
             <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2.5 py-1.5 rounded-xl">
-              <Eye className="w-3.5 h-3.5 text-sky-400" />
+              <Eye className="w-3.5 h-3.5 text-[var(--pm-accent)]/80" />
               <span>{article.views + (hasLiked ? 1 : 0)} ভিউ</span>
             </div>
           </div>
@@ -152,16 +152,16 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
           <div className="space-y-3">
             {/* Publisher Info */}
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="w-6 h-6 rounded-lg bg-[var(--pm-accent)]/10 border border-[var(--pm-accent)]/20 flex items-center justify-center">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
               </div>
-              <span className="text-xs text-cyan-400 font-bold uppercase tracking-wider">{article.source}</span>
+              <span className="text-xs text-[var(--pm-accent)] font-bold uppercase tracking-wider">{article.source}</span>
               <span className="text-zinc-600">•</span>
               <span className="text-xs text-zinc-500 font-medium">{article.publishedAt}</span>
             </div>
 
             {/* Main Headline */}
-            <h2 className="text-xl md:text-2xl font-black text-white hover:text-cyan-400 transition-colors tracking-tight leading-tight italic">
+            <h2 className="text-xl md:text-2xl font-black text-white hover:text-[var(--pm-accent)] transition-colors tracking-tight leading-tight italic">
               {article.titleBn}
             </h2>
             <p className="text-xs text-zinc-500 font-medium tracking-wide">
@@ -179,7 +179,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
                     exit={{ opacity: 0 }}
                     className="space-y-3"
                   >
-                    <p className="text-cyan-300 font-semibold mb-2">{article.summaryBn}</p>
+                    <p className="text-[var(--pm-accent)]/80 font-semibold mb-2">{article.summaryBn}</p>
                     <p className="whitespace-pre-line leading-loose text-zinc-300">{article.contentBn}</p>
                     {article.content && (
                       <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 mt-4">
@@ -201,7 +201,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
           <div className="flex flex-col gap-4 pt-2">
             <button 
               onClick={() => setIsExpanded(!isExpanded)}
-              className="self-start flex items-center gap-1 text-xs font-black text-cyan-400 hover:text-[#00c853] transition-colors focus:outline-none uppercase tracking-wider"
+              className="self-start flex items-center gap-1 text-xs font-black text-[var(--pm-accent)] hover:opacity-80 transition-colors focus:outline-none uppercase tracking-wider"
             >
               <span>{isExpanded ? 'সংক্ষিপ্ত করুন' : 'বিস্তারিত খবর পড়ুন'}</span>
               {isExpanded ? <ChevronUp className="w-4 h-4 animate-bounce" /> : <ChevronDown className="w-4 h-4 animate-bounce" />}
@@ -230,7 +230,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors font-bold text-xs cursor-pointer",
                     showComments
-                      ? "bg-cyan-500/15 text-cyan-400" 
+                      ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)]" 
                       : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
                   )}
                   aria-label="Toggle comments"
@@ -247,7 +247,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
                   className={cn(
                     "p-2 rounded-full transition-colors cursor-pointer",
                     isCopied 
-                      ? "bg-cyan-500/20 text-cyan-400" 
+                      ? "bg-[var(--pm-accent)]/20 text-[var(--pm-accent)]" 
                       : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
                   )}
                   title="Copy news link"
@@ -287,11 +287,11 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
                       value={newComment}
                       onChange={e => setNewComment(e.target.value)}
                       placeholder="মন্তব্য লিখুন..." 
-                      className="flex-1 bg-white/5 text-xs text-white placeholder-zinc-500 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 border border-white/5"
+                      className="flex-1 bg-white/5 text-xs text-white placeholder-zinc-500 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-[var(--pm-accent)] border border-white/5"
                     />
                     <button 
                       type="submit" 
-                      className="px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-xl transition-colors cursor-pointer"
+                      className="px-4 py-2.5 bg-[var(--pm-accent)] hover:opacity-90 text-white text-xs font-black rounded-xl transition-colors cursor-pointer"
                     >
                       আপলোড
                     </button>
@@ -301,7 +301,7 @@ export const NewsCard = React.forwardRef<HTMLDivElement, NewsCardProps>(({ artic
                     {comments.map((comm) => (
                       <div key={comm.id} className="p-3 bg-white/[0.01] rounded-2xl border border-white/5 space-y-1">
                         <div className="flex justify-between items-center text-[10px]">
-                          <span className="text-cyan-400 font-extrabold">{comm.author}</span>
+                          <span className="text-[var(--pm-accent)] font-extrabold">{comm.author}</span>
                           <span className="text-zinc-500 font-medium">{comm.time}</span>
                         </div>
                         <p className="text-xs text-zinc-300 font-medium leading-relaxed">{comm.text}</p>

@@ -55,7 +55,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
             <h1 className="text-4xl font-black text-white tracking-tighter">
               ৳ {balance.toLocaleString()}
             </h1>
-            <span className="text-cyan-500 text-xs font-bold bg-cyan-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[var(--pm-accent)] text-xs font-bold bg-[var(--pm-accent)]/10 px-2 py-0.5 rounded-full">
               {isBn ? "সুরক্ষিত" : "Safe"}
             </span>
           </div>
@@ -76,7 +76,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">
                 {isBn ? "অবস্থা" : "Status"}
               </p>
-              <div className="flex items-center gap-1.5 text-cyan-400 font-black">
+              <div className="flex items-center gap-1.5 text-[var(--pm-accent)] font-black">
                 <ShieldCheck size={12} />
                 <span className="text-[10.5px]">{isBn ? "যাচাইকৃত" : "Verified"}</span>
               </div>
@@ -89,7 +89,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
       <div className="grid grid-cols-2 gap-3">
         <Button 
           onClick={() => onAction?.('topup')}
-          className="h-14 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm gap-2 cursor-pointer"
+          className="h-14 rounded-2xl bg-[var(--pm-accent)] hover:opacity-90 text-white font-black text-sm gap-2 cursor-pointer"
         >
           <Plus size={18} />
           {isBn ? "ক্যাশ ইন" : "Cash In"}
@@ -158,7 +158,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center",
-                    tx.type === 'credit' ? "bg-cyan-500/10 text-cyan-500" : "bg-rose-500/10 text-rose-500"
+                    tx.type === 'credit' ? "bg-[var(--pm-accent)]/10 text-[var(--pm-accent)]" : "bg-rose-500/10 text-rose-500"
                   )}>
                     {tx.type === 'credit' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
                   </div>
@@ -171,14 +171,14 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
                 <div className="text-right">
                   <span className={cn(
                     "text-sm font-black tracking-tighter",
-                    tx.type === 'credit' ? "text-cyan-400" : "text-white"
+                    tx.type === 'credit' ? "text-[var(--pm-accent)]" : "text-white"
                   )}>
                     {tx.type === 'credit' ? '+' : '-'} ৳{tx.amount.toLocaleString()}
                   </span>
                   <div className="flex items-center justify-end gap-1 mt-1">
                     <div className={cn(
                       "w-1 h-1 rounded-full",
-                      tx.status === 'success' ? "bg-cyan-500" : "bg-amber-500"
+                      tx.status === 'success' ? "bg-[var(--pm-accent)]" : "bg-amber-500"
                     )} />
                     <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">
                       {tx.status === 'success' ? (isBn ? "সফল" : "success") : (isBn ? "প্রক্রিয়াধীন" : "pending")}

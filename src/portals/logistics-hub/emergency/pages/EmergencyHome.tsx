@@ -124,7 +124,7 @@ export default function EmergencyHome() {
                 <Activity className="h-5 w-5 text-rose-500" />
                 {t('Verified Hospitals Nearby', 'নিকটস্থ ভেরিফাইড হাসপাতাল')}
               </h2>
-              <Button variant="link" className="text-rose-500 text-xs">{t('See All', 'সব দেখুন')}</Button>
+              <Button variant="ghost" className="text-rose-500 text-xs">{t('See All', 'সব দেখুন')}</Button>
             </div>
 
             <div className="grid gap-4">

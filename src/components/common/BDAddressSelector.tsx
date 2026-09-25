@@ -1,18 +1,22 @@
 import React from 'react';
 
 export interface AddressDetails {
+  fullName?: string;
+  phone?: string;
   division: string;
   district: string;
   upazila: string;
   area: string;
+  zipCode?: string;
 }
 
 interface BDAddressSelectorProps {
   initialValue?: any;
-  onChange: (details: AddressDetails, isValid: boolean) => void;
+  onChange?: (details: AddressDetails, isValid: boolean) => void;
+  onAddressChange?: (details: AddressDetails, isValid: boolean) => void;
 }
 
-export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({ initialValue, onChange }) => {
+export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({ initialValue, onChange, onAddressChange }) => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">

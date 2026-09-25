@@ -6,10 +6,9 @@ interface LocationState {
   lat?: number;
   lng?: number;
   isAutoDetected: boolean;
-  routeHistory: { lat: number; lng: number; timestamp: string }[];
   setLocation: (city: string, lat?: number, lng?: number) => void;
-  setAutoDetected: (status: boolean) => void;
   updateLiveLocation: (lat: number, lng: number) => void;
+  setAutoDetected: (status: boolean) => void;
 }
 
 export const useLocationStore = create<LocationState>()(
@@ -17,14 +16,9 @@ export const useLocationStore = create<LocationState>()(
     (set) => ({
       city: 'Dhaka', // Default
       isAutoDetected: false,
-      routeHistory: [],
       setLocation: (city, lat, lng) => set({ city, lat, lng, isAutoDetected: false }),
+      updateLiveLocation: (lat, lng) => set((s) => ({ ...s, lat, lng })),
       setAutoDetected: (status) => set({ isAutoDetected: status }),
-      updateLiveLocation: (lat, lng) => set((state) => ({
-        lat,
-        lng,
-        routeHistory: [...state.routeHistory, { lat, lng, timestamp: new Date().toISOString() }]
-      })),
     }),
     {
       name: 'pm-location-storage',

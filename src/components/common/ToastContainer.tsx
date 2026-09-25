@@ -1,17 +1,17 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { useNotificationStore, NotificationType } from '@/modules/notification/notificationStore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNotificationStore, NotificationType } from '../../store/notificationStore';
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react';
 
 const icons: Record<NotificationType, React.ReactNode> = {
-  success: <CheckCircle className="w-5 h-5 text-cyan-500" />,
+  success: <CheckCircle className="w-5 h-5 text-emerald-500" />,
   error: <XCircle className="w-5 h-5 text-red-500" />,
   info: <Info className="w-5 h-5 text-blue-500" />,
   warning: <AlertTriangle className="w-5 h-5 text-amber-500" />,
 };
 
 const backgrounds: Record<NotificationType, string> = {
-  success: 'border-cyan-500/20 bg-cyan-500/10',
+  success: 'border-emerald-500/20 bg-emerald-500/10',
   error: 'border-red-500/20 bg-red-500/10',
   info: 'border-blue-500/20 bg-blue-500/10',
   warning: 'border-amber-500/20 bg-amber-500/10',

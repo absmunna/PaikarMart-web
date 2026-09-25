@@ -83,6 +83,9 @@ export const useCartStore = create<CartStore>()(
           } else {
             const itemToPush: CartItem = {
               ...newItem,
+              name: newItem.name || newItem.title || 'পণ্য',
+              price: Number(newItem.price) || 0,
+              image: newItem.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
               quantity: qtyToAdd,
               stock: maxStock,
               portal: newItem.portal || 'b2c',

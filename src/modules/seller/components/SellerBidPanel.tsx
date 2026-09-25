@@ -39,7 +39,7 @@ export const SellerBidPanel: React.FC<Props> = ({ bids }) => {
             <div className="flex flex-col gap-4">
                <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                     <h4 className="text-sm font-black text-white group-hover:text-cyan-400 transition-colors line-clamp-1 mb-1">{bid.demandTitle}</h4>
+                     <h4 className="text-sm font-black text-white group-hover:text-[var(--pm-accent)] transition-colors line-clamp-1 mb-1">{bid.demandTitle}</h4>
                      <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-bold uppercase">
                            <Clock className="w-3 h-3" />
@@ -52,11 +52,11 @@ export const SellerBidPanel: React.FC<Props> = ({ bids }) => {
                      </div>
                   </div>
                   <div className="text-right">
-                     <p className="text-sm font-black text-cyan-400">{formatBDT(bid.amount)}</p>
+                     <p className="text-sm font-black text-[var(--pm-accent)]">{formatBDT(bid.amount)}</p>
                      <span className={cn(
                         "text-[9px] font-black uppercase tracking-tighter px-2 py-0.5 rounded-full",
                         bid.status === 'pending' ? "bg-amber-500/10 text-amber-400" :
-                        bid.status === 'accepted' ? "bg-cyan-500/10 text-cyan-400" :
+                        bid.status === 'accepted' ? "bg-[var(--pm-accent)]/10 text-[var(--pm-accent)]" :
                         "bg-rose-500/10 text-rose-400"
                      )}>
                         {bid.status}
@@ -71,7 +71,7 @@ export const SellerBidPanel: React.FC<Props> = ({ bids }) => {
                   </p>
                </div>
 
-               <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-cyan-400 transition-colors w-fit">
+               <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[var(--pm-accent)] transition-colors w-fit">
                   View Full Quotation Details <ChevronRight className="w-3 h-3" />
                </button>
             </div>
