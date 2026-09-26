@@ -1,6 +1,6 @@
 import * as React from "react";
 
-type Theme = "dark" | "light" | "premium" | "deep-dark" | "colorful" | "nakshi-light" | "green-field";
+export type Theme = "dark" | "light" | "premium" | "deep-dark" | "colorful" | "nakshi-light" | "green-field" | (string & {});
 
 export interface ThemePreset {
   id: Theme;
@@ -32,17 +32,7 @@ const THEME_PRESETS: ThemePreset[] = [
 const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = React.useState<Theme>(() => {
-    return (localStorage.getItem("pm_theme") as Theme) || "dark";
-  });
-
-  React.useEffect(() => {
-    // Sync with localStorage and document class
-    const root = window.document.documentElement;
-    THEME_PRESETS.forEach(p => root.classList.remove(p.id));
-    root.classList.add(theme);
-    localStorage.setItem("pm_theme", theme);
-  }, [theme]);
+  const [theme, setTheme] = React.useState<Theme>("dark");
 
   const value: ThemeContextValue = React.useMemo(() => ({
     theme,

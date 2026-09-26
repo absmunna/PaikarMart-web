@@ -27,6 +27,7 @@ export interface Product {
   tags?: string[];
   type?: string;
   portal?: string;
+  badge?: string;
 }
 
 export interface Post {

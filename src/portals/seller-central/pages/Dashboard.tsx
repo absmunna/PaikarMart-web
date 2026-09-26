@@ -1,6 +1,6 @@
 import React from 'react';
 import { SellerDashboard } from '@/modules/seller/components/SellerDashboard';
-import { VoiceAssistantWidget } from '@modules/ai';
+import { VoiceAssistantWidget } from '@/modules/ai';
 
 export default function SellerDashboardPage() {
   return (

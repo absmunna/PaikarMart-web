@@ -78,10 +78,10 @@ export const SearchPage: React.FC = () => {
   const filteredProducts = useMemo(() => {
     if (!query.trim()) return mockProducts.slice(0, 8);
     const qLower = query.toLowerCase().trim();
-    return mockProducts.filter(p => 
-      p.title.toLowerCase().includes(qLower) || 
-      p.category.toLowerCase().includes(qLower) ||
-      p.vendor.toLowerCase().includes(qLower)
+    return mockProducts.filter((p: any) => 
+      (p.title || p.name || '').toLowerCase().includes(qLower) || 
+      (p.category || '').toLowerCase().includes(qLower) ||
+      (typeof p.vendor === 'string' ? p.vendor : p.vendor?.name || p.vendorName || p.seller || '').toLowerCase().includes(qLower)
     );
   }, [query]);
 

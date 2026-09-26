@@ -16,20 +16,55 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@backend/*": ["./backend/*"],
-      "@shared/*": ["./src/shared/*"],
-      "@modules/*": ["./src/modules/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@ui/*": ["./src/components/ui/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
+      ],
+      "@shared": [
+        "./src/shared"
+      ],
+      "@modules/*": [
+        "./src/modules/*"
+      ],
+      "@modules": [
+        "./src/modules"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@lib": [
+        "./src/lib"
+      ],
+      "@ui/*": [
+        "./src/components/ui/*"
+      ],
+      "@ui": [
+        "./src/components/ui"
+      ],
+      "@portals/*": [
+        "./src/portals/*"
+      ],
+      "@portals": [
+        "./src/portals"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@components": [
+        "./src/components"
+      ],
+      "@backend/*": [
+        "./backend/*"
+      ],
+      "@backend": [
+        "./backend"
+      ]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  },
-  "include": ["src", "vite.config.ts"],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  }
 }

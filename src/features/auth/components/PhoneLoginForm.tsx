@@ -8,13 +8,29 @@ import { useNavigate } from 'react-router-dom';
 
 export const PhoneLoginForm = () => {
   const [phone, setPhone] = useState('');
-  const { loginWithPhone } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginWithPhone(phone, '123456');
+      await signIn({ 
+        id: 'usr-' + Date.now(), 
+        uid: 'usr-' + Date.now(), 
+        name: 'Phone User', 
+        phone, 
+        roles: ['buyer'],
+        capabilities: {
+          canBuy: true,
+          canSell: false,
+          canManageProducts: false,
+          canManageOrders: false
+        },
+        accountStatus: "active",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      } as any); // Mock sign in
+      toast.success('Successfully logged in!');
       navigate('/');
     } catch (error) {
       toast.error('Login failed.');

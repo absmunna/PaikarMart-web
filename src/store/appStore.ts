@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Language = 'EN' | 'BN' | 'en' | 'bn';
+type Language = 'EN' | 'BN';
 
 interface AppState {
   lang: Language;

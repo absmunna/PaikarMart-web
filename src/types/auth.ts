@@ -5,13 +5,11 @@ export interface User {
   email: string;
   role: UserRole | string;
   name?: string;
-  fullName?: string;
   displayName?: string;
-  phone?: string;
   avatar?: string;
-  avatarUrl?: string;
+  phone?: string;
   portals?: string[];
-  isVerified?: boolean;
+  [key: string]: any;
 }
 
 export interface AuthState {

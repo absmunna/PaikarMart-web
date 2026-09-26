@@ -4,9 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import { SearchBar } from "./SearchBar";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useCartStore } from "../modules/cart/cartStore";
+import { useCartStore } from "../modules/cart/store/useCartStore";
 import { SideNavDrawer } from "./common/AppNavigation";
-import { useLanguage } from "@/features/language/LanguageContext";
+import { useLanguage } from "../features/language/LanguageContext";
 
 export default function Header() {
   const { user, isAuthenticated, hasRole } = useAuth();

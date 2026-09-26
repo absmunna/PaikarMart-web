@@ -28,7 +28,7 @@ export interface SellerOrder {
   id: string;
   buyerName: string;
   amount: number;
-  status: 'new' | 'processing' | 'shipped' | 'completed' | 'cancelled';
+  status: 'new' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'pending';
   createdAt: string;
   itemCount: number;
 }

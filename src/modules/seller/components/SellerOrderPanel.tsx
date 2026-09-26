@@ -8,19 +8,20 @@ import { GlassCard } from '@/components/ui';
 
 interface SellerOrderPanelProps {
   orders: SellerOrder[];
-  onAccept: (id: string) => void;
-  onShip: (id: string) => void;
+  onAccept?: (id: string) => void;
+  onShip?: (id: string) => void;
 }
 
 const STATUS_CONFIG: Record<SellerOrder['status'], { label: string; color: string; bg: string; icon: any }> = {
   new: { label: 'New Order', color: 'text-primary', bg: 'bg-primary/10', icon: ShoppingBag },
+  pending: { label: 'Pending', color: 'text-amber-400', bg: 'bg-amber-400/10', icon: Clock },
   processing: { label: 'In Packing', color: 'text-amber-400', bg: 'bg-amber-400/10', icon: Clock },
   shipped: { label: 'Dispatched', color: 'text-indigo-400', bg: 'bg-indigo-400/10', icon: Truck },
   completed: { label: 'Settled', color: 'text-[var(--pm-accent)]', bg: 'bg-[var(--pm-accent)]/10', icon: CheckCircle2 },
   cancelled: { label: 'Cancelled', color: 'text-rose-400', bg: 'bg-rose-400/10', icon: XCircle },
 };
 
-export const SellerOrderPanel: React.FC<SellerOrderPanelProps> = ({ orders, onAccept, onShip }) => {
+export const SellerOrderPanel: React.FC<SellerOrderPanelProps> = ({ orders, onAccept = () => {}, onShip = () => {} }) => {
   return (
     <div className="flex flex-col gap-5">
       {orders.length === 0 ? (

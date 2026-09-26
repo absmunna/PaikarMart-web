@@ -25,7 +25,8 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const auth = useAuth() as any;
+  const user = auth.user;
 
   const menuItems = [
     { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/seller-central" },
@@ -37,7 +38,8 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
   ];
 
   const handleSignOut = async () => {
-    await signOut();
+    if (auth.signOut) await auth.signOut();
+    else if (auth.logout) await auth.logout();
     navigate("/");
   };
 
@@ -94,10 +96,10 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
           <div className="p-4 border-t border-white/5">
             <div className="bg-[#1e2136] rounded-3xl p-4 flex items-center gap-3 border border-white/5">
               <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#FF7A00] to-orange-600 flex items-center justify-center text-white font-bold uppercase overflow-hidden shrink-0">
-                {user?.name ? user.name.charAt(0) : "U"}
+                {(user?.displayName || user?.name || user?.email || "U").charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white truncate">{user?.name || "Seller Name"}</p>
+                <p className="text-sm font-bold text-white truncate">{user?.displayName || user?.name || "Seller Name"}</p>
                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ভেরিফাইড সেলার</p>
               </div>
               <button 

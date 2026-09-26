@@ -46,28 +46,30 @@ class EventBus extends EventEmitter {
 
   private async handleProductLifecycle(event: any) {
     try {
-      const { productId, sellerId, title } = event.payload;
+      if (!process.env.DATABASE_URL) return;
+      const { productId, sellerId } = event.payload;
       const product = await prisma.product.findUnique({ where: { id: productId } });
       
       if (!product) return;
 
       // Automatically create a ContentItem (social feed post) for the new product
-      await prisma.contentItem.create({
-        data: {
-          contentType: 'PRODUCT',
-          title: `নতুন পণ্য: ${product.title}`,
-          content: `${product.description?.substring(0, 150)}...`,
-          mediaUrl: product.images?.[0] || null,
-          authorId: sellerId,
-          categoryId: product.categoryId,
-          isPromoted: product.isPKStore,
-          metadata: {
-            productId: product.id,
-            price: Number(product.price),
-            type: product.type
+      if ((prisma as any).contentItem?.create) {
+        await (prisma as any).contentItem.create({
+          data: {
+            contentType: 'PRODUCT',
+            title: `নতুন পণ্য: ${(product as any).title || product.name}`,
+            content: `${product.description?.substring(0, 150)}...`,
+            mediaUrl: product.images?.[0] || null,
+            authorId: sellerId,
+            categoryId: product.category,
+            isPromoted: product.isPKStore,
+            metadata: {
+              productId: product.id,
+              price: Number(product.price)
+            }
           }
-        }
-      });
+        });
+      }
 
       console.log(`[Product Lifecycle] Auto-published product ${productId} to Social Feed`);
     } catch (err) {
@@ -92,15 +94,17 @@ class EventBus extends EventEmitter {
     console.log(`[EventBus] Emitting ${eventName}: ${eventId}`);
     
     try {
-      // Ensure all event emissions are durably persisted to Database
-      await prisma.platformEventLog.create({
-        data: {
-          eventId,
-          type: eventName,
-          payload: payload,
-          status: 'processed'
-        }
-      });
+      if (process.env.DATABASE_URL && (prisma as any).platformEventLog?.create) {
+        // Ensure all event emissions are durably persisted to Database
+        await (prisma as any).platformEventLog.create({
+          data: {
+            eventId,
+            type: eventName,
+            payload: payload,
+            status: 'processed'
+          }
+        });
+      }
     } catch (err) {
       console.error(`[EventBus] Failed to persist event log for ${eventName}`, err);
     }

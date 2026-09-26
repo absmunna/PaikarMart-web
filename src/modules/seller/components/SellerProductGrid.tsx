@@ -55,7 +55,7 @@ export const SellerProductGrid: React.FC<SellerProductGridProps> = ({ products }
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {products.map((product) => (
-          <div key={product.id} className="bg-white/5 border border-[var(--pm-border)] rounded-2xl p-4 flex gap-4 group hover:border-[var(--pm-accent)]/30 transition-all backdrop-blur-md">
+          <div key={product.id} className="bg-white/5 border border-[var(--pm-border)] rounded-2xl p-4 flex gap-4 group hover:border-cyan-400/30 transition-all backdrop-blur-md">
             {/* Image */}
             <div className="w-24 h-24 rounded-xl bg-[var(--pm-card)] border border-[var(--pm-border)] overflow-hidden shrink-0 relative">
               <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
@@ -114,7 +114,7 @@ export const SellerProductGrid: React.FC<SellerProductGridProps> = ({ products }
                     onClick={() => toggleBoost(product)}
                     className={cn(
                       "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer",
-                      product.isBoosted ? "bg-[var(--pm-accent)] text-black hover:bg-[var(--pm-accent)] shadow-[0_0_10px_var(--pm-accent)/30]" : "bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white"
+                      product.isBoosted ? "bg-[var(--pm-accent)] text-black hover:bg-[var(--pm-accent)] shadow-[0_0_10px_rgba(34,211,238,0.3)]" : "bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white"
                   )}>
                       {product.isBoosted ? "Boosted" : "Boost"}
                   </button>

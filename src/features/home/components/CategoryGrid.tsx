@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from "@/components/ui";
+import { Card } from "@/components/ui/card";
 
 const categories = ['Electronics', 'Fashion', 'Home Decor', 'Groceries', 'Services'];
 

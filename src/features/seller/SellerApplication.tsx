@@ -169,9 +169,7 @@ export const SellerApplication: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const userId = user.id || (user as any).uid;
-      const userAvatar = user.avatarUrl || user.avatar || '';
-      const userRef = doc(db, 'users', userId);
+      const userRef = doc(db, 'users', user.uid);
 
       // 1. Save main unified seller application on user document
       await updateDoc(userRef, {
@@ -187,7 +185,7 @@ export const SellerApplication: React.FC = () => {
           contactPhone: formData.phone,
           verified: false,
           verificationStatus: 'pending',
-          avatarUrl: userAvatar,
+          avatarUrl: user.photoURL || '',
           coverUrl: '',
           physicalAddress: formData.physicalAddress,
           businessInfo: {
@@ -217,8 +215,8 @@ export const SellerApplication: React.FC = () => {
 
       // 2. Add verification entries to kyc_documents
       if (formData.nidNumber) {
-        await setDoc(doc(db, 'kyc_documents', `nid_${userId}`), {
-          userId: userId,
+        await setDoc(doc(db, 'kyc_documents', `nid_${user.uid}`), {
+          userId: user.uid,
           documentType: 'NID Card',
           documentNumber: formData.nidNumber,
           status: 'pending',
@@ -228,8 +226,8 @@ export const SellerApplication: React.FC = () => {
       }
 
       if (formData.tradeLicenseNo) {
-        await setDoc(doc(db, 'kyc_documents', `trade_${userId}`), {
-          userId: userId,
+        await setDoc(doc(db, 'kyc_documents', `trade_${user.uid}`), {
+          userId: user.uid,
           documentType: 'Trade License',
           documentNumber: formData.tradeLicenseNo,
           dbidNumber: formData.dbidNumber || '',
@@ -240,13 +238,13 @@ export const SellerApplication: React.FC = () => {
       }
 
       // 3. Create Audit Log Entry
-      const logId = `log_${Date.now()}_${userId}`;
+      const logId = `log_${Date.now()}_${user.uid}`;
       await setDoc(doc(db, 'audit_logs', logId), {
         id: logId,
-        userId: userId,
+        userId: user.uid,
         action: 'SUBMIT_SELLER_APPLICATION',
         details: `User applied for Unified Seller. Type: ${formData.sellerType}, Primary Offering: ${formData.primaryOffering}`,
-        targetUserId: userId,
+        targetUserId: user.uid,
         createdAt: serverTimestamp()
       });
 

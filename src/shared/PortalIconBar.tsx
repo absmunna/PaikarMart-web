@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export const PortalIconBar: React.FC<{ context?: string }> = () => {
   const portals = [
-    { id: 'marketplace', icon: ShoppingBag, label: 'Marketplace', path: '/marketplace', color: 'text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]/20' },
+    { id: 'marketplace', icon: ShoppingBag, label: 'Marketplace', path: '/marketplace', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
     { id: 'wholesale', icon: Briefcase, label: 'Wholesale B2B', path: '/wholesale', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
     { id: 'video', icon: Film, label: 'Video & Live', path: '/video', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
     { id: 'demand', icon: Tag, label: 'Demand Hub', path: '/demand', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },

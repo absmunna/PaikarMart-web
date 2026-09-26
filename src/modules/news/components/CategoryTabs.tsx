@@ -20,13 +20,13 @@ export interface NewsCategory {
 }
 
 export const NEWS_CATEGORIES: NewsCategory[] = [
-  { id: 'all', label: 'All News', labelBn: 'সব খবর', icon: Rss, color: 'from-[var(--pm-accent)] to-orange-600' },
-  { id: 'trending', label: 'Trending', labelBn: 'জনপ্রিয় খবর', icon: Flame, color: 'from-amber-500 to-red-600' },
-  { id: 'wholesale', label: 'Wholesale BD', labelBn: 'পাইকারি বাজার', icon: Layers, color: 'from-blue-600 to-indigo-700' },
-  { id: 'retail', label: 'Retail Trends', labelBn: 'খুচরা মার্কেট', icon: Store, color: 'from-pink-600 to-rose-700' },
+  { id: 'all', label: 'All News', labelBn: 'সব খবর', icon: Rss, color: 'from-cyan-500 to-green-600' },
+  { id: 'trending', label: 'Trending', labelBn: 'জনপ্রিয় খবর', icon: Flame, color: 'from-orange-500 to-red-600' },
+  { id: 'wholesale', label: 'Wholesale BD', labelBn: 'পাইকারি বাজার', icon: Layers, color: 'from-blue-500 to-indigo-600' },
+  { id: 'retail', label: 'Retail Trends', labelBn: 'খুচরা মার্কেট', icon: Store, color: 'from-pink-500 to-rose-600' },
   { id: 'jamdani', label: 'Jamdani/Heritage', labelBn: 'জামদানি ঐতিহ্য', icon: Sparkles, color: 'from-amber-400 to-yellow-600' },
-  { id: 'business', label: 'SME Secrets', labelBn: 'ব্যবসা গাইড', icon: TrendingUp, color: 'from-emerald-500 to-teal-700' },
-  { id: 'tech', label: 'E-Commerce Tech', labelBn: 'ট্রেড টেকনোলজি', icon: Cpu, color: 'from-orange-500 to-amber-600' },
+  { id: 'business', label: 'SME Secrets', labelBn: 'ব্যবসা গাইড', icon: TrendingUp, color: 'from-purple-500 to-violet-600' },
+  { id: 'tech', label: 'E-Commerce Tech', labelBn: 'ট্রেড টেকনোলজি', icon: Cpu, color: 'from-cyan-500 to-blue-600' },
 ];
 
 interface CategoryTabsProps {

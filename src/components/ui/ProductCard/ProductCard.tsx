@@ -3,57 +3,44 @@ import { motion } from 'framer-motion';
 import { Star, Heart } from 'lucide-react';
 
 export interface Product {
-  id: string | number;
+  id: number | string;
   name?: string;
   title?: string;
   price: string | number;
   rating?: string | number;
   reviews?: string | number;
   image?: string;
-  imageUrl?: string;
   [key: string]: any;
 }
 
 export interface ProductCardProps {
-  product: any;
+  product: Product;
   className?: string;
-  onSelectProduct?: (product: any) => void;
-  onClick?: (e?: any) => void;
-  isFlashSale?: boolean;
   noLink?: boolean;
+  onClick?: () => void;
   customAction?: React.ReactNode;
+  isFlashSale?: boolean;
   [key: string]: any;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ 
   product, 
-  className = "",
-  onSelectProduct,
-  onClick,
-  isFlashSale,
-  customAction
+  className = "", 
+  onClick, 
+  customAction 
 }) => {
   const title = product.name || product.title || 'Product';
-  const img = product.image || product.imageUrl || (Array.isArray(product.images) ? product.images[0] : null) || `https://picsum.photos/seed/${product.id}/400/300`;
-  const priceVal = typeof product.price === 'number' ? `৳${product.price.toLocaleString()}` : product.price;
-
-  const handleClick = (e: React.MouseEvent) => {
-    onClick?.(e);
-    onSelectProduct?.(product);
-  };
+  const rating = product.rating ?? '4.8';
+  const reviews = product.reviews ?? '120';
+  const priceDisplay = typeof product.price === 'number' ? `৳${product.price.toLocaleString()}` : product.price;
 
   return (
     <motion.div 
-      className={`rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] overflow-hidden flex flex-col relative shrink-0 cursor-pointer ${className} group`}
+      className={`rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] overflow-hidden flex flex-col relative shrink-0 ${className} group cursor-pointer`}
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
-      onClick={handleClick}
+      onClick={onClick}
     >
-      {isFlashSale && (
-        <span className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded shadow">
-          Flash Sale
-        </span>
-      )}
       <button 
         type="button"
         onClick={(e) => { e.stopPropagation(); }}
@@ -63,25 +50,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </button>
       <div className="h-[160px] bg-[var(--pm-surface-hover)] flex items-center justify-center overflow-hidden">
         <img 
-          src={img}
+          src={product.image || product.images?.[0] || `https://picsum.photos/seed/${product.id}/400/300`}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           referrerPolicy="no-referrer"
         />
       </div>
-      <div className="p-3 flex flex-col flex-1 justify-between">
+      <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
         <div>
-          <h4 className="font-semibold text-sm line-clamp-1 group-hover:text-[var(--pm-accent)] transition-colors">{title}</h4>
-          <p className="text-[var(--pm-accent)] font-bold text-sm mt-1">{priceVal}</p>
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-1 text-xs text-[var(--pm-text-muted)]">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            <span>{product.rating ?? '4.8'}</span>
-            <span>({product.reviews ?? '12'})</span>
+          <h3 className="text-sm font-medium text-[var(--pm-text)] truncate">{title}</h3>
+          <div className="flex items-center gap-1">
+            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+            <span className="text-[10px] text-[var(--pm-text-muted)]">{rating} ({reviews})</span>
           </div>
-          {customAction}
+          <p className="text-sm font-bold text-[var(--pm-accent)] mt-1">{priceDisplay}</p>
         </div>
+        {customAction && (
+          <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+            {customAction}
+          </div>
+        )}
       </div>
     </motion.div>
   );

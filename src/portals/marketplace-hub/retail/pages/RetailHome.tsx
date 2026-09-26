@@ -288,10 +288,9 @@ export const RetailHome = () => {
   // Combined Filters and Searches
   const filteredProducts = useMemo(() => {
     return normalizedProducts.filter((product) => {
-      const q = searchQuery.toLowerCase();
-      const matchesSearch = (product.title || "").toLowerCase().includes(q) || 
-                            (product.description || "").toLowerCase().includes(q) ||
-                            (product.vendorName || "").toLowerCase().includes(q);
+      const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            product.vendorName.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCategory = selectedCategory === "all" || product.categoryId === selectedCategory;
       

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useLocationStore } from './locationStore';
 
 export const useGeolocation = () => {
@@ -6,7 +6,7 @@ export const useGeolocation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const detectLocation = useCallback(() => {
+  const detectLocation = () => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser');
       return;
@@ -20,7 +20,7 @@ export const useGeolocation = () => {
         const { latitude, longitude } = position.coords;
         
         try {
-          // OpenStreetMap Nominatim reverse geocoding
+          // OpenStreetMap Nominatim reverse geocoding (reliable and accurate for Bangladesh)
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
           );
@@ -31,6 +31,7 @@ export const useGeolocation = () => {
             setLocation(city, latitude, longitude);
             setAutoDetected(true);
           } else {
+            // Fallback to BigDataCloud
             const bdResponse = await fetch(
               `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
             );
@@ -42,6 +43,7 @@ export const useGeolocation = () => {
           }
         } catch (err) {
           console.error('Error fetching location name:', err);
+          // Simple fallback to BigDataCloud on error
           try {
             const bdResponse = await fetch(
               `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
@@ -51,7 +53,7 @@ export const useGeolocation = () => {
               setLocation(bdData.city || bdData.locality, latitude, longitude);
               setAutoDetected(true);
             }
-          } catch {
+          } catch (fallbackErr) {
             setError('Failed to fetch location name');
           }
         } finally {
@@ -65,20 +67,20 @@ export const useGeolocation = () => {
       },
       { timeout: 8000 }
     );
-  }, [setLocation, setAutoDetected]);
+  };
 
-  const watchLocation = useCallback((callback?: (coords: { lat: number; lng: number }) => void): number | null => {
-    if (!navigator.geolocation) return null;
-    const id = navigator.geolocation.watchPosition(
+  const watchLocation = (callback?: (coords: { lat: number; lng: number }) => void) => {
+    if (!navigator.geolocation) return () => {};
+    const watchId = navigator.geolocation.watchPosition(
       (pos) => {
-        setLocation('Current Location', pos.coords.latitude, pos.coords.longitude);
-        callback?.({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        const { latitude, longitude } = pos.coords;
+        if (callback) callback({ lat: latitude, lng: longitude });
       },
-      (err) => console.warn('watchLocation error:', err),
+      (err) => console.warn(err),
       { enableHighAccuracy: true }
     );
-    return id;
-  }, [setLocation]);
+    return () => navigator.geolocation.clearWatch(watchId);
+  };
 
   return { detectLocation, watchLocation, isLoading, error };
 };

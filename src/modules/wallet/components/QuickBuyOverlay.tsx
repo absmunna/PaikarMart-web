@@ -98,8 +98,8 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
           <div className="space-y-0.5">
             <h4 className="text-white font-black text-base tracking-tight line-clamp-1">{product.title}</h4>
             <div className="flex items-center gap-2">
-              <p className="text-[var(--pm-accent)] font-black text-lg tracking-tight">{formatBDT(product.price)}</p>
-              <div className="px-2 py-0.5 rounded-md bg-[var(--pm-accent)]/10 border border-[var(--pm-accent)]/20 text-[8px] font-black text-[var(--pm-accent)] uppercase tracking-widest">
+              <p className="text-violet-400 font-black text-lg tracking-tight">{formatBDT(product.price)}</p>
+              <div className="px-2 py-0.5 rounded-md bg-violet-500/10 border border-violet-500/20 text-[8px] font-black text-violet-400 uppercase tracking-widest">
                 Special Price
               </div>
             </div>
@@ -123,7 +123,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
             )}
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[var(--pm-accent)]/20 flex items-center justify-center text-[var(--pm-accent)]">
+              <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-violet-400">
                 <Wallet size={18} />
               </div>
               <div className="text-left">
@@ -131,7 +131,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
                 <p className="text-[10px] text-zinc-500">Balance: {formatBDT(balance)}</p>
               </div>
             </div>
-            {paymentMethod === 'wallet' && <div className="w-5 h-5 rounded-full bg-[var(--pm-accent)] flex items-center justify-center"><ChevronRight size={12} className="text-white" /></div>}
+            {paymentMethod === 'wallet' && <div className="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center"><ChevronRight size={12} className="text-white" /></div>}
           </button>
 
           <button 
@@ -142,17 +142,17 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
             )}
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#e2136e]/20 flex items-center justify-center text-[#e2136e] font-black text-[9px]">bKash</div>
+              <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400 font-black text-[9px]">bKash</div>
               <div className="text-left">
                 <p className="text-[12px] font-bold text-white">Mobile Banking</p>
                 <p className="text-[10px] text-zinc-500">Fast & Secure Checkout</p>
               </div>
             </div>
-            {paymentMethod === 'bkash' && <div className="w-5 h-5 rounded-full bg-[#e2136e] flex items-center justify-center"><ChevronRight size={12} className="text-white" /></div>}
+            {paymentMethod === 'bkash' && <div className="w-5 h-5 rounded-full bg-pink-500 flex items-center justify-center"><ChevronRight size={12} className="text-white" /></div>}
           </button>
 
           <div className="flex items-center gap-2 px-1 pt-2">
-            <ShieldCheck size={14} className="text-[var(--pm-accent)]" />
+            <ShieldCheck size={14} className="text-cyan-500" />
             <p className="text-[10px] text-zinc-500 font-medium tracking-tight">Funds held in secure Escrow until delivery.</p>
           </div>
 
@@ -170,7 +170,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
           <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
             <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-1">Confirm Payment</p>
             <p className="text-2xl font-black text-white">{formatBDT(product.price)}</p>
-            <p className="text-[10px] text-[var(--pm-accent)] mt-1 uppercase font-bold">via {paymentMethod.toUpperCase()}</p>
+            <p className="text-[10px] text-violet-400 mt-1 uppercase font-bold">via {paymentMethod.toUpperCase()}</p>
           </div>
 
           <div className="flex items-center gap-3 text-left p-3">
@@ -193,7 +193,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
             <Button 
               onClick={handlePurchase}
               disabled={isProcessing}
-              className="flex-[2] h-14 bg-[var(--pm-accent)] hover:opacity-90 text-white font-black rounded-2xl border-none"
+              className="flex-[2] h-14 bg-violet-600 hover:bg-violet-500 text-white font-black rounded-2xl border-none"
             >
               {isProcessing ? (
                 <span className="flex items-center gap-2">

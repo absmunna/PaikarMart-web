@@ -26,7 +26,7 @@ export const StoryBar: React.FC<{ context: string }> = () => {
             className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
           >
             <div className="relative">
-              <div className={`w-16 h-16 rounded-full p-0.5 ${story.isUser ? 'border-2 border-dashed border-[#FF7A00]' : 'bg-gradient-to-tr from-[#FF7A00] via-[#FFD700] to-orange-400'}`}>
+              <div className={`w-16 h-16 rounded-full p-0.5 ${story.isUser ? 'border-2 border-dashed border-[#FF7A00]' : 'bg-gradient-to-tr from-[#FF7A00] via-pink-500 to-cyan-400'}`}>
                 <div className="w-full h-full rounded-full bg-zinc-900 overflow-hidden border-2 border-[#0f111a]">
                   <img src={story.avatar} alt={story.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                 </div>

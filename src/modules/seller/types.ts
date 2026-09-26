@@ -11,14 +11,10 @@ export interface SellerProduct {
   category?: string;
   categoryId?: string;
   categoryName?: string;
-  status?: 'in_stock' | 'low_stock' | 'out_of_stock' | string;
   type?: 'retail' | 'wholesale' | 'homemade' | 'nearby' | string;
   isActive?: boolean;
+  status?: string;
   sellerId: string;
-  sellerName?: string;
-  location?: string;
-  tags?: string[];
-  views?: number;
   createdAt?: string;
   [key: string]: any;
 }
@@ -28,11 +24,12 @@ export interface SellerOrder {
   buyerName?: string;
   buyerPhone?: string;
   items: { productId: string; name: string; qty: number; price: number }[];
-  totalAmount: number;
+  totalAmount?: number;
   total?: number;
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   createdAt?: string;
   deliveryAddress?: string;
+  [key: string]: any;
 }
 
 export interface ServiceBooking {
@@ -60,26 +57,8 @@ export interface ReturnRequest {
   id: string;
   orderId: string;
   reason: string;
-  status: 'open' | 'reviewing' | 'approved' | 'rejected' | 'pending';
+  status: 'open' | 'reviewing' | 'approved' | 'rejected';
   createdAt?: string;
-}
-
-export interface SellerProfile {
-  id: string;
-  sellerId?: string;
-  storeName?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  status?: string;
-  avatar?: string;
-  tradeLicense?: string;
-  nidNumber?: string;
-  address?: any;
-  verified?: boolean;
-  tier?: string;
-  createdAt?: any;
-  updatedAt?: any;
 }
 
 export interface SellerVerificationPayload {
@@ -87,4 +66,31 @@ export interface SellerVerificationPayload {
   shopName?: string;
   tradeLicense?: string;
   documents?: string[];
+}
+
+export interface SellerProfile {
+  id: string;
+  storeName?: string;
+  shopName?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  logo?: string;
+  banner?: string;
+  description?: string;
+  address?: string;
+  division?: string;
+  district?: string;
+  upazila?: string;
+  isVerified?: boolean;
+  verificationStatus?: 'unverified' | 'pending' | 'verified' | 'rejected';
+  verificationPayload?: SellerVerificationPayload;
+  sellerType?: 'retail' | 'wholesale' | 'both' | 'service' | string;
+  rating?: number;
+  totalOrders?: number;
+  totalSales?: number;
+  balance?: number;
+  createdAt?: any;
+  updatedAt?: any;
+  [key: string]: any;
 }

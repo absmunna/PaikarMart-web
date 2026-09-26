@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { handleAIChat, handleMarketSearch } from './ai.controller';
-import { requireAuth, optionalAuth } from '@backend/middleware/auth';
+import { requireAuth, optionalAuth } from '../../middleware/auth';
 
 const router = Router();
 

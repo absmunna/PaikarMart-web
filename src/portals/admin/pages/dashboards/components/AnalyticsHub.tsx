@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { formatPrice } from "@/modules/app/utils/formatPrice";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/card";
 
 const SALES_DATA = [
   { day: "Sat", sales: 45000, visitors: 120, conversions: 5 },

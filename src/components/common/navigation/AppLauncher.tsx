@@ -53,13 +53,13 @@ export const AppLauncher: React.FC = () => {
           <div className="sticky top-0 z-50 bg-[#010804]/80 backdrop-blur-xl border-b border-white/5">
             <div className="max-w-[1280px] mx-auto px-6 h-20 flex items-center justify-between gap-6">
               <div className="flex-1 relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-[var(--pm-accent)] transition-colors" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-cyan-500 transition-colors" />
                 <input 
                   type="text"
                   placeholder={isBn ? "সুপার অ্যাপস খুঁজুন..." : "Search Super Apps..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 text-sm font-black uppercase tracking-wider focus:outline-none focus:border-[var(--pm-accent)]/50 transition-all placeholder:text-zinc-600"
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 text-sm font-black uppercase tracking-wider focus:outline-none focus:border-cyan-500/50 transition-all placeholder:text-zinc-600"
                 />
                 {searchQuery && (
                   <button 
@@ -102,7 +102,7 @@ export const AppLauncher: React.FC = () => {
                               <HubIcon className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-black text-white tracking-tight uppercase italic underline decoration-[var(--pm-accent)]/50 decoration-4 underline-offset-4">
+                              <h3 className="text-lg font-black text-white tracking-tight uppercase italic underline decoration-cyan-500/50 decoration-4 underline-offset-4">
                                 {isBn ? hub.nameBn : hub.nameEn}
                               </h3>
                               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
@@ -172,13 +172,13 @@ export const AppLauncher: React.FC = () => {
                   className="p-8 rounded-[40px] bg-white/[0.01] border border-white/5 shadow-2xl space-y-8"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-widest bg-[var(--pm-accent)]/5 px-3 py-1 rounded-full border border-[var(--pm-accent)]/10">PaikarWallet</span>
-                    <Wallet className="w-6 h-6 text-[var(--pm-accent)]" />
+                    <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest bg-cyan-500/5 px-3 py-1 rounded-full border border-cyan-500/10">PaikarWallet</span>
+                    <Wallet className="w-6 h-6 text-cyan-500" />
                   </div>
                   <div>
                     <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mb-1">Total Balance</p>
                     <h4 className="text-4xl font-black tracking-tighter text-white">
-                      <span className="text-[var(--pm-accent)] mr-1.5">৳</span>
+                      <span className="text-cyan-500 mr-1.5">৳</span>
                       {userBalance.toLocaleString()}
                     </h4>
                   </div>
@@ -193,12 +193,12 @@ export const AppLauncher: React.FC = () => {
                     <div className="h-8 w-px bg-white/5" />
                     <div>
                       <p className="text-[8px] font-black text-zinc-600 uppercase mb-1">Trust Score</p>
-                      <span className="text-[9px] font-black text-[var(--pm-accent)]">Level 4</span>
+                      <span className="text-[9px] font-black text-cyan-400">Level 4</span>
                     </div>
                   </div>
                   <button 
                     onClick={() => handleNavigate('/wallet')}
-                    className="w-full h-14 rounded-2xl bg-[var(--pm-accent)] hover:opacity-90 text-black text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-[var(--pm-accent)]/20"
+                    className="w-full h-14 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-cyan-500/20"
                   >
                     Manage Wallet
                   </button>
@@ -222,11 +222,11 @@ export const AppLauncher: React.FC = () => {
                           <act.icon className="w-6 h-6" strokeWidth={1} />
                         </div>
                         <div>
-                          <p className="text-xs font-black text-zinc-100 group-hover:text-[var(--pm-accent)] transition-colors uppercase tracking-tight">{act.bn}</p>
+                          <p className="text-xs font-black text-zinc-100 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{act.bn}</p>
                           <p className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest mt-1">{act.en}</p>
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-[var(--pm-accent)] transition-all" strokeWidth={3} />
+                      <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-cyan-500 transition-all" strokeWidth={3} />
                     </motion.div>
                   ))}
                 </div>

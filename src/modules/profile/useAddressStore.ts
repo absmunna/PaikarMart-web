@@ -7,10 +7,14 @@ export interface SavedAddress extends AddressDetails {
   label: string;
   labelBn: string;
   isDefault?: boolean;
+  fullName?: string;
+  phone?: string;
+  zipCode?: string;
   road?: string;
   house?: string;
   landmark?: string;
   deliveryNote?: string;
+  [key: string]: any;
 }
 
 interface AddressStore {
@@ -42,7 +46,7 @@ export const useAddressStore = create<AddressStore>()(
       ],
 
       addAddress: (newAddr) => set((state) => ({
-        addresses: [...state.addresses, { ...newAddr, id: `addr-${Date.now()}` }]
+        addresses: [...state.addresses, { ...newAddr, id: `addr-${Date.now()}` } as SavedAddress]
       })),
 
       updateAddress: (id, updatedFields) => set((state) => ({

@@ -41,13 +41,13 @@ export default function PortalsPage() {
       <div className="sticky top-0 z-50 bg-[#010804]/90 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-[1280px] mx-auto px-4 h-20 flex items-center gap-4">
           <div className="flex-1 relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-[var(--pm-accent)] transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-cyan-500 transition-colors" />
             <input 
               type="text"
               placeholder={isBn ? "সুপার অ্যাপস খুঁজুন..." : "Search Super Apps..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 text-sm font-black uppercase tracking-wider focus:outline-none focus:border-[var(--pm-accent)]/50 transition-all placeholder:text-zinc-600"
+              className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 text-sm font-black uppercase tracking-wider focus:outline-none focus:border-cyan-500/50 transition-all placeholder:text-zinc-600"
             />
             {searchQuery && (
               <button 
@@ -99,7 +99,7 @@ export default function PortalsPage() {
                             <HubIcon className="w-6 h-6 text-white" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-black text-white tracking-tight uppercase italic underline decoration-[var(--pm-accent)]/50 decoration-4 underline-offset-4">
+                            <h3 className="text-lg font-black text-white tracking-tight uppercase italic underline decoration-cyan-500/50 decoration-4 underline-offset-4">
                               {isBn ? hub.nameBn : hub.nameEn}
                             </h3>
                             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
@@ -174,17 +174,17 @@ export default function PortalsPage() {
             >
               <div className="relative space-y-6">
                 <div className="flex items-center justify-between">
-                  <div className="px-2.5 py-1 rounded-full bg-orange-500/5 border border-orange-500/10 text-[9px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                  <div className="px-2.5 py-1 rounded-full bg-cyan-500/5 border border-cyan-500/10 text-[9px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
                     PaikarWallet
                   </div>
-                  <Wallet className="w-5 h-5 text-orange-500" />
+                  <Wallet className="w-5 h-5 text-cyan-500" />
                 </div>
 
                 <div>
                   <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mb-1">Balance</p>
                   <h4 className="text-3xl font-black tracking-tighter text-white">
-                    <span className="text-orange-500 mr-1">৳</span>
+                    <span className="text-cyan-500 mr-1">৳</span>
                     {userBalance.toLocaleString()}
                   </h4>
                 </div>
@@ -199,13 +199,13 @@ export default function PortalsPage() {
                   </div>
                   <div className="border-l border-white/5 pl-4">
                     <p className="text-[8px] font-black text-zinc-500 uppercase mb-1">Status</p>
-                    <span className="text-[8px] font-black text-orange-400 border border-orange-500/20 px-1.5 py-0.5 rounded-sm uppercase tracking-widest">Active</span>
+                    <span className="text-[8px] font-black text-cyan-400 border border-cyan-500/20 px-1.5 py-0.5 rounded-sm uppercase tracking-widest">Active</span>
                   </div>
                 </div>
 
                 <button 
                   onClick={() => navigate('/wallet')}
-                  className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-400 text-black text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-500/20"
+                  className="w-full py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-black text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-cyan-500/20"
                 >
                   Withdraw / Topup
                 </button>
@@ -216,7 +216,7 @@ export default function PortalsPage() {
             <div className="space-y-2">
               {[
                 { id: 'store', bn: 'সেলার সেন্ট্রাল', en: 'Seller Central', path: role === 'buyer' ? '/become-seller' : '/seller', icon: ShoppingBag, color: 'text-amber-400' },
-                { id: 'wallet', bn: 'আমার ওয়ালেট', en: 'My Wallet', path: '/wallet', icon: Wallet, color: 'text-orange-400' },
+                { id: 'wallet', bn: 'আমার ওয়ালেট', en: 'My Wallet', path: '/wallet', icon: Wallet, color: 'text-cyan-400' },
                 { id: 'order', bn: 'অর্ডার ও ক্রয়', en: 'Orders', path: '/orders', icon: ShoppingBag, color: 'text-sky-400' },
                 { id: 'favourite', bn: 'প্রিয় পণ্য তালিকা', en: 'Wishlist', path: '/wishlist', icon: Heart, color: 'text-rose-400' },
               ].map((act) => (
@@ -231,22 +231,22 @@ export default function PortalsPage() {
                       <act.icon className="w-5 h-5" strokeWidth={1} />
                     </div>
                     <div>
-                      <p className="text-xs font-black text-zinc-100 group-hover:text-orange-400 transition-colors uppercase tracking-tight">{act.bn}</p>
+                      <p className="text-xs font-black text-zinc-100 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{act.bn}</p>
                       <p className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest mt-1">{act.en}</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-orange-500 transition-all" strokeWidth={3} />
+                  <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-cyan-500 transition-all" strokeWidth={3} />
                 </motion.div>
               ))}
             </div>
 
             {/* ECOSYSTEM SYNC */}
-            <div className="p-5 rounded-3xl bg-orange-500/[0.02] border border-orange-500/10 flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
-                <HelpCircle className="w-4 h-4 text-orange-500" />
+            <div className="p-5 rounded-3xl bg-cyan-500/[0.02] border border-cyan-500/10 flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center shrink-0">
+                <HelpCircle className="w-4 h-4 text-cyan-500" />
               </div>
               <div>
-                <h5 className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Trust Ecosystem</h5>
+                <h5 className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">Trust Ecosystem</h5>
                 <p className="text-[9px] text-zinc-600 mt-2 leading-relaxed font-bold uppercase tracking-tighter">
                   Real-time sync enabled with 7-level verification score.
                 </p>

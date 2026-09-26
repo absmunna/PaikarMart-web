@@ -92,7 +92,11 @@ export const getProducts = async (req: Request, res: Response) => {
     }
 
     const products = await prisma.product.findMany();
-    res.json(products);
+    res.json(products.map(p => ({
+      ...p,
+      title: p.name,
+      name: p.name
+    })));
   } catch (error) {
     console.error('Fetch Products Error:', error);
     res.status(500).json({ error: 'Failed to fetch products' });
@@ -101,7 +105,8 @@ export const getProducts = async (req: Request, res: Response) => {
 
 export const addProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, price, originalPrice, images, isPKStore, category, stock } = req.body;
+    const { name, title, description, price, originalPrice, images, isPKStore, category, stock } = req.body;
+    const productName = (name || title || 'Untitled Product').trim();
     
     // In a real application, you would attach the sellerId from the logged-in user's token.
     // Assuming 'dev-seller-id' as a fallback seller id.
@@ -110,14 +115,15 @@ export const addProduct = async (req: Request, res: Response) => {
     if (!process.env.DATABASE_URL) {
       return res.status(201).json({
         id: `prod-${Date.now()}`,
-        name,
-        description,
-        price,
-        originalPrice,
-        images,
-        isPKStore,
-        category,
-        stock,
+        name: productName,
+        title: productName,
+        description: description || productName,
+        price: Number(price) || 0,
+        originalPrice: originalPrice ? Number(originalPrice) : null,
+        images: images || [],
+        isPKStore: !!isPKStore,
+        category: category || 'general',
+        stock: Number(stock) || 0,
         sellerId
       });
     }
@@ -138,19 +144,23 @@ export const addProduct = async (req: Request, res: Response) => {
 
     const product = await prisma.product.create({
       data: {
-        name,
-        description: description || name,
-        price,
-        originalPrice,
+        name: productName,
+        description: description || productName,
+        price: Number(price) || 0,
+        originalPrice: originalPrice ? Number(originalPrice) : null,
         images: images || [],
         isPKStore: !!isPKStore,
         category: category || null,
-        stock: stock || 0,
+        stock: Number(stock) || 0,
         sellerId: user.id
       }
     });
 
-    res.status(201).json(product);
+    res.status(201).json({
+      ...product,
+      title: product.name,
+      name: product.name
+    });
   } catch (error) {
     console.error('Add Product Error:', error);
     res.status(500).json({ error: 'Failed to add product' });
@@ -205,7 +215,15 @@ export const getProductById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    res.json(product);
+    res.json({
+      ...product,
+      title: product.name,
+      name: product.name,
+      seller: product.seller ? {
+        ...product.seller,
+        fullName: product.seller.name
+      } : undefined
+    });
   } catch (error) {
     console.error('Fetch Product Detail Error:', error);
     res.status(500).json({ error: 'Failed to fetch product details' });

@@ -29,13 +29,13 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
   onViewDetails 
 }) => {
   return (
-    <GlassCard className="overflow-hidden border-[var(--pm-accent)]/10">
+    <GlassCard className="overflow-hidden border-violet-500/10">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--pm-accent)]/10 flex items-center justify-center border border-[var(--pm-accent)]/20">
-              <ShieldCheck className="w-5 h-5 text-[var(--pm-accent)]" />
+            <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
+              <ShieldCheck className="w-5 h-5 text-violet-400" />
             </div>
             <div>
               <h3 className="text-white font-black text-lg tracking-tight">Escrow Transparency</h3>
@@ -46,7 +46,7 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
             variant="ghost" 
             size="sm" 
             onClick={onViewDetails}
-            className="text-[var(--pm-accent)] hover:text-[var(--pm-accent)]/80 hover:bg-[var(--pm-accent)]/5 gap-2"
+            className="text-violet-400 hover:text-violet-300 hover:bg-violet-500/5 gap-2"
           >
             Detailed Ledger
             <ChevronRight className="w-4 h-4" />
@@ -66,19 +66,19 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
 
           <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
             <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Released</p>
-            <p className="text-xl font-black text-[var(--pm-accent)]">{formatBDT(summary.totalReleased)}</p>
+            <p className="text-xl font-black text-cyan-400">{formatBDT(summary.totalReleased)}</p>
             <div className="flex items-center gap-1 mt-2">
-              <TrendingUp className="w-3 h-3 text-[var(--pm-accent)]" />
-              <span className="text-[9px] text-[var(--pm-accent)]/80 font-bold uppercase">+12.5% this week</span>
+              <TrendingUp className="w-3 h-3 text-cyan-500" />
+              <span className="text-[9px] text-cyan-500/80 font-bold uppercase">+12.5% this week</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 bg-[var(--pm-accent)]/[0.03]">
-            <p className="text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-widest mb-1">Next Payout</p>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 bg-violet-500/[0.03]">
+            <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Next Payout</p>
             <p className="text-xl font-black text-white">{formatBDT(summary.nextPayoutAmount)}</p>
             <div className="flex items-center gap-1 mt-2">
-              <Calendar className="w-3 h-3 text-[var(--pm-accent)]" />
-              <span className="text-[9px] text-[var(--pm-accent)]/80 font-bold uppercase">{summary.nextPayoutDate || 'Calculating...'}</span>
+              <Calendar className="w-3 h-3 text-violet-400" />
+              <span className="text-[9px] text-violet-400/80 font-bold uppercase">{summary.nextPayoutDate || 'Calculating...'}</span>
             </div>
           </div>
 
@@ -97,7 +97,7 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-black text-white tracking-tight">Escrow Release Timeline</h4>
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/10">
-              <Info className="w-3 h-3 text-[var(--pm-accent)]" />
+              <Info className="w-3 h-3 text-violet-400" />
               <span className="text-[9px] text-zinc-400 font-bold">Payouts happen at 10 AM Daily</span>
             </div>
           </div>
@@ -115,7 +115,7 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center border",
                     tx.status === 'released' 
-                      ? "bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]/20 text-[var(--pm-accent)]" 
+                      ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400" 
                       : "bg-white/5 border-white/10 text-zinc-400"
                   )}>
                     {tx.status === 'released' ? <ShieldCheck className="w-5 h-5" /> : <Clock className="w-5 h-5 text-amber-500" />}
@@ -134,13 +134,13 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
                 <div className="text-right">
                   <p className={cn(
                     "text-sm font-black tracking-tight",
-                    tx.status === 'released' ? "text-[var(--pm-accent)]" : "text-white"
+                    tx.status === 'released' ? "text-cyan-400" : "text-white"
                   )}>
                     {tx.status === 'released' ? '+' : ''}{formatBDT(tx.amount)}
                   </p>
                   <div className={cn(
                     "text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full inline-block mt-1.5",
-                    tx.status === 'released' ? "bg-[var(--pm-accent)]/10 text-[var(--pm-accent)]" : "bg-amber-500/10 text-amber-500"
+                    tx.status === 'released' ? "bg-cyan-500/10 text-cyan-500" : "bg-amber-500/10 text-amber-500"
                   )}>
                     {tx.status.replace('_', ' ')}
                   </div>
@@ -158,14 +158,14 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="px-6 py-4 bg-[var(--pm-accent)]/5 border-t border-[var(--pm-accent)]/10 flex items-center justify-between">
+      <div className="px-6 py-4 bg-violet-500/5 border-t border-violet-500/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[var(--pm-accent)]" />
-          <p className="text-[11px] text-[var(--pm-accent)]/80 font-medium">
+          <ShieldCheck className="w-4 h-4 text-violet-400" />
+          <p className="text-[11px] text-violet-300 font-medium">
             Protected by Paikar Mart Escrow Protocol v2.4
           </p>
         </div>
-        <Link to="/faq" className="text-[10px] text-[var(--pm-accent)] font-black uppercase tracking-widest hover:text-[var(--pm-accent)]/80 transition-colors">
+        <Link to="/faq" className="text-[10px] text-violet-400 font-black uppercase tracking-widest hover:text-violet-300 transition-colors">
           Learn how escrow works
         </Link>
       </div>

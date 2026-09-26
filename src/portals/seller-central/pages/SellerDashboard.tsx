@@ -12,7 +12,7 @@ import { RoleUploadModal } from '@/components/upload/RoleUploadModal';
 import { Link } from 'react-router-dom';
 
 export default function SellerDashboard() {
-  const { isSeller, profile, products, orders, loading: isLoading, updateProfile } = useSeller();
+  const { isSeller, profile, products, orders, isLoading, updateProfile } = useSeller();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   // Store Settings Form State

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { GeminiService } from '@backend/services/geminiService';
-import { WalletService } from '@backend/modules/wallet';
+import { GeminiService } from '../../services/geminiService';
+import { WalletService } from '../wallet/wallet.service';
 import { prisma } from '../../config/database';
 
 export const handleMarketSearch = async (req: Request, res: Response) => {
@@ -93,18 +93,18 @@ export const handleAIChat = async (req: Request, res: Response) => {
           for (const call of (calls as any)) {
             const { name, args } = call.functionCall;
             if (name === "searchProducts") {
-              const products = await prisma.product.findMany({
+              const products = process.env.DATABASE_URL ? await prisma.product.findMany({
                 where: {
                   OR: [
-                    { title: { contains: args.query, mode: 'insensitive' } },
+                    { name: { contains: args.query, mode: 'insensitive' } },
                     { description: { contains: args.query, mode: 'insensitive' } }
                   ]
                 },
                 take: 5
-              });
+              }) : [];
               res.write(`data: ${JSON.stringify({ 
                 toolCall: name, 
-                result: products.map(p => ({ id: p.id, name: p.title, price: Number(p.price) })) 
+                result: products.map(p => ({ id: p.id, name: p.name, title: p.name, price: Number(p.price) })) 
               })}\n\n`);
             }
           }

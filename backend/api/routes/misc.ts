@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, expandStory, expandDemand, expandProduct, genId } from "@backend/api/lib/db";
+import { db, expandStory, expandDemand, expandProduct, genId } from "../lib/db";
 
 const router: IRouter = Router();
 

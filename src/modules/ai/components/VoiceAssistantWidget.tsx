@@ -107,11 +107,11 @@ export const VoiceAssistantWidget: React.FC = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="w-80 md:w-96"
           >
-            <GlassCard className="overflow-hidden border-[var(--pm-accent)]/20 shadow-2xl">
-              <div className="p-4 border-b border-white/5 flex items-center justify-between bg-[var(--pm-accent)]/5">
+            <GlassCard className="overflow-hidden border-violet-500/20 shadow-2xl">
+              <div className="p-4 border-b border-white/5 flex items-center justify-between bg-violet-500/5">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--pm-accent)]/10 flex items-center justify-center border border-[var(--pm-accent)]/20">
-                    <BrainCircuit className="w-4 h-4 text-[var(--pm-accent)]" />
+                  <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
+                    <BrainCircuit className="w-4 h-4 text-violet-400" />
                   </div>
                   <span className="text-sm font-black text-white tracking-tight uppercase">Paikar Assistant</span>
                 </div>
@@ -127,25 +127,25 @@ export const VoiceAssistantWidget: React.FC = () => {
                 {isListening ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex gap-1">
-                          {[0, 1, 2].map(i => (
-                            <motion.div
-                              key={i}
-                              animate={{ scaleY: [1, 2.5, 1] }}
-                              transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
-                              className="w-1 h-3 bg-[var(--pm-accent)] rounded-full"
-                            />
-                          ))}
-                        </div>
-                        <p className="text-[var(--pm-accent)] text-xs font-black uppercase tracking-widest">Listening...</p>
+                      <div className="flex gap-1">
+                        {[0, 1, 2].map(i => (
+                          <motion.div
+                            key={i}
+                            animate={{ scaleY: [1, 2.5, 1] }}
+                            transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
+                            className="w-1 h-3 bg-violet-400 rounded-full"
+                          />
+                        ))}
                       </div>
+                      <p className="text-violet-400 text-xs font-black uppercase tracking-widest">Listening...</p>
+                    </div>
                     <p className="text-white font-bold text-lg leading-tight tracking-tight italic opacity-80">
                       "{transcript || 'Speak now...'}"
                     </p>
                   </div>
                 ) : isTyping ? (
                   <div className="flex flex-col items-center justify-center py-8 space-y-3">
-                    <Loader2 className="w-8 h-8 text-[var(--pm-accent)] animate-spin" />
+                    <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
                     <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Analyzing Data...</p>
                   </div>
                 ) : lastMessage ? (
@@ -158,7 +158,7 @@ export const VoiceAssistantWidget: React.FC = () => {
                     <div className="flex justify-end">
                       <button 
                         onClick={toggleListening}
-                        className="flex items-center gap-2 text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-widest hover:opacity-80 transition-colors"
+                        className="flex items-center gap-2 text-[10px] font-black text-violet-400 uppercase tracking-widest hover:text-violet-300 transition-colors"
                       >
                         Ask Another Question
                         <ChevronRight className="w-3 h-3" />
@@ -167,8 +167,8 @@ export const VoiceAssistantWidget: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center py-6 space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-[var(--pm-accent)]/10 flex items-center justify-center mx-auto border border-[var(--pm-accent)]/20">
-                      <Sparkles className="w-8 h-8 text-[var(--pm-accent)]" />
+                    <div className="w-16 h-16 rounded-full bg-violet-500/10 flex items-center justify-center mx-auto border border-violet-500/20">
+                      <Sparkles className="w-8 h-8 text-violet-400" />
                     </div>
                     <div>
                       <p className="text-white font-black text-sm">How can I help your business today?</p>
@@ -191,7 +191,7 @@ export const VoiceAssistantWidget: React.FC = () => {
           "w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 border-2",
           isListening 
             ? "bg-red-500 border-red-400/50 shadow-red-500/40" 
-            : "bg-[var(--pm-accent)] border-orange-400/30 shadow-[var(--pm-accent)]/40"
+            : "bg-violet-600 border-violet-400/30 shadow-violet-600/40"
         )}
       >
         <div className="relative">

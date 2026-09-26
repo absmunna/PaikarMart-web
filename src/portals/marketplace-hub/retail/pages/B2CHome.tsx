@@ -182,10 +182,9 @@ export const B2CHome = () => {
   const filteredProducts = mockProducts.filter((p: any) => {
     // Exclude strict B2B portal listings if B2C is browsed, unless matching category
     const isB2COrPk = p.portal === 'b2c' || p.portal === 'pk-shop';
-    const matchesSearch = 
-      (p.title || p.name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-      (p.category || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.sellerId || p.seller || "").toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          p.sellerId.toLowerCase().includes(searchQuery.toLowerCase());
     
     // Normalize Category ID
     let mappedCat = activeCategory;
@@ -432,7 +431,7 @@ export const B2CHome = () => {
         <div className="space-y-6 mt-4">
           
           {/* ━━━ B2C HERO SPOTLIGHT CAROUSEL SECTION (update-v01) ━━━ */}
-          <section className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-[var(--pm-surface)] h-[180px] sm:h-[220px] md:h-[260px] lg:h-[290px] flex flex-col justify-end p-4 sm:p-6 select-none">
+          <section className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-[var(--pm-surface)] h-[170px] flex flex-col justify-end p-4 select-none">
             {/* Background Image Carousel with absolute transition */}
             <div className="absolute inset-0 z-0">
               <AnimatePresence mode="wait">
@@ -453,15 +452,15 @@ export const B2CHome = () => {
             </div>
 
             {/* Slide Content */}
-            <div className="relative z-20 space-y-2 sm:space-y-3 text-left max-w-xl">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--pm-accent)]/25 border border-[var(--pm-accent)]/30 text-[9px] sm:text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-wide">
-                <Sparkles className="w-3 h-3" />
+            <div className="relative z-20 space-y-2 text-left max-w-[85%]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--pm-accent)]/25 border border-[var(--pm-accent)]/30 text-[8px] font-black text-[var(--pm-accent)] uppercase tracking-wide">
+                <Sparkles className="w-2.5 h-2.5" />
                 {SPOTLIGHT_SLIDES[activeHeroSlide].badge}
               </span>
-              <h2 className="text-base sm:text-xl md:text-2xl font-black text-white tracking-tight leading-snug">
+              <h2 className="text-base font-black text-white tracking-tight leading-snug">
                 {SPOTLIGHT_SLIDES[activeHeroSlide].title}
               </h2>
-              <p className="text-[11px] sm:text-xs text-[var(--pm-text-secondary)] font-medium leading-normal line-clamp-2">
+              <p className="text-[10px] text-[var(--pm-text-secondary)] font-medium leading-normal line-clamp-1 max-w-[90%]">
                 {SPOTLIGHT_SLIDES[activeHeroSlide].desc}
               </p>
               
@@ -472,10 +471,10 @@ export const B2CHome = () => {
                     setActiveCategory(slide.category);
                     toast.success(`"${slide.title}" সেকশনে আপনাকে স্বাগতম!`);
                   }}
-                  className="px-4 py-2 rounded-full bg-white text-black font-black text-[10px] sm:text-xs hover:bg-zinc-200 transition-all select-none duration-150 active:scale-95 shadow-md shadow-white/5 cursor-pointer flex items-center gap-1 hover:gap-1.5"
+                  className="px-4 py-1.5 rounded-full bg-white text-black font-black text-[9px] hover:bg-zinc-200 transition-all select-none duration-150 active:scale-95 shadow-md shadow-white/5 cursor-pointer flex items-center gap-1 hover:gap-1.5"
                 >
                   <span>{SPOTLIGHT_SLIDES[activeHeroSlide].btnText}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-black stroke-[3px]" />
+                  <ChevronRight className="w-3 h-3 text-black stroke-[3px]" />
                 </button>
               </div>
             </div>
@@ -822,5 +821,3 @@ export const B2CHome = () => {
     </div>
   );
 };
-
-export default B2CHome;

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { initiatePayment, verifyPayment, handlePaymentCallback } from './payment.controller';
-import { requireAuth } from '@backend/middleware/auth';
-import { requirePermission } from '@backend/middleware/permission';
+import { requireAuth } from '../../middleware/auth';
+import { requirePermission } from '../../middleware/permission';
 
 const router = Router();
 

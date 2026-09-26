@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth, UserRole } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import { UserRole } from "../../permissions/roles";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -68,7 +69,8 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, allowedRoles }) 
     return <Navigate to="/auth" replace />;
   }
 
-  const hasAccess = user.roles.some(role => allowedRoles.includes(role as UserRole));
+  const userRoles: string[] = Array.isArray((user as any).roles) ? (user as any).roles : [user.role];
+  const hasAccess = userRoles.some(role => allowedRoles.includes(role as UserRole));
 
   if (!hasAccess) {
     return (

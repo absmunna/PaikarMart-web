@@ -22,13 +22,7 @@ export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
   const [followers, setFollowers] = useState(4820);
 
   // Mapped brand items
-  const brandProducts = products.filter(p => {
-    const bId = (brandId || "").toLowerCase();
-    return (p.sellerId && p.sellerId.toLowerCase().includes(bId)) || 
-           (p.seller && p.seller.toLowerCase().includes(bId)) ||
-           (p.title && p.title.toLowerCase().includes(bId)) ||
-           (p.name && p.name.toLowerCase().includes(bId));
-  });
+  const brandProducts = products.filter(p => p.sellerId && p.sellerId.toLowerCase().includes(brandId.toLowerCase()) || p.title.toLowerCase().includes(brandId.toLowerCase()));
 
   const handleFollowBrand = () => {
     if (isLikedBrand) {

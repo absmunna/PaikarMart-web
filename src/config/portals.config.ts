@@ -63,7 +63,7 @@ export const HUB_REGISTRY: PortalHub[] = [
     nameBn: 'নিয়ারবাই',
     descriptionEn: 'Hyperlocal shops, instant delivery & deals',
     descriptionBn: 'এলাকাভিত্তিক শপ, ইনস্ট্যান্ট ডেলিভারি ও ডিলস',
-    color: 'from-orange-500 to-amber-700',
+    color: 'from-cyan-500 to-teal-700',
     iconName: 'MapPin'
   },
   {
@@ -117,7 +117,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'ড্রপশিপিং',
     realWorldModel: 'Oberlo',
     route: '/dropship',
-    color: 'from-amber-500 to-orange-600',
+    color: 'from-cyan-500 to-blue-600',
     status: 'active',
     iconName: 'Package'
   },
@@ -128,7 +128,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'হোলসেল মার্কেট',
     realWorldModel: 'Indiamart',
     route: '/wholesale',
-    color: 'from-blue-600 to-indigo-800',
+    color: 'from-blue-600 to-cyan-800',
     status: 'active',
     iconName: 'Boxes'
   },
@@ -196,7 +196,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'পিকে স্টোর',
     realWorldModel: 'Verified Store',
     route: '/pk-shop',
-    color: 'from-orange-500 to-amber-600',
+    color: 'from-cyan-500 to-teal-600',
     status: 'active',
     iconName: 'ShieldCheck'
   },
@@ -220,7 +220,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'গ্রোসারি',
     realWorldModel: 'Chaldal',
     route: '/grocery',
-    color: 'from-green-400 to-emerald-600',
+    color: 'from-green-400 to-cyan-600',
     status: 'active',
     iconName: 'Egg'
   },
@@ -288,7 +288,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'চাকরি ও গিগ',
     realWorldModel: 'Bdjobs',
     route: '/jobs',
-    color: 'from-orange-500 to-blue-700',
+    color: 'from-cyan-500 to-blue-700',
     status: 'active',
     iconName: 'Briefcase'
   },
@@ -343,7 +343,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'ওয়ার্কস্পেস অফিস',
     realWorldModel: 'Google Workspace',
     route: '/workspace',
-    color: 'from-blue-500 to-indigo-600',
+    color: 'from-blue-500 to-cyan-600',
     status: 'active',
     iconName: 'ClipboardList'
   },
@@ -354,7 +354,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'অর্থনীতি',
     realWorldModel: 'Bank',
     route: '/finance',
-    color: 'from-orange-500 to-amber-700',
+    color: 'from-cyan-500 to-teal-700',
     status: 'active',
     iconName: 'Wallet'
   },
@@ -424,7 +424,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'রিয়েল এস্টেট',
     realWorldModel: 'Bproperty',
     route: '/real-estate',
-    color: 'from-teal-500 to-emerald-700',
+    color: 'from-teal-500 to-cyan-700',
     status: 'active',
     iconName: 'Home'
   },
@@ -479,7 +479,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'ট্রাভেল ট্যুর',
     realWorldModel: 'ShareTrip',
     route: '/travel',
-    color: 'from-orange-400 to-sky-600',
+    color: 'from-cyan-400 to-sky-600',
     status: 'active',
     iconName: 'Compass'
   },
@@ -501,7 +501,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'এডুকেশন',
     realWorldModel: '10 Minute School',
     route: '/education',
-    color: 'from-blue-400 to-indigo-600',
+    color: 'from-blue-400 to-cyan-600',
     status: 'active',
     iconName: 'GraduationCap'
   },
@@ -523,7 +523,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     nameBn: 'এগ্রিকালচার',
     realWorldModel: 'Agro',
     route: '/agriculture',
-    color: 'from-orange-400 to-green-600',
+    color: 'from-cyan-400 to-green-600',
     status: 'active',
     iconName: 'Tractor'
   },

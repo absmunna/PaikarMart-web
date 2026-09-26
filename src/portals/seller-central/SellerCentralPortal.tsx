@@ -138,16 +138,13 @@ export function SellerCentralPortal() {
   const [isStorefrontPreview, setIsStorefrontPreview] = useState(false);
   const [pricingInput, setPricingInput] = useState({ title: "", price: "", stock: "", category: "home" });
 
-  // Destructure items from useSeller
+  // Destructure items from useSeller and create stateful setters
   const { 
     products, 
     orders, 
-    serviceBookings, 
-    setServiceBookings = () => {},
-    deliveryTasks, 
-    setDeliveryTasks = () => {},
-    returnsRequests,
-    setReturnsRequests = () => {},
+    serviceBookings: contextServiceBookings, 
+    deliveryTasks: contextDeliveryTasks, 
+    returnsRequests: contextReturnsRequests,
     createProduct, 
     updateProduct, 
     deleteProduct, 
@@ -155,6 +152,28 @@ export function SellerCentralPortal() {
     profile, 
     submitVerification 
   } = useSeller();
+
+  const [serviceBookings, setServiceBookings] = useState(() => contextServiceBookings || []);
+  const [deliveryTasks, setDeliveryTasks] = useState(() => contextDeliveryTasks || []);
+  const [returnsRequests, setReturnsRequests] = useState(() => contextReturnsRequests || []);
+
+  useEffect(() => {
+    if (contextServiceBookings && contextServiceBookings.length > 0) {
+      setServiceBookings(contextServiceBookings);
+    }
+  }, [contextServiceBookings]);
+
+  useEffect(() => {
+    if (contextDeliveryTasks && contextDeliveryTasks.length > 0) {
+      setDeliveryTasks(contextDeliveryTasks);
+    }
+  }, [contextDeliveryTasks]);
+
+  useEffect(() => {
+    if (contextReturnsRequests && contextReturnsRequests.length > 0) {
+      setReturnsRequests(contextReturnsRequests);
+    }
+  }, [contextReturnsRequests]);
 
   // Content Creators stats (kept local as placeholder)
   const [creatorContents, setCreatorContents] = useState([
@@ -406,7 +425,7 @@ export function SellerCentralPortal() {
             { label: t("Today Orders", "আজকের অর্ডার", isEn), value: String(orders.filter(o => o.status === "pending" || o.status === "processing").length), extra: "+20%", color: "text-blue-400" },
             { label: t("Total Sales", "মোট বিক্রি", isEn), value: `৳${totalSalesFromOrders.toLocaleString()}`, extra: "+15%", color: "text-emerald-400" },
             { label: t("Products", "পণ্য সংখ্যা", isEn), value: String(products.length), extra: "ইনভেন্টরি", color: "text-sky-400" },
-            { label: t("Order Returns", "ক্ষতিগ্রস্ত/রিটার্ন", isEn), value: String(returnsRequests.filter(r => r.status === "pending").length), extra: "রিফান্ড আবেদন", color: "text-red-400" }
+            { label: t("Order Returns", "ক্ষতিগ্রস্ত/রিটার্ন", isEn), value: String(returnsRequests.filter(r => (r.status as string) === "pending" || r.status === "open").length), extra: "রিফান্ড আবেদন", color: "text-red-400" }
           ]
         };
     }

@@ -60,7 +60,7 @@ export interface AppUser {
   id: string;
   fullName: string;
   name?: string;
-  phone?: string;
+  phone: string;
   email?: string;
   avatarUrl?: string;
   avatar?: string;

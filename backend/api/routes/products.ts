@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, expandProduct, genId } from "@backend/api/lib/db";
+import { db, expandProduct, genId } from "../lib/db";
 
 const router: IRouter = Router();
 
@@ -62,12 +62,14 @@ router.get("/products/:id", (req, res) => {
 });
 
 router.post("/products", (req, res) => {
-  const { title, description, price, type, categoryId, images, stock, tags } =
+  const { title, name, description, price, type, categoryId, images, stock, tags } =
     req.body ?? {};
-  if (!title || !categoryId) return res.status(400).json({ error: "invalid" });
+  const productTitle = (title || name || "").trim();
+  if (!productTitle || !categoryId) return res.status(400).json({ error: "invalid" });
   const p = {
     id: genId("p"),
-    title,
+    title: productTitle,
+    name: productTitle,
     description: description ?? "",
     price: Number(price) || 0,
     currency: "BDT",
@@ -85,7 +87,7 @@ router.post("/products", (req, res) => {
   db.products.unshift(p);
   const c = db.categories.find((x) => x.id === categoryId);
   if (c) c.productCount++;
-  res.status(201).json(expandProduct(p));
+  res.status(201).json({ ...expandProduct(p), name: p.title, title: p.title });
 });
 
 export default router;

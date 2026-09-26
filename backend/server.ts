@@ -33,6 +33,8 @@ import { aiRoutes } from './modules/ai/ai.routes';
 import vendorsRouter from './api/routes/vendors';
 import miscRouter from './api/routes/misc';
 import meRouter from './api/routes/me';
+import postsRouter from './api/routes/posts';
+import { roleRoutes } from './modules/auth/role.routes';
 
 dotenv.config();
 
@@ -82,6 +84,8 @@ async function startServer() {
   app.use('/api/v1', vendorsRouter);
   app.use('/api/v1', miscRouter);
   app.use('/api/v1', meRouter);
+  app.use('/api/v1', postsRouter);
+  app.use('/api/v1/roles', roleRoutes);
 
   app.get("/api/v1/health", (req, res) => {
     res.json({ status: "ok", message: "Paikar Mart API running" });

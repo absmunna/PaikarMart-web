@@ -21,12 +21,10 @@ interface SellerContextValue {
   products: SellerProduct[];
   orders: SellerOrder[];
   serviceBookings: ServiceBooking[];
-  setServiceBookings?: React.Dispatch<React.SetStateAction<ServiceBooking[]>>;
   deliveryTasks: DeliveryTask[];
-  setDeliveryTasks?: React.Dispatch<React.SetStateAction<DeliveryTask[]>>;
   returnsRequests: ReturnRequest[];
-  setReturnsRequests?: React.Dispatch<React.SetStateAction<ReturnRequest[]>>;
   loading: boolean;
+  isLoading: boolean;
   error: string | null;
   fetchProducts: () => Promise<void>;
   fetchOrders: () => Promise<void>;
@@ -102,11 +100,11 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const submitVerification = useCallback(async (payload: any, type?: any, category?: any) => {
-    const body = typeof payload === 'object' && !Array.isArray(payload) && payload !== null
+    const body = (typeof payload === 'object' && !Array.isArray(payload))
       ? payload
       : { documents: payload, type, category };
     const res = await apiFetch('/verification', { method: 'POST', body: JSON.stringify(body) });
-    setProfile(p => ({ ...p, verificationStatus: "pending", ...body }));
+    setProfile((p: any) => ({ ...p, verificationStatus: "pending", ...body }));
     return res;
   }, []);
 
@@ -130,12 +128,10 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
     products,
     orders,
     serviceBookings,
-    setServiceBookings,
     deliveryTasks,
-    setDeliveryTasks,
     returnsRequests,
-    setReturnsRequests,
     loading,
+    isLoading: loading,
     error,
     fetchProducts,
     fetchOrders,
@@ -150,31 +146,11 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
   return <SellerContext.Provider value={value}>{children}</SellerContext.Provider>;
 }
 
-const defaultSellerValue: SellerContextValue = {
-  isSeller: false,
-  becomeSeller: () => {},
-  profile: { verificationStatus: "unsubmitted" },
-  updateProfile: () => {},
-  products: [],
-  orders: [],
-  serviceBookings: [],
-  deliveryTasks: [],
-  returnsRequests: [],
-  loading: false,
-  error: null,
-  fetchProducts: async () => {},
-  fetchOrders: async () => {},
-  createProduct: async () => ({} as any),
-  updateProduct: async () => ({} as any),
-  deleteProduct: async () => {},
-  setOrderStatus: async () => ({} as any),
-  submitVerification: async () => ({}),
-  verificationStatus: "unsubmitted",
-};
-
 export function useSeller() {
   const ctx = useContext(SellerContext);
-  return ctx || defaultSellerValue;
+  if (!ctx) throw new Error("useSeller must be used within SellerProvider");
+  return ctx;
 }
 
 export const useSellerContext = useSeller;
+

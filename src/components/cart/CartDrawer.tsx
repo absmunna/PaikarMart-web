@@ -1,11 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ShoppingBag, Trash2, Plus, Minus, Coins } from 'lucide-react';
 import { useCartStore } from '../../modules/cart/cartStore';
 
 export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const navigate = useNavigate();
   const { items, removeItem, updateQuantity, getTotalPrice, getTotalCoins } = useCartStore();
 
   return (
@@ -104,7 +102,7 @@ export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 <button 
                   onClick={() => {
                     onClose();
-                    navigate('/checkout');
+                    window.location.href = '/checkout';
                   }}
                   className="w-full bg-[var(--pm-accent)] text-white py-3 rounded-xl text-xs font-black shadow-lg shadow-[var(--pm-accent)]/20 active:scale-95 transition-all"
                 >

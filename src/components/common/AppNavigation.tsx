@@ -68,9 +68,8 @@ function NavigationContent({ onClose }: { onClose?: () => void }) {
   };
 
   // Determine dynamic seller/merchant status
-  const anyUser = user as any;
-  const isApprovedSeller = anyUser?.capabilities?.canSell || anyUser?.roles?.includes('seller') || user?.role === 'seller';
-  const applicationStatus = anyUser?.sellerApplicationStatus;
+  const isApprovedSeller = user?.capabilities?.canSell || user?.roles?.includes('seller');
+  const applicationStatus = user?.sellerApplicationStatus;
 
   return (
     <div className="space-y-6">
@@ -88,8 +87,8 @@ function NavigationContent({ onClose }: { onClose?: () => void }) {
           >
             <div className="relative shrink-0">
               <div className="h-7 w-7 rounded-full bg-[#FF7A00]/10 text-[#FF7A00] border border-white/5 flex items-center justify-center font-black overflow-hidden text-xs">
-                {anyUser.photoURL || user.avatar ? (
-                  <img src={anyUser.photoURL || user.avatar} alt={user.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt={user.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                 ) : (
                   <span>{user.name?.[0].toUpperCase() || "U"}</span>
                 )}

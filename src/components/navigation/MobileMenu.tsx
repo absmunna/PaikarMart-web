@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Home, ShoppingBag, Grid, ShieldAlert, Settings, LogOut, Check, LogIn, User, Store, Package, Heart, LayoutDashboard, PlusCircle } from 'lucide-react';
+import { X, Home, ShoppingBag, Grid, ShieldAlert, Settings, LogOut, Check, LogIn, User, Store } from 'lucide-react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../providers/ThemeProvider';
-import { useAuth } from '@/features/auth/AuthContext';
+import { useAuthStore } from '../../modules/auth/store/authStore';
 import { useAppStore } from '../../store/appStore';
 import { useTranslation } from '../../lib/i18n';
 
@@ -15,7 +15,7 @@ interface MobileMenuProps {
 export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation();
-  const { user, isAuthenticated, logout, isSeller } = useAuth();
+  const { user, isAuthenticated, logout } = useAuthStore();
   const { lang, setLang } = useAppStore();
   const navigate = useNavigate();
 
@@ -55,10 +55,10 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
               {isAuthenticated && user ? (
                 <Link to="/profile" onClick={onClose} className="flex flex-col gap-2 group">
                   <div className="w-12 h-12 rounded-full border-2 border-[var(--pm-accent)] overflow-hidden shadow-md group-hover:scale-105 transition-transform">
-                    <img src={user.avatar || user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt="Profile" className="w-full h-full object-cover bg-[var(--pm-bg)]" />
+                    <img src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt="Profile" className="w-full h-full object-cover bg-[var(--pm-bg)]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[var(--pm-text)] leading-tight">{user.fullName || user.name || 'ইউজার'}</h3>
+                    <h3 className="font-bold text-sm text-[var(--pm-text)] leading-tight">{user.name || 'ইউজার'}</h3>
                     <span className="text-[10px] text-[var(--pm-accent)] font-medium uppercase tracking-wider">{user.role}</span>
                   </div>
                 </Link>
@@ -82,22 +82,11 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
 
             {/* Navigation Links */}
             <nav className="flex-1 space-y-1">
-              <NavLink to="/" className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Home className="w-4 h-4 text-[var(--pm-accent)]"/> {t('home')}</NavLink>
-              
-              {isSeller ? (
-                <NavLink to="/seller" className="flex items-center gap-3 px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-bold shadow-sm" onClick={onClose}>
-                  <LayoutDashboard className="w-4 h-4"/> মার্চেন্ট হাব (Seller)
-                </NavLink>
-              ) : (
-                <NavLink to="/become-seller" className="flex items-center gap-3 px-3 py-2 rounded-xl bg-[var(--pm-accent-soft)] text-[var(--pm-accent)] border border-[var(--pm-accent)]/20 text-sm font-bold" onClick={onClose}>
-                  <PlusCircle className="w-4 h-4"/> সেলার একাউন্ট খুলুন
-                </NavLink>
-              )}
-
-              <NavLink to="/b2c" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><ShoppingBag className="w-4 h-4 text-[var(--pm-accent)]"/> {t('shop')}</NavLink>
-              <NavLink to="/orders" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Package className="w-4 h-4 text-[var(--pm-accent)]"/> আমার অর্ডার</NavLink>
-              <NavLink to="/wishlist" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Heart className="w-4 h-4 text-[var(--pm-accent)]"/> পছন্দের তালিকা</NavLink>
+              <NavLink to="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Home className="w-4 h-4 text-[var(--pm-accent)]"/> {t('home')}</NavLink>
+              <NavLink to="/shop" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><ShoppingBag className="w-4 h-4 text-[var(--pm-accent)]"/> {t('shop')}</NavLink>
               <NavLink to="/portals" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Grid className="w-4 h-4 text-[var(--pm-accent)]"/> {t('portals')}</NavLink>
+              <NavLink to="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><ShieldAlert className="w-4 h-4 text-[var(--pm-accent)]"/> {t('dashboard')}</NavLink>
+              <NavLink to="/vendors" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Store className="w-4 h-4 text-[var(--pm-accent)]"/> {t('vendor_dir')}</NavLink>
               <NavLink to="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[var(--pm-surface-hover)] transition-colors text-sm font-medium text-[var(--pm-text)]" onClick={onClose}><Settings className="w-4 h-4 text-[var(--pm-accent)]"/> {t('settings')}</NavLink>
             </nav>
             

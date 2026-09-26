@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { formatDistanceToNow } from "date-fns";
 // Removed useListNotifications from @/modules/app/api/client/hooks
 import { 
   Bell, 
@@ -18,6 +17,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
+function formatDistanceToNow(date: Date, options?: { addSuffix?: boolean }): string {
+  const diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (diffSec < 60) return options?.addSuffix ? 'just now' : 'now';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m${options?.addSuffix ? ' ago' : ''}`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h${options?.addSuffix ? ' ago' : ''}`;
+  const diffDay = Math.floor(diffHr / 24);
+  return `${diffDay}d${options?.addSuffix ? ' ago' : ''}`;
+}
 
 interface NotificationItem {
   id: string;

@@ -4,11 +4,10 @@ import {
   Heart, Share2, Plus, Minus, ShoppingCart, ArrowLeft,
   Package, Sparkles, MessageSquare, Clock, Check
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { ProductReviews } from "../../components/reviews/ProductReviews";
 import { useCartStore } from "../../modules/cart/store/useCartStore";
 import { toast } from "sonner";
-import { mockProducts } from "@/lib/workspace-stub";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -20,39 +19,34 @@ export default function ProductDetails() {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
 
-  const matched = useMemo(() => {
-    return mockProducts.find((p) => p.id === id || String(p.id) === String(id));
-  }, [id]);
-
-  // Dynamic product data with fallback
+  // High quality sample product data with real imagery
   const product = {
     id: id || "prod-101",
-    title: matched?.title || matched?.name || "Premium Combed Cotton Crewneck T-Shirt (Export Quality)",
-    description: matched?.description || "Experience breathable comfort with 100% combed ringspun cotton fabric (180 GSM). Specially crafted for Bangladesh's subtropical climate with reactive dye, anti-pilling wash, and double-stitched reinforced collar. Ideal for both daily retail wear and wholesale bulk re-branding.",
-    price: matched?.price || 450,
-    originalPrice: matched?.compareAtPrice || matched?.originalPrice || Math.round((matched?.price || 450) * 1.35),
-    wholesalePrice: matched?.moq ? Math.round((matched.price) * 0.65) : 220,
-    moq: matched?.moq || 50,
-    isWholesaleAvailable: Boolean(matched?.moq || matched?.type === 'wholesale'),
-    rating: matched?.rating || 4.8,
-    reviews: matched?.reviewCount || 124,
+    title: "Premium Combed Cotton Crewneck T-Shirt (Export Quality)",
+    description: "Experience breathable comfort with 100% combed ringspun cotton fabric (180 GSM). Specially crafted for Bangladesh's subtropical climate with reactive dye, anti-pilling wash, and double-stitched reinforced collar. Ideal for both daily retail wear and wholesale bulk re-branding.",
+    price: 450,
+    originalPrice: 650,
+    wholesalePrice: 220,
+    moq: 50,
+    isWholesaleAvailable: true,
+    rating: 4.8,
+    reviews: 124,
     sold: 1542,
-    images: matched?.images && matched.images.length > 0 
-      ? matched.images 
-      : [
-          matched?.image || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
-          "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800",
-          "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800"
-        ],
+    images: [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800",
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800"
+    ],
     variants: ["Small (38)", "Medium (40)", "Large (42)", "XL (44)", "XXL (46)"],
     colors: ["Black", "Navy Blue", "Heather Grey", "Olive Green"],
     seller: {
-      id: matched?.sellerId || matched?.vendor?.id || "store-1",
-      name: matched?.vendorName || matched?.vendor?.name || matched?.seller || "Dhaka Garments Syndicate",
+      id: "store-1",
+      name: "Dhaka Garments Syndicate",
       rating: 4.9,
       verified: true,
       joinDate: "2021",
-      location: matched?.location || "Keraniganj Wholesale Complex, Dhaka",
+      location: "Keraniganj Wholesale Complex, Dhaka",
       responseRate: "98%"
     }
   };

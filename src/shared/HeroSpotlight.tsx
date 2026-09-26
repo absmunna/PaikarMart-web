@@ -2,8 +2,9 @@ import React from 'react';
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Sparkles, TrendingUp } from 'lucide-react';
 
-interface HeroSpotlightProps {
+export interface HeroSpotlightProps {
   context?: string;
+  [key: string]: any;
 }
 
 export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ context }) => {
@@ -14,7 +15,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ context }) => {
       <div className="absolute bottom-8 left-8 right-8 flex items-end justify-between">
         <div className="space-y-2">
           <div className="flex gap-2">
-            <span className="px-3 py-1 rounded-full bg-[var(--pm-accent)] text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+            <span className="px-3 py-1 rounded-full bg-cyan-500 text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
               <Sparkles size={10} /> Viral Now
             </span>
             <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
@@ -24,7 +25,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ context }) => {
           <h2 className="text-3xl font-black text-white tracking-tighter uppercase leading-none">PaikarMart Flash Sale</h2>
           <p className="text-zinc-300 text-sm font-medium">Up to 40% off on all wholesale electronics. Limited time only!</p>
         </div>
-        <button className="bg-white text-black px-6 py-3 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[var(--pm-accent)] transition-colors">
+        <button className="bg-white text-black px-6 py-3 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-cyan-400 transition-colors">
           Shop Now
         </button>
       </div>

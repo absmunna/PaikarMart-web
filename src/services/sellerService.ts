@@ -1,4 +1,4 @@
-﻿import { 
+import { 
   collection, 
   doc, 
   setDoc, 
@@ -80,7 +80,7 @@ export const sellerService = {
         id: newDocRef.id, 
         ...newProduct, 
         createdAt: new Date().toISOString() 
-      } as SellerProduct;
+      } as unknown as SellerProduct;
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, "products");
       throw error;

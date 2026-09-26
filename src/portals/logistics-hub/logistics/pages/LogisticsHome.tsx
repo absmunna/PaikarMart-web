@@ -189,9 +189,9 @@ export default function LogisticsPortal() {
   }, [city, isAutoDetected]);
 
   useEffect(() => {
-    let watchId: number | null = null;
+    let cleanupWatch: any = null;
     if (bookingStep === 'tracking') {
-      watchId = watchLocation();
+      cleanupWatch = watchLocation();
       const interval = setInterval(() => {
         setMapProgress(prev => {
           if (prev >= 100) {
@@ -203,7 +203,8 @@ export default function LogisticsPortal() {
       }, 500);
       return () => {
         clearInterval(interval);
-        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        if (typeof cleanupWatch === 'function') cleanupWatch();
+        else if (cleanupWatch !== null) navigator.geolocation.clearWatch(cleanupWatch);
       };
     } else {
       setMapProgress(0);

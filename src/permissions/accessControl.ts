@@ -5,7 +5,7 @@ import { hasPermission, hasAnyPermission } from "./permissions";
 
 /** True if role meets minimum required role level */
 export function meetsRoleRequirement(userRole: AppRole, requiredRole: AppRole): boolean {
-  return (ROLE_HIERARCHY[userRole] ?? 0) >= (ROLE_HIERARCHY[requiredRole] ?? 0);
+  return (ROLE_HIERARCHY[userRole]?.requiredTrustLevel ?? 0) >= (ROLE_HIERARCHY[requiredRole]?.requiredTrustLevel ?? 0);
 }
 
 /** Portal access map — which roles can access which portal */

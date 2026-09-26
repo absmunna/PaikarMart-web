@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserNotificationCategory = 'order' | 'promo' | 'security' | 'b2b' | 'system' | 'info' | 'success' | 'warning' | 'error';
+export type UserNotificationCategory = 'order' | 'promo' | 'security' | 'b2b' | 'system';
 
 export interface UserNotification {
   id: string;
@@ -16,11 +16,7 @@ export interface UserNotification {
 interface NotificationState {
   notifications: UserNotification[];
   unreadCount: number;
-  addNotification: (
-    notifOrTitle: string | Omit<UserNotification, 'id' | 'isRead' | 'timestamp'>,
-    type?: string,
-    description?: string
-  ) => void;
+  addNotification: (notif: string | Omit<UserNotification, 'id' | 'isRead' | 'timestamp'>, categoryOrType?: string) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   removeNotification: (id: string) => void;
@@ -71,18 +67,25 @@ export const useNotificationStore = create<NotificationState>()(
       notifications: INITIAL_NOTIFICATIONS,
       unreadCount: INITIAL_NOTIFICATIONS.filter(n => !n.isRead).length,
       
-      addNotification: (notifOrTitle, type = 'system', description = '') => set((state) => {
-        const payload: Omit<UserNotification, 'id' | 'isRead' | 'timestamp'> = 
-          typeof notifOrTitle === 'string'
-            ? { title: notifOrTitle, type: type as UserNotificationCategory, description }
-            : notifOrTitle;
-
-        const newNotif: UserNotification = {
-          ...payload,
-          id: `notif-${Date.now()}`,
-          isRead: false,
-          timestamp: new Date().toISOString()
-        };
+      addNotification: (notif, categoryOrType) => set((state) => {
+        let newNotif: UserNotification;
+        if (typeof notif === 'string') {
+          newNotif = {
+            id: `notif-${Date.now()}`,
+            type: (categoryOrType as UserNotificationCategory) || 'system',
+            title: notif,
+            description: '',
+            isRead: false,
+            timestamp: new Date().toISOString()
+          };
+        } else {
+          newNotif = {
+            ...notif,
+            id: `notif-${Date.now()}`,
+            isRead: false,
+            timestamp: new Date().toISOString()
+          };
+        }
         const updated = [newNotif, ...state.notifications];
         return {
           notifications: updated,

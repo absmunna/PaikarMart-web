@@ -1,2 +1,2 @@
 export * from '../useCartStore';
-export { useCartStore as default } from '../useCartStore';
+export { useCartStore } from '../useCartStore';

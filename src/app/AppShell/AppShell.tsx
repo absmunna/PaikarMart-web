@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/AuthContext";
-import { GlobalNavigation } from "@/components/common/navigation/GlobalNavigation";
+import { GlobalNavigation } from "@/components/common/GlobalNavigation";
 import { cn } from "@/lib/utils";
 import { GlobalTopBar as Header } from "./GlobalTopBar";
 import { BottomNav } from "@/components/common/navigation/BottomNav";
 import { AppLauncher } from "@/components/common/navigation/AppLauncher";
+import { getRoleGroup, ROLE_GROUP_META } from "@/config/roles.config";
 import { RoleBasedSidebar } from "./RoleBasedSidebar";
 import { GlobalRouter } from "./GlobalRouter";
 import { EventSyncProvider } from "./EventSyncProvider";
@@ -22,6 +23,12 @@ export const AppShell: React.FC = () => {
     return localStorage.getItem('pm_sidebar_collapsed') === 'true';
   });
   const userRole = (role as any) || 'guest';
+
+  React.useEffect(() => {
+    const roleGroup = getRoleGroup(userRole);
+    const roleMeta = ROLE_GROUP_META[roleGroup];
+    document.title = `Paikar Mart - ${roleMeta.labelEn}`;
+  }, [userRole]);
 
   React.useEffect(() => {
     const handleToggle = () => setIsSidebarOpen(prev => !prev);
@@ -48,17 +55,17 @@ export const AppShell: React.FC = () => {
   }, [isSidebarCollapsed]);
 
   const content = (
-    <div className={isReels ? "h-[100dvh] w-full bg-black overflow-hidden" : "min-h-[100dvh] w-full overflow-x-hidden flex flex-col bg-[#020604] relative isolate"}>
+    <div className={isReels ? "h-[100dvh] w-full bg-black overflow-hidden" : "min-h-[100dvh] w-full overflow-x-hidden flex flex-col bg-[var(--pm-bg)] relative isolate"}>
       <GlobalNavigation />
       {/* Background decorations for ultra-wide screens */}
       {!isReels && (
         <div className="fixed inset-0 pointer-events-none -z-10 opacity-30 overflow-hidden">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--pm-accent)]/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--pm-secondary)]/10 blur-[120px] rounded-full" />
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
         </div>
       )}
 
-      <div className={isReels ? "h-full" : "flex-1 w-full max-w-[1440px] mx-auto flex flex-col bg-[#050B08] shadow-[0_0_120px_rgba(0,0,0,0.9)] border-x border-white/[0.03] relative isolate"}>
+      <div className={isReels ? "h-full" : "flex-1 w-full max-w-[1440px] mx-auto flex flex-col bg-[var(--pm-bg)] shadow-none border-x border-white/[0.03] relative isolate"}>
         {!isReels && <Header isSidebarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />}
         
         <div className={isReels ? "h-full" : "flex flex-1 w-full relative pt-[72px]"}>
@@ -84,7 +91,7 @@ export const AppShell: React.FC = () => {
                 `role-context-${role || 'guest'}`
               )}>
                 <div className="max-w-[1360px] mx-auto w-full h-full relative"> 
-                    <GlobalRouter />
+                   <GlobalRouter />
                 </div>
               </main>
               <Footer />

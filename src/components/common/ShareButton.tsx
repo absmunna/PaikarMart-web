@@ -7,8 +7,8 @@ interface ShareButtonProps {
   url: string;
   title: string;
   className?: string;
-  variant?: 'outline' | 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg' | 'icon';
+  variant?: 'ghost' | 'default' | 'outline' | 'secondary' | 'destructive' | 'link' | null | undefined;
+  size?: 'default' | 'sm' | 'lg' | 'icon' | null | undefined;
   children?: React.ReactNode;
 }
 

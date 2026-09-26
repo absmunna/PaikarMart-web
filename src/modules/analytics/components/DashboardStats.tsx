@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../../../components/ui/Card';
+import { Card } from '@/components/ui/card';
 
 export const DashboardStats = () => (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
