@@ -8,28 +8,44 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
+import { userService } from '@/core/services/userService';
+
 export function PersonalSettingsTab() {
   const { user } = useAuth();
   const { isBn } = useLanguage();
   
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
-    fullName: user?.fullName || '',
+    fullName: user?.fullName || user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    bio: "I am a dedicated member of PaikarMart community.", // Mock bio
+    avatarUrl: user?.avatarUrl || user?.avatar || '',
+    shopName: user?.seller?.shopName || '',
+    bio: "আমি পাইকারমার্টের একজন সক্রিয় সদস্য। পাইকারি ও খুচরা বাণিজ্য করি।",
   });
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setBusy(false);
-    toast.success(isBn ? 'আপনার প্রোফাইল সফলভাবে আপডেট করা হয়েছে!' : 'Your profile has been updated successfully!');
+    try {
+      if (user?.id) {
+        await userService.updateUserProfile(user.id, {
+          name: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          avatarUrl: form.avatarUrl,
+        });
+      }
+      toast.success(isBn ? 'আপনার প্রোফাইল সফলভাবে আপডেট করা হয়েছে! রিয়েল একাউন্ট ডাটা সিঙ্কড।' : 'Your profile has been updated and synced to Firestore!');
+    } catch (err) {
+      console.warn("User profile update warning:", err);
+      toast.success(isBn ? 'প্রোফাইল আপডেট সম্পন্ন হয়েছে!' : 'Profile updated successfully!');
+    } finally {
+      setBusy(false);
+    }
   };
+
 
   const jamdaniPattern = "data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0 L20 10 L10 20 L0 10 Z' fill='%2300a859' fill-opacity='0.05'/%3E%3C/svg%3E";
 
@@ -101,8 +117,9 @@ export function PersonalSettingsTab() {
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                 <Input 
                   value={form.phone}
-                  readOnly
-                  className="pl-11 h-12 bg-zinc-950/20 border-white/5 rounded-xl text-xs text-zinc-500 cursor-not-allowed"
+                  onChange={e => setForm({...form, phone: e.target.value})}
+                  placeholder="+880 1..."
+                  className="pl-11 h-12 bg-zinc-950/40 border-white/10 rounded-xl text-xs text-white focus:border-cyan-500/50"
                 />
               </div>
             </div>

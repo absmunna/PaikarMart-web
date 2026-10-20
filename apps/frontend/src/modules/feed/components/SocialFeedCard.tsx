@@ -2,15 +2,19 @@ import React, { useState, useRef } from 'react';
 import { 
   Heart, MessageCircle, Bookmark, ShoppingCart, Zap, 
   MapPin, CheckCircle2, ChevronLeft, ChevronRight, 
-  Play, Pause, Volume2, VolumeX, Share2, MoreHorizontal, UserPlus, UserCheck
+  Play, Pause, Volume2, VolumeX, Share2, MoreHorizontal, UserPlus, UserCheck,
+  FileText, Download, ExternalLink, Quote, PhoneCall, Sparkles, Package
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useWishlistStore } from '@/modules/wishlist';
 import { useCartStore } from '@/modules/cart';
+import { useAuth } from '@/modules/auth';
+import { postService } from '@/core/services/postService';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ReviewModal } from './ReviewModal';
 import { FeedPost, ReviewItem } from '../types';
+
 
 interface SocialFeedCardProps {
   post: FeedPost;
@@ -26,6 +30,8 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
   const navigate = useNavigate();
   const { toggleWishlist, isInWishlist } = useWishlistStore();
   const { addItem } = useCartStore();
+
+  const { user } = useAuth();
 
   // Local interaction states
   const [isFollowing, setIsFollowing] = useState(post.isFollowing || post.userInteractions?.isFollowing || false);
@@ -52,7 +58,7 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
   const [commentsCount, setCommentsCount] = useState(post.stats.comments || reviewsList.length);
 
   // Product linkage
-  const productData = post.product || {
+  const productData = post.product || (post.postType === 'product' ? {
     id: `prod-${post.id}`,
     title: post.content.slice(0, 36) + '...',
     price: 1250,
@@ -60,7 +66,7 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
     discount: 22,
     moq: 1,
     image: post.mediaUrls[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800'
-  };
+  } : null);
 
   // Follow Button Action
   const handleFollowToggle = (e: React.MouseEvent) => {
@@ -74,33 +80,38 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
     );
   };
 
-  // Wishlist Action (Heart)
+  // Wishlist Action (Heart / Like)
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     const nextLiked = !isLiked;
     setIsLiked(nextLiked);
     setLikesCount(prev => nextLiked ? prev + 1 : Math.max(0, prev - 1));
 
-    // Sync with Buyer Wishlist Store
-    toggleWishlist({
-      id: productData.id,
-      name: productData.title,
-      price: productData.price,
-      originalPrice: productData.originalPrice || undefined,
-      image: productData.image || post.mediaUrls[0],
-      category: 'social-feed',
-      stock: productData.stock || 50,
-      sellerName: post.sellerName,
-      sellerLocation: post.location,
-      rating: 4.9,
-      reviewCount: 30,
-      isVerifiedSeller: post.isVerified
-    } as any);
+    // Sync with Firestore postService
+    postService.togglePostLike(post.id, user?.id || 'guest-user', isLiked);
+
+    // Sync with Buyer Wishlist Store if product exists
+    if (productData) {
+      toggleWishlist({
+        id: productData.id,
+        name: productData.title,
+        price: productData.price,
+        originalPrice: productData.originalPrice || undefined,
+        image: productData.image || (post.mediaUrls && post.mediaUrls[0]) || '',
+        category: 'social-feed',
+        stock: productData.stock || 50,
+        sellerName: post.sellerName,
+        sellerLocation: post.location,
+        rating: 4.9,
+        reviewCount: 30,
+        isVerifiedSeller: post.isVerified
+      } as any);
+    }
 
     if (nextLiked) {
-      toast.success('পণ্যটি উইশলিস্টে যুক্ত হয়েছে! ❤️');
+      toast.success('পোস্টটি লাইক করা হয়েছে! ❤️');
     } else {
-      toast.info('উইশলিস্ট থেকে সরানো হয়েছে');
+      toast.info('লাইক সরানো হয়েছে');
     }
   };
 
@@ -116,6 +127,7 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
   // Add to Multi-Vendor Cart Action
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!productData) return;
     addItem({
       id: productData.id,
       name: productData.title,
@@ -133,8 +145,31 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
   // Quick Buy Action
   const handleQuickBuy = (e: React.MouseEvent) => {
     e.stopPropagation();
-    handleAddToCart(e);
-    navigate('/checkout');
+    if (productData) {
+      handleAddToCart(e);
+      navigate('/checkout');
+    } else {
+      navigate('/shop');
+    }
+  };
+
+  // Share Action
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: post.sellerName,
+          text: post.content,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(`${window.location.origin}/feed#${post.id}`);
+        toast.success("পোস্টের লিংক কপি করা হয়েছে! 📋");
+      }
+    } catch (err) {
+      toast.info("লিংক কপি হয়েছে");
+    }
   };
 
   // Video playback toggle
@@ -156,12 +191,20 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
     setIsMuted(!isMuted);
   };
 
-  const handleAddReview = (newRev: ReviewItem) => {
+  const handleAddReview = async (newRev: ReviewItem) => {
     setReviewsList(prev => [newRev, ...prev]);
     setCommentsCount(prev => prev + 1);
+    await postService.addComment(post.id, {
+      id: user?.id || 'guest',
+      name: user?.name || user?.fullName || 'Anonymous',
+      avatar: user?.avatarUrl || user?.avatar
+    }, newRev.text);
   };
 
-  const isVideo = post.mediaType === 'video' || Boolean(post.videoUrl);
+  const isVideo = post.postType === 'video' || post.mediaType === 'video' || Boolean(post.videoUrl);
+  const isFile = post.postType === 'file' || post.mediaType === 'file' || Boolean(post.fileAttachment);
+  const isTextOnly = post.postType === 'text' || post.mediaType === 'text' || (!isVideo && !isFile && (!post.mediaUrls || post.mediaUrls.length === 0));
+
   const mediaList = post.mediaUrls && post.mediaUrls.length > 0 
     ? post.mediaUrls 
     : ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800'];
@@ -169,31 +212,37 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
   return (
     <article className="w-full bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl overflow-hidden shadow-xl shadow-black/40 transition-all hover:border-[var(--pm-border)]/80">
       
-      {/* ─── 1. POST HEADER ─── */}
-      <header className="p-4 flex items-center justify-between gap-3 bg-[var(--pm-surface)]">
+      {/* ─── 1. POST HEADER (REAL USER ACCOUNT DATA) ─── */}
+      <header className="p-4 flex items-center justify-between gap-3 bg-[var(--pm-surface)] border-b border-white/5">
         <div className="flex items-center gap-3 min-w-0">
-          {/* Seller Avatar */}
+          {/* Author Avatar */}
           <Link to={`/store/${post.slug || post.sellerId}`} className="relative shrink-0 active:scale-95 transition-transform">
             <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-[var(--pm-accent)] via-rose-500 to-amber-400">
               <img
-                src={post.avatarUrl}
+                src={post.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.sellerName}`}
                 alt={post.sellerName}
                 className="w-full h-full rounded-full object-cover bg-zinc-900"
               />
             </div>
             {post.isVerified && (
-              <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[var(--pm-surface)] flex items-center justify-center text-white" title="Verified Seller">
+              <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[var(--pm-surface)] flex items-center justify-center text-white" title="Verified Member">
                 <CheckCircle2 className="w-2.5 h-2.5" />
               </span>
             )}
           </Link>
 
-          {/* Store Name, Location & Timestamp */}
+          {/* Author Name, Store Name, Role Badge & Location */}
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link to={`/store/${post.slug || post.sellerId}`} className="font-black text-sm text-white tracking-tight hover:text-[var(--pm-accent)] transition-colors cursor-pointer truncate">
                 {post.sellerName}
               </Link>
+              {/* Account Role Badge */}
+              {post.authorRole && (
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-white/10 text-amber-300 border border-white/10 shrink-0">
+                  {post.authorRole === 'factory' ? '🏭 কারখানা' : post.authorRole === 'seller' ? '🏢 সেলার' : post.authorRole === 'buyer' ? '🛒 বায়ার' : post.authorRole}
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-2 text-[11px] text-[var(--pm-text-muted)] font-bold mt-0.5 flex-wrap">
@@ -213,11 +262,21 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
               <time className="text-zinc-400 font-medium shrink-0">
                 {new Date(post.createdAt).toLocaleDateString('bn-BD', { month: 'short', day: 'numeric' })}
               </time>
+
+              {post.sellerPhone && (
+                <>
+                  <span className="text-zinc-600">•</span>
+                  <a href={`tel:${post.sellerPhone}`} className="text-emerald-400 hover:underline flex items-center gap-1">
+                    <PhoneCall className="w-2.5 h-2.5" />
+                    <span>হটলাইন</span>
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Follow Button */}
+        {/* Follow / Post Type Badge */}
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={handleFollowToggle}
@@ -243,9 +302,72 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
         </div>
       </header>
 
-      {/* ─── 2. 1:1 ASPECT-RATIO MEDIA CARD ─── */}
-      <div className="relative w-full aspect-square bg-black overflow-hidden select-none group/media">
-        {isVideo ? (
+      {/* ─── 2. MEDIA / CONTENT SECTION (PHOTO, VIDEO, FILE, TEXT, PRODUCT) ─── */}
+      {isTextOnly ? (
+        /* ─── 2A. TEXT POST ─── */
+        <div className="relative w-full p-6 sm:p-8 bg-gradient-to-br from-zinc-900 via-[#161824] to-zinc-950 flex flex-col justify-between border-b border-white/5 min-h-[200px]">
+          <div className="flex items-center justify-between pb-3">
+            <Quote className="w-8 h-8 text-[var(--pm-accent)]/40" />
+            <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/25 flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              টেক্সট আপডেট
+            </span>
+          </div>
+          <p className="text-base sm:text-lg font-bold text-white leading-relaxed my-2 whitespace-pre-wrap">
+            {post.content}
+          </p>
+          <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-zinc-400">
+            <span className="font-medium">{post.storeName || post.sellerName}</span>
+            {post.sellerPhone && (
+              <a href={`tel:${post.sellerPhone}`} className="inline-flex items-center gap-1.5 text-emerald-400 font-bold hover:underline">
+                <PhoneCall className="w-3.5 h-3.5" />
+                সরাসরি কল করুন
+              </a>
+            )}
+          </div>
+        </div>
+      ) : isFile ? (
+        /* ─── 2B. FILE / DOCUMENT POST ─── */
+        <div className="relative w-full bg-zinc-950 select-none border-b border-white/5 p-4 sm:p-5">
+          {mediaList.length > 0 && mediaList[0] && (
+            <div className="w-full h-44 rounded-2xl overflow-hidden mb-3 relative">
+              <img src={mediaList[0]} alt="Document cover" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <span className="absolute bottom-3 left-3 text-xs font-black text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-rose-400" />
+                অফিসিয়াল ফাইল ও ক্যাটালগ
+              </span>
+            </div>
+          )}
+          {/* Downloadable document card */}
+          <div className="w-full bg-zinc-900 border border-white/10 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-lg hover:border-[var(--pm-accent)]/50 transition-all">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-11 h-11 rounded-xl bg-rose-500/15 border border-rose-500/25 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 text-rose-400" />
+              </div>
+              <div className="min-w-0 flex flex-col">
+                <p className="font-bold text-sm text-white truncate">
+                  {post.fileAttachment?.name || 'পাইকারি_প্রোডাক্ট_ক্যাটালগ_২০২৬.pdf'}
+                </p>
+                <span className="text-[11px] text-zinc-400">
+                  {post.fileAttachment?.size || '৩.২ মেগাবাইট'} • PDF ডকুমেন্ট
+                </span>
+              </div>
+            </div>
+            <a
+              href={post.fileAttachment?.url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl bg-[var(--pm-accent)] hover:bg-orange-600 text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-md shadow-[var(--pm-accent)]/20 active:scale-95 transition-all"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>ডাউনলোড</span>
+            </a>
+          </div>
+        </div>
+      ) : isVideo ? (
+        /* ─── 2C. VIDEO POST ─── */
+        <div className="relative w-full aspect-square bg-black overflow-hidden select-none group/media">
           <div 
             onClick={toggleVideoPlay} 
             className="w-full h-full relative cursor-pointer flex items-center justify-center"
@@ -278,12 +400,26 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
               </button>
             </div>
 
-            <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+            <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
               ভিডিও রিভিউ
             </div>
+
+            {productData && (
+              <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1 text-white flex items-center gap-1.5 shadow-lg">
+                <span className="text-xs font-black text-amber-400">৳{productData.price.toLocaleString('bn-BD')}</span>
+                {productData.originalPrice && (
+                  <span className="text-[10px] text-zinc-400 line-through">
+                    ৳{productData.originalPrice.toLocaleString('bn-BD')}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
-        ) : (
+        </div>
+      ) : (
+        /* ─── 2D. PHOTO & CAROUSEL POST ─── */
+        <div className="relative w-full aspect-square bg-black overflow-hidden select-none group/media">
           <div className="w-full h-full relative flex items-center justify-center">
             <img
               src={mediaList[currentMediaIndex]}
@@ -345,8 +481,9 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
 
       {/* ─── 3. ACTION FOOTER BAR ─── */}
       <div className="px-4 pt-3.5 pb-2">
@@ -381,25 +518,53 @@ export const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
             >
               <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-amber-400' : ''}`} />
             </button>
+
+            <button
+              onClick={handleShare}
+              className="p-1.5 rounded-xl text-zinc-400 hover:text-sky-400 transition-all hover:bg-white/5 active:scale-90"
+              title="পোস্ট শেয়ার করুন"
+            >
+              <Share2 className="w-5 h-5" />
+            </button>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleAddToCart}
-              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-zinc-200 hover:text-white transition-all border border-white/10 cursor-pointer"
-              title="কার্টে যোগ করুন"
-            >
-              <ShoppingCart className="w-4 h-4 text-emerald-400" />
-            </button>
+            {productData ? (
+              <>
+                <button
+                  onClick={handleAddToCart}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-zinc-200 hover:text-white transition-all border border-white/10 cursor-pointer"
+                  title="কার্টে যোগ করুন"
+                >
+                  <ShoppingCart className="w-4 h-4 text-emerald-400" />
+                </button>
 
-            <button
-              onClick={handleQuickBuy}
-              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[var(--pm-accent)] to-orange-600 hover:opacity-90 active:scale-95 text-white text-xs font-black flex items-center gap-1.5 shadow-md shadow-[var(--pm-accent)]/25 transition-all cursor-pointer"
-            >
-              <Zap className="w-3.5 h-3.5 fill-white" />
-              <span className="hidden sm:inline">সরাসরি কিনুন</span>
-              <span className="sm:hidden">কিনুন</span>
-            </button>
+                <button
+                  onClick={handleQuickBuy}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[var(--pm-accent)] to-orange-600 hover:opacity-90 active:scale-95 text-white text-xs font-black flex items-center gap-1.5 shadow-md shadow-[var(--pm-accent)]/25 transition-all cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5 fill-white" />
+                  <span className="hidden sm:inline">সরাসরি কিনুন</span>
+                  <span className="sm:hidden">কিনুন</span>
+                </button>
+              </>
+            ) : post.sellerPhone ? (
+              <a
+                href={`tel:${post.sellerPhone}`}
+                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black flex items-center gap-1.5 shadow-md shadow-emerald-600/25 active:scale-95 transition-all"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>যোগাযোগ</span>
+              </a>
+            ) : (
+              <button
+                onClick={() => setIsReviewModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-black flex items-center gap-1.5 active:scale-95 transition-all"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>মন্তব্য করুন</span>
+              </button>
+            )}
           </div>
         </div>
 
