@@ -1,0 +1,12 @@
+.forest,
+[data-theme="forest"] {
+  --pm-bg: #022c22;
+  --pm-surface: #064e3b;
+  --pm-card: #065f46;
+  --pm-text: #ecfdf5;
+  --pm-muted: #a7f3d0;
+  --pm-border: rgba(52, 211, 153, 0.2);
+  --pm-glass: rgba(6, 78, 59, 0.85);
+  --pm-accent: #10b981;
+  --pm-accent-hover: #34d399;
+}

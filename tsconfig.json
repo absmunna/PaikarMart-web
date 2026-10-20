@@ -1,0 +1,69 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": ["node"],
+    "typeRoots": [
+      "./apps/frontend/node_modules/@types",
+      "./apps/backend/node_modules/@types"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./apps/frontend/src/*"],
+      "@/app/*": ["./apps/frontend/src/app/*"],
+      "@/core/*": ["./apps/frontend/src/core/*"],
+      "@/design-system/*": ["./apps/frontend/src/design-system/*"],
+      "@/modules/*": ["./apps/frontend/src/modules/*"],
+      "@/shared/*": ["./apps/frontend/src/shared/*"],
+      "@/portals/*": ["./apps/frontend/src/portals/*"],
+      "@/components/*": ["./apps/frontend/src/design-system/components/*"],
+      "@/components/ui/*": ["./apps/frontend/src/design-system/components/ui/*"],
+      "@/hooks/*": ["./apps/frontend/src/shared/hooks/*"],
+      "@/types/*": ["./apps/frontend/src/shared/types/*"],
+      "@/constants/*": ["./apps/frontend/src/shared/constants/*"],
+      "@/guards/*": ["./apps/frontend/src/core/auth/guards/*"],
+      "@/permissions/*": ["./apps/frontend/src/core/auth/permissions/*"],
+      "@/providers/*": ["./apps/frontend/src/app/providers/*"],
+      "@/router/*": ["./apps/frontend/src/app/router/*"],
+      "@/services/*": ["./apps/frontend/src/core/services/*"],
+      "@/store/*": ["./apps/frontend/src/app/store/*"],
+      "@/context/*": ["./apps/frontend/src/app/context/*"],
+      "@/lib/*": ["./apps/frontend/src/core/lib/*"],
+      "@/api/*": ["./apps/frontend/src/core/api/*"],
+      "@/config/*": ["./apps/frontend/src/core/config/*"],
+      "@/pages/*": ["./apps/frontend/src/pages/*"],
+      "@backend/*": ["./apps/backend/*"],
+      "@shared/*": ["./apps/frontend/src/shared/*"],
+      "@modules/*": ["./apps/frontend/src/modules/*"],
+      "@lib/*": ["./apps/frontend/src/core/lib/*"],
+      "@ui/*": ["./apps/frontend/src/design-system/components/ui/*"],
+      "@config/*": ["./apps/frontend/*"],
+      "shared/*": ["./packages/shared/*"]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": [
+    "apps/frontend/src/**/*",
+    "apps/frontend/vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "dist",
+    "**/dist"
+  ]
+}

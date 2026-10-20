@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User profile with role-based access information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user ID (matches auth UID)" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "name": { "type": "string", "description": "Full name or shop owner name" },
+        "role": { "type": "string", "enum": ["buyer", "seller", "admin", "rider", "service_provider"], "description": "Platform access role" },
+        "avatarUrl": { "type": "string", "description": "Profile picture URL" },
+        "walletBalance": { "type": "number", "description": "Current wallet balance in BDT" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account registration timestamp" }
+      },
+      "required": ["id", "email", "name", "role"]
+    },
+    "products": {
+      "title": "Product",
+      "description": "Marketplace and wholesale inventory product listing",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique product ID" },
+        "name": { "type": "string", "description": "Product title in Bengali or English" },
+        "description": { "type": "string", "description": "Detailed description of the product" },
+        "price": { "type": "number", "description": "Unit or wholesale price in BDT" },
+        "originalPrice": { "type": "number", "description": "Original crossed-out price if discounted" },
+        "images": { "type": "string", "description": "Primary or featured product image URL" },
+        "category": { "type": "string", "description": "Category slug or title" },
+        "stock": { "type": "number", "description": "Available stock quantity" },
+        "isPKStore": { "type": "boolean", "description": "Whether curated in PK Store" },
+        "sellerId": { "type": "string", "description": "User ID of the merchant who owns this product" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Listing creation timestamp" }
+      },
+      "required": ["id", "name", "price", "sellerId"]
+    },
+    "orders": {
+      "title": "Order",
+      "description": "Customer purchase transaction and shipment tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique order tracking ID" },
+        "userId": { "type": "string", "description": "Buyer's user UID" },
+        "sellerId": { "type": "string", "description": "Merchant's user UID" },
+        "productId": { "type": "string", "description": "Product reference ID" },
+        "total": { "type": "number", "description": "Order total in BDT" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "packing", "in_transit", "delivered", "cancelled"], "description": "Shipment progress status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Order placement timestamp" }
+      },
+      "required": ["id", "userId", "productId", "total", "status"]
+    },
+    "demands": {
+      "title": "Demand",
+      "description": "Bulk buyer sourcing demand request posted to the community",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Demand post ID" },
+        "authorUserId": { "type": "string", "description": "Requester user UID" },
+        "title": { "type": "string", "description": "Demand headline" },
+        "description": { "type": "string", "description": "Specific requirement or specifications" },
+        "budget": { "type": "number", "description": "Target purchase budget in BDT" },
+        "category": { "type": "string", "description": "Category name" },
+        "status": { "type": "string", "enum": ["open", "fulfilled", "closed"], "description": "Sourcing status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Posting timestamp" }
+      },
+      "required": ["id", "authorUserId", "title"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/users" },
+      "description": "Public and private user account profiles"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/products" },
+      "description": "Marketplace, B2B wholesale, and retail catalog products"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/orders" },
+      "description": "Order fulfillment records between buyers and sellers"
+    },
+    "/demands/{demandId}": {
+      "schema": { "$ref": "#/entities/demands" },
+      "description": "Wholesale sourcing demand board"
+    }
+  }
+}

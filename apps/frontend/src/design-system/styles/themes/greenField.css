@@ -1,0 +1,12 @@
+.greenField,
+[data-theme="greenField"] {
+  --pm-bg: #021a12;
+  --pm-surface: #052e22;
+  --pm-card: #0a3a2b;
+  --pm-text: #ecfdf5;
+  --pm-muted: #86efac;
+  --pm-border: rgba(52, 211, 153, 0.12);
+  --pm-glass: rgba(5, 46, 34, 0.85);
+  --pm-accent: #10b981;
+  --pm-accent-hover: #34d399;
+}

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paikar Mart</title>
+    <meta name="description" content="Multi-vendor scalable marketplace platform for Bangladesh, supporting wholesale, retail, nearby shops, and services." />
+    <meta property="og:title" content="Paikar Mart" />
+    <meta property="og:description" content="Multi-vendor scalable marketplace platform for Bangladesh, supporting wholesale, retail, nearby shops, and services." />
+    <link rel="icon" type="image/svg+xml" href="/pwa-192x192.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#09090b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PaikarMart" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.svg" />
+    <script>
+      (function() {
+        function isViteWsError(err) {
+          if (!err) return false;
+          var msg = String(err.message || err.reason || err || '');
+          var stack = String(err.stack || '');
+          return (
+            msg.indexOf('WebSocket') !== -1 ||
+            msg.indexOf('closed without opened') !== -1 ||
+            msg.indexOf('vite:ws') !== -1 ||
+            stack.indexOf('@vite/client') !== -1
+          );
+        }
+
+        function handler(e) {
+          if (isViteWsError(e) || isViteWsError(e.reason) || isViteWsError(e.error)) {
+            if (e.preventDefault) e.preventDefault();
+            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+            if (e.stopPropagation) e.stopPropagation();
+            return true;
+          }
+        }
+
+        window.addEventListener('unhandledrejection', handler, true);
+        window.addEventListener('error', handler, true);
+        
+        var prevOnError = window.onerror;
+        window.onerror = function(msg, url, line, col, error) {
+          if (isViteWsError(msg) || isViteWsError(error) || (url && url.indexOf('@vite/client') !== -1)) {
+            return true;
+          }
+          if (typeof prevOnError === 'function') {
+            return prevOnError.apply(this, arguments);
+          }
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

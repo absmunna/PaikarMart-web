@@ -1,0 +1,30 @@
+# ==============================================================================
+# PAIKAR MART - RENDER BLUEPRINT CONFIGURATION (render.yaml)
+# Auto-deployment for Backend API on Render connected to GitHub
+# ==============================================================================
+services:
+  - type: web
+    name: paikarmart-backend
+    runtime: node
+    plan: free
+    region: singapore
+    autoDeploy: true
+    branch: main
+    buildCommand: npm install && cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build
+    startCommand: node apps/backend/dist/server.js
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false # Set in Render Dashboard: Supabase PostgreSQL Connection String
+      - key: JWT_SECRET
+        generateValue: true # Render automatically generates a secure 32+ character key
+      - key: CLIENT_URL
+        sync: false # Set in Render Dashboard: your Vercel deployment URL (e.g. https://paikarmart.vercel.app)
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false # Optional: Google Gemini API key for AI features

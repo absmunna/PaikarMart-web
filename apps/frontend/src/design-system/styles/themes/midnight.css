@@ -1,0 +1,12 @@
+.midnight,
+[data-theme="midnight"] {
+  --pm-bg: #020617;
+  --pm-surface: #0a0f29;
+  --pm-card: #0f1738;
+  --pm-text: #f8fafc;
+  --pm-muted: #818cf8;
+  --pm-border: rgba(99, 102, 241, 0.15);
+  --pm-glass: rgba(10, 15, 41, 0.85);
+  --pm-accent: #6366f1;
+  --pm-accent-hover: #818cf8;
+}

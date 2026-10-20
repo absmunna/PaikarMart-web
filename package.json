@@ -1,0 +1,25 @@
+{
+  "name": "paikarmart-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "cd apps/backend && npx tsx server.ts",
+    "build": "cd apps/frontend && npm run build && cd ../backend && npm run build",
+    "start": "node apps/backend/dist/server.js",
+    "postinstall": "cd packages/database && npx --yes prisma generate",
+    "typecheck": "npm run lint --workspace=@paikarmart/frontend",
+    "lint": "npm run lint --workspace=@paikarmart/frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "~5.8.2"
+  },
+  "dependencies": {
+    "recharts": "^3.10.1"
+  }
+}

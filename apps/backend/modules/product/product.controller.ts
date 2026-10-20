@@ -1,0 +1,413 @@
+import { Request, Response } from 'express';
+import { prisma, db } from '../../config/database';
+import { CommercialPricingService } from '../commercial/commercial.pricing.service';
+
+export const getProducts = async (req: Request, res: Response) => {
+  try {
+    if (!db.isConnected()) {
+      // Return mock products catalog in dev mode
+      const mockProducts = [
+        // PK Shop (isPKStore: true)
+        {
+          id: "pk-01",
+          name: "Premium Crafted Leather Wallet",
+          description: "Hand-stitched genuine leather wallet with RFID blocking and multiple card slots. Pure elegance.",
+          price: 2499,
+          originalPrice: 3500,
+          images: ["https://images.unsplash.com/photo-1627123424574-724758594e93?w=500&h=400&fit=crop"],
+          category: "accessories",
+          stock: 25,
+          isPKStore: true,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "pk-02",
+          name: "Royal Rajshahi Silk Sari",
+          description: "Premium pure silk sari from Rajshahi, traditional motifs woven with metallic zari borders.",
+          price: 8500,
+          originalPrice: 12000,
+          images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&h=400&fit=crop"],
+          category: "fashion",
+          stock: 12,
+          isPKStore: true,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        // B2C Retail Products (isPKStore: false, category !== 'wholesale')
+        {
+          id: "b2c-01",
+          name: "Acoustix Pro Wireless Earbuds",
+          description: "Active Noise Cancelling (ANC), 30-hour playback time, Bluetooth 5.3, splash proof.",
+          price: 1899,
+          originalPrice: 2499,
+          images: ["https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&h=400&fit=crop"],
+          category: "electronics",
+          stock: 50,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "b2c-02",
+          name: "NeoFit Smart Watch Series X",
+          description: "Heart rate monitor, blood oxygen tracker, built-in GPS, multi-sport mode, AMOLED screen.",
+          price: 3200,
+          originalPrice: 4500,
+          images: ["https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&h=400&fit=crop"],
+          category: "electronics",
+          stock: 30,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        // B2B Wholesale Products (isPKStore: false, category === 'wholesale')
+        {
+          id: "b2b-05",
+          name: "Wholesale Cotton Polo Shirts (Pack of 50)",
+          description: "100% combed cotton pique fabric, retail quality polo shirts in mixed sizes and colors.",
+          price: 7500,
+          originalPrice: 10000,
+          images: ["https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500&h=400&fit=crop"],
+          category: "wholesale",
+          stock: 200,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "b2b-06",
+          name: "Factory Direct Leather Footwear (20 Pairs)",
+          description: "Genuine export quality formal leather shoes. Assorted sizes 40-44, wholesale lot.",
+          price: 18000,
+          originalPrice: 24000,
+          images: ["https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=500&h=400&fit=crop"],
+          category: "wholesale",
+          stock: 80,
+          isPKStore: false,
+          sellerId: "dev-seller-id",
+          createdAt: new Date().toISOString()
+        }
+      ];
+      return res.json(mockProducts);
+    }
+
+    const products = await prisma.product.findMany();
+    res.json(products);
+  } catch (error) {
+    console.error('Fetch Products Error:', error);
+    res.status(500).json({ error: 'Failed to fetch products' });
+  }
+};
+
+export const addProduct = async (req: Request, res: Response) => {
+  try {
+    const { name, description, price, originalPrice, images, isPKStore, category, stock } = req.body;
+    
+    // Check user role from headers (simulated) or authenticated request user context
+    const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-seller-id';
+    const userRole = req.headers['x-user-role'] as string || (req as any).user?.role || 'buyer';
+
+    const allowedSellerRoles = [
+      'seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'factory', 'rural', 'wholesale', 
+      'exporter', 'importer', 'brand_seller', 'b2b_seller', 'food_seller', 'grocery_seller', 'rural_seller', 
+      'nearby_shop', 'service_provider', 'digital_seller', 'business', 'admin', 'super_admin'
+    ];
+
+    if (!allowedSellerRoles.includes(userRole)) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Forbidden: Only registered sellers, vendors, or admins have product posting rights.'
+      });
+    }
+
+    if (!db.isConnected()) {
+      return res.status(201).json({
+        id: `prod-${Date.now()}`,
+        name,
+        description,
+        price,
+        originalPrice,
+        images,
+        isPKStore,
+        category,
+        stock,
+        sellerId: userId
+      });
+    }
+
+    // Ensure the dummy seller user exists or link to one.
+    let user = await prisma.user.findFirst();
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          id: userId,
+          email: 'demo-seller@paikarmart.com',
+          fullName: 'Demo Seller',
+          role: 'seller'
+        }
+      });
+    }
+
+    // Adapt to prisma schema
+    const product = await prisma.product.create({
+      data: {
+        title: name,
+        description: description || name,
+        price,
+        originalPrice,
+        images: images || [],
+        category: category || 'others',
+        stock: stock || 0,
+        vendor: {
+          connectOrCreate: {
+            where: { userId: user.id },
+            create: {
+              userId: user.id,
+              shopName: 'Demo Store',
+              isVerified: true
+            }
+          }
+        }
+      }
+    });
+
+    res.status(201).json(product);
+  } catch (error) {
+    console.error('Add Product Error:', error);
+    res.status(500).json({ error: 'Failed to add product' });
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!db.isConnected()) {
+      return res.json({ message: 'Product deleted in dev mode' });
+    }
+
+    await prisma.product.delete({ where: { id } });
+    res.json({ message: 'Product deleted' });
+  } catch (error) {
+    console.error('Delete Product Error:', error);
+    res.status(500).json({ error: 'Failed to delete product' });
+  }
+};
+
+export const getProductById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!db.isConnected()) {
+      // Look up in dev list
+      const defaultProduct = {
+        id,
+        name: "প্রিমিয়াম কোয়ালিটি প্রোডাক্ট",
+        description: "অরিজিনাল গ্যারান্টিযুক্ত প্রিমিয়াম পণ্য। পাইকার মার্ট ভেরিফায়েড বিক্রেতা দ্বারা সরবরাহকৃত।",
+        price: 2499,
+        originalPrice: 3200,
+        images: ["https://images.unsplash.com/photo-1627123424574-724758594e93?w=500&h=400&fit=crop"],
+        category: "electronics",
+        stock: 50,
+        rating: 4.8,
+        reviewsCount: 124,
+        isPKStore: false,
+        sellerId: "seller-01"
+      };
+      return res.json(defaultProduct);
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { seller: true }
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('Fetch Product Detail Error:', error);
+    res.status(500).json({ error: 'Failed to fetch product details' });
+  }
+};
+
+export const getProductSeller = async (req: Request, res: Response) => {
+  try {
+    return res.json({
+      id: "seller-01",
+      name: "মেসার্স আলম ব্রাদার্স ট্রেডার্স",
+      rating: 4.9,
+      reviewsCount: 380,
+      joinedYear: "২০২২",
+      location: "চকবাজার, ঢাকা",
+      isVerified: true,
+      badge: "টপ রেটেড হোলসেলার",
+      responseRate: "৯৮%",
+      totalProducts: 45
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch seller details' });
+  }
+};
+
+export const getProductReviews = async (req: Request, res: Response) => {
+  try {
+    const { id: productId } = req.params;
+
+    if (!db.isConnected()) {
+      return res.json([
+        {
+          id: "rev-1",
+          userName: "সাকিব আল হাসান",
+          userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+          rating: 5,
+          comment: "প্রোডাক্ট কোয়ালিটি অনেক ভালো। ডেলিভারিও দ্রুত পেয়েছি। ধন্যবাদ পাইকার মার্ট।",
+          createdAt: "২ দিন আগে"
+        },
+        {
+          id: "rev-2",
+          userName: "মাহমুদুল হাসান",
+          userAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&h=100&fit=crop",
+          rating: 4.5,
+          comment: "প্যাকেজিং খুব শক্ত ছিল। পাইকারি দাম অনুযায়ী জিনিসটি উপযুক্ত।",
+          createdAt: "৫ দিন আগে"
+        }
+      ]);
+    }
+
+    const reviews = await prisma.review.findMany({
+      where: { productId },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(reviews);
+  } catch (error) {
+    console.error('Get Product Reviews Error:', error);
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+};
+
+export const addProductReview = async (req: Request, res: Response) => {
+  try {
+    const { id: productId } = req.params;
+    const { rating, comment, userName, images } = req.body;
+    
+    const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-user-id';
+
+    if (!db.isConnected()) {
+      // Restrict Product Review submission ONLY to users with Status = DELIVERED
+      // In dev simulated mode, let's mock a delivered order for 'b2c-01', but NOT for 'b2c-02'.
+      if (productId === 'b2c-02') {
+        return res.status(403).json({
+          error: 'Review Restricted',
+          message: 'Review submission restricted. You can only submit reviews for products that have been successfully DELIVERED to your account.'
+        });
+      }
+
+      return res.status(201).json({
+        id: `rev-${Date.now()}`,
+        userName: userName || "Anonymous Buyer",
+        userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+        rating: rating || 5,
+        comment: comment || "Excellent product!",
+        createdAt: "Just now",
+        verifiedBuyer: true
+      });
+    }
+
+    // Real DB check:
+    // Check if there is an order for this buyerId containing this productId with status = 'delivered'
+    const deliveredOrder = await prisma.order.findFirst({
+      where: {
+        buyerId: userId,
+        status: 'delivered',
+        orderItems: {
+          some: {
+            productId: productId
+          }
+        }
+      }
+    });
+
+    if (!deliveredOrder) {
+      return res.status(403).json({
+        error: 'Review Restricted',
+        message: 'Review submission restricted. You can only submit reviews for products that have been successfully DELIVERED to your account.'
+      });
+    }
+
+    // Save review
+    const review = await prisma.review.create({
+      data: {
+        userId,
+        userName: userName || 'Anonymous Buyer',
+        productId,
+        rating: rating ? parseInt(rating) : 5,
+        comment,
+        images: images || [],
+        verifiedBuyer: true
+      }
+    });
+
+    res.status(201).json(review);
+  } catch (error) {
+    console.error('Add Product Review Error:', error);
+    res.status(500).json({ error: 'Failed to submit review' });
+  }
+};
+
+export const getProductQnA = async (req: Request, res: Response) => {
+  try {
+    return res.json([
+      {
+        id: "q-1",
+        question: "৫০ পিসের বেশি নিলে কি অতিরিক্ত ডিসকাউন্ট পাওয়া যাবে?",
+        answer: "হ্যাঁ, ৫০ পিসের বেশি অর্ডারে স্পেশাল লট রেট পাবেন। মেসেজ করুন।",
+        author: "আকরাম ট্রেডার্স"
+      },
+      {
+        id: "q-2",
+        question: "ঢাকার বাইরে কুরিয়ারে ক্যাশ অন ডেলিভারি দেওয়া যাবে?",
+        answer: "হ্যাঁ, সুন্দরবন ও রেডেক্স কুরিয়ারে ক্যাশ অন ডেলিভারি এভেইলেবল।",
+        author: "বিক্রেতা"
+      }
+    ]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch Q&A' });
+  }
+};
+
+export const addQuestion = async (req: Request, res: Response) => {
+  try {
+    const { question } = req.body;
+    return res.status(201).json({
+      id: `q-${Date.now()}`,
+      question,
+      message: 'প্রশ্নটি সফলভাবে পাঠানো হয়েছে। বিক্রেতা উত্তর দিলে জানানো হবে।'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to submit question' });
+  }
+};
+
+export const getProductPricing = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.query;
+    
+    if (quantity) {
+      const qty = parseInt(quantity as string, 10);
+      const calc = await CommercialPricingService.calculateTieredPricing(id, qty);
+      return res.json({ status: 'success', data: calc });
+    }
+
+    const tiers = await CommercialPricingService.getProductTiers(id);
+    return res.json({ status: 'success', data: tiers });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || 'Failed to fetch product pricing tiers' });
+  }
+};
+
