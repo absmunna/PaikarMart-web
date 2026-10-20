@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "cd apps/backend && npx tsx server.ts",
     "build": "cd apps/frontend && npm run build && cd ../backend && npm run build",
-    "start": "node apps/backend/dist/server.js",
+    "start": "node --no-deprecation apps/backend/dist/server.js",
     "postinstall": "cd packages/database && npx --yes prisma generate",
     "typecheck": "npm run lint --workspace=@paikarmart/frontend",
     "lint": "npm run lint --workspace=@paikarmart/frontend"

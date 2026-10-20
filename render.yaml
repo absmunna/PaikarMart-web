@@ -10,8 +10,8 @@ services:
     region: singapore
     autoDeploy: true
     branch: main
-    buildCommand: npm install && cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build
-    startCommand: node apps/backend/dist/server.js
+    buildCommand: (corepack enable pnpm 2>/dev/null || true) && (pnpm install --no-frozen-lockfile || npm install --legacy-peer-deps) && cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build
+    startCommand: node --no-deprecation apps/backend/dist/server.js
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV

@@ -215,7 +215,11 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server is listening on port ${PORT}`);
+    console.log(`==============================================`);
+    console.log(`🚀 PAIKAR MART BACKEND API IS ONLINE & LIVE!`);
+    console.log(`📡 Listening on: http://0.0.0.0:${PORT}`);
+    console.log(`🩺 Health check: http://0.0.0.0:${PORT}/api/v1/health`);
+    console.log(`==============================================`);
   });
 }
 
