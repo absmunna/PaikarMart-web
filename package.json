@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev": "cd apps/backend && npx tsx server.ts",
-    "build": "cd apps/frontend && npm run build && cd ../backend && npm run build",
+    "build": "cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build",
+    "build:all": "cd apps/frontend && npm run build && cd ../backend && npm run build",
     "start": "node --no-deprecation apps/backend/dist/server.js",
     "postinstall": "cd packages/database && npx --yes prisma generate",
     "typecheck": "npm run lint --workspace=@paikarmart/frontend",
