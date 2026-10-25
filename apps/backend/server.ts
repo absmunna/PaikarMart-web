@@ -90,6 +90,8 @@ async function startServer() {
   app.use('/api/v1/analytics', analyticsRoutes);
   app.use('/api/v1/nearby', nearbyRoutes);
   app.use('/api/v1/shops/nearby', nearbyRoutes);
+  app.use('/api/v1/local', nearbyRoutes);
+  app.use('/api/local', nearbyRoutes);
   app.use('/api/v1/delivery', deliveryRoutes);
   app.use('/api/v1/logistics', logisticsHubRoutes);
   app.use('/api/v1/deals', dealRoutes);

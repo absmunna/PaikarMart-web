@@ -4,8 +4,6 @@
   "installCommand": "pnpm install --no-frozen-lockfile",
   "buildCommand": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build",
   "outputDirectory": "apps/frontend/dist",
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/(.*)",

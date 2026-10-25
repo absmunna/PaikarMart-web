@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShoppingBag, Pill, Utensils, Zap, Briefcase, Users, MapPin, 
   Search, SlidersHorizontal, ChevronDown, Clock, ShieldCheck, 
-  AlertCircle, ArrowRight, Heart, Star, Grid, Layout, Navigation,
+  AlertCircle, ArrowRight, ArrowUpRight, Heart, Star, Grid, Layout, Navigation,
   MessageSquare, Loader2, Store
 } from 'lucide-react';
 import { HomeHeader } from '@/components/home/HomeHeader';
@@ -108,6 +109,7 @@ const FALLBACK_SHOPS: NearbyStore[] = [
 type HubTab = 'explore' | 'feed' | 'services' | 'events';
 
 export const LocalHubHome: React.FC = () => {
+  const navigate = useNavigate();
   const { t, isBn } = useLanguage();
   const [radius, setRadius] = useState<number>(5);
   const [isRadiusOpen, setIsRadiusOpen] = useState(false);
@@ -162,9 +164,10 @@ export const LocalHubHome: React.FC = () => {
 
         const response = await fetch(`/api/v1/nearby?${queryParams.toString()}`);
         if (response.ok) {
-          const data = await response.json();
-          if (isMounted && Array.isArray(data)) {
-            setShops(data);
+          const json = await response.json();
+          const list = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : []);
+          if (isMounted && list.length > 0) {
+            setShops(list);
           }
         }
       } catch (err) {
@@ -384,7 +387,8 @@ export const LocalHubHome: React.FC = () => {
                       {filteredShops.map((shop) => (
                         <div 
                           key={shop.id} 
-                          className="bg-black/40 border border-white/5 rounded-3xl p-4 flex gap-4 hover:border-cyan-400/30 transition-all text-left group"
+                          onClick={() => navigate(`/nearby/shop/${shop.id}`)}
+                          className="bg-black/40 border border-white/5 rounded-3xl p-4 flex gap-4 hover:border-cyan-400/40 hover:bg-black/60 transition-all text-left group cursor-pointer"
                         >
                           <div className="w-20 h-20 rounded-2xl overflow-hidden relative shrink-0 border border-white/5 bg-zinc-900">
                             <img src={shop.avatar} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
@@ -396,7 +400,7 @@ export const LocalHubHome: React.FC = () => {
                           <div className="flex-1 min-w-0 flex flex-col justify-between">
                             <div>
                               <div className="flex items-start justify-between gap-1">
-                                <h3 className="font-bold text-sm text-white truncate leading-tight">{shop.name}</h3>
+                                <h3 className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors truncate leading-tight">{shop.name}</h3>
                                 {shop.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
                               </div>
                               <p className="text-[10px] text-zinc-400 truncate mt-0.5">{shop.address}</p>
@@ -413,20 +417,36 @@ export const LocalHubHome: React.FC = () => {
                               </div>
                             </div>
                             
-                            <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-2">
+                            <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-2 gap-2 flex-wrap">
                               <div className="flex items-center gap-1 text-[10px] font-medium text-cyan-300">
                                 <Clock className="w-3 h-3 text-cyan-400" />
                                 <span>{shop.deliveryTime}</span>
                               </div>
 
-                              <button
-                                type="button"
-                                onClick={() => setChatTargetShop({ id: shop.id, name: shop.name })}
-                                className="px-3 py-1.5 bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-300 border border-cyan-400/25 rounded-xl text-[10px] font-black uppercase flex items-center gap-1 transition-all cursor-pointer"
-                              >
-                                <MessageSquare className="w-3 h-3" />
-                                চ্যাট করুন
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setChatTargetShop({ id: shop.id, name: shop.name });
+                                  }}
+                                  className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 rounded-xl text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+                                >
+                                  <MessageSquare className="w-3 h-3 text-cyan-400" />
+                                  চ্যাট
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/nearby/shop/${shop.id}`);
+                                  }}
+                                  className="px-3 py-1.5 bg-cyan-400 text-black hover:bg-cyan-300 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                                >
+                                  <span>দোকানে প্রবেশ</span>
+                                  <ArrowUpRight className="w-3 h-3" />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>

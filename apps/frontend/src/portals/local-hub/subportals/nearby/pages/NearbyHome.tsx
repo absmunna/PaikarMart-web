@@ -415,10 +415,9 @@ export default function NearbyHome() {
               <div className="p-5 pt-0">
                 <button
                   onClick={() => {
-                    toast.success(`${shop.name}-এর সম্পূর্ণ ক্যাটালগে প্রবেশ করা হচ্ছে`);
-                    navigate('/b2c');
+                    navigate(`/nearby/shop/${shop.id}`);
                   }}
-                  className="w-full py-3 rounded-2xl bg-[var(--pm-surface-hover)] hover:bg-emerald-600 hover:text-white border border-[var(--pm-border)] text-xs font-bold text-[var(--pm-text)] transition-all flex items-center justify-center gap-2 active:scale-95 group-hover:border-emerald-500/30"
+                  className="w-full py-3 rounded-2xl bg-[var(--pm-surface-hover)] hover:bg-emerald-600 hover:text-white border border-[var(--pm-border)] text-xs font-bold text-[var(--pm-text)] transition-all flex items-center justify-center gap-2 active:scale-95 group-hover:border-emerald-500/30 cursor-pointer"
                 >
                   দোকানে প্রবেশ করুন <ArrowUpRight className="w-4 h-4" />
                 </button>
