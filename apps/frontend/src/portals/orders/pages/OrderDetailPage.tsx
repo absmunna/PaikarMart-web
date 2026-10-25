@@ -11,6 +11,7 @@ import {
 import { useLanguage } from "@/modules/language";
 import { useOrderTrackingStore } from "@/modules/orders";
 import { LiveTrackingSheet } from "@/portals/orders/components/LiveTrackingSheet";
+import { safeBack } from "@/lib/navigation";
 
 const formatPrice = formatBDT;
 
@@ -123,7 +124,11 @@ export default function OrderDetailPage() {
       {/* Header bar */}
       <div className="flex items-center justify-between sticky top-0 z-40 bg-[#020604]/90 backdrop-blur-md py-2 -mx-2 px-2 border-b border-white/[0.04]">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="h-11 w-11 flex items-center justify-center rounded-2xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 active:scale-90 transition-all cursor-pointer">
+          <button 
+            onClick={() => safeBack(navigate, '/orders')} 
+            className="h-11 w-11 flex items-center justify-center rounded-2xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 active:scale-90 transition-all cursor-pointer"
+            title="ফিরে যান"
+          >
             <ArrowLeft className="h-5 w-5 text-white" />
           </button>
           <div>

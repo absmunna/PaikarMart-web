@@ -15,7 +15,13 @@ import {
   Flame,
   BadgeCheck,
   FileText,
+  Settings,
+  User,
+  Moon,
+  Shield,
+  Database
 } from "lucide-react";
+import { SettingsDrawer } from "@/design-system/components/common/navigation/SettingsDrawer";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCartStore } from "@/modules/cart";
 import { motion, AnimatePresence } from "motion/react";
@@ -39,6 +45,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
   const location = useLocation();
 
   const [isMegaSearchOpen, setIsMegaSearchOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const getPageTitle = (path: string) => {
     if (path === "/") return "Discover";
@@ -280,6 +287,27 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
                   </span>
                 )}
               </motion.button>
+              
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsSettingsOpen(true)}
+                className="w-10 h-10 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)]"
+              >
+                <Settings className="w-5 h-5" strokeWidth={2} />
+              </motion.button>
+
+              <SettingsDrawer 
+                isOpen={isSettingsOpen} 
+                onClose={() => setIsSettingsOpen(false)}
+                title="App Settings"
+                items={[
+                  { label: 'Profile Management (প্রোফাইল)', icon: User, onClick: () => navigate('/profile') },
+                  { label: 'Notification Settings (নোটিফিকেশন)', icon: Bell, badge: 'Push • Email • In-App', onClick: () => navigate('/settings/notifications') },
+                  { label: 'Theme/Appearance (থিম)', icon: Moon, onClick: () => navigate('/settings') },
+                  { label: 'Privacy & Security (নিরাপত্তা)', icon: Shield, onClick: () => navigate('/settings') },
+                  { label: 'Data & Storage (ডাটা)', icon: Database, onClick: () => navigate('/settings') },
+                ]}
+              />
 
               <div className="ml-1">
                 <ThemeSwitcher />

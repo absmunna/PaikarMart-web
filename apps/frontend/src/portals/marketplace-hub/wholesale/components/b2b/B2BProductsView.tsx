@@ -6,6 +6,8 @@ import {
 import { useB2BProducts } from '@/modules/b2b';
 import { useB2BProductUIStore } from '@/modules/b2b';
 import { GlobalSkeletonSystem, SafeFallbackCard } from '@/app/AppShell/GlobalSkeletonSystem';
+import { ProductCardSkeleton } from '@/components/ui/ProductCard/ProductCardSkeleton';
+import { ProductCard } from '@/design-system/components/ui/ProductCard/ProductCard';
 
 interface B2BProductsViewProps {
   initialCategory?: string;
@@ -205,19 +207,9 @@ export const B2BProductsView: React.FC<B2BProductsViewProps> = ({
 
       {/* 4. Product Grid Layout */}
       {isLoading ? (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
-          {[1,2,3,4,5,6,7,8].map(i => (
-            <div key={i} className="space-y-3">
-              <GlobalSkeletonSystem className="aspect-square w-full" />
-              <div className="space-y-2">
-                <GlobalSkeletonSystem className="h-4 w-3/4" />
-                <GlobalSkeletonSystem className="h-3 w-1/2" />
-                <div className="flex gap-1">
-                  <GlobalSkeletonSystem className="h-6 flex-1" />
-                  <GlobalSkeletonSystem className="h-6 flex-1" />
-                </div>
-              </div>
-            </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-4">
+          {[1,2,3,4,5,6,7,8,9,10].map(i => (
+            <ProductCardSkeleton key={i} />
           ))}
         </div>
       ) : error ? (
@@ -230,83 +222,25 @@ export const B2BProductsView: React.FC<B2BProductsViewProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5">
           {filteredProducts.map(prod => {
             const minPrice = Math.min(...prod.tierPrices.map(t => t.price));
-            const maxPrice = Math.max(...prod.tierPrices.map(t => t.price));
-            const isSaved = savedProducts.includes(prod.id);
-
             return (
-              <div
-                key={prod.id}
-                onClick={() => onNavigate('product-detail', prod.id)}
-                className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-2xl overflow-hidden cursor-pointer hover:border-[var(--pm-accent)]/30 transition-all p-3.5 flex flex-col justify-between space-y-3 relative group"
-              >
-                {/* Image and heart */}
-                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black/20">
-                  <img src={prod.image} alt={prod.name} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" referrerPolicy="no-referrer" />
-                  <button
-                    onClick={(e) => toggleSave(prod.id, e)}
-                    className="absolute top-2 right-2 p-1.5 rounded-xl bg-black/55 hover:bg-black/80 backdrop-blur border border-white/5 text-white/80 transition-colors"
-                  >
-                    <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-rose-500 text-rose-500' : ''}`} />
-                  </button>
-                  <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[8.5px] font-black uppercase tracking-wider border border-white/10">
-                    MOQ: {prod.moq} Pcs
-                  </div>
-                </div>
-
-                {/* Info block */}
-                <div className="space-y-1.5 flex-1 flex flex-col justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {prod.isVerified && (
-                        <span className="text-[7.5px] px-1.5 py-0.5 bg-orange-600/15 text-orange-400 border border-orange-500/20 font-black rounded flex items-center gap-0.5 uppercase">
-                          <ShieldCheck className="w-2.5 h-2.5 shrink-0" /> Verified
-                        </span>
-                      )}
-                      {prod.isExport && (
-                        <span className="text-[7.5px] px-1.5 py-0.5 bg-cyan-500/15 text-cyan-400 border border-cyan-500/20 font-black rounded flex items-center gap-0.5 uppercase">
-                          <Globe className="w-2.5 h-2.5 shrink-0" /> EXPORT
-                        </span>
-                      )}
-                    </div>
-                    <h4 className="text-xs font-black text-white line-clamp-2 leading-tight">{prod.name}</h4>
-                    <p className="text-[10px] text-[var(--pm-text-secondary)] truncate">By: {prod.vendorName}</p>
-                  </div>
-
-                  {/* Pricing tier ranges */}
-                  <div className="pt-2 border-t border-white/5 flex flex-col gap-0.5">
-                    <span className="text-[8px] text-[var(--pm-text-secondary)] font-bold uppercase tracking-wide">Wholesale Tier Pricing</span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-xs font-black text-[var(--pm-accent)]">৳ {minPrice} - ৳ {maxPrice}</span>
-                      <span className="text-[8.5px] text-[var(--pm-text-secondary)] font-semibold">/ pc</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Grid micro-actions */}
-                <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-white/5">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onNavigate('product-detail', prod.id);
-                    }}
-                    className="py-1.5 bg-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/90 text-white text-[9.5px] font-black tracking-wide rounded-lg flex items-center justify-center gap-0.5 transition-colors"
-                  >
-                    <FileText className="w-3 h-3" /> RFQ Form
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onNavigate('factory-profile', prod.vendorId);
-                    }}
-                    className="py-1.5 bg-white/5 hover:bg-white/10 text-white/90 text-[9.5px] font-bold rounded-lg flex items-center justify-center gap-0.5 border border-white/5 transition-colors"
-                  >
-                    <MessageCircle className="w-3 h-3" /> Contact Seller
-                  </button>
-                </div>
-              </div>
+              <ProductCard 
+                key={prod.id} 
+                product={{
+                  id: prod.id,
+                  name: prod.name,
+                  type: 'product',
+                  portal: 'wholesale',
+                  vendor: prod.vendorName,
+                  price: minPrice,
+                  image: prod.image,
+                  moq: prod.moq,
+                  isVerified: prod.isVerified,
+                  isExport: prod.isExport
+                }}
+              />
             );
           })}
         </div>

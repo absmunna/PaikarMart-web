@@ -115,14 +115,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date().toISOString(),
               }));
             } catch (e) {
-              console.error("[LocationContext] Error processing coordinates:", e);
+              console.warn("[LocationContext] Error processing coordinates:", e);
             } finally {
               setIsDetecting(false);
               resolve();
             }
           },
           (err) => {
-            console.warn("[LocationContext] Geolocation failed or denied:", err.message);
+            console.warn("[LocationContext] Geolocation unavailable or permission denied:", err?.message || 'Access denied');
             // Permission denied or error — fall back to Dhaka
             setLocation({
               city: "Dhaka",
@@ -134,11 +134,11 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             setIsDetecting(false);
             resolve();
           },
-          { enableHighAccuracy: false, timeout: 10000, maximumAge: 120_000 },
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 120_000 },
         );
       });
     } catch (err) {
-      console.error("[LocationContext] Critical geolocation error:", err);
+      console.warn("[LocationContext] Geolocation auto-detection skipped:", err);
       setIsDetecting(false);
     }
   }, []);

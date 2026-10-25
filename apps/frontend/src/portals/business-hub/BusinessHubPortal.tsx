@@ -1,5 +1,4 @@
-﻿import React from 'react';
-import { StoryBar } from '@/shared/StoryBar';
+import React from 'react';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Briefcase } from 'lucide-react';
@@ -7,7 +6,6 @@ import { Briefcase } from 'lucide-react';
 export default function BusinessHubPortal() {
   return (
     <div className="min-h-screen pb-20">
-      <StoryBar context="business-hub" />
       <PortalIconBar context="business-hub" />
       <main className="p-4 space-y-4">
         <GlassCard className="p-6 flex items-center gap-4">

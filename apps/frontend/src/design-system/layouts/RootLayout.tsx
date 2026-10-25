@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar } from '@/components/navigation/Navbar';
 import { BottomNav } from '@/components/navigation/BottomNav';
 import { UnifiedSidebar } from '@/design-system/components/navigation/UnifiedSidebar';
-import { FloatingNavButton } from '@/components/navigation/FloatingNavButton';
 import { ThemeBlobs } from '@/components/layout/ThemeBlobs';
 import { NakshiOverlay } from '@/components/layout/NakshiOverlay';
 import { CartDrawer } from '@/components/cart/CartDrawer';
@@ -17,6 +16,8 @@ import {
   PhoneCall, 
   Truck, Flame
 } from 'lucide-react';
+import { CategoryBar } from '@/design-system/components/navigation/CategoryBar';
+import { GlobalLocationModal } from '@/modules/location';
 
 export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,6 +26,16 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const { balance, coins } = useWalletStore();
   const openChat = useLiveChatStore((state) => state.openChat);
   const navigate = useNavigate();
+  const location = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Automatically scroll page and main container to top whenever route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0);
+    }
+  }, [location.pathname, location.search]);
 
   return (
     <div className="h-[100dvh] w-full bg-[var(--pm-bg)] transition-colors duration-500 overflow-hidden">
@@ -45,9 +56,10 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
           <CartDrawer isOpen={isOpen} onClose={close} />
           <NotificationDrawer />
           <LiveChatDrawer />
+          <GlobalLocationModal />
 
-          <main className="flex-1 pt-[60px] md:pt-[64px] pb-[80px] lg:pb-8 overflow-y-auto hide-scrollbar">
-            <FloatingNavButton />
+          <main ref={mainRef} className="flex-1 pt-[60px] md:pt-[64px] pb-[80px] lg:pb-8 overflow-y-auto hide-scrollbar">
+            <CategoryBar className="sticky top-0 z-30" />
             <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-2 max-w-[1400px] mx-auto">
               {children}
             </div>

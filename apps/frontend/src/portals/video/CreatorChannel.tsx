@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CheckCircle2, Film, ShoppingBag, Wrench, Radio, Users, Star, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { safeBack } from "@/lib/navigation";
 
 export default function CreatorChannel() {
   const [activeTab, setActiveTab] = useState<"videos" | "shorts" | "products" | "services">("videos");
@@ -11,10 +12,11 @@ export default function CreatorChannel() {
     <div className="w-full max-w-7xl mx-auto px-4 py-6 text-white">
       {/* Back Button */}
       <button 
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors"
+        onClick={() => safeBack(navigate, '/')}
+        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors cursor-pointer"
+        title="ফিরে যান"
       >
-        <ArrowLeft className="h-4 w-4" /> Back
+        <ArrowLeft className="h-4 w-4" /> ফিরে যান
       </button>
 
       {/* Channel Header Banner */}

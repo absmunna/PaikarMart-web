@@ -8,7 +8,7 @@ The following packages are currently pending development or integration to achie
 - [x] Navigation Finalization (Bottom Nav with Apps/Messages sync)
 - [ ] B2C Retail Portal (Full backend integration and frontend components)
 - [x] Wallet Dashboard (Real balance tracking, transaction history, Add/Send/Recharge API integration)
-- [ ] PK Store (Link with real product data with PK Coin cashbacks)
+- [x] PK Store (Link with real product data with PK Coin cashbacks)
 
 ## Package 7: Feed & Interaction
 - [x] Social Feed UI Improvement (`CreatePostComposer` + Refined Layout)

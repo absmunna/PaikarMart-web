@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw, Send, Plus, CreditCard, 
-  Search, Filter, ChevronRight, CheckCircle2, AlertCircle, Copy, HelpCircle, Phone, ShieldCheck
+  Search, Filter, ChevronRight, CheckCircle2, AlertCircle, Copy, HelpCircle, Phone, ShieldCheck, ArrowLeft
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { apiClient } from '@/api/client';
 import { useWalletStore } from '@/modules/wallet';
 import { toast } from 'sonner';
+import { safeBack } from '@/lib/navigation';
 
 interface Transaction {
   id: string;
@@ -41,6 +43,7 @@ const FALLBACK_TRANSACTIONS: Transaction[] = [
 ];
 
 export const WalletPage = () => {
+  const navigate = useNavigate();
   const storeWallet = useWalletStore();
   const [balance, setBalance] = useState(storeWallet.balance || 45280);
   const [coins, setCoins] = useState(storeWallet.coins || 2500);
@@ -270,8 +273,23 @@ export const WalletPage = () => {
   });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 pb-28 text-[var(--pm-text)] pt-4 space-y-8">
+    <div className="w-full max-w-4xl mx-auto px-4 pb-28 text-[var(--pm-text)] pt-4 space-y-6">
       
+      {/* ─── WALLET HEADER & BACK NAVIGATION ─── */}
+      <div className="flex items-center gap-3 pb-2 border-b border-[var(--pm-border)]">
+        <button 
+          onClick={() => safeBack(navigate, '/')}
+          className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 text-[var(--pm-text)] shadow-xs cursor-pointer"
+          title="ফিরে যান"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">ডিজিটাল ওয়ালেট ও এসক্রো</h1>
+          <p className="text-[10px] text-[var(--pm-muted)] font-bold uppercase tracking-wider">PaikarMart Central Vault · নিরাপদ এসক্রো ট্রাস্ট</p>
+        </div>
+      </div>
+
       {/* ─── WALLET COCKPIT HEADER ─── */}
       <div className="flex flex-col md:flex-row gap-6">
         {/* Main Balance Card */}

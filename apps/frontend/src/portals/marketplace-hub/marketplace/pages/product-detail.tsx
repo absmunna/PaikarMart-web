@@ -8,6 +8,7 @@ import {
   ArrowDownCircle, FileText, MessageSquare 
 } from "lucide-react";
 import { toast } from 'sonner';
+import { safeBack } from '@/lib/navigation';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -88,7 +89,7 @@ export default function ProductDetail() {
   return (
     <UnifiedPostDetail 
       item={feedItem} 
-      onBack={() => navigate(-1)}
+      onBack={() => safeBack(navigate, '/marketplace')}
       customFields={customFields}
       actionButtonLabel={actionLabel}
       onAction={() => {

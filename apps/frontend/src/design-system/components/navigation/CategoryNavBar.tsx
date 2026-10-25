@@ -26,14 +26,10 @@ export const CategoryNavBar: React.FC<CategoryNavBarProps> = ({
   items,
   topOffset = '0px'
 }) => {
-  // If specific custom items and custom handler are passed, render custom strip;
-  // otherwise smoothly forward to the unified DynamicCategoryBar
+  // If no custom items and no onFilterChange handler, RootLayout's global DynamicCategoryBar
+  // already provides the context-aware dynamic category bar; return null to prevent duplicate rendering.
   if (!items && !onFilterChange) {
-    const validPortal: PortalContextType = 
-      context === 'retail' || context === 'wholesale' || context === 'local' || context === 'services' || context === 'logistics' 
-        ? context 
-        : 'all';
-    return <DynamicCategoryBar forcePortal={validPortal} showDualFeedToggle={false} />;
+    return null;
   }
 
   const defaultCategories: CategoryFilterItem[] = [

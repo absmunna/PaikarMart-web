@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HomeHeader } from "@/components/home/HomeHeader";
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 
 // Import modular B2B sub-components (new add)
@@ -175,10 +174,7 @@ export default function B2BHub() {
       {/* ━━━ TOP BRANDING & WALLET ━━━ */}
       <HomeHeader />
 
-      {/* ━━━ HERO ZONE: Stories ━━━ */}
-      <section className="pt-3">
-        <StoryBar context="wholesale" />
-      </section>
+
 
       {/* ━━━ STICKY NAV HUB (SUB ROUTER TABS + PORTAL BAR) ━━━ */}
       <div className="md:sticky top-16 z-40 bg-[var(--pm-bg)]/95 backdrop-blur-md border-b border-white/[0.08] mt-2 -mx-4 px-4 pb-2 pt-1.5 flex flex-col gap-2">

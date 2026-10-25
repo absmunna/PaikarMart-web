@@ -10,6 +10,8 @@ import { useTheme } from '@/providers/ThemeProvider';
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/modules/auth/store/authStore';
 import { useTranslation } from '@/core/lib/i18n';
+import { useNotificationSettingsStore } from '@/modules/notification/store/notificationSettingsStore';
+import { safeBack } from '@/lib/navigation';
 
 export const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -17,7 +19,7 @@ export const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { lang, setLang } = useAppStore();
   const { user, isAuthenticated, logout, updateProfile } = useAuthStore();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { push, email, inApp, togglePush } = useNotificationSettingsStore();
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const themeList = [
@@ -42,8 +44,9 @@ export const SettingsPage: React.FC = () => {
       <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--pm-border)]">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] flex items-center justify-center hover:bg-[var(--pm-surface-hover)] transition-all cursor-pointer text-[var(--pm-text)]"
+            onClick={() => safeBack(navigate, '/')}
+            className="w-10 h-10 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] flex items-center justify-center hover:bg-[var(--pm-surface-hover)] transition-all cursor-pointer text-[var(--pm-text)] active:scale-95 shadow-xs"
+            title="ফিরে যান"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -155,25 +158,55 @@ export const SettingsPage: React.FC = () => {
 
         {/* Security & Notification Controls */}
         <div className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-5 shadow-xs space-y-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-[var(--pm-accent)]" />
-            <h2 className="font-black text-sm text-[var(--pm-text)]">নিরাপত্তা ও নোটিফিকেশন</h2>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-[var(--pm-accent)]" />
+              <h2 className="font-black text-sm text-[var(--pm-text)]">নিরাপত্তা ও নোটিফিকেশন</h2>
+            </div>
+            <button
+              onClick={() => navigate('/settings/notifications')}
+              className="text-xs font-bold text-[var(--pm-accent)] hover:underline flex items-center gap-1"
+            >
+              <span>বিস্তারিত সেটিংস</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Quick Notification Settings Card */}
+          <div 
+            onClick={() => navigate('/settings/notifications')}
+            className="flex items-center justify-between p-3.5 bg-[var(--pm-bg)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-2xl cursor-pointer transition-all group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] flex items-center justify-center shrink-0">
+                <Bell className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[var(--pm-text)] group-hover:text-[var(--pm-accent)] transition-colors">
+                  নোটিফিকেশন প্রিফারেন্স কন্ট্রোল
+                </p>
+                <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
+                  পুশ ({push.enabled ? 'চালু' : 'বন্ধ'}) • ইমেইল ({email.enabled ? 'চালু' : 'বন্ধ'}) • ইন-অ্যাপ ({inApp.enabled ? 'চালু' : 'বন্ধ'})
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:translate-x-0.5 transition-transform" />
           </div>
 
           <div className="flex items-center justify-between py-2 border-b border-[var(--pm-border)]/50">
             <div>
-              <p className="text-xs font-bold text-[var(--pm-text)]">পুশ নোটিফিকেশন</p>
+              <p className="text-xs font-bold text-[var(--pm-text)]">কুইক পুশ নোটিফিকেশন</p>
               <p className="text-[10px] text-[var(--pm-text-muted)]">অর্ডার ও দামের আপডেট এসএমএস/ইন-অ্যাপ পাবেন</p>
             </div>
             <button
-              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${
-                notificationsEnabled ? 'bg-[var(--pm-accent)]' : 'bg-zinc-600'
+              onClick={() => togglePush('enabled')}
+              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                push.enabled ? 'bg-[var(--pm-accent)]' : 'bg-zinc-600'
               }`}
             >
               <div
                 className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                  notificationsEnabled ? 'translate-x-6' : 'translate-x-0'
+                  push.enabled ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>

@@ -107,7 +107,7 @@ export const locationService = {
         }
       };
     } catch (error) {
-      console.error("Error in reverseGeocode:", error);
+      console.warn("[locationService] Error in reverseGeocode:", error);
       throw error;
     }
   }

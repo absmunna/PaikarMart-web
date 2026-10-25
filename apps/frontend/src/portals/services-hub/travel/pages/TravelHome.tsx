@@ -3,7 +3,6 @@ import {
   Building2, Plane, MapPin, Search, Calendar,
   Info, ShieldCheck, Zap, Clock, ChevronRight, ArrowLeft
 } from "lucide-react";
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -16,9 +15,6 @@ export default function TravelPortal() {
   return (
     <div className="w-full px-4 pb-24 flex flex-col pt-16">
       <div className="flex-1 flex flex-col gap-6 pt-2">
-        <section className="pt-2 md:pt-4">
-          <StoryBar context={"travel" as any} />
-        </section>
 
         <div className="sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-border/50 -mx-4 px-4">
           <CategoryNavBar context={"travel" as any} />

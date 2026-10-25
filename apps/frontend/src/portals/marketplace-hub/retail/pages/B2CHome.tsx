@@ -15,8 +15,8 @@ import { B2CStoreProfile } from './B2CStoreProfile';
 import { B2CBrandProfile } from './B2CBrandProfile';
 import { B2CDeals } from './B2CDeals';
 
-// Import Product interface and mock products list
-import { ProductCard } from "@/modules/product";
+// Import UnifiedPostCard for standardized UI
+import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
 import { Product } from '@/modules/product';
 import { mockProducts } from '@/portals/marketplace-hub/retail/data/products';
 
@@ -25,7 +25,6 @@ import { useNotificationStore } from '@/modules/notification';
 import { useAuth } from '@/modules/auth';
 import { useCartDrawerStore } from '@/modules/cart';
 import { HomeHeader } from '@/components/home/HomeHeader';
-import { StoryBar } from '@shared/StoryBar';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
 import { useCategoryStore } from '@/store/categoryStore';
@@ -349,10 +348,7 @@ export const B2CHome = () => {
       <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        {/* ━━━ HERO ZONE: Stories ━━━ */}
-        <section className="pt-2 animate-fade-in">
-          <StoryBar context="retail" />
-        </section>
+        {/* ━━━ HERO ZONE ━━━ */}
 
 
       {/* ━━━ DISMISSIBLE HIGH-VISIBILITY NOTICE MARQUEE BANNER (v01 upgrade) ━━━ */}
@@ -721,11 +717,36 @@ export const B2CHome = () => {
           {/* RECOMMENDED FOR YOU (Vertical Grid list displaying live sorted items) */}
           <section className="space-y-3">
             <h3 className="text-[11px] font-black uppercase text-zinc-400 tracking-wider">আপনার জন্য সাজেকশনস</h3>
-            <div className="product-sink-grid">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {getSortedProducts(mockProducts.filter((p: any) => p.portal === 'b2c' || p.portal === 'pk-shop')).slice(0, 8).map((prod: any) => (
-                <div key={prod.id} onClick={() => handleSelectProduct(prod)}>
-                  <ProductCard product={prod} />
-                </div>
+                <UnifiedPostCard 
+                  key={prod.id}
+                  post={{
+                    id: prod.id,
+                    type: 'product',
+                    domain: 'RETAIL',
+                    authorName: prod.seller || 'Verified Merchant',
+                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${prod.seller || 'merchant'}`,
+                    isVerified: true,
+                    authorRole: 'রিটেইল সেলার',
+                    timestamp: 'Recommended',
+                    content: prod.description || `${prod.title} আপনার জন্য সাজেক্ট করা হয়েছে।`,
+                    imageUrl: prod.image,
+                    location: 'Dhaka',
+                    likes: prod.reviewCount || 0,
+                    comments: 5,
+                    product: {
+                      id: prod.id,
+                      title: prod.title,
+                      price: prod.price,
+                      imageUrl: prod.image
+                    },
+                    metadata: {
+                      isPkExclusive: prod.portal === 'pk-shop',
+                      isOfficialBrand: ['Bata', 'Aarong', 'Apple', 'Samsung'].includes(prod.seller || '')
+                    }
+                  }}
+                />
               ))}
             </div>
           </section>
@@ -766,11 +787,37 @@ export const B2CHome = () => {
               <p className="text-[10px] text-[var(--pm-text-secondary)] font-bold mt-1 max-w-[200px]">অনুগ্রহ করে অন্য শব্দ নিয়ে পুনরায় খুঁজুন অথবা ক্যাটাগরি পরিবর্তন করুন।</p>
             </div>
           ) : (
-            <div className="product-sink-grid">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {sortedFilteredProducts.map(prod => (
-                <div key={prod.id} onClick={() => handleSelectProduct(prod)}>
-                  <ProductCard product={prod} />
-                </div>
+                <UnifiedPostCard 
+                  key={prod.id}
+                  post={{
+                    id: prod.id,
+                    type: 'product',
+                    domain: 'RETAIL',
+                    authorName: prod.seller || 'Verified Merchant',
+                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${prod.seller || 'merchant'}`,
+                    isVerified: true,
+                    authorRole: 'রিটেইল সেলার',
+                    timestamp: 'Active Now',
+                    content: prod.description || `${prod.title} এখন সাশ্রয়ী মূল্যে সহজলভ্য।`,
+                    imageUrl: prod.image,
+                    location: 'Dhaka',
+                    likes: prod.reviewCount || 0,
+                    comments: 8,
+                    product: {
+                      id: prod.id,
+                      title: prod.title,
+                      price: prod.price,
+                      imageUrl: prod.image
+                    },
+                    metadata: {
+                      isFlashSale: prod.isFlashSale,
+                      isOfficialBrand: ['Bata', 'Aarong', 'Apple', 'Samsung'].includes(prod.seller || ''),
+                      discountTag: prod.oldPrice ? `${Math.round(((prod.oldPrice - prod.price) / prod.oldPrice) * 100)}% ছাড়` : undefined
+                    }
+                  }}
+                />
               ))}
             </div>
           )}

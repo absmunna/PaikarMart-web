@@ -13,6 +13,8 @@ import { useAddressStore, SavedAddress } from '@/modules/profile';
 import { useWalletStore } from '@/modules/wallet';
 import { cn } from "@/lib/utils";
 import { toast } from 'sonner';
+import { useAuth } from '@/modules/auth';
+import { useAuthStore } from '@/modules/auth/store/useAuthStore';
 
 interface CartItem {
   id: string;
@@ -39,7 +41,16 @@ interface CheckoutStepperProps {
   subtotal: number;
   discount: number;
   checkoutType?: UniversalCheckoutType;
-  onOrderCompleted: (details: { address: string; delivery: string; payment: string; total: number; doubleAddresses?: { pickup: string; drop: string } }) => Promise<void>;
+  onOrderCompleted: (details: { 
+    address: string; 
+    delivery: string; 
+    payment: string; 
+    total: number; 
+    doubleAddresses?: { pickup: string; drop: string };
+    guestName?: string;
+    guestPhone?: string;
+    guestEmail?: string;
+  }) => Promise<void>;
 }
 
 // Preset saved addresses are now managed via useAddressStore
@@ -53,6 +64,12 @@ export const CheckoutStepper = ({
 }: CheckoutStepperProps) => {
   const { isBn } = useLanguage();
   const [step, setStep] = useState(0);
+
+  // Authentication status
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
 
   // Address Book from unified store
   const { addresses: savedAddresses, addAddress } = useAddressStore();
@@ -231,6 +248,12 @@ export const CheckoutStepper = ({
   // Next step navigation handler
   const handleNext = () => {
     if (step < steps.length - 1) {
+      if (step === 0 && !isAuthenticated) {
+        if (!guestName.trim() || !guestPhone.trim()) {
+          toast.error(isBn ? "দয়া করে নাম ও মোবাইল নম্বর প্রদান করুন" : "Please fill in your name and phone number for auto-account creation.");
+          return;
+        }
+      }
       setStep(step + 1);
     } else {
       // Complete Order callback with standard format
@@ -245,7 +268,10 @@ export const CheckoutStepper = ({
         doubleAddresses: isTwoWay ? {
           pickup: primaryAddress,
           drop: getAddressString(selectedDropAddrId)
-        } : undefined
+        } : undefined,
+        guestName: !isAuthenticated ? guestName : undefined,
+        guestPhone: !isAuthenticated ? guestPhone : undefined,
+        guestEmail: !isAuthenticated ? guestEmail : undefined,
       };
 
       onOrderCompleted(details);
@@ -254,6 +280,7 @@ export const CheckoutStepper = ({
 
   const isNextDisabled = () => {
     if (step === 0) {
+      if (!isAuthenticated && (!guestName.trim() || !guestPhone.trim())) return true;
       // Must have valid selected addresses
       if (!selectedAddrId) return true;
       if (['courier', 'truck', 'rent_car'].includes(checkoutType) && !selectedDropAddrId) return true;
@@ -339,6 +366,61 @@ export const CheckoutStepper = ({
                     </button>
                   )}
                 </div>
+
+                {!isAuthenticated && (
+                  <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/30 space-y-3.5 text-left">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4.5 h-4.5 text-cyan-400 animate-pulse shrink-0" />
+                      <div>
+                        <h4 className="text-xs font-black uppercase text-zinc-100 tracking-tight">
+                          {isBn ? "গেস্ট চেকআউট ও অটো অ্যাকাউন্ট ক্রিয়েশন" : "Guest Checkout & Instant Auto-Account"}
+                        </h4>
+                        <p className="text-[10px] text-zinc-400 font-medium">
+                          {isBn ? "লগইন করা ছাড়াই সরাসরি অর্ডার করুন। আপনার তথ্য দিয়ে স্বয়ংক্রিয়ভাবে বায়ার প্রোফাইল তৈরি হবে।" : "Enter contact info to proceed. A free buyer account will be created automatically upon checkout."}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="block text-[8.5px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                          {isBn ? "আপনার পুরো নাম *" : "Full Name *"}
+                        </label>
+                        <input
+                          type="text"
+                          value={guestName}
+                          onChange={(e) => setGuestName(e.target.value)}
+                          placeholder="e.g. Rahim Ahmed"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-400/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[8.5px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                          {isBn ? "মোবাইল নম্বর (এসএমএস ট্র্যাক) *" : "Phone Number (SMS Track) *"}
+                        </label>
+                        <input
+                          type="tel"
+                          value={guestPhone}
+                          onChange={(e) => setGuestPhone(e.target.value)}
+                          placeholder="e.g. 01700000000"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-400/50"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="block text-[8.5px] font-black text-zinc-400 uppercase tracking-widest mb-1">
+                          {isBn ? "ইমেইল অ্যাড্রেস (ঐচ্ছিক)" : "Email Address (Optional)"}
+                        </label>
+                        <input
+                          type="email"
+                          value={guestEmail}
+                          onChange={(e) => setGuestEmail(e.target.value)}
+                          placeholder="e.g. rahim@example.com"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-400/50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {showAddForm ? (
                   /* Custom Address Form slide-down */

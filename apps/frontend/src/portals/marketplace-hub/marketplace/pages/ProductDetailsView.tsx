@@ -17,6 +17,7 @@ import {
   type SellerProductOffer 
 } from "@/modules/product";
 import { ChatModal } from "@/modules/chat";
+import { safeBack } from "@/lib/navigation";
 
 export default function ProductDetailsView() {
   const { id } = useParams();
@@ -295,8 +296,9 @@ export default function ProductDetailsView() {
       
       {/* Back Button */}
       <button 
-        onClick={() => navigate(-1)} 
+        onClick={() => safeBack(navigate, '/')} 
         className="inline-flex items-center gap-2 text-xs font-black text-zinc-400 hover:text-white mb-6 transition-colors cursor-pointer"
+        title="ফিরে যান"
       >
         <ArrowLeft className="h-4 w-4" /> আগের পৃষ্ঠায় ফিরুন
       </button>

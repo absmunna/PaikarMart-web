@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, Search, ArrowRight } from 'lucide-react';
+import { HelpCircle, ChevronDown, Search, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAppStore } from '@/modules/app';
 
 interface FAQItem {
@@ -64,6 +65,13 @@ export default function FAQPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Link 
+        to="/" 
+        className="inline-flex items-center gap-2 text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] transition-colors mb-6"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        {lang === 'EN' ? 'Back to Home' : 'হোম পেজে ফিরে যান'}
+      </Link>
       {/* Hero Banner with 3D vibe */}
       <div className="relative overflow-hidden bg-gradient-to-r from-orange-500/20 via-orange-600/5 to-transparent border border-white/10 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl">
         <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 blur-3xl rounded-full" />

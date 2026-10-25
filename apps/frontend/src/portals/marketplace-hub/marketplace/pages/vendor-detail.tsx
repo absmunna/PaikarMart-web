@@ -8,8 +8,7 @@ import {
 } from "@/modules/app";
 import { ProductGrid } from "@/modules/product";
 import { ProductCard } from "@/components/ui/ProductCard";
-import { UniversalFeedCard } from "@/modules/feed";
-import { mapPostToFeedItem } from "@/modules/feed";
+import { UnifiedPostCard, UnifiedPost } from "@/design-system/components/feed/UnifiedPostCard";
 import { useSocialStore } from "@/modules/feed";
 import {
   MapPin,
@@ -224,13 +223,28 @@ export default function VendorDetail() {
             {tab === "posts" && (
               <div className="space-y-4">
                 {(vendor.recentPosts || []).length > 0 ? (
-                  (vendor.recentPosts || []).map((post: any) => (
-                    <UniversalFeedCard 
-                      key={post.id} 
-                      item={mapPostToFeedItem(post)} 
-                      onLike={toggleLike}
-                    />
-                  ))
+                  (vendor.recentPosts || []).map((post: any) => {
+                    const unifiedPost: UnifiedPost = {
+                      id: post.id,
+                      type: post.type?.toLowerCase() === 'demand' ? 'demand' : (post.type?.toLowerCase() === 'product' || post.postType === 'product') ? 'product' : 'status',
+                      authorName: vendor.name,
+                      authorAvatar: vendor.avatarUrl || '',
+                      isVerified: vendor.verified || false,
+                      authorRole: vendor.tagline || 'Merchant',
+                      timestamp: post.createdAt || 'Recently',
+                      content: post.content || post.description || '',
+                      imageUrl: post.mediaUrls?.[0] || post.imageUrl || post.image,
+                      likes: post.stats?.likes || 0,
+                      comments: post.stats?.comments || 0,
+                      product: (post.postType === 'product' || post.product) ? {
+                        id: post.product?.id || post.id,
+                        title: post.product?.title || post.title || 'Product',
+                        price: post.product?.price || post.price || 0,
+                        imageUrl: post.product?.image || post.imageUrl || post.image || ''
+                      } : undefined
+                    };
+                    return <UnifiedPostCard key={post.id} post={unifiedPost} />;
+                  })
                 ) : (
                   <div className="py-20 text-center bg-[#050D08] border border-[#1e3425] border-dashed rounded-[28px] text-zinc-600 font-bold uppercase tracking-widest">
                     No Posts found

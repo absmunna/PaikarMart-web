@@ -56,7 +56,7 @@ export const B2CDeals: React.FC<B2CDealsProps> = ({ products, onBack, onSelectPr
 
         {/* List of deals */}
         {dealProducts.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {dealProducts.map((p) => (
               <div key={p.id} onClick={() => onSelectProduct(p)} className="cursor-pointer">
                 <ProductCard product={p} />

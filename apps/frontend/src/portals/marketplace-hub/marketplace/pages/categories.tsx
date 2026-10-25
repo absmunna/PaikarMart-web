@@ -5,7 +5,6 @@ import { useListCategories, getListCategoriesQueryKey } from "@/modules/app";
 import { Link } from "react-router-dom";
 import * as Icons from "lucide-react";
 import { Search, Sparkles, TrendingUp, Package } from "lucide-react";
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { cn } from "@/lib/utils";
 
@@ -34,9 +33,6 @@ export default function Categories() {
 
   return (
     <div className="flex flex-col gap-6 pb-28 pt-0">
-      <section className="mt-2 text-[var(--pm-text)]">
-        <StoryBar context="categories" />
-      </section>
       <div className="sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-[var(--pm-border)]/40 px-0">
         <CategoryNavBar context="categories" />
       </div>

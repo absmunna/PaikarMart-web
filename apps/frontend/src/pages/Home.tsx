@@ -8,9 +8,9 @@ import {
   X, Flame, RefreshCw, ChevronDown, Check
 } from "lucide-react";
 
-import HeroSection from "@/design-system/components/home/HeroSection";
-import { PortalIconBar } from "@/shared/PortalIconBar";
-import { ProductCard } from "@/design-system/components/ui";
+
+import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
+import { ProductCardSkeleton } from "@/design-system/components/ui/ProductCard";
 import { useCartStore } from "@/modules/cart";
 import { ECOMMERCE_PRODUCTS, EcommerceProduct } from "@/modules/product";
 import { PageSkeleton } from "@/app/AppShell/GlobalSkeletonSystem";
@@ -162,15 +162,9 @@ export default function Home() {
   return (
     <div className="w-full pb-24 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 space-y-6">
-        {/* ─── 1. TOP HERO BANNER & WALLET COCKPIT ─── */}
-        <HeroSection />
 
-        {/* ─── 2. 4-HUB FAST LAUNCHER BAR ─── */}
-        <div>
-          <PortalIconBar />
-        </div>
 
-        {/* ─── 3. COMMERCE PRODUCTS SECTION ─── */}
+        {/* ─── 2. COMMERCE PRODUCTS SECTION ─── */}
         <section className="space-y-4 pt-1">
           <div className="space-y-4">
               {/* Section Header */}
@@ -308,7 +302,13 @@ export default function Home() {
               </div>
 
               {/* 2-column on mobile, 4-column on desktop Product Cards Grid */}
-              {filteredProducts.length === 0 ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                    <ProductCardSkeleton key={n} />
+                  ))}
+                </div>
+              ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-16 px-4 bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] border-dashed space-y-3">
                   <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 flex items-center justify-center text-zinc-400">
                     <Search className="w-6 h-6" />
@@ -326,7 +326,7 @@ export default function Home() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   <AnimatePresence mode="popLayout">
                     {filteredProducts.map((product) => (
                       <motion.div
@@ -337,9 +337,36 @@ export default function Home() {
                         exit={{ opacity: 0, scale: 0.96 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <ProductCard
-                          product={product}
-                          onQuickAdd={(p) => handleAddToCart(p as EcommerceProduct)}
+                        <UnifiedPostCard
+                          post={{
+                            id: product.id.toString(),
+                            type: 'product',
+                            domain: product.category === 'wholesale' ? 'WHOLESALE' : 'RETAIL',
+                            authorName: product.sellerName || 'Verified Seller',
+                            authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.sellerName || 'seller'}`,
+                            isVerified: product.isVerified || true,
+                            authorRole: product.category === 'wholesale' ? 'পাইকারি আড়ত' : 'খুচরা বিক্রেতা',
+                            timestamp: 'Just now',
+                            content: product.description || `নতুন ${product.name} এখন সহজলভ্য। সরাসরি পেইকার মার্ট থেকে অর্ডার করুন।`,
+                            imageUrl: product.image,
+                            location: product.sellerLocation,
+                            likes: product.reviewCount || 0,
+                            comments: Math.floor((product.reviewCount || 0) / 4),
+                            product: {
+                              id: product.id.toString(),
+                              title: product.name,
+                              price: product.price,
+                              imageUrl: product.image,
+                              moq: product.moq
+                            },
+                            metadata: {
+                              isFlashSale: product.discount && product.discount > 20,
+                              isPkExclusive: ['1', '5', '10'].includes(product.id.toString()),
+                              discountTag: product.discount ? `${product.discount}% ছাড়` : undefined,
+                              distance: '৪৫০ মি',
+                              deliveryTime: '১৫ মিনিট'
+                            }
+                          }}
                         />
                       </motion.div>
                     ))}

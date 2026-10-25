@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/modules/auth';
 import { useWalletStore } from '@/modules/wallet';
-import { StoryBar } from '@shared/StoryBar';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
 import { HUB_REGISTRY, PORTAL_REGISTRY, ICON_COMPONENTS_MAP } from '@/config/portals.config';
 import { useLanguage } from '@/modules/language';
@@ -67,10 +66,7 @@ export default function PortalsPage() {
       </div>
 
       <div className="sticky top-20 z-40 bg-[var(--pm-surface)]/80 backdrop-blur-md">
-        <section className="px-2 pt-2">
-          <StoryBar context="social-feed" />
-        </section>
-        <section className="px-2 pb-2">
+        <section className="px-2 pb-2 pt-2">
           <CategoryNavBar context="social-feed" />
         </section>
       </div>

@@ -1,4 +1,4 @@
-﻿import { 
+import { 
   doc, 
   getDoc, 
   collection, 
@@ -60,7 +60,7 @@ export const walletService = {
       } else {
         callback(null);
       }
-    }, (error) => handleFirestoreError(error, OperationType.GET, `wallets/${userId}`));
+    }, (error) => console.warn("Wallet subscription error:", error?.message));
   },
 
   /**
@@ -99,6 +99,6 @@ export const walletService = {
         ...doc.data()
       })) as Transaction[];
       callback(txs);
-    }, (error) => handleFirestoreError(error, OperationType.LIST, `wallets/${userId}/transactions`));
+    }, (error) => console.warn("Transactions subscription error:", error?.message));
   }
 };

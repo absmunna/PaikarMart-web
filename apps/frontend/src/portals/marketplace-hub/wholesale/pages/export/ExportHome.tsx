@@ -8,7 +8,6 @@ import {
   Building2, Users, Phone, Star, Award, AlertCircle
 } from "lucide-react";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
-import { StoryBar } from "@shared/StoryBar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -181,7 +180,7 @@ export function ExportHome() {
 
   return (
     <div className="flex flex-col gap-6 pb-28 pt-0">
-      <section className="mt-2"><StoryBar context="export" /></section>
+
       <div className="sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-[var(--pm-border)]/40 px-4">
         <CategoryNavBar context="export" />
       </div>

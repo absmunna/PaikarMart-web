@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useOrderTrackingStore, TrackingOrder, OrderState } from "@/modules/orders";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { safeBack } from "@/lib/navigation";
 
 type TabType = "all" | "pending" | "processing" | "shipping" | "delivered" | "cancelled" | "refund";
 
@@ -175,8 +176,9 @@ export default function OrdersHome() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => navigate(-1)} 
+              onClick={() => safeBack(navigate, '/')} 
               className="p-2.5 rounded-xl bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer"
+              title="ফিরে যান"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>

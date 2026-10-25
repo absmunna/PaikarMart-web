@@ -7,9 +7,9 @@ import {
   MessageSquare, ChevronRight, SlidersHorizontal, ArrowRight, X, Clock,
   ChevronLeft, Award, ThumbsUp, AlertCircle, RefreshCw
 } from 'lucide-react';
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { ProductCard } from "@/modules/product";
+import { ProductListSkeleton } from "@/components/ui/ProductCard/ProductCardSkeleton";
 import { useCommerceCartStore } from '@modules/commerce/cart/useCartStore';
 import { formatBDT } from '@lib/format';
 import { Button } from '@ui/button';
@@ -347,11 +347,6 @@ export const RetailHome = () => {
   return (
     <div className="w-full max-w-[480px] md:max-w-4xl lg:max-w-6xl mx-auto px-4 pb-28 text-[var(--pm-text)] flex flex-col pt-0" id="retail-portal-root">
       
-      {/* 1. MANDATORY STORY BAR */}
-      <section className="pt-2 -mx-4 md:mx-0">
-        <StoryBar context="retail" />
-      </section>
-
       {/* 2. MANDATORY STICKY PORTAL BAR */}
       <div className="md:sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-[var(--pm-border)]/50 -mx-4 px-4 mt-2">
         <CategoryNavBar 
@@ -443,19 +438,7 @@ export const RetailHome = () => {
       <div className="mt-3">
         <AnimatePresence mode="popLayout">
           {isQueryLoading && filteredProducts.length === 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <div key={idx} className="rounded-3xl border border-white/[0.04] bg-white/[0.02] overflow-hidden animate-pulse">
-                  <div className="aspect-square bg-white/5" />
-                  <div className="p-3 space-y-2.5">
-                    <div className="h-2 w-1/3 bg-white/5 rounded-full" />
-                    <div className="h-3 w-4/5 bg-white/5 rounded-full" />
-                    <div className="h-2 w-1/2 bg-white/5 rounded-full" />
-                    <div className="h-8 w-full bg-white/5 rounded-xl mt-3" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ProductListSkeleton count={8} />
           ) : filteredProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-white/[0.01] border border-dashed border-white/10 rounded-3xl gap-4 text-center">
               <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-600">

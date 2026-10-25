@@ -221,6 +221,17 @@ export const postService = {
    * Create a new post in Firestore
    */
   async createPost(input: CreatePostInput): Promise<FeedPost> {
+    // Rule: Normal users (buyer/user) cannot upload products
+    const isNormalUser = input.authorRole === 'buyer' || input.authorRole === 'user' || !input.authorRole;
+    if (isNormalUser && input.postType === 'product') {
+      throw new Error("সাধারণ ব্যবহারকারী হিসেবে আপনি প্রোডাক্ট আপলোড করতে পারবেন না। পণ্য বা ক্যাটালগ আপলোড করতে সেলার বা ব্যবসায়ী একাউন্টে রেজিস্টার করুন।");
+    }
+
+    // Rule: Normal user posts (text or photo) expire after 24 hours
+    const expiresAt = isNormalUser 
+      ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() 
+      : null;
+
     const postCollection = collection(db, "posts");
     
     // Determine media type
@@ -278,6 +289,7 @@ export const postService = {
       videoUrl: input.videoUrl || null,
       fileAttachment: input.fileAttachment || null,
       product: productPayload,
+      expiresAt,
       
       stats: {
         likes: 0,
@@ -327,6 +339,7 @@ export const postService = {
       q,
       (snapshot) => {
         if (!snapshot.empty) {
+          const now = Date.now();
           const list: FeedPost[] = snapshot.docs.map((d) => {
             const data = d.data();
             let dateStr = new Date().toISOString();
@@ -350,6 +363,7 @@ export const postService = {
               sellerPhone: data.sellerPhone,
               sellerEmail: data.sellerEmail,
               createdAt: dateStr,
+              expiresAt: data.expiresAt || null,
               content: data.content || '',
               postType: data.postType || (data.mediaType === 'video' ? 'video' : 'photo'),
               tags: data.tags || [],
@@ -361,7 +375,10 @@ export const postService = {
               stats: data.stats || { likes: 0, comments: 0, shares: 0, saves: 0 },
               userInteractions: { isLiked: false, isSaved: false, isFollowing: false },
               reviews: []
-            } as FeedPost;
+            } as any;
+          }).filter((p: any) => {
+            if (!p.expiresAt) return true;
+            return new Date(p.expiresAt).getTime() > now;
           });
 
           onPostsUpdate(list);

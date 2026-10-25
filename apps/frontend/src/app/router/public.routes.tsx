@@ -1,4 +1,5 @@
 import { Route } from 'react-router-dom';
+import { AuthGuard } from '@/guards/AuthGuard';
 import Home from '@/pages/Home';
 import Feed from '@/pages/Feed';
 import ProductDetails from '@/portals/marketplace-hub/marketplace/pages/ProductDetailsView';
@@ -12,6 +13,7 @@ import { ProfilePage } from '@/modules/profile';
 import { PortalHubPage } from '@/modules/portals';
 import { SearchPage } from '@/pages/SearchPage';
 import Notifications from '@/modules/notification/pages/notifications';
+import { NotificationSettingsPage } from '@/modules/notification/pages/NotificationSettingsPage';
 import ChatList from '@/portals/messages/pages/ChatList';
 import ChatDetail from '@/portals/messages/pages/ChatDetail';
 import CartPage from '@/modules/cart/pages/CartPage';
@@ -39,8 +41,8 @@ export const publicRoutes = (
     <Route path="/reels" element={<Reels />} />
     <Route path="/video" element={<VideoHub />} />
     <Route path="/video/*" element={<VideoHub />} />
-    <Route path="/profile" element={<ProfilePage />} />
-    <Route path="/profile/:id" element={<ProfilePage />} />
+    <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+    <Route path="/profile/:id" element={<AuthGuard><ProfilePage /></AuthGuard>} />
     <Route path="/u/:id" element={<ProfilePage />} />
     <Route path="/vendors/:id" element={<ProfilePage />} />
     <Route path="/store/:id" element={<ProfilePage />} />
@@ -50,10 +52,15 @@ export const publicRoutes = (
     <Route path="/news/*" element={<NewsPage />} />
     <Route path="/search" element={<SearchPage />} />
     <Route path="/notifications" element={<Notifications />} />
+    <Route path="/notifications/settings" element={<NotificationSettingsPage />} />
+    <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
     <Route path="/messages" element={<ChatList />} />
     <Route path="/messages/:id" element={<ChatDetail />} />
     <Route path="/apps" element={<HubPage />} />
     <Route path="/portals" element={<HubPage />} />
+    <Route path="/hub" element={<HubPage />} />
+    <Route path="/portal-hub" element={<HubPage />} />
+    <Route path="/games" element={<HubPage />} />
     <Route path="/portals/:type" element={<PortalHubPage />} />
 
     {/* Legal & Community Q&A Pages */}

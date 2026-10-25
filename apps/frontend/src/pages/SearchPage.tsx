@@ -7,6 +7,7 @@ import {
   MapPin, SlidersHorizontal, Tag, Sparkles
 } from 'lucide-react';
 import { mockProducts } from '@/lib/workspace-stub';
+import { safeBack } from '@/lib/navigation';
 
 const POPULAR_SEARCHES = [
   'সুন্দরবনের মধু',
@@ -97,8 +98,8 @@ export const SearchPage: React.FC = () => {
           
           {/* Back button */}
           <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-xl text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] active:scale-95 transition-all shrink-0"
+            onClick={() => safeBack(navigate, '/')}
+            className="p-2 rounded-xl text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] active:scale-95 transition-all shrink-0 cursor-pointer"
             title="ফিরে যান"
           >
             <ArrowLeft className="w-5 h-5" />

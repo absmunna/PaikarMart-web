@@ -13,6 +13,7 @@ import { NeighborhoodFeed } from '../components/NeighborhoodFeed';
 import { LocalServices } from '../components/LocalServices';
 import { LocalEvents } from '../components/LocalEvents';
 import { useLanguage } from '@/modules/language';
+import { useLocationStore, useGeolocation } from '@/modules/location';
 import { ChatModal } from '@/modules/chat';
 import { toast } from 'sonner';
 
@@ -114,10 +115,20 @@ export const LocalHubHome: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   
-  // GPS Coordinates state
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number }>({ lat: 23.8103, lng: 90.4125 });
-  const [locationName, setLocationName] = useState('ঢাকা কেন্দ্রীয় এলাকা (Dhaka Central)');
-  const [isDetectingGps, setIsDetectingGps] = useState(false);
+  // Global Location state
+  const { 
+    lat, 
+    lng, 
+    formattedAddress, 
+    city, 
+    isAutoDetected, 
+    openLocationModal 
+  } = useLocationStore();
+  const { detectLocation, isLoading: isDetectingGps } = useGeolocation();
+
+  // GPS Coordinates state derived from global location store
+  const userCoords = { lat: lat || 23.8103, lng: lng || 90.4125 };
+  const locationName = formattedAddress || city || 'ঢাকা কেন্দ্রীয় এলাকা (Dhaka Central)';
 
   // Live shops state
   const [shops, setShops] = useState<NearbyStore[]>(FALLBACK_SHOPS);
@@ -127,27 +138,11 @@ export const LocalHubHome: React.FC = () => {
   const [chatTargetShop, setChatTargetShop] = useState<{ id: string; name: string } | null>(null);
 
   // Detect GPS Location
-  const handleDetectGps = () => {
-    if (!navigator.geolocation) {
-      toast.error('আপনার ব্রাউজারে GPS সাপোর্ট নেই');
-      return;
+  const handleDetectGps = async () => {
+    const success = await detectLocation();
+    if (success) {
+      toast.success('আপনার লাইভ জিপিএস লোকেশন সনাক্ত হয়েছে!');
     }
-    setIsDetectingGps(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setUserCoords({ lat: latitude, lng: longitude });
-        setLocationName(`${latitude.toFixed(4)}° N, ${longitude.toFixed(4)}° E (লাইভ GPS)`);
-        setIsDetectingGps(false);
-        toast.success('আপনার লাইভ জিপিএস লোকেশন সনাক্ত হয়েছে!');
-      },
-      (err) => {
-        console.warn('Geolocation error:', err);
-        setIsDetectingGps(false);
-        toast.info('GPS পারমিশন পাওয়া যায়নি। স্ট্যান্ডার্ড ঢাকা জোন ব্যবহৃত হচ্ছে।');
-      },
-      { timeout: 6000 }
-    );
   };
 
   // Fetch shops from backend /api/v1/nearby
@@ -272,14 +267,20 @@ export const LocalHubHome: React.FC = () => {
           </div>
 
           {/* Location indicator bar */}
-          <div className="p-2.5 bg-black/30 border border-white/5 rounded-2xl flex items-center justify-between text-xs">
-            <span className="text-zinc-400 font-medium flex items-center gap-1.5 truncate">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              বর্তমান অবস্থান: <strong className="text-white truncate">{locationName}</strong>
-            </span>
-            <span className="text-[10px] text-cyan-400 font-mono font-bold uppercase shrink-0">
-              Haversine GPS Engine Active
-            </span>
+          <div className="p-2.5 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-between text-xs gap-2">
+            <div className="flex items-center gap-2 truncate min-w-0">
+              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isAutoDetected ? 'bg-emerald-400 animate-pulse' : 'bg-cyan-400'}`} />
+              <span className="text-zinc-300 font-medium truncate text-xs">
+                অবস্থান: <strong className="text-white font-black">{locationName}</strong>
+              </span>
+            </div>
+            <button
+              onClick={openLocationModal}
+              className="text-[10px] font-black text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 px-2.5 py-1 rounded-xl border border-cyan-500/20 transition-all shrink-0 cursor-pointer flex items-center gap-1 active:scale-95"
+            >
+              <MapPin className="w-3 h-3" />
+              <span>লোকেশন পরিবর্তন</span>
+            </button>
           </div>
 
           {/* Hub Navigation Tabs */}

@@ -5,6 +5,7 @@ import { publicRoutes } from './public.routes';
 import { portalRoutes } from './portal.routes';
 import { adminRoutes } from './admin.routes';
 import { protectedRoutes } from './protected.routes';
+import { settingsRoutes } from './settings.routes';
 import { PageSkeleton } from '@/app/AppShell/GlobalSkeletonSystem';
 import { ErrorBoundary } from '@/design-system/components/common/ErrorBoundary';
 
@@ -16,10 +17,12 @@ import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
 import { SandboxGatewayPage } from '@/pages/SandboxGatewayPage';
 import { NotFound } from '@/pages/NotFound';
+import { ScrollToTop } from '@/shared/components/layout/ScrollToTop';
 
 export const AppRoutes: React.FC = () => {
   return (
     <ErrorBoundary>
+      <ScrollToTop />
       <Suspense fallback={<PageSkeleton />}>
         <Routes>
           {/* Standalone Auth & Checkout pages */}
@@ -42,6 +45,7 @@ export const AppRoutes: React.FC = () => {
                     {publicRoutes}
                     {portalRoutes}
                     {protectedRoutes}
+                    {settingsRoutes}
                     {adminRoutes}
 
                     {/* Fallback */}
@@ -62,4 +66,5 @@ export { publicRoutes } from './public.routes';
 export { portalRoutes } from './portal.routes';
 export { adminRoutes } from './admin.routes';
 export { protectedRoutes } from './protected.routes';
+export { settingsRoutes } from './settings.routes';
 export { ROLE_ROUTE_CONFIG } from './role.routes';

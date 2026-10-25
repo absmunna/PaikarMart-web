@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { ShieldAlert, ArrowLeft, RefreshCcw, Lock } from "lucide-react";
 import { motion } from "motion/react";
+import { safeBack } from "@/lib/navigation";
 
 interface UserGuardProps {
   children: React.ReactNode;
@@ -135,8 +136,9 @@ export const UserGuard: React.FC<UserGuardProps> = ({
 
           <div className="space-y-2.5">
             <button
-              onClick={() => navigate(-1)}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all border border-white/5 active:scale-95"
+              onClick={() => safeBack(navigate, '/')}
+              className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all border border-white/5 active:scale-95 cursor-pointer"
+              title="ফিরে যান"
             >
               <ArrowLeft className="h-4 w-4 text-[#FF7A00]" /> Go Back
             </button>

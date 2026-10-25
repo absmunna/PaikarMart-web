@@ -93,26 +93,34 @@ export const useLocation = () => {
   };
 
   const refreshLocation = () => {
-    if (!navigator.geolocation) {
-      setLocation(prev => ({ ...prev, error: 'Geolocation not supported', loading: false }));
+    if (typeof window === 'undefined' || !navigator?.geolocation) {
+      setLocation(prev => ({ ...prev, city: prev.city || 'Dhaka', error: null, loading: false }));
       return;
     }
 
     setLocation(prev => ({ ...prev, loading: true }));
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        fetchCityName(position.coords.latitude, position.coords.longitude);
-      },
-      (error) => {
-        setLocation(prev => ({ 
-          ...prev, 
-          error: error.message, 
-          loading: false,
-          address: 'Location access denied'
-        }));
-      }
-    );
+    try {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchCityName(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn('[useLocation] Geolocation permission denied or unavailable:', error?.message || 'Access denied');
+          setLocation(prev => ({ 
+            ...prev, 
+            city: prev.city || 'Dhaka',
+            error: null, 
+            loading: false,
+            address: 'Dhaka, Bangladesh'
+          }));
+        },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 120000 }
+      );
+    } catch (e) {
+      console.warn('[useLocation] Geolocation call skipped:', e);
+      setLocation(prev => ({ ...prev, city: prev.city || 'Dhaka', error: null, loading: false }));
+    }
   };
 
   useEffect(() => {

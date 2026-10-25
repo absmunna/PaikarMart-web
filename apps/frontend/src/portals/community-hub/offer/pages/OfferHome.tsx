@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
-import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -36,7 +35,6 @@ export default function OfferHome() {
     <div className="w-full text-[var(--pm-text)] pb-32">
       {/* Portal Header Rule */}
       <section className="pt-4 px-2 space-y-1">
-        <StoryBar context="offer" />
         <PortalIconBar context="marketplace" />
       </section>
 

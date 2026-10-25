@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Star, Heart, CheckCircle2, Bookmark, Gift, ShieldAlert, BadgeInfo } from 'lucide-react';
-import { ProductCard } from "@/modules/product";
+import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
 import { Product } from '@/modules/product';
 import { toast } from 'sonner';
 
@@ -135,21 +135,67 @@ export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
           <h3 className="text-[11px] font-black text-white uppercase tracking-wider">রিলিজড পার্টনার কালেকশনস</h3>
           
           {brandProducts.length === 0 ? (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Fallback to display standard fashion/electronics elements of this sub layout */}
               {products.slice(0, 4).map(itm => (
-                <ProductCard
+                <UnifiedPostCard
                   key={itm.id}
-                  product={itm}
+                  post={{
+                    id: itm.id,
+                    type: 'product',
+                    domain: 'RETAIL',
+                    authorName: brandId,
+                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${brandId}`,
+                    isVerified: true,
+                    authorRole: 'অফিশিয়াল ব্র্যান্ড',
+                    timestamp: 'Official Now',
+                    content: itm.description || `${itm.title} আমাদের স্টোরে এখন সহজলভ্য।`,
+                    imageUrl: itm.image,
+                    location: 'Dhaka',
+                    likes: itm.reviewCount || 0,
+                    comments: 5,
+                    product: {
+                      id: itm.id,
+                      title: itm.title,
+                      price: itm.price,
+                      imageUrl: itm.image
+                    },
+                    metadata: {
+                      isOfficialBrand: true
+                    }
+                  }}
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {brandProducts.map(itm => (
-                <ProductCard
+                <UnifiedPostCard
                   key={itm.id}
-                  product={itm}
+                  post={{
+                    id: itm.id,
+                    type: 'product',
+                    domain: 'RETAIL',
+                    authorName: brandId,
+                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${brandId}`,
+                    isVerified: true,
+                    authorRole: 'অফিশিয়াল ব্র্যান্ড',
+                    timestamp: 'Official Now',
+                    content: itm.description || `${itm.title} আমাদের স্টোরে এখন সহজলভ্য।`,
+                    imageUrl: itm.image,
+                    location: 'Dhaka',
+                    likes: itm.reviewCount || 0,
+                    comments: 5,
+                    product: {
+                      id: itm.id,
+                      title: itm.title,
+                      price: itm.price,
+                      imageUrl: itm.image
+                    },
+                    metadata: {
+                      isOfficialBrand: true
+                    }
+                  }}
                 />
               ))}
             </div>

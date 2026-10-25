@@ -10,6 +10,7 @@ import { formatBDT } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeBack } from '@/lib/navigation';
 
 export const CartPage: React.FC = () => {
   const navigate = useNavigate();
@@ -84,8 +85,9 @@ export const CartPage: React.FC = () => {
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5 select-none md:flex-row flex-col items-start gap-4">
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => navigate(-1)}
+              onClick={() => safeBack(navigate, '/')}
               className="p-2.5 bg-[#0b101d] hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all border border-white/5 cursor-pointer"
+              title="ফিরে যান"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>

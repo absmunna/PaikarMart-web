@@ -14,9 +14,11 @@ import {
   Tag, 
   ChevronRight,
   MessageCircle,
-  BellOff
+  BellOff,
+  Settings
 } from "lucide-react";
 import { toast } from "sonner";
+import { safeBack } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 interface NotificationItem {
@@ -220,8 +222,9 @@ export default function Notifications() {
             <div className="flex items-center gap-3">
               <button 
                 id="btn-back-to-home"
-                onClick={() => navigate(-1)} 
+                onClick={() => safeBack(navigate, '/')} 
                 className="p-2 -ml-2 rounded-full hover:bg-white/[0.06] active:scale-95 transition-all text-white/80 cursor-pointer"
+                title="ফিরে যান"
               >
                 <ArrowLeft className="w-5 h-5" strokeWidth={2} />
               </button>
@@ -238,27 +241,37 @@ export default function Notifications() {
               </div>
             </div>
 
-            {combinedNotifications.length > 0 && (
               <div className="flex items-center gap-1">
+                {combinedNotifications.length > 0 && (
+                  <>
+                    <button
+                      id="btn-mark-all-read"
+                      onClick={handleMarkAllRead}
+                      title="সব পড়ুন"
+                      className="px-2.5 py-1.5 rounded-lg text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 hover:bg-[var(--pm-accent)]/20 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      সব পড়ুন
+                    </button>
+                    <button
+                      id="btn-clear-all"
+                      onClick={handleClearAll}
+                      title="সব মুছুন"
+                      className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/[0.06] transition-all cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
                 <button
-                  id="btn-mark-all-read"
-                  onClick={handleMarkAllRead}
-                  title="সব পড়ুন"
-                  className="px-2.5 py-1.5 rounded-lg text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 hover:bg-[var(--pm-accent)]/20 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black"
+                  id="btn-notification-settings"
+                  onClick={() => navigate('/settings/notifications')}
+                  title="নোটিফিকেশন সেটিংস (Push, Email, In-App)"
+                  className="p-1.5 rounded-lg text-white/60 hover:text-[var(--pm-accent)] hover:bg-white/[0.06] transition-all cursor-pointer flex items-center justify-center"
                 >
-                  <Check className="w-3.5 h-3.5" />
-                  সব পড়ুন
-                </button>
-                <button
-                  id="btn-clear-all"
-                  onClick={handleClearAll}
-                  title="সব মুছুন"
-                  className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/[0.06] transition-all cursor-pointer"
-                >
-                  <Trash2 className="w-4 h-4" />
+                  <Settings className="w-4 h-4" />
                 </button>
               </div>
-            )}
           </div>
         </motion.div>
       </div>

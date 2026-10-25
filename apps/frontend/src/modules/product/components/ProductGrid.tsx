@@ -1,12 +1,13 @@
 import { ProductCard } from "./ProductCard";
+import { ProductCardSkeleton } from "@/components/ui/ProductCard/ProductCardSkeleton";
 import { Product } from "@/modules/app";
-import { GlassCard } from "@/components/ui/GlassCard";
 
 interface ProductGridProps {
   products?: Product[];
   emptyMessage?: string;
   isLoading?: boolean;
   skeletonCount?: number;
+  viewMode?: 'grid' | 'list';
 }
 
 export function ProductGrid({
@@ -14,19 +15,13 @@ export function ProductGrid({
   emptyMessage = "No products found.",
   isLoading = false,
   skeletonCount = 8,
+  viewMode = 'grid',
 }: ProductGridProps) {
   if (isLoading || products === undefined) {
     return (
-      <div className="product-sink-grid">
+      <div className={viewMode === 'list' ? 'flex flex-col gap-3' : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3.5 sm:gap-4'}>
         {Array.from({ length: skeletonCount }).map((_, i) => (
-          <GlassCard key={i} className="h-full overflow-hidden bg-[var(--pm-surface)]">
-            <div className="aspect-[4/3] skeleton-shimmer" />
-            <div className="p-4 flex flex-col gap-2">
-              <div className="h-3 w-1/2 rounded skeleton-shimmer" />
-              <div className="h-4 w-full rounded skeleton-shimmer" />
-              <div className="h-4 w-1/3 rounded skeleton-shimmer mt-1" />
-            </div>
-          </GlassCard>
+          <ProductCardSkeleton key={i} viewMode={viewMode} />
         ))}
       </div>
     );

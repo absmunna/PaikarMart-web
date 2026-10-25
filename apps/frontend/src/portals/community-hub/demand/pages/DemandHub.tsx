@@ -3,6 +3,7 @@ import { PlusCircle, MapPin, Tag, MessageSquare, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { safeBack } from "@/lib/navigation";
 
 interface DemandPost {
   id: string;
@@ -101,10 +102,11 @@ export default function DemandHub() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
         <div>
           <button 
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-2 transition-colors"
+            onClick={() => safeBack(navigate, '/')}
+            className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-2 transition-colors cursor-pointer"
+            title="ফিরে যান"
           >
-            <ArrowLeft className="h-4 w-4" /> Back
+            <ArrowLeft className="h-4 w-4" /> ফিরে যান
           </button>
           <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
             <Tag className="h-6 w-6 text-[#FF7A00]" /> Buyer Demand & Sourcing Hub

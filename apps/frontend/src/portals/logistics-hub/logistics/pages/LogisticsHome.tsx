@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
-import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -477,7 +476,6 @@ export default function LogisticsPortal() {
       
       {/* ━━━ PORTAL HOMEPAGE HEADER ━━━ */}
       <section className="pt-4 px-2 space-y-1">
-        <StoryBar context="logistics" />
         <PortalIconBar context="transport" />
       </section>
 

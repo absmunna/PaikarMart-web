@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Star, MapPin, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { safeBack } from "@/lib/navigation";
 
 export default function StoreProfileView() {
   const { id } = useParams();
@@ -9,10 +10,11 @@ export default function StoreProfileView() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 text-white">
       <button 
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors"
+        onClick={() => safeBack(navigate, '/')}
+        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors cursor-pointer"
+        title="ফিরে যান"
       >
-        <ArrowLeft className="h-4 w-4" /> Back
+        <ArrowLeft className="h-4 w-4" /> ফিরে যান
       </button>
 
       {/* Store Cover */}

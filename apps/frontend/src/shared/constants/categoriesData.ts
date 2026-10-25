@@ -37,14 +37,16 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
       name: 'All',
       nameBn: 'সব প্রোডাক্ট',
       icon: ShoppingBag,
-      color: 'text-[var(--pm-accent)]'
+      color: 'text-[var(--pm-accent)]',
+      bgGradient: 'from-orange-500/25 via-pink-500/15 to-amber-500/25 border-orange-500/40'
     },
     {
       id: 'fashion',
       name: 'Fashion',
-      nameBn: 'ফ্যাশন ও টেক্সটাইল',
+      nameBn: 'ফ্যাশন ও ক্লথিং',
       icon: Shirt,
       color: 'text-indigo-400',
+      bgGradient: 'from-indigo-500/25 via-purple-500/15 to-indigo-500/25 border-indigo-500/40',
       subcategories: [
         { id: 'f-all', name: 'All Fashion', nameBn: 'সকল ফ্যাশন', slug: 'all' },
         { id: 't-shirts', name: 'T-Shirts & Polos', nameBn: 'টি-শার্ট ও পোলো', slug: 't-shirts' },
@@ -57,9 +59,10 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
     {
       id: 'electronics',
       name: 'Electronics',
-      nameBn: 'ইলেকট্রনিক্স ও গ্যাজেট',
+      nameBn: 'গ্যাজেট ও ডিভাইস',
       icon: Smartphone,
       color: 'text-cyan-400',
+      bgGradient: 'from-cyan-500/25 via-blue-500/15 to-cyan-500/25 border-cyan-500/40',
       subcategories: [
         { id: 'e-all', name: 'All Gadgets', nameBn: 'সকল গ্যাজেট', slug: 'all' },
         { id: 'smart-watches', name: 'Smart Watches', nameBn: 'স্মার্ট ওয়াচ', slug: 'smart-watches' },
@@ -75,6 +78,7 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
       nameBn: 'খাদ্য ও আড়ত পণ্য',
       icon: Wheat,
       color: 'text-amber-400',
+      bgGradient: 'from-amber-500/25 via-yellow-500/15 to-amber-500/25 border-amber-500/40',
       subcategories: [
         { id: 'g-all', name: 'All Agro', nameBn: 'সকল খাদ্যসামগ্রী', slug: 'all' },
         { id: 'rice', name: 'Miniket & Aromatic Rice', nameBn: 'মিনিকেট ও পোলাও চাল', slug: 'rice' },
@@ -90,6 +94,7 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
       nameBn: 'গৃহসজ্জা ও হস্তশিল্প',
       icon: Home,
       color: 'text-emerald-400',
+      bgGradient: 'from-emerald-500/25 via-teal-500/15 to-emerald-500/25 border-emerald-500/40',
       subcategories: [
         { id: 'h-all', name: 'All Home', nameBn: 'সকল গৃহসজ্জা', slug: 'all' },
         { id: 'nakshi', name: 'Nakshi Kantha', nameBn: 'নকশী কাঁথা', slug: 'nakshi' },
@@ -101,9 +106,10 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
     {
       id: 'beauty',
       name: 'Beauty & Care',
-      nameBn: 'রূপচর্চা ও প্রসাধন',
+      nameBn: 'রূপচর্চা ও বিউটি',
       icon: Sparkles,
       color: 'text-pink-400',
+      bgGradient: 'from-pink-500/25 via-rose-500/15 to-pink-500/25 border-pink-500/40',
       subcategories: [
         { id: 'b-all', name: 'All Beauty', nameBn: 'সকল রূপচর্চা', slug: 'all' },
         { id: 'skincare', name: 'Organic Skincare', nameBn: 'অর্গানিক স্কিনকেয়ার', slug: 'skincare' },
@@ -114,9 +120,10 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
     {
       id: 'auto',
       name: 'Auto Parts',
-      nameBn: 'মোটর ও গাড়ির পার্টস',
+      nameBn: 'মোটর ও অটো পার্টস',
       icon: Car,
       color: 'text-rose-400',
+      bgGradient: 'from-rose-500/25 via-red-500/15 to-rose-500/25 border-rose-500/40',
       subcategories: [
         { id: 'a-all', name: 'All Auto', nameBn: 'সকল মোটর পার্টস', slug: 'all' },
         { id: 'helmets', name: 'Helmets & Gear', nameBn: 'হেলমেট ও সেফটি গিয়ার', slug: 'helmets' },
@@ -130,6 +137,7 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
       nameBn: 'ডিজিটাল ও কোড',
       icon: Code,
       color: 'text-violet-400',
+      bgGradient: 'from-violet-500/25 via-purple-500/15 to-violet-500/25 border-violet-500/40',
       subcategories: [
         { id: 'd-all', name: 'All Digital', nameBn: 'সকল ডিজিটাল', slug: 'all' },
         { id: 'software', name: 'POS & Accounting', nameBn: 'দোকানের হিসাব সফটওয়্যার', slug: 'software' },
@@ -141,8 +149,21 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
 
   // 2. ROOT & DUAL FEED GENERAL (Home / Feed)
   all: [
-    { id: 'all', name: 'All', nameBn: 'সব ফিড', icon: ShoppingBag, color: 'text-[var(--pm-accent)]' },
-    { id: 'fashion', name: 'Fashion', nameBn: 'পোশাক', icon: Shirt, color: 'text-indigo-400',
+    { 
+      id: 'all', 
+      name: 'All', 
+      nameBn: 'সব ফিড', 
+      icon: ShoppingBag, 
+      color: 'text-[var(--pm-accent)]',
+      bgGradient: 'from-orange-500/25 via-pink-500/15 to-amber-500/25 border-orange-500/40' 
+    },
+    { 
+      id: 'fashion', 
+      name: 'Fashion', 
+      nameBn: 'ফ্যাশন', 
+      icon: Shirt, 
+      color: 'text-indigo-400',
+      bgGradient: 'from-indigo-500/25 via-purple-500/15 to-indigo-500/25 border-indigo-500/40',
       subcategories: [
         { id: 't-shirts', name: 'T-Shirts', nameBn: 'টি-শার্ট', slug: 't-shirts' },
         { id: 'panjabi', name: 'Panjabi', nameBn: 'পাঞ্জাবি', slug: 'panjabi' },
@@ -150,50 +171,121 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
         { id: 'denim', name: 'Denim', nameBn: 'জিন্স', slug: 'denim' }
       ]
     },
-    { id: 'electronics', name: 'Electronics', nameBn: 'ইলেকট্রনিক্স', icon: Smartphone, color: 'text-cyan-400',
+    { 
+      id: 'electronics', 
+      name: 'Electronics', 
+      nameBn: 'ইলেকট্রনিক্স', 
+      icon: Smartphone, 
+      color: 'text-cyan-400',
+      bgGradient: 'from-cyan-500/25 via-blue-500/15 to-cyan-500/25 border-cyan-500/40',
       subcategories: [
         { id: 'smart-watches', name: 'Watches', nameBn: 'স্মার্ট ওয়াচ', slug: 'smart-watches' },
         { id: 'audio', name: 'Audio', nameBn: 'ইয়ারবাডস', slug: 'audio' },
         { id: 'chargers', name: 'Accessories', nameBn: 'চার্জার ও কেবল', slug: 'chargers' }
       ]
     },
-    { id: 'grocery', name: 'Grocery', nameBn: 'মুদি ও খামার', icon: Wheat, color: 'text-amber-400',
+    { 
+      id: 'grocery', 
+      name: 'Grocery', 
+      nameBn: 'মুদি ও খামার', 
+      icon: Wheat, 
+      color: 'text-amber-400',
+      bgGradient: 'from-amber-500/25 via-yellow-500/15 to-amber-500/25 border-amber-500/40',
       subcategories: [
         { id: 'honey', name: 'Honey', nameBn: 'মধু', slug: 'honey' },
         { id: 'oil-ghee', name: 'Oil & Ghee', nameBn: 'তেল ও ঘি', slug: 'oil-ghee' },
         { id: 'rice', name: 'Rice', nameBn: 'চাল', slug: 'rice' }
       ]
     },
-    { id: 'home', name: 'Home Living', nameBn: 'নকশী ও হস্তশিল্প', icon: Home, color: 'text-emerald-400' },
-    { id: 'beauty', name: 'Beauty', nameBn: 'রূপচর্চা', icon: Sparkles, color: 'text-pink-400' },
-    { id: 'services', name: 'Services', nameBn: 'সার্ভিস', icon: Wrench, color: 'text-purple-400' },
-    { id: 'logistics', name: 'Logistics', nameBn: 'লজিস্টিকস ও রাইড', icon: Truck, color: 'text-blue-400' }
+    { 
+      id: 'home', 
+      name: 'Home Living', 
+      nameBn: 'নকশী ও হস্তশিল্প', 
+      icon: Home, 
+      color: 'text-emerald-400',
+      bgGradient: 'from-emerald-500/25 via-teal-500/15 to-emerald-500/25 border-emerald-500/40' 
+    },
+    { 
+      id: 'beauty', 
+      name: 'Beauty', 
+      nameBn: 'রূপচর্চা', 
+      icon: Sparkles, 
+      color: 'text-pink-400',
+      bgGradient: 'from-pink-500/25 via-rose-500/15 to-pink-500/25 border-pink-500/40' 
+    },
+    { 
+      id: 'services', 
+      name: 'Services', 
+      nameBn: 'সার্ভিস', 
+      icon: Wrench, 
+      color: 'text-purple-400',
+      bgGradient: 'from-purple-500/25 via-violet-500/15 to-purple-500/25 border-purple-500/40' 
+    },
+    { 
+      id: 'logistics', 
+      name: 'Logistics', 
+      nameBn: 'লজিস্টিকস ও রাইড', 
+      icon: Truck, 
+      color: 'text-blue-400',
+      bgGradient: 'from-blue-500/25 via-sky-500/15 to-blue-500/25 border-blue-500/40' 
+    }
   ],
 
   // 3. WHOLESALE B2B
   wholesale: [
-    { id: 'all', name: 'All Lots', nameBn: 'সকল পাইকারি লট', icon: Layers, color: 'text-[var(--pm-accent)]' },
-    { id: 'knitwear-lots', name: 'Export Surplus', nameBn: 'গার্মেন্টস এক্সপোর্ট লট', icon: Shirt, color: 'text-indigo-400',
+    { 
+      id: 'all', 
+      name: 'All Lots', 
+      nameBn: 'সকল পাইকারি লট', 
+      icon: Layers, 
+      color: 'text-[var(--pm-accent)]',
+      bgGradient: 'from-orange-500/25 via-amber-500/15 to-orange-500/25 border-orange-500/40' 
+    },
+    { 
+      id: 'knitwear-lots', 
+      name: 'Export Surplus', 
+      nameBn: 'গার্মেন্টস এক্সপোর্ট লট', 
+      icon: Shirt, 
+      color: 'text-indigo-400',
+      bgGradient: 'from-indigo-500/25 via-purple-500/15 to-indigo-500/25 border-indigo-500/40',
       subcategories: [
         { id: 'tshirt-lots', name: 'T-Shirt Lots (100+ pcs)', nameBn: 'টি-শার্ট লট (১০০+ পিস)', slug: 'tshirt-lots' },
         { id: 'denim-lots', name: 'Export Denim Lots', nameBn: 'এক্সপোর্ট জিন্স লট', slug: 'denim-lots' },
         { id: 'panjabi-wholesale', name: 'Keraniganj Panjabi', nameBn: 'কেরানীগঞ্জ পাঞ্জাবি', slug: 'panjabi-wholesale' }
       ]
     },
-    { id: 'fabrics', name: 'Fabrics & Yarns', nameBn: 'থান কাপড় ও সুতা', icon: Package, color: 'text-pink-400',
+    { 
+      id: 'fabrics', 
+      name: 'Fabrics & Yarns', 
+      nameBn: 'থান কাপড় ও সুতা', 
+      icon: Package, 
+      color: 'text-pink-400',
+      bgGradient: 'from-pink-500/25 via-rose-500/15 to-pink-500/25 border-pink-500/40',
       subcategories: [
         { id: 'cotton-voile', name: 'Islampur Voile & Cotton', nameBn: 'ইসলামপুর ভয়েল ও সুতি', slug: 'cotton-voile' },
         { id: 'yarn-spools', name: 'Knitting Yarn Spools', nameBn: 'নিটিং সুতা', slug: 'yarn-spools' }
       ]
     },
-    { id: 'bulk-agro', name: 'Commodity Grains', nameBn: 'খাতুনগঞ্জ আড়ত পণ্য', icon: Wheat, color: 'text-amber-400',
+    { 
+      id: 'bulk-agro', 
+      name: 'Commodity Grains', 
+      nameBn: 'খাতুনগঞ্জ আড়ত পণ্য', 
+      icon: Wheat, 
+      color: 'text-amber-400',
+      bgGradient: 'from-amber-500/25 via-orange-500/15 to-amber-500/25 border-amber-500/40',
       subcategories: [
         { id: 'rice-sack', name: '50kg Rice Sacks', nameBn: '৫০ কেজি চালের বস্তা', slug: 'rice-sack' },
         { id: 'spices-lot', name: 'Cardamom & Cumin Lots', nameBn: 'এলাচ ও জিরা লট', slug: 'spices-lot' },
         { id: 'oil-barrel', name: 'Mustard Oil Drums', nameBn: 'ড্রাম সরিষার তেল', slug: 'oil-barrel' }
       ]
     },
-    { id: 'machinery', name: 'Machinery & Tools', nameBn: 'মেশিনারি ও প্যাকেজিং', icon: Wrench, color: 'text-slate-300',
+    { 
+      id: 'machinery', 
+      name: 'Machinery & Tools', 
+      nameBn: 'মেশিনারি ও প্যাকেজিং', 
+      icon: Wrench, 
+      color: 'text-slate-300',
+      bgGradient: 'from-slate-500/25 via-zinc-500/15 to-slate-500/25 border-slate-500/40',
       subcategories: [
         { id: 'sewing-machines', name: 'Industrial Sewing Motors', nameBn: 'ইন্ডাস্ট্রিয়াল সেলাই মেশিন', slug: 'sewing-machines' },
         { id: 'packaging-poly', name: 'Poly & Corrugated Cartons', nameBn: 'পলি ও কার্টন প্যাকেজিং', slug: 'packaging-poly' }
@@ -203,68 +295,166 @@ export const PORTAL_CATEGORIES_MAP: Record<PortalContextType, MainCategoryItem[]
 
   // 4. LOCAL NEARBY
   local: [
-    { id: 'all', name: 'All Nearby', nameBn: 'নিকটবর্তী সব', icon: Store, color: 'text-emerald-400' },
-    { id: 'grocery', name: 'Daily Grocery', nameBn: 'মুদি দোকান', icon: Wheat, color: 'text-amber-400',
+    { 
+      id: 'all', 
+      name: 'All Nearby', 
+      nameBn: 'নিকটবর্তী সব', 
+      icon: Store, 
+      color: 'text-emerald-400',
+      bgGradient: 'from-emerald-500/25 via-teal-500/15 to-emerald-500/25 border-emerald-500/40' 
+    },
+    { 
+      id: 'grocery', 
+      name: 'Daily Grocery', 
+      nameBn: 'মুদি দোকান', 
+      icon: Wheat, 
+      color: 'text-amber-400',
+      bgGradient: 'from-amber-500/25 via-yellow-500/15 to-amber-500/25 border-amber-500/40',
       subcategories: [
         { id: 'rice-flour', name: 'Rice, Flour & Oil', nameBn: 'চাল, ডাল ও তেল', slug: 'rice-flour' },
         { id: 'dairy-eggs', name: 'Milk & Farm Eggs', nameBn: 'দুধ ও ডিম', slug: 'dairy-eggs' },
         { id: 'spices-salt', name: 'Salt & Spices', nameBn: 'লবণ ও মশলা', slug: 'spices-salt' }
       ]
     },
-    { id: 'pharmacy', name: 'Pharmacy', nameBn: 'ফার্মেসি ও ঔষধ', icon: Activity, color: 'text-teal-400',
+    { 
+      id: 'pharmacy', 
+      name: 'Pharmacy', 
+      nameBn: 'ফার্মেসি ও ঔষধ', 
+      icon: Activity, 
+      color: 'text-teal-400',
+      bgGradient: 'from-teal-500/25 via-cyan-500/15 to-teal-500/25 border-teal-500/40',
       subcategories: [
         { id: 'otc-medicines', name: 'OTC Medicines', nameBn: 'সাধারণ ঔষধ', slug: 'otc-medicines' },
         { id: 'baby-care', name: 'Baby Food & Diapers', nameBn: 'বেবি ফুড ও ডায়াপার', slug: 'baby-care' },
         { id: 'first-aid', name: 'First Aid & Antiseptic', nameBn: 'ফার্স্ট এইড', slug: 'first-aid' }
       ]
     },
-    { id: 'fresh-bazar', name: 'Fresh Bazaar', nameBn: 'তাজা মাছ, মাংস ও সবজি', icon: ShoppingBag, color: 'text-rose-400',
+    { 
+      id: 'fresh-bazar', 
+      name: 'Fresh Bazaar', 
+      nameBn: 'তাজা মাছ ও মাংস', 
+      icon: ShoppingBag, 
+      color: 'text-rose-400',
+      bgGradient: 'from-rose-500/25 via-red-500/15 to-rose-500/25 border-rose-500/40',
       subcategories: [
         { id: 'fresh-fish', name: 'River Fish & Ilish', nameBn: 'তাজা নদীর মাছ ও ইলিশ', slug: 'fresh-fish' },
         { id: 'chicken-beef', name: 'Halal Beef & Chicken', nameBn: 'গরুর মাংস ও ব্রয়লার', slug: 'chicken-beef' },
         { id: 'vegetables', name: 'Fresh Green Veg', nameBn: 'তাজা শাক-সবজি', slug: 'vegetables' }
       ]
     },
-    { id: 'sweets-bakery', name: 'Bakery & Sweets', nameBn: 'মিষ্টি ও বেকারি', icon: Sparkles, color: 'text-amber-500' }
+    { 
+      id: 'sweets-bakery', 
+      name: 'Bakery & Sweets', 
+      nameBn: 'মিষ্টি ও বেকারি', 
+      icon: Sparkles, 
+      color: 'text-amber-500',
+      bgGradient: 'from-amber-500/25 via-orange-500/15 to-amber-500/25 border-amber-500/40' 
+    }
   ],
 
   // 5. SERVICES HUB
   services: [
-    { id: 'all', name: 'All Services', nameBn: 'সকল সার্ভিস', icon: Wrench, color: 'text-purple-400' },
-    { id: 'ac-repair', name: 'AC & Fridge', nameBn: 'এসি ও ফ্রিজ মেরামত', icon: Wrench, color: 'text-cyan-400',
+    { 
+      id: 'all', 
+      name: 'All Services', 
+      nameBn: 'সকল সার্ভিস', 
+      icon: Wrench, 
+      color: 'text-purple-400',
+      bgGradient: 'from-purple-500/25 via-violet-500/15 to-purple-500/25 border-purple-500/40' 
+    },
+    { 
+      id: 'ac-repair', 
+      name: 'AC & Fridge', 
+      nameBn: 'এসি ও ফ্রিজ মেরামত', 
+      icon: Wrench, 
+      color: 'text-cyan-400',
+      bgGradient: 'from-cyan-500/25 via-blue-500/15 to-cyan-500/25 border-cyan-500/40',
       subcategories: [
         { id: 'ac-servicing', name: 'AC Master Service & Gas', nameBn: 'এসি মাস্টার সার্ভিস ও গ্যাস', slug: 'ac-servicing' },
         { id: 'fridge-repair', name: 'Refrigerator Cooling Fix', nameBn: 'ফ্রিজ সার্ভিসিং', slug: 'fridge-repair' }
       ]
     },
-    { id: 'electric-plumbing', name: 'Electric & Plumbing', nameBn: 'ইলেকট্রিক ও প্লাম্বিং', icon: Zap, color: 'text-amber-400',
+    { 
+      id: 'electric-plumbing', 
+      name: 'Electric & Plumbing', 
+      nameBn: 'ইলেকট্রিক ও প্লাম্বিং', 
+      icon: Zap, 
+      color: 'text-amber-400',
+      bgGradient: 'from-amber-500/25 via-yellow-500/15 to-amber-500/25 border-amber-500/40',
       subcategories: [
         { id: 'wiring', name: 'House Wiring & Short Circuit', nameBn: 'হাউজ ওয়্যারিং', slug: 'wiring' },
         { id: 'pipe-fitting', name: 'Plumbing & Pipe Line', nameBn: 'স্যানিটারি ও পাইপ ফিটিং', slug: 'pipe-fitting' }
       ]
     },
-    { id: 'home-shifting', name: 'Home Shifting', nameBn: 'বাসা বদল ও হ্যান্ডেলিং', icon: Truck, color: 'text-indigo-400' },
-    { id: 'cleaning-pest', name: 'Cleaning & Pest', nameBn: 'ক্লিনিং ও পেস্ট কন্ট্রোল', icon: Sparkles, color: 'text-emerald-400' }
+    { 
+      id: 'home-shifting', 
+      name: 'Home Shifting', 
+      nameBn: 'বাসা বদল ও ট্রাক', 
+      icon: Truck, 
+      color: 'text-indigo-400',
+      bgGradient: 'from-indigo-500/25 via-purple-500/15 to-indigo-500/25 border-indigo-500/40' 
+    },
+    { 
+      id: 'cleaning-pest', 
+      name: 'Cleaning & Pest', 
+      nameBn: 'ক্লিনিং ও পেস্ট', 
+      icon: Sparkles, 
+      color: 'text-emerald-400',
+      bgGradient: 'from-emerald-500/25 via-teal-500/15 to-emerald-500/25 border-emerald-500/40' 
+    }
   ],
 
   // 6. LOGISTICS & RIDE SHARING
   logistics: [
-    { id: 'all', name: 'All Logistics', nameBn: 'সব লজিস্টিকস', icon: Truck, color: 'text-blue-400' },
-    { id: 'ride-share', name: 'Inter-City Rides', nameBn: 'আন্তঃজেলা কার ও রাইড', icon: Navigation, color: 'text-emerald-400',
+    { 
+      id: 'all', 
+      name: 'All Logistics', 
+      nameBn: 'সব লজিস্টিকস', 
+      icon: Truck, 
+      color: 'text-blue-400',
+      bgGradient: 'from-blue-500/25 via-sky-500/15 to-blue-500/25 border-blue-500/40' 
+    },
+    { 
+      id: 'ride-share', 
+      name: 'Inter-City Rides', 
+      nameBn: 'আন্তঃজেলা কার ও রাইড', 
+      icon: Navigation, 
+      color: 'text-emerald-400',
+      bgGradient: 'from-emerald-500/25 via-teal-500/15 to-emerald-500/25 border-emerald-500/40',
       subcategories: [
         { id: 'dhaka-shariatpur', name: 'Dhaka ⇄ Shariatpur', nameBn: 'ঢাকা ⇄ শরিয়তপুর', slug: 'dhaka-shariatpur' },
         { id: 'dhaka-chattogram', name: 'Dhaka ⇄ Chattogram', nameBn: 'ঢাকা ⇄ চট্টগ্রাম', slug: 'dhaka-chattogram' },
         { id: 'dhaka-sylhet', name: 'Dhaka ⇄ Sylhet', nameBn: 'ঢাকা ⇄ সিলেট', slug: 'dhaka-sylhet' }
       ]
     },
-    { id: 'truck-pickup', name: 'Truck & Pickup', nameBn: 'ট্রাক ও পিকআপ ভাড়া', icon: Truck, color: 'text-amber-400',
+    { 
+      id: 'truck-pickup', 
+      name: 'Truck & Pickup', 
+      nameBn: 'ট্রাক ও পিকআপ ভাড়া', 
+      icon: Truck, 
+      color: 'text-amber-400',
+      bgGradient: 'from-amber-500/25 via-orange-500/15 to-amber-500/25 border-amber-500/40',
       subcategories: [
         { id: 'pickup-1ton', name: '1 Ton Pickup Van', nameBn: '১ টন পিকআপ ভ্যান', slug: 'pickup-1ton' },
         { id: 'covered-van-7ton', name: '7 Ton Covered Van', nameBn: '৭ টন কাভার্ড ভ্যান', slug: 'covered-van-7ton' },
         { id: 'open-truck', name: 'Open Truck Long Haul', nameBn: 'খোলা ট্রাক', slug: 'open-truck' }
       ]
     },
-    { id: 'parcel-courier', name: 'Parcel Courier', nameBn: 'এক্সপ্রেস পার্সেল ডেলিভারি', icon: Package, color: 'text-cyan-400' },
-    { id: 'ambulance', name: 'Ambulance', nameBn: 'জরুরি অ্যাম্বুলেন্স', icon: Activity, color: 'text-red-400' }
+    { 
+      id: 'parcel-courier', 
+      name: 'Parcel Courier', 
+      nameBn: 'এক্সপ্রেস পার্সেল', 
+      icon: Package, 
+      color: 'text-cyan-400',
+      bgGradient: 'from-cyan-500/25 via-blue-500/15 to-cyan-500/25 border-cyan-500/40' 
+    },
+    { 
+      id: 'ambulance', 
+      name: 'Ambulance', 
+      nameBn: 'জরুরি অ্যাম্বুলেন্স', 
+      icon: Activity, 
+      color: 'text-red-400',
+      bgGradient: 'from-red-500/25 via-rose-500/15 to-red-500/25 border-red-500/40' 
+    }
   ]
 };

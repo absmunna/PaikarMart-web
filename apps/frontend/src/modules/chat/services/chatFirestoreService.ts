@@ -97,15 +97,17 @@ export function subscribeUserChats(
         onUpdate(conversations);
       },
       (error) => {
-        handleFirestoreError(error, OperationType.LIST, 'chats');
+        console.warn('Chats subscription permission or connection error:', error?.message);
         if (onError) onError(error);
+        else onUpdate([]);
       }
     );
 
     return unsubscribe;
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, 'chats');
+    console.warn('Chats subscription failed:', error);
     if (onError) onError(error);
+    else onUpdate([]);
     return () => {};
   }
 }
@@ -146,15 +148,17 @@ export function subscribeChatMessages(
         onUpdate(msgs);
       },
       (error) => {
-        handleFirestoreError(error, OperationType.LIST, `chats/${chatId}/messages`);
+        console.warn('Chat messages subscription error:', error?.message);
         if (onError) onError(error);
+        else onUpdate([]);
       }
     );
 
     return unsubscribe;
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, `chats/${chatId}/messages`);
+    console.warn('Chat messages subscription failed:', error);
     if (onError) onError(error);
+    else onUpdate([]);
     return () => {};
   }
 }

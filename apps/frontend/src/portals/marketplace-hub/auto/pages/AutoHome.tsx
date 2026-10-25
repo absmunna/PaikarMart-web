@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { HomeHeader } from "@/design-system/components/home/HomeHeader";
 import { SubPortalNav } from "@/design-system/components/navigation/SubPortalNav";
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -122,7 +121,6 @@ export default function AutoPortal() {
       <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <section className="mt-2"><StoryBar context="auto" /></section>
         <div className="sticky top-[154px] z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-[var(--pm-border)]/40 -mx-4 px-4">
           <CategoryNavBar context="auto" />
         </div>

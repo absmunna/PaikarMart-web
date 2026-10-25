@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { SmartSellerWizard } from '@/modules/registration';
-import { StoryBar } from '@shared/StoryBar';
 import { PortalIconBar } from '@shared/PortalIconBar';
 import { 
   ShieldCheck, HelpCircle, ChevronDown, ChevronUp,
@@ -56,7 +55,6 @@ export default function BecomeSellerPage() {
       
       {/* 1. HEADER STORY BAR */}
       <section className="pt-2 px-3 sm:px-6">
-        <StoryBar context="seller" />
       </section>
 
       {/* 2. STICKY PORTAL/CATEGORY BAR */}

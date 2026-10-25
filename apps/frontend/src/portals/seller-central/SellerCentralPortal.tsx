@@ -63,7 +63,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { UnifiedPaymentForm } from "@/components/common/UnifiedPaymentForm";
 import { UnifiedDeliveryTracking } from "@/components/common/UnifiedDeliveryTracking";
@@ -558,7 +557,6 @@ export function SellerCentralPortal() {
       </div>
 
       <div className="max-w-[1360px] mx-auto w-full px-2 space-y-4">
-        <StoryBar context="seller" />
         <CategoryNavBar context="seller" />
 
         {/* ── Role Identity Highlight Bar ── */}

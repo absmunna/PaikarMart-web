@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CategoryTabs } from '../components/CategoryTabs';
-import { NewsCard } from '../components/NewsCard';
+import { UnifiedPostCard, UnifiedPost } from '@/design-system/components/feed/UnifiedPostCard';
 import { MOCK_NEWS_ARTICLES } from '../data/mockNewsData';
-import { StoryBar } from '@shared/StoryBar';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
 import { 
   Search, 
@@ -46,10 +45,7 @@ export const NewsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background/30 backdrop-blur-3xl text-white pb-28">
-      {/* 1st Element: Promotional Stories context bar */}
-      <section className="pt-2 px-6">
-        <StoryBar context="media" />
-      </section>
+      {/* 2nd Element: Portals list icons top nav bar */}
 
       {/* 2nd Element: Portals list icons top nav bar */}
       <div className="sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-white/[0.08] px-6 mt-2">
@@ -129,12 +125,31 @@ export const NewsPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Main Stream Grid: 8 columns wide */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-6">
             <AnimatePresence mode="popLayout">
               {filteredArticles.length > 0 ? (
-                filteredArticles.map((article) => (
-                  <NewsCard key={article.id} article={article} />
-                ))
+                filteredArticles.map((article) => {
+                  const post: UnifiedPost = {
+                    id: article.id,
+                    type: 'news',
+                    domain: 'SOCIAL',
+                    authorName: article.source,
+                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${article.source}`,
+                    isVerified: true,
+                    authorRole: 'News Source',
+                    timestamp: article.publishedAt,
+                    content: article.summaryBn,
+                    imageUrl: article.imageUrl,
+                    likes: article.initialLikes,
+                    comments: 5, // Mock comments count
+                    metadata: {
+                       readTime: article.readTimeBn,
+                       views: article.views,
+                       urgency: article.isPremium ? 'High' : 'Normal'
+                    }
+                  };
+                  return <UnifiedPostCard key={article.id} post={post} />;
+                })
               ) : (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}

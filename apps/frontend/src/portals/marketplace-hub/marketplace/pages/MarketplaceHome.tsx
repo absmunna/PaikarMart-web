@@ -8,11 +8,11 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/modules/language";
-import { StoryBar } from "@shared/StoryBar";
 import { PortalIconBar } from "@shared/PortalIconBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { HeroSpotlight } from "@shared/HeroSpotlight";
 import { ProductCard } from "@/components/ui/ProductCard";
+import { UnifiedPostCard, UnifiedPost } from "@/design-system/components/feed/UnifiedPostCard";
 import { motion, AnimatePresence } from "motion/react";
 import { useProductStore } from '@/modules/product';
 import { useB2BRFQStore } from '@/modules/b2b';
@@ -223,7 +223,6 @@ export function MarketplaceHome() {
     <div className="w-full text-[var(--pm-text)] pb-24">
       {/* ━━━ PORTAL HOMEPAGE HEADER (Top Priority) ━━━ */}
       <section className="pt-4 space-y-1">
-        <StoryBar context="marketplace" />
         <PortalIconBar context="marketplace" />
       </section>
 
@@ -504,67 +503,41 @@ export function MarketplaceHome() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-6">
                 {wholesaleProducts.map((product) => (
-                  <div key={product.id} className="bg-zinc-950 rounded-3xl border border-white/5 overflow-hidden flex flex-col md:flex-row gap-4 p-4 hover:border-blue-500/20 transition-all">
-                    {/* Image Area */}
-                    <div className="w-full md:w-40 h-40 rounded-2xl overflow-hidden shrink-0 relative bg-zinc-900 border border-white/5">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                      {product.verified && (
-                        <div className="absolute top-2 left-2 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest flex items-center gap-0.5">
-                          <ShieldCheck className="w-2.5 h-2.5" /> B2B Verified
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Content Area */}
-                    <div className="flex-1 flex flex-col justify-between space-y-3">
-                      <div>
-                        <div className="flex justify-between items-center text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
-                          <span>{product.category}</span>
-                          <span className="flex items-center gap-1 text-zinc-400">
-                            <MapPin className="w-3 h-3 text-blue-400" /> {product.location}
-                          </span>
-                        </div>
-                        <h4 className="text-xs font-black text-white mt-1 leading-snug">{product.name}</h4>
-                        <p className="text-[10px] text-zinc-500 line-clamp-2 mt-1 leading-normal">{product.description}</p>
-                      </div>
-
-                      {/* Bulk Tier Prices Container */}
-                      <div className="bg-[#020604] border border-white/[0.04] p-3 rounded-2xl space-y-1.5">
-                        <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest block">Wholesale Bulk Pricing</span>
-                        <div className="grid grid-cols-3 gap-2">
-                          {product.priceTiers.map((tier, idx) => (
-                            <button 
-                              key={idx} 
-                              onClick={() => setRfqModal({ product, tier })}
-                              className="p-2 rounded-xl bg-white/[0.02] hover:bg-blue-500/10 border border-white/[0.04] hover:border-blue-500/20 text-center transition-all group"
-                            >
-                              <p className="text-[8px] text-zinc-500 font-black uppercase tracking-wider group-hover:text-blue-400 transition-colors">{tier.label}</p>
-                              <p className="text-[10px] text-white font-extrabold mt-0.5">৳{tier.price}</p>
-                              <p className="text-[7px] text-zinc-600 font-medium tracking-tight mt-0.5">MOQ: {tier.moq} {tier.unit}</p>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-white/[0.03]">
-                        <div className="text-[9px] text-zinc-500 font-bold">
-                          Supplier: <span className="text-zinc-300 font-black">{product.supplier}</span>
-                        </div>
-                        <button 
-                          onClick={() => setRfqModal({ product, tier: product.priceTiers[0] })}
-                          className="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white font-black text-[10px] rounded-xl uppercase tracking-wider transition-all flex items-center gap-1"
-                        >
-                          <FileText className="w-3.5 h-3.5" /> {isBn ? "কোটেশন পাঠান" : "Inquire Lot"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <UnifiedPostCard 
+                    key={product.id}
+                    post={{
+                      id: product.id,
+                      type: 'product',
+                      domain: 'WHOLESALE',
+                      authorName: product.supplier,
+                      authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.supplier}`,
+                      isVerified: product.verified,
+                      authorRole: 'ফ্যাক্টরি / সাপ্লায়ার',
+                      timestamp: 'Active Now',
+                      content: product.description,
+                      imageUrl: product.image,
+                      location: product.location,
+                      likes: product.reviews || 0,
+                      comments: 15,
+                      product: {
+                        id: product.id,
+                        title: product.name,
+                        price: product.priceTiers[0].price,
+                        imageUrl: product.image,
+                        moq: product.minOrderQty
+                      },
+                      metadata: {
+                        isOfficialBrand: product.verified,
+                        deliveryTime: product.leadTime
+                      }
+                    }}
+                  />
                 ))}
 
                 {wholesaleProducts.length === 0 && (
-                  <div className="col-span-2 text-center py-10 text-zinc-500 font-bold text-xs uppercase tracking-widest">
+                  <div className="col-span-1 text-center py-10 text-zinc-500 font-bold text-xs uppercase tracking-widest">
                     {isBn ? "কোনো পণ্য খুঁজে পাওয়া যায়নি!" : "No wholesale products found matching category filter!"}
                   </div>
                 )}

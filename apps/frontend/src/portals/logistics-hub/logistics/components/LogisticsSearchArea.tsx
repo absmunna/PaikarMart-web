@@ -14,18 +14,19 @@ interface LogisticsSearchAreaProps {
 export function LogisticsSearchArea({ pickup, drop, setPickup, setDrop, isBilingual = false }: LogisticsSearchAreaProps) {
   const t = (en: string, bn: string) => isBilingual ? bn : en;
   const { detectLocation } = useGeolocation();
-  const { city, isAutoDetected } = useLocationStore();
+  const { formattedAddress, city, isAutoDetected } = useLocationStore();
 
   const handleLocate = () => {
     detectLocation();
   };
 
-  // Sync pickup with detected city if auto-detected recently
+  // Sync pickup with detected location if auto-detected or global location changes
   React.useEffect(() => {
-    if (isAutoDetected && city) {
-      setPickup(city);
+    const loc = formattedAddress || city;
+    if (loc && !pickup) {
+      setPickup(loc);
     }
-  }, [city, isAutoDetected]);
+  }, [formattedAddress, city]);
 
   return (
     <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 space-y-4">

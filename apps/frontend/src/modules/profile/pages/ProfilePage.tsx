@@ -30,6 +30,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { CreatePostComposer } from '@/design-system/components/feed/CreatePostComposer';
 
 interface TimelinePost {
   id: string;
@@ -485,68 +486,27 @@ export function ProfilePage() {
             
             {/* "What's on your mind?" Composer Box */}
             {isMe && (
-              <div className="p-5 rounded-2xl bg-zinc-950/80 border border-white/10 space-y-4 shadow-xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800 shrink-0">
-                    <img src={profileData.avatarUrl} alt={profileData.name} className="w-full h-full object-cover" />
-                  </div>
-                  <input
-                    type="text"
-                    value={composerText}
-                    onChange={(e) => setComposerText(e.target.value)}
-                    placeholder={`What's on your mind, ${profileData.name.split(' ')[0]}?`}
-                    className="flex-1 h-11 px-4 rounded-full bg-white/[0.05] border border-white/10 text-white placeholder-zinc-500 text-xs sm:text-sm focus:outline-none focus:border-cyan-500 focus:bg-white/[0.08] transition-all"
-                  />
-                </div>
-
-                {showImageInput && (
-                  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-zinc-400 uppercase">Attach Photo URL</span>
-                      <button onClick={() => setShowImageInput(false)} className="text-zinc-500 hover:text-white">
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <input
-                      type="url"
-                      value={composerImage}
-                      onChange={(e) => setComposerImage(e.target.value)}
-                      placeholder="Paste image link (e.g. Unsplash URL)..."
-                      className="w-full h-9 px-3 rounded-lg bg-zinc-900 border border-white/10 text-white text-xs focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowImageInput(!showImageInput)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-white/5 text-emerald-400 text-xs font-bold transition-all cursor-pointer"
-                    >
-                      <ImageIcon className="w-4 h-4" />
-                      <span>Photo/Video</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setComposerText(prev => prev + ' 🤝 Business update: ');
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-white/5 text-amber-400 text-xs font-bold transition-all cursor-pointer hidden sm:flex"
-                    >
-                      <Smile className="w-4 h-4" />
-                      <span>Feeling/Activity</span>
-                    </button>
-                  </div>
-
-                  <Button
-                    onClick={handleCreatePost}
-                    disabled={!composerText.trim() && !composerImage}
-                    className="h-8 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-black font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer"
-                  >
-                    Post
-                  </Button>
-                </div>
+              <div className="mb-6">
+                <CreatePostComposer
+                  onPostCreated={(newPost) => {
+                    const mapped: TimelinePost = {
+                      id: newPost.id,
+                      authorName: newPost.authorName || profileData.name,
+                      authorHandle: newPost.authorHandle || profileData.handle,
+                      authorAvatar: newPost.authorAvatar || profileData.avatarUrl,
+                      timestamp: 'Just now',
+                      content: newPost.content,
+                      imageUrl: newPost.imageUrl || newPost.mediaUrl,
+                      likes: 0,
+                      commentsCount: 0,
+                      sharesCount: 0,
+                      comments: []
+                    };
+                    setPosts(prev => [mapped, ...prev]);
+                    toast.success('Successfully published new post on profile!');
+                  }}
+                  onOpenModal={() => {}}
+                />
               </div>
             )}
 

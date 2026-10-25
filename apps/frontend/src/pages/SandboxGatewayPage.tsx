@@ -4,6 +4,7 @@ import { ShieldCheck, ArrowLeft, Loader2, CheckCircle2, Lock, Smartphone, KeyRou
 import { Button } from '@/components/ui/button';
 import { formatBDT } from '@/lib/format';
 import { toast } from 'sonner';
+import { safeBack } from '@/lib/navigation';
 
 export const SandboxGatewayPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -103,8 +104,9 @@ export const SandboxGatewayPage: React.FC = () => {
           style={{ backgroundColor: themeColor }}
         >
           <button
-            onClick={() => navigate(-1)}
-            className="absolute left-4 top-4 p-2 rounded-xl bg-black/20 hover:bg-black/30 transition-colors text-white"
+            onClick={() => safeBack(navigate, '/checkout')}
+            className="absolute left-4 top-4 p-2 rounded-xl bg-black/20 hover:bg-black/30 transition-colors text-white cursor-pointer"
+            title="ফিরে যান"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>

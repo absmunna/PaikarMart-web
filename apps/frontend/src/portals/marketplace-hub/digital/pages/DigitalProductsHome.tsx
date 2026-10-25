@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { useListProducts, getListProductsQueryKey } from "@/modules/app";
 import { ProductGrid } from "@/modules/product";
-import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 
 const CATEGORIES = [
@@ -43,11 +42,6 @@ export default function DigitalProductsHome() {
   return (
     <div className="pt-2 pb-16 w-full max-w-7xl mx-auto min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] px-4 flex flex-col gap-6">
       
-      {/* 1. STORY BAR */}
-      <section className="pt-2">
-        <StoryBar context="digital-services" />
-      </section>
-
       {/* 2. STICKY PORTAL BAR */}
       <div className="md:sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-border/50 px-0 mt-2">
         <CategoryNavBar context="digital-services" />

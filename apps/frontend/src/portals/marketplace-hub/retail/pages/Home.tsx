@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Sparkles, TrendingUp, Filter, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Sparkles, TrendingUp, Filter, CheckCircle2, MapPin } from 'lucide-react';
 import { HomeHero } from '@/portals/marketplace-hub/retail/components/HomeHero';
 import { CategoryNavBar, CategoryFilterItem } from '@shared/CategoryNavBar';
 import { PortalAccess } from '@/portals/marketplace-hub/retail/components/PortalAccess';
@@ -9,6 +9,8 @@ import { ProductCard } from "@/modules/product";
 import { mockProducts } from '@/portals/marketplace-hub/retail/data/products';
 import { useCartStore } from '@/modules/cart';
 import { useCartDrawerStore } from '@/modules/cart';
+import { useCategoryStore } from '@/store/categoryStore';
+import { useLocationStore } from '@/modules/location';
 
 // Framer motion animation variants for container staggering
 const containerVariants = {
@@ -32,28 +34,56 @@ const itemVariants = {
 };
 
 export const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('সব');
+  const { activeMainCategory, setMainCategory } = useCategoryStore();
+  const { formattedAddress, city, isAutoDetected, openLocationModal } = useLocationStore();
+  const currentHomeLocation = formattedAddress || city || 'ঢাকা';
   const openCart = useCartDrawerStore((state) => state.open);
   const totalItemsCount = useCartStore((state) => state.getTotalItems());
   const totalPrice = useCartStore((state) => state.getTotalPrice());
 
   // Static defined categories available
   const categoryItems: CategoryFilterItem[] = useMemo(() => {
-    const names = ['সব', 'ফ্যাশন', 'ইলেকট্রনিক্স', 'গ্রোসারি', 'গৃহস্থালি', 'সৌন্দর্য'];
-    return names.map((name: string) => ({
-      id: name,
-      labelBn: name,
-      label: name,
-      color: "from-cyan-500 to-teal-600",
-      count: name === 'সব' ? mockProducts.length : mockProducts.filter((p: any) => p.category === name).length
+    const list = [
+      { id: 'all', labelBn: 'সব', label: 'All' },
+      { id: 'fashion', labelBn: 'ফ্যাশন', label: 'Fashion' },
+      { id: 'electronics', labelBn: 'ইলেকট্রনিক্স', label: 'Electronics' },
+      { id: 'grocery', labelBn: 'গ্রোসারি', label: 'Grocery' },
+      { id: 'home', labelBn: 'গৃহস্থালি', label: 'Home' },
+      { id: 'beauty', labelBn: 'সৌন্দর্য', label: 'Beauty' }
+    ];
+    return list.map((item) => ({
+      id: item.id,
+      labelBn: item.labelBn,
+      label: item.label,
+      color: "from-cyan-500 to-teal-600"
     }));
   }, []);
 
-  // Filter products by selected category tag
+  // Filter products by selected category tag synced with useCategoryStore
   const filteredProducts = useMemo(() => {
-    if (selectedCategory === 'সব') return mockProducts;
-    return mockProducts.filter((product) => product.category === selectedCategory);
-  }, [selectedCategory]);
+    if (!activeMainCategory || activeMainCategory === 'all' || activeMainCategory === 'সব') {
+      return mockProducts;
+    }
+
+    const keywords: Record<string, string[]> = {
+      fashion: ['পোশাক', 'শাড়ি', 'ব্যাগ', 'ফ্যাশন'],
+      electronics: ['মোবাইল', 'সোলার', 'ইলেকট্রনিক্স'],
+      grocery: ['মাছ', 'চাল', 'খাদ্য', 'মাংস', 'গ্রোসারি', 'মুদি'],
+      home: ['আসবাবপত্র', 'গৃহস্থালি'],
+      beauty: ['রূপচর্চা', 'সৌন্দর্য'],
+      services: ['service', 'Electrician', 'Moving', 'Plumbing', 'Tech', 'Legal']
+    };
+
+    const targetKeywords = keywords[activeMainCategory] || [activeMainCategory];
+
+    return mockProducts.filter((product) => {
+      const prodCat = (product.category || '').toLowerCase();
+      const prodName = (product.name || '').toLowerCase();
+      return targetKeywords.some(kw => 
+        prodCat.includes(kw.toLowerCase()) || prodName.includes(kw.toLowerCase())
+      );
+    });
+  }, [activeMainCategory]);
 
   // Flash sale filtered list
   const flashSaleProducts = useMemo(() => {
@@ -85,8 +115,8 @@ export const Home = () => {
         
         <CategoryNavBar 
           items={categoryItems} 
-          activeFilter={selectedCategory} 
-          onFilterChange={setSelectedCategory} 
+          activeFilter={activeMainCategory || 'all'} 
+          onFilterChange={(id) => setMainCategory(id)} 
         />
       </div>
 
@@ -109,10 +139,10 @@ export const Home = () => {
             <Sparkles className="w-5 h-5 text-[var(--pm-accent)] animate-pulse" />
             <SectionHeader title="আপনার পছন্দের পণ্য সমূহ" />
           </div>
-          {selectedCategory !== 'সব' && (
+          {activeMainCategory && activeMainCategory !== 'all' && (
             <button 
-              onClick={() => setSelectedCategory('সব')}
-              className="text-xs text-[var(--pm-text-secondary)] hover:text-[var(--pm-accent)] transition-colors font-semibold"
+              onClick={() => setMainCategory('all')}
+              className="text-xs text-[var(--pm-text-secondary)] hover:text-[var(--pm-accent)] transition-colors font-semibold cursor-pointer"
             >
               রিসেট
             </button>
@@ -157,14 +187,22 @@ export const Home = () => {
 
       {/* 6. Local Location/Pickup Nearby Store highlight */}
       <div className="mx-2 p-4 rounded-3xl bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] flex items-center justify-between gap-3 shadow-inner">
-        <div className="text-left">
-          <p className="text-[10px] text-[var(--pm-text-secondary)] font-bold uppercase tracking-widest">সংযুক্ত জিপিএস (Location Optimized)</p>
-          <p className="text-xs font-bold text-[var(--pm-text)] mt-1">নিকটস্থ দোকান ও দ্রুততম এক্সপ্রেস ডেলিভারি পান!</p>
+        <div className="text-left min-w-0">
+          <p className="text-[10px] text-[var(--pm-text-secondary)] font-bold uppercase tracking-widest flex items-center gap-1.5">
+            <span className={`w-2 h-2 rounded-full ${isAutoDetected ? 'bg-emerald-400 animate-pulse' : 'bg-cyan-400'}`} />
+            সংযুক্ত ডেলিভারি জোন ({isAutoDetected ? 'লাইভ GPS' : 'সেট করা অবস্থান'})
+          </p>
+          <p className="text-xs font-black text-[var(--pm-text)] mt-1 truncate">
+            {currentHomeLocation} — নিকটস্থ দোকান ও দ্রুততম এক্সপ্রেস ডেলিভারি পান!
+          </p>
         </div>
-        <div className="px-3 py-1.5 bg-cyan-500/10 text-cyan-500 rounded-full text-[10px] font-black flex items-center gap-1 shrink-0 border border-cyan-500/15">
-          <CheckCircle2 className="w-3.5 h-3.5 fill-cyan-500/10" />
-          <span>অনলাইন</span>
-        </div>
+        <button
+          onClick={openLocationModal}
+          className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-400 rounded-xl text-[11px] font-black flex items-center gap-1.5 shrink-0 border border-cyan-500/20 cursor-pointer transition-all"
+        >
+          <MapPin className="w-3.5 h-3.5" />
+          <span>পরিবর্তন</span>
+        </button>
       </div>
 
       {/* 7. Beautiful Floating Quick Action Cart Bar Sheet (Opens the drawer instantly) */}

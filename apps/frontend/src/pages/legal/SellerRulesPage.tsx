@@ -1,5 +1,6 @@
 import React from 'react';
-import { Gavel, CheckCircle2, ShieldAlert, BadgeInfo, Scale, Sparkles } from 'lucide-react';
+import { Gavel, CheckCircle2, ShieldAlert, BadgeInfo, Scale, Sparkles, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAppStore } from '@/modules/app';
 
 export default function SellerRulesPage() {
@@ -34,6 +35,13 @@ export default function SellerRulesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <Link 
+        to="/" 
+        className="inline-flex items-center gap-2 text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] transition-colors mb-6"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        {lang === 'EN' ? 'Back to Home' : 'হোম পেজে ফিরে যান'}
+      </Link>
       {/* Banner */}
       <div className="relative overflow-hidden bg-gradient-to-r from-orange-400/10 to-transparent border border-white/5 rounded-3xl p-6 md:p-8 mb-8 shadow-xl">
         <h1 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3">

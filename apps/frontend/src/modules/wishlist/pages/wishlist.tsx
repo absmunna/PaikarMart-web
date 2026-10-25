@@ -5,6 +5,7 @@ import { useWishlistStore } from "@/modules/wishlist";
 // import { ProductCard } from "@/modules/product";
 import { formatBDT } from "@/lib/format";
 import { toast } from "sonner";
+import { safeBack } from "@/lib/navigation";
 
 export default function WishlistPage() {
   const navigate = useNavigate();
@@ -30,8 +31,9 @@ export default function WishlistPage() {
       <div className="sticky top-0 z-40 glass border-b border-[var(--pm-border)]/50 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate(-1)}
-            className="w-8 h-8 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] flex items-center justify-center hover:bg-white/10 transition-all"
+            onClick={() => safeBack(navigate, '/')}
+            className="w-8 h-8 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer"
+            title="ফিরে যান"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>

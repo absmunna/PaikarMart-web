@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Compass, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '@/modules/language';
 import { Button } from '@/components/ui/button';
+import { safeBack } from '@/lib/navigation';
 
 export default function PortalComingSoon() {
   const navigate = useNavigate();
@@ -63,8 +64,8 @@ export default function PortalComingSoon() {
 
         <div className="flex flex-col gap-3">
           <Button 
-            onClick={() => navigate(-1)} 
-            className="h-12 w-full max-w-[200px] mx-auto rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white border border-white/5 font-black text-xs uppercase tracking-widest gap-2.5"
+            onClick={() => safeBack(navigate, '/')} 
+            className="h-12 w-full max-w-[200px] mx-auto rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white border border-white/5 font-black text-xs uppercase tracking-widest gap-2.5 cursor-pointer"
           >
             <ArrowLeft size={14} />
             {isBn ? "ফিরে যান" : "Go Back"}

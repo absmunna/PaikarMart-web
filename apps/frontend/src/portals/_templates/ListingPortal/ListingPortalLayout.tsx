@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Search, MapPin, Filter, AlertTriangle } from "lucide-react";
-import { StoryBar } from "@shared/StoryBar";
 import { PortalIconBar } from "@shared/PortalIconBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { HeroSpotlight } from "@shared/HeroSpotlight";
@@ -22,7 +21,6 @@ export function ListingPortalLayout({ titleEn, titleBn, context, searchQuery, on
     <div className="flex flex-col gap-2 pb-28 pt-0">
       {/* ━━━ HEADER SECTION (Top Priority) ━━━ */}
       <section className="mt-4 px-2 space-y-1">
-        <StoryBar context={context} />
         <PortalIconBar context={context} />
       </section>
 

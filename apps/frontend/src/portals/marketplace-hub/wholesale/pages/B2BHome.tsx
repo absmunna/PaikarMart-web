@@ -8,9 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { useCartStore, useCartDrawerStore } from "@/modules/cart";
 import { toast } from "sonner";
-import { HomeHeader } from "@/design-system/components/home/HomeHeader";
-import { SubPortalNav } from "@/design-system/components/navigation/SubPortalNav";
-import { ProductCard } from "@/design-system/components/ui/ProductCard";
+import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
+import { safeBack } from "@/lib/navigation";
 
 interface B2BProduct {
   id: string;
@@ -262,8 +261,6 @@ export const B2BHome: React.FC = () => {
 
   return (
     <div className="w-full pb-20 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
-      <HomeHeader />
-      <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
@@ -271,8 +268,9 @@ export const B2BHome: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <button 
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 text-[var(--pm-text)] shadow-xs"
+            onClick={() => safeBack(navigate, '/')}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 text-[var(--pm-text)] shadow-xs cursor-pointer"
+            title="ফিরে যান"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -389,89 +387,36 @@ export const B2BHome: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts.map((product) => (
-            <div
+            <UnifiedPostCard
               key={product.id}
-              className="group bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                {/* Product Image & Badges */}
-                <div className="aspect-[4/3] w-full relative overflow-hidden bg-black/20">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-blue-400/30 shadow-md">
-                    {product.tag}
-                  </span>
-                  <span className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md text-amber-400 text-[10px] font-black px-2.5 py-1 rounded-xl border border-amber-400/20">
-                    MOQ: {product.moq} পিস
-                  </span>
-                </div>
-
-                {/* Info Container */}
-                <div className="p-4 space-y-3">
-                  <div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-medium mb-1">
-                      <Building2 className="w-3 h-3 text-blue-400" />
-                      <span className="truncate">{product.factoryName}</span>
-                      <span>• {product.location}</span>
-                    </div>
-                    <Link to={`/product/${product.id}`}>
-                      <h3 className="text-sm font-bold text-[var(--pm-text)] line-clamp-2 group-hover:text-blue-400 transition-colors leading-snug">
-                        {product.name}
-                      </h3>
-                    </Link>
-                  </div>
-
-                  {/* Pricing Details */}
-                  <div className="p-3 rounded-2xl bg-[var(--pm-surface-hover)] border border-[var(--pm-border)]/50 space-y-1.5">
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-[10px] text-[var(--pm-text-muted)] font-bold">পাইকারি রেট:</span>
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-base font-black text-blue-400">৳{product.price}</span>
-                        <span className="text-[10px] text-[var(--pm-text-muted)]">/ পিস</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[var(--pm-border)]/40">
-                      <span className="text-[var(--pm-text-muted)]">মোট লট প্রাইস:</span>
-                      <span className="font-bold text-[var(--pm-text)]">৳{(product.price * product.moq).toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  {/* Tier Pricing Snippet */}
-                  {product.tierPricing && (
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase text-[var(--pm-text-muted)] tracking-wider">বাল্ক টিয়ার প্রাইসিং:</span>
-                      <div className="grid grid-cols-3 gap-1 text-[9px] text-center">
-                        {product.tierPricing.map((tier, idx) => (
-                          <div key={idx} className="p-1 rounded-lg bg-[var(--pm-bg)] border border-[var(--pm-border)]/40">
-                            <p className="text-[var(--pm-text-muted)] truncate">{tier.range}</p>
-                            <p className="font-bold text-emerald-400">৳{tier.price}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="p-4 pt-0 grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => handleAddWholesaleToCart(product)}
-                  className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" /> কার্টে নিন
-                </button>
-                <Link
-                  to={`/product/${product.id}`}
-                  className="w-full py-2.5 rounded-xl bg-[var(--pm-surface-hover)] hover:bg-[var(--pm-border)] border border-[var(--pm-border)] text-xs font-bold text-[var(--pm-text)] transition-colors flex items-center justify-center gap-1 text-center"
-                >
-                  বিস্তারিত <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
+              post={{
+                id: product.id,
+                type: 'product',
+                domain: 'WHOLESALE',
+                authorName: product.factoryName,
+                authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.factoryName}`,
+                isVerified: product.verified,
+                authorRole: 'ফ্যাক্টরি / মিলার',
+                timestamp: 'Active Now',
+                content: `${product.name} - ${product.tag}. সরাসরি ফ্যাক্টরি থেকে সংগ্রহ করুন।`,
+                imageUrl: product.image,
+                location: product.location,
+                likes: product.reviews,
+                comments: Math.floor(product.reviews / 5),
+                product: {
+                  id: product.id,
+                  title: product.name,
+                  price: product.price,
+                  imageUrl: product.image,
+                  moq: product.moq
+                },
+                metadata: {
+                  urgency: 'Normal',
+                  isOfficialBrand: ['b2b-03', 'b2b-06'].includes(product.id),
+                  discountTag: product.originalPrice ? `${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% ছাড়` : undefined
+                }
+              }}
+            />
           ))}
         </div>
       )}

@@ -5,15 +5,20 @@ import { UserRole } from '@/permissions/roles';
 
 export const RoleGuard = ({ 
   children, 
-  allowedRoles 
+  allowedRoles,
+  redirectTo = '/unauthorized'
 }: { 
   children: React.ReactNode;
   allowedRoles: string[];
+  redirectTo?: string;
 }) => {
   const { user, isAuthenticated } = useAuthStore();
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (user && allowedRoles.includes(user.role as string)) return <>{children}</>;
+  const role = (user?.role || (user as any)?.roles?.[0] || 'buyer').toLowerCase();
+  const normalizedAllowed = allowedRoles.map(r => r.toLowerCase());
+
+  if (normalizedAllowed.includes(role)) return <>{children}</>;
   
-  return <Navigate to="/dashboard" replace />; // Redirect unauthorized users to basic dashboard or home
+  return <Navigate to={redirectTo} replace />;
 };

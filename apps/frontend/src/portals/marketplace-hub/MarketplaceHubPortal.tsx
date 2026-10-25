@@ -9,8 +9,6 @@ import {
   ChevronDown, Send, PlusCircle, Check, Store, Activity, 
   Wrench, Laptop, Cpu, Coins, Award, Heart, HelpCircle, FileText, RefreshCw, Eye
 } from 'lucide-react';
-import { StoryBar } from '@/shared/StoryBar';
-import { PortalIconBar } from '@/shared/PortalIconBar';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { MARKETPLACE_CATEGORIES } from './config/marketplaceCategories.config';
 import { MARKETPLACE_PORTALS } from './config/marketplacePortals.config';
@@ -19,7 +17,7 @@ import { mockProducts } from '@/core/lib/workspace-stub';
 import { useCartStore } from '@/modules/cart';
 import { toast } from 'sonner';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
-import { ProductCard } from '@/design-system/components/ui/ProductCard';
+import { UnifiedPostCard } from '@/design-system/components/feed/UnifiedPostCard';
 import { ProductGridSkeleton } from '@/app/AppShell/GlobalSkeletonSystem';
 
 export default function MarketplaceHubPortal() {
@@ -132,15 +130,9 @@ export default function MarketplaceHubPortal() {
 
   return (
     <div className="w-full pb-20 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
-      
-      {/* Home Header branding & Profile */}
-      <HomeHeader />
-      
-      {/* Horizontal Sub-Portal / Portal Category Selector Bar */}
-      <SubPortalNav />
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8 pt-4">
 
         {/* Dynamic Interactive Banner based on Active Sub-Portal */}
         <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#0c0e1a] via-[#121626] to-[#0a0c14] p-6 sm:p-8 shadow-2xl">
@@ -402,11 +394,37 @@ export default function MarketplaceHubPortal() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {filteredProducts.map((product) => (
-                <ProductCard 
+                <UnifiedPostCard 
                   key={product.id}
-                  product={product}
-                  onQuickAdd={handleQuickAdd}
-                  activePortal={activePortal}
+                  post={{
+                    id: product.id,
+                    type: product.type === 'service' ? 'service' : 'product',
+                    domain: (product.portal === 'wholesale' || (product.moq && product.moq > 1)) ? 'WHOLESALE' : 'RETAIL',
+                    authorName: product.seller || 'Verified Seller',
+                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.seller || 'seller'}`,
+                    isVerified: true,
+                    authorRole: product.type === 'service' ? 'সার্ভিস প্রোভাইডার' : 'ভেরিফাইড সেলার',
+                    timestamp: 'Active',
+                    content: product.description || `নতুন ${product.name || product.title} এখন আমাদের স্টোরে। সেরা মূল্যে সংগ্রহ করুন।`,
+                    imageUrl: product.image,
+                    location: product.location || 'Dhaka',
+                    likes: product.rating ? Math.floor(product.rating * 20) : 0,
+                    comments: 12,
+                    product: {
+                      id: product.id,
+                      title: product.name || product.title,
+                      price: product.price,
+                      imageUrl: product.image,
+                      moq: product.moq
+                    },
+                    metadata: {
+                      isPkExclusive: ['1', '5', '10'].includes(product.id),
+                      isOfficialBrand: ['Aarong', 'Bata', 'Apple', 'Samsung', 'Walton', 'Vision'].includes(product.seller || ''),
+                      distance: '৪৫০ মি',
+                      deliveryTime: '১৫ মিনিট',
+                      discountTag: product.discount ? `${product.discount}% ছাড়` : undefined
+                    }
+                  }}
                 />
               ))}
             </div>

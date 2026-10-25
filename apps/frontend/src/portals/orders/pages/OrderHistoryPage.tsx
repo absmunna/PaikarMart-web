@@ -13,6 +13,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/modules/language";
 import { useOrderTrackingStore } from "@/modules/orders";
+import { safeBack } from "@/lib/navigation";
 
 const formatSafeTime = (dateStr: string) => {
   if (!dateStr) return "";
@@ -114,7 +115,11 @@ export default function OrderHistoryPage() {
   return (
     <div className="min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] pb-28 max-w-[480px] mx-auto">
       <header className="sticky top-0 z-50 bg-[var(--pm-bg)]/80 backdrop-blur-md border-b border-white/5 p-4 flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white">
+        <button 
+          onClick={() => safeBack(navigate, '/orders')} 
+          className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white cursor-pointer active:scale-95 transition-all"
+          title="ফিরে যান"
+        >
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div>

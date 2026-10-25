@@ -7,13 +7,12 @@ import { useAuth } from '@/app/context/AuthContext';
 
 export const AppBottomNav: React.FC = () => {
   const location = useLocation();
-  const { toggleAppLauncher } = useNavUIStore();
   const { isAuthenticated } = useAuth();
 
   const navItems = [
     { icon: Home, label: 'Home', path: '/' },
     { icon: LayoutGrid, label: 'Feed', path: '/feed' },
-    { icon: PlusSquare, label: 'Hub', isCenter: true },
+    { icon: PlusSquare, label: 'Hub', path: '/portals', isCenter: true },
     { icon: MessageCircle, label: 'Chat', path: '/messages', authRequired: true },
     { icon: User, label: 'Profile', path: isAuthenticated ? '/profile' : '/auth/login' },
   ];
@@ -29,7 +28,7 @@ export const AppBottomNav: React.FC = () => {
             return (
               <Link
               key="center-hub"
-              to="/portal-hub"
+              to="/portals"
               className="relative -top-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--pm-accent)] text-white shadow-[0_8px_20px_rgba(255,122,0,0.3)] transition-transform active:scale-90"
             >
               <Icon className="h-7 w-7" />

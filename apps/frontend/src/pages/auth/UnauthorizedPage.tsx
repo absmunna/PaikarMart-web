@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldAlert, ArrowLeft, Home, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { safeBack } from '@/lib/navigation';
 
 export const UnauthorizedPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,8 +32,9 @@ export const UnauthorizedPage: React.FC = () => {
           </Link>
 
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => safeBack(navigate, '/')}
             className="w-full py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-zinc-300 font-bold text-xs transition-all border border-white/5 flex items-center justify-center gap-2 cursor-pointer"
+            title="ফিরে যান"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>পূর্ববর্তী পেজে ফিরে যান</span>

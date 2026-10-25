@@ -1,4 +1,25 @@
-import { NewsArticleType } from '../components/NewsCard';
+export interface NewsArticleType {
+  id: string;
+  title: string;
+  titleBn: string;
+  summary: string;
+  summaryBn: string;
+  content: string;
+  contentBn: string;
+  imageUrl: string;
+  category: string;
+  categoryLabel: string;
+  categoryLabelBn: string;
+  source: string;
+  sourceLogo?: string;
+  author: string;
+  publishedAt: string;
+  readTime: string;
+  readTimeBn: string;
+  views: number;
+  initialLikes: number;
+  isPremium?: boolean;
+}
 
 export const MOCK_NEWS_ARTICLES: NewsArticleType[] = [
   {

@@ -16,6 +16,8 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useOrderTrackingStore, Order as StoreOrder } from '@/modules/orders';
 import { useLanguage } from '@/modules/language';
+import { safeBack } from '@/lib/navigation';
+import { useAuthStore } from '@/modules/auth/store/useAuthStore';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -95,7 +97,35 @@ export const CheckoutPage: React.FC = () => {
     payment: string;
     total: number;
     doubleAddresses?: { pickup: string; drop: string };
+    guestName?: string;
+    guestPhone?: string;
+    guestEmail?: string;
   }) => {
+    // 1. Guest auto account onboarding handling
+    const isUnauthenticated = !useAuthStore.getState().isAuthenticated;
+    if (isUnauthenticated || stepDetails.guestPhone) {
+      if (stepDetails.guestPhone && stepDetails.guestName) {
+        const guestResult = await confirmOrderService.guestCheckout({
+          fullName: stepDetails.guestName,
+          phone: stepDetails.guestPhone,
+          email: stepDetails.guestEmail,
+          deliveryAddress: stepDetails.address,
+          paymentMethod: stepDetails.payment,
+          cartItems: items
+        });
+
+        if (guestResult.scenario === 'EXISTING_USER') {
+          toast.error(isBn ? "এই ফোন নম্বরে একটি অ্যাকাউন্ট রয়েছে। দয়া করে লগইন করুন।" : guestResult.message || "An account with this phone already exists.");
+          return;
+        }
+
+        if (guestResult.success && guestResult.user && guestResult.sessionToken) {
+          useAuthStore.getState().login(guestResult.user, guestResult.sessionToken);
+          toast.success(isBn ? "স্বয়ংক্রিয় বায়ার অ্যাকাউন্ট তৈরি হয়েছে!" : "Automated buyer account created & logged in!");
+        }
+      }
+    }
+
     const payload: OrderConfirmationPayload = {
       items,
       address: stepDetails.address,
@@ -386,8 +416,9 @@ export const CheckoutPage: React.FC = () => {
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5 select-none">
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => navigate(-1)}
+              onClick={() => safeBack(navigate, '/cart')}
               className="p-2.5 bg-zinc-900/60 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all border border-white/5 cursor-pointer"
+              title="ফিরে যান"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>

@@ -9,6 +9,7 @@ import { HomeHeader } from '@/design-system/components/home/HomeHeader';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
 import { ProductCard } from '@/design-system/components/ui/ProductCard';
 import { Button } from '@/components/ui/button';
+import { safeBack } from '@/lib/navigation';
 
 // Mock data for a specific dropship store
 const MOCK_STORES = {
@@ -92,7 +93,11 @@ export default function DropshipStore() {
         {/* Top Navbar Replacement with Branding Header already there */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="p-2 hover:bg-[var(--pm-surface-hover)] rounded-full transition-colors border border-[var(--pm-border)]">
+            <button 
+              onClick={() => safeBack(navigate, '/')} 
+              className="p-2 hover:bg-[var(--pm-surface-hover)] rounded-full transition-colors border border-[var(--pm-border)] cursor-pointer"
+              title="ফিরে যান"
+            >
               <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
             </button>
             <span className="font-black text-lg tracking-tight text-[var(--pm-text)]">{store.name}</span>

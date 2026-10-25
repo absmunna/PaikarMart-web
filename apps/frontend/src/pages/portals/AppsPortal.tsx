@@ -25,10 +25,12 @@ import {
   ShoppingBasket,
   Shirt,
   Utensils,
-  Cpu
+  Cpu,
+  ArrowLeft
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '@/context/AuthContext';
+import { safeBack } from '@/lib/navigation';
 
 interface CategoryItem {
   id: string;
@@ -97,10 +99,11 @@ export default function AppsPortal() {
       {/* Header with Back Button */}
       <div className="flex items-center gap-4">
         <button 
-          onClick={() => navigate(-1)}
-          className="p-2.5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] transition-all active:scale-95"
+          onClick={() => safeBack(navigate, '/')}
+          className="p-2.5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] transition-all active:scale-95 cursor-pointer shadow-xs"
+          title="ফিরে যান"
         >
-          <ChevronDown className="w-5 h-5 rotate-90" />
+          <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
         </button>
         <div>
           <h1 className="text-xl font-black tracking-tight text-[var(--pm-text)]">Super Apps Hub</h1>
