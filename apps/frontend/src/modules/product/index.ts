@@ -1,0 +1,13 @@
+export { useProductStore, type Product as DataProduct } from './store/useProductStore';
+export * from './store/useProductUIStore';
+export * from './types/product.types';
+export * from './components/ProductCard';
+export * from './components/ProductGrid';
+export * from './components/ProductQASection';
+export * from './components/ReviewSystem';
+export * from './components/RatingDisplay';
+export * from './components/CategoryChips';
+export * from './components/MultiSellerOffersSection';
+export * from './components/LinkInventoryModal';
+export * from './data/ecommerceProducts';
+export * from './utils/productActions';

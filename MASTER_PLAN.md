@@ -86,29 +86,31 @@ PaikarMart হবে Bangladesh-এর **Super App** — social commerce + marke
 
 ---
 
-## 2. Portal Architecture (12 Super Portals)
+## 2. Hub & Portal Architecture (Commerce Layers)
 
-প্রতিটি portal আলাদা website-এর মতো কিন্তু same shell, auth, wallet share করে।
+PaikarMart ৪টি প্রধান Hub-এ বিভক্ত। প্রতিটি Hub-এর আন্ডারে সংশ্লিষ্ট commerce portals থাকবে।
 
-### 2.1 Portal Registry
+### 2.1 The Four Major Hubs
 
-| ID | Portal Name | Real-World Model | Route | Status |
-|---|---|---|---|---|
-| `marketplace` | Marketplace | Daraz / Shopee | `/marketplace` | ✅ আছে |
-| `b2b` | B2B Trade Hub | Alibaba / TradeKey | `/b2b` | ✅ আছে |
-| `food` | Food Delivery | FoodPanda | `/food` | ✅ আছে |
-| `grocery` | Grocery | Chaldal | `/grocery` | ✅ আছে |
-| `pharmacy` | Pharmacy | AmarLab | `/pharmacy` | ✅ আছে |
-| `ride` | Logistics Hub | Pathao / Uber / Courier | `/ride` | ✅ আছে |
-| `services` | Services | Fiverr | `/services` | ✅ আছে |
-| `media` | News & Content | YouTube + Prothomalo | `/news` | ⚡ video/reels merge |
-| `nearby` | Nearby Shops | Google Local | `/local` | ✅ আছে |
-| `travel` | Travel & Hotel | Booking.com | `/travel` | ⚡ hotel merge |
-| `jobs` | Jobs & Career | Bdjobs | `/jobs` | ⚡ page → portal |
-| `verticals` | Niche Markets | Hub | `/verticals` | 🆕 নতুন hub |
+| Hub ID | Hub Name | Key Portals / Categories | Route Prefix |
+|---|---|---|---|
+| `marketplace-hub` | Marketplace Hub | Wholesale, Retail, PK Store, Brand Shops, Digital, Auto | `/marketplace` |
+| `services-hub` | Services Hub | Home Service, Pro, Repair, Freelance, Education, Healthcare | `/services` |
+| `logistic-hub` | Logistic Hub | Ride, Courier, Truck, Food/Grocery Delivery, Business Transport | `/logistics` |
+| `local-hub` | Local Hub | Nearby Shops, Local Mfg, Pharmacy, Grocery, Home Food | `/local` |
 
-**Verticals sub-portals:**
-`/real-estate` | `/agriculture` | `/healthcare` | `/education` | `/auto` | `/finance` | `/events` | `/telecom`
+### 2.2 Portal Registry (Consolidated)
+
+| Portal ID | Hub | Category | Status |
+|---|---|---|---|
+| `wholesale` | Marketplace | B2B / Manufacturing | ✅ |
+| `retail` | Marketplace | B2C / Retail | ✅ |
+| `pk-shop` | Marketplace | Curated / Premium | ✅ |
+| `ride` | Logistic | Transport / Ride-share | ✅ |
+| `courier` | Logistic | Delivery / Parcel | ✅ |
+| `food` | Logistic/Local | Food Delivery | ✅ |
+| `nearby` | Local | Local Shops / Businesses | ✅ |
+| `pro-services`| Services | Professional Services | ✅ |
 
 ### 2.2 Portal Structure Rule (Every Portal MUST Follow)
 
@@ -822,7 +824,20 @@ server.ts:
 
 ---
 
-## 17. Folder Structure (Final Target)
+## 17. Folder Structure (Monorepo Target)
+> Note: All frontend paths are relative to `apps/frontend/`.
+
+```
+/ (Root)
+├── apps/
+│   ├── frontend/             (Vercel Deploy)
+│   └── backend/              (Render Deploy)
+├── packages/
+│   ├── database/             (Prisma)
+│   └── shared/               (Common Logic)
+```
+
+### 17.1 Frontend Internal Structure (apps/frontend/src/)
 
 ```
 src/
@@ -870,32 +885,26 @@ src/
 │   └── NotFound.tsx
 │
 └── portals/
-    ├── _templates/           🆕 shared templates
-    │   ├── EcomDeliveryPortal/
-    │   ├── ListingPortal/
-    │   └── SellerDashboard/
-    ├── marketplace/
-    ├── b2b/
-    ├── food/                 → use EcomDeliveryPortal template
-    ├── grocery/              → use EcomDeliveryPortal template
-    ├── pharmacy/             → use EcomDeliveryPortal template
-    ├── ride/
-    ├── services/
-    ├── nearby/
-    ├── news/                 media hub
-    ├── travel/               + hotel
-    ├── messages/             + AI Chat embed
-    ├── jobs/                 🆕 upgrade to full portal
-    ├── real-estate/          🆕 upgrade to full portal
-    └── verticals/            🆕 hub
-        ├── index.tsx
-        ├── agriculture/
-        ├── healthcare/
-        ├── education/
-        ├── auto/
-        ├── finance/
-        ├── events/
-        └── telecom/
+    ├── marketplace-hub/      🆕 (Consolidated Marketplace)
+    │   ├── wholesale/
+    │   ├── retail/
+    │   ├── pk-shop/
+    │   └── digital/
+    ├── services-hub/         🆕 (Consolidated Services)
+    │   ├── pro/
+    │   ├── home/
+    │   └── health/
+    ├── logistic-hub/         🆕 (Consolidated Logistics)
+    │   ├── ride/
+    │   ├── courier/
+    │   └── food-delivery/
+    ├── local-hub/            🆕 (Consolidated Local)
+    │   ├── nearby-shops/
+    │   ├── pharmacy/
+    │   └── grocery/
+    ├── admin/
+    ├── seller-central/
+    └── common/               (Shared portal layouts/widgets)
 ```
 
 ---

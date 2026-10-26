@@ -1,7 +1,7 @@
 # PAIKAR MART - PROJECT ARCHITECTURE AUDIT & MIGRATION PLAN
 
 ## 1. Executive Summary
-This document provides a hard audit of the current Paikar Mart codebase (Frontend & Backend) to identify structural inconsistencies, overlapping domains, and fragmented routing. It outlines a strict migration plan to reorganize the scattered files into a highly modular, secure, and advanced architectural pattern aligned with the official documentation (`/documentation/architecture/`).
+This document provides a hard audit of the current Paikar Mart codebase (Frontend & Backend) to identify structural inconsistencies, overlapping domains, and fragmented routing. It outlines a strict migration plan to reorganize the scattered files into a highly modular, secure, and advanced architectural pattern aligned with the official documentation (`/docs/architecture/`).
 
 **CRITICAL DIRECTIVE**: No advanced UI/UX components, pages, or features currently built will be deleted, even if they are missing from the formal documentation. Missing documentation will be noted, and the features will be safely integrated into the proper new folder structure.
 
@@ -39,33 +39,44 @@ This document provides a hard audit of the current Paikar Mart codebase (Fronten
 
 ## 3. The Target Master Architecture
 
-Pursuant to `FULL_PORTAL_ARCHITECTURE.md`, the frontend will be enforced into this strict layout:
+Pursuant to modern modular monolith standards, the frontend (`apps/frontend/src`) will be structured into:
 
 ```text
-/src
-  /api          # global generic API interceptors, React Query keys
-  /components   # global UI primitive components (buttons, headers, modals)
-  /features     # complex reusable cross-portal widgets (e.g., Chat widget, SocialProfile)
-  /layouts      # shell shells (AppShell, GlobalSidebar, BottomNav)
-  /modules      # PURE BUSINESS LOGIC (Zustand stores, services, types) - NO PAGES!
-  /pages        # Core isolated pages (Login, Terms, Core Error Pages)
-  /portals      # The 17 Official Ecosystems (EACH with its own /pages, /components)
-      /admin
-      /b2b          # incorporates wholesale, export, factory-portal
-      /brand-shops
-      /demand
-      /marketplace
-      /messages
-      /nearby
-      /news
-      /orders
-      /pk-shop
-      /retail       # incorporates retail-b2c
-      /seller
-      /services
-      /transport
-      /travel
-      /wallet
+src/
+├── app/                      # App root config (AppShell, Providers, Router setup, Main Layouts)
+│   ├── router/               # Global route configurations & guard wrappers
+│   ├── store/                # Global app-wide stores
+│   └── App.tsx               # Root entry component
+│
+├── core/                     # Global singleton utilities, API clients, security setup
+│   ├── api/                  # Axios / Fetch client instances & interceptors
+│   ├── auth/                 # Firebase Auth initialization & session logic
+│   └── config/               # Environment variables, feature flags
+│
+├── design-system/            # Global UI primitives & Design Tokens
+│   ├── components/           # Button, Input, Modal, GlassCard, etc.
+│   ├── layouts/              # AppShell, BottomNav, MobileFrame wrappers
+│   └── styles/               # Tailwind global CSS, themes, variables
+│
+├── modules/                  # Vertical Feature Modules (Domain-Driven Business Logic)
+│   ├── seller/               # Store, services, types, hooks
+│   ├── order/
+│   ├── wallet/
+│   ├── feed/
+│   ├── product/
+│   └── ...
+│
+├── portals/                  # Page-Level Views / Hubs (Composed using modules & design-system)
+│   ├── marketplace-hub/
+│   ├── seller-central/
+│   ├── logistics-hub/
+│   ├── community-hub/
+│   └── admin-portal/
+│
+└── shared/                   # Truly shared cross-cutting utilities, types, constants
+    ├── utils/
+    ├── types/
+    └── constants/
 ```
 
 ---

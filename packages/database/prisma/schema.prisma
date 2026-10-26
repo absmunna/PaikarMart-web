@@ -1,0 +1,430 @@
+// backend/database/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  buyer
+  seller
+  admin
+  moderator
+}
+
+enum PostType {
+  regular
+  product_showcase
+  buying_demand
+}
+
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+enum PaymentStatus {
+  unpaid
+  paid
+  refunded
+}
+
+model User {
+  id            String    @id // Matches Firebase uid
+  email         String    @unique
+  phone         String?   @unique
+  fullName      String
+  avatarUrl     String?
+  role          Role      @default(buyer)
+
+  // Relations
+  vendorProfile    VendorProfile?
+  sellerStores     SellerStore[]
+  riderAssignments RiderAssignment[] @relation("RiderAssignments")
+  products         Product[]
+  orders           Order[]       @relation("BuyerOrders")
+  vendorOrders     Order[]       @relation("VendorOrders")
+  posts            Post[]        @relation("UserPosts")
+  sentMessages     ChatMessage[] @relation("SentMessages")
+  receivedMessages ChatMessage[] @relation("ReceivedMessages")
+
+  demands        Demand[]       @relation("UserDemands")
+  comments       Comment[]      @relation("UserComments")
+  stories        Story[]        @relation("UserStories")
+  notifications  Notification[] @relation("UserNotifications")
+  wallet         Wallet?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model VendorProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  shopName     String
+  tradeLicense String?  // For verification
+  nidNumber    String?
+  address      String?
+  location     String?
+  isVerified   Boolean  @default(false)
+  products     Product[]
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Product {
+  id            String    @id @default(uuid())
+  asin          String?   @unique // Auto-generated unique product code
+  vendorId      String
+  vendor        VendorProfile @relation(fields: [vendorId], references: [id])
+  userId        String?   // Optional: direct link to User
+  user          User?     @relation(fields: [userId], references: [id])
+  storeId       String?
+  store         SellerStore? @relation(fields: [storeId], references: [id])
+  portalCategoryId String?
+  portalCategory   PortalCategory? @relation(fields: [portalCategoryId], references: [id])
+
+  title         String
+  description   String
+  price         Decimal
+  originalPrice Decimal?
+  moq           Int       @default(1)
+  stock         Int       @default(0)
+  category      String
+  image         String?   // Primary Firebase Storage URL
+  images        String[]  @default([]) // Array of Firebase Storage URLs
+
+  // Master-Variant Relation (Amazon-style)
+  parentProductId String?
+  parentProduct   Product?  @relation("MasterToVariants", fields: [parentProductId], references: [id])
+  variants        Product[] @relation("MasterToVariants")
+
+  tieredPrices    TieredPrice[]
+  digitalAsset    DigitalAsset?
+
+  orderItems    OrderItem[]
+  posts         Post[]    @relation("ProductPosts")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  buyerId       String
+  buyer         User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  vendorId      String
+  vendor        VendorProfile @relation(fields: [vendorId], references: [id])
+  vendorUser    User        @relation("VendorOrders", fields: [vendorId], references: [id], map: "Order_vendorUser_fkey") // Mapping logic
+  storeId       String?
+  store         SellerStore? @relation(fields: [storeId], references: [id])
+
+  totalAmount   Decimal
+  status        OrderStatus @default(pending)
+  paymentStatus PaymentStatus @default(unpaid)
+
+  // Hyperlocal / Logistics attributes
+  deliveryType  String      @default("standard") // "standard" | "hyperlocal_instant" | "scheduled_slot"
+  scheduledSlot DateTime?
+  riderAssignment RiderAssignment?
+  walletTransactions WalletTransaction[]
+
+  orderItems    OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id             String      @id @default(uuid())
+  orderId        String
+  order          Order       @relation(fields: [orderId], references: [id])
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id])
+  storeId        String?
+  store          SellerStore? @relation(fields: [storeId], references: [id])
+  quantity       Int
+  price          Decimal
+  appliedTierMinUnits Int?
+}
+
+model Post {
+  id           String   @id @default(uuid())
+  authorId     String
+  author       User     @relation("UserPosts", fields: [authorId], references: [id])
+  type         PostType @default(regular)
+  content      String
+  mediaUrls    String[] @default([]) // Firebase Storage URLs
+  productId    String?
+  product      Product? @relation("ProductPosts", fields: [productId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  comments     Comment[]
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  message    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+// Keep existing supporting models but adapt them
+model Demand {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserDemands", fields: [authorUserId], references: [id])
+  title          String
+  description    String
+  budget         Decimal
+  currency       String   @default("BDT")
+  categoryId     String
+  location       String?
+  urgency        String   @default("normal")
+  status         String   @default("open")
+  createdAt      DateTime @default(now())
+}
+
+model Comment {
+  id             String   @id @default(uuid())
+  postId         String
+  post           Post     @relation(fields: [postId], references: [id])
+  authorUserId   String
+  author         User     @relation("UserComments", fields: [authorUserId], references: [id])
+  content        String
+  createdAt      DateTime @default(now())
+}
+
+model Story {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserStories", fields: [authorUserId], references: [id])
+  imageUrl       String
+  caption        String?
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation("UserNotifications", fields: [userId], references: [id])
+  type           String
+  title          String
+  body           String
+  actorAvatarUrl String?
+  read           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model Wallet {
+  id                 String              @id @default(uuid())
+  userId             String              @unique
+  user               User                @relation(fields: [userId], references: [id])
+  balance            Decimal             @default(0.00)
+  coins              Int                 @default(0)
+  transactions       Transaction[]
+  walletTransactions WalletTransaction[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  type      String   // "inflow" | "outflow"
+  title     String
+  subtitle  String
+  amount    Decimal
+  status    String   @default("completed")
+  createdAt DateTime @default(now())
+}
+
+enum PortalType {
+  b2c_retail
+  b2b_wholesale
+  hyperlocal_nearby
+  logistics_services
+  digital_ott
+  export_import
+}
+
+model PortalCategory {
+  id          String       @id @default(uuid())
+  slug        String       @unique
+  name        String
+  nameBn      String?
+  portalType  PortalType   @default(b2c_retail)
+  icon        String?
+  description String?
+  products    Product[]
+  stores      SellerStore[]
+  createdAt   DateTime     @default(now())
+}
+
+model SellerStore {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  storeName      String
+  slug           String?   @unique
+  district       String    @default("Dhaka")
+  division       String    @default("Dhaka")
+  address        String?
+  avatarUrl      String?
+  bannerUrl      String?
+  rating         Float     @default(4.9)
+  reviewCount    Int       @default(120)
+  isVerified     Boolean   @default(true)
+  followersCount Int       @default(0)
+
+  // Hyperlocal geofencing & dispatch
+  latitude             Float?
+  longitude            Float?
+  serviceRadiusKm      Float    @default(5.0)
+  isOpen               Boolean  @default(true)
+  estimatedPrepMinutes Int      @default(20)
+  storeType            String   @default("retail") // "retail", "wholesale", "food", "grocery", "service", "digital"
+  portalCategoryId     String?
+  portalCategory       PortalCategory? @relation(fields: [portalCategoryId], references: [id])
+
+  products           Product[]
+  orders             Order[]
+  orderItems         OrderItem[]
+  riderAssignments   RiderAssignment[]
+  walletTransactions WalletTransaction[]
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model TieredPrice {
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  minUnits   Int      // e.g. 1, 10, 100
+  maxUnits   Int?     // e.g. 9, 99, null for unlimited
+  unitPrice  Decimal
+  createdAt  DateTime @default(now())
+}
+
+enum RiderStatus {
+  searching
+  assigned
+  arrived_at_store
+  picked_up
+  out_for_delivery
+  delivered
+  cancelled
+}
+
+model RiderAssignment {
+  id               String       @id @default(uuid())
+  orderId          String       @unique
+  order            Order        @relation(fields: [orderId], references: [id])
+  riderId          String?
+  riderUser        User?        @relation("RiderAssignments", fields: [riderId], references: [id])
+  storeId          String?
+  store            SellerStore? @relation(fields: [storeId], references: [id])
+  status           RiderStatus  @default(searching)
+  pickupLat        Float?
+  pickupLng        Float?
+  deliveryLat      Float?
+  deliveryLng      Float?
+  distanceKm       Float?
+  estimatedMinutes Int?
+  dispatchType     String       @default("instant") // "instant" | "scheduled"
+  scheduledTime    DateTime?
+  assignedAt       DateTime?
+  deliveredAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model WalletTransaction {
+  id          String        @id @default(uuid())
+  walletId    String
+  wallet      Wallet        @relation(fields: [walletId], references: [id])
+  orderId     String?
+  order       Order?        @relation(fields: [orderId], references: [id])
+  storeId     String?
+  store       SellerStore?  @relation(fields: [storeId], references: [id])
+  type        String        // "credit" | "debit" | "commission" | "cashback" | "inflow" | "outflow"
+  title       String
+  subtitle    String?
+  amount      Decimal
+  status      String        @default("completed")
+  referenceId String?
+  createdAt   DateTime      @default(now())
+}
+
+model DigitalAsset {
+  id            String       @id @default(uuid())
+  productId     String       @unique
+  product       Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  assetType     String       // "license_key" | "downloadable_file" | "ott_subscription"
+  downloadUrl   String?
+  fileSizeMb    Float?
+  keys          LicenseKey[]
+  createdAt     DateTime     @default(now())
+}
+
+model LicenseKey {
+  id               String       @id @default(uuid())
+  digitalAssetId   String
+  digitalAsset     DigitalAsset @relation(fields: [digitalAssetId], references: [id], onDelete: Cascade)
+  keyCode          String
+  isAssigned       Boolean      @default(false)
+  assignedToUserId String?
+  orderId          String?
+  assignedAt       DateTime?
+  expiresAt        DateTime?
+  createdAt        DateTime     @default(now())
+}
+
+model UserLocation {
+  id        String   @id @default(uuid())
+  userId    String?
+  district  String   @default("Dhaka")
+  division  String   @default("Dhaka")
+  area      String?
+  latitude  Float?
+  longitude Float?
+  isDefault Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  userId        String
+  userName      String?
+  productId     String?
+  postId        String?
+  rating        Int      @default(5)
+  comment       String
+  images        String[] @default([])
+  verifiedBuyer Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}

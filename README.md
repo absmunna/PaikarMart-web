@@ -47,32 +47,27 @@ cp .env.example .env
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure (Monorepo)
 
 ```text
 paikar-mart/
-├── .env.example         # Template for environment variables (safe for Git)
-├── .gitignore           # Hardened security rules (ignores all .env and secret files)
-├── backend/             # Express.js API server & modules
-│   ├── api/             # API route handlers & routers
-│   ├── config/          # Database (Prisma), Redis, and environment configs
-│   ├── middleware/      # Security (Helmet, CORS, Rate Limit, Auth, Sanitization)
-│   ├── modules/         # Domain-driven backend modules (auth, products, orders, etc.)
-│   └── server.ts        # Express entry point with Vite middleware in dev
-├── prisma/              # Prisma schema & migration files
-│   └── schema.prisma    # PostgreSQL database models
-├── src/                 # React Frontend Application
-│   ├── components/      # Reusable UI & layout components (Navbar, Cart, Drawers, etc.)
-│   ├── features/        # High-level features (Checkout, Registration, Auth, etc.)
-│   ├── layouts/         # RootLayout with desktop 3-zone contract & responsive viewport
-│   ├── modules/         # State management stores (Cart, Wallet, Auth, Location, etc.)
-│   ├── pages/           # Application views (Home, Feed, ProductDetails, Checkout, etc.)
-│   ├── portals/         # Dedicated business portals (B2B, B2C, Services, Ride, Nearby, Seller)
-│   └── routes/          # React Router v7 routes
-├── package.json         # Node.js dependencies & scripts
-├── vite.config.ts       # Vite configuration with Tailwind CSS v4 plugin
-├── vercel.json          # Vercel SPA routing configuration
-└── railway.toml         # Railway deployment build and start configuration
+├── apps/
+│   ├── frontend/        # React 18 + Vite + Tailwind CSS v4
+│   │   ├── src/
+│   │   │   ├── components/ # Reusable UI components
+│   │   │   ├── features/   # Business features (Auth, Feed, etc.)
+│   │   │   ├── portals/    # Specialized hubs (B2B, Local, etc.)
+│   │   │   └── pages/      # Route level views
+│   └── backend/         # Node.js + Express.js API
+│       ├── api/         # Routes & Controllers
+│       ├── modules/     # Domain services
+│       └── server.ts    # Main entry point
+├── packages/
+│   ├── database/        # Prisma schema & Client
+│   └── shared/          # Shared types & utilities
+├── .env.example         # Environment template
+├── package.json         # Monorepo scripts (pnpm)
+└── pnpm-workspace.yaml  # Workspace configuration
 ```
 
 ---
