@@ -30,7 +30,7 @@ export const ThemeLangSwitcher = () => {
 
   return (
     <div ref={dropdownRef} className="relative">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-8 h-8 rounded-full bg-[var(--pm-surface-hover)] border border-[var(--pm-border)]/50 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:border-[var(--pm-accent)]/50 transition-all"
         title="Settings (Theme & Language)"
@@ -74,8 +74,8 @@ export const ThemeLangSwitcher = () => {
                 <button
                   onClick={() => setLang('BN')}
                   className={`flex-1 py-1 rounded-md text-[10px] font-black transition-all ${
-                    lang === 'BN' 
-                    ? 'bg-[var(--pm-accent)] text-white shadow-sm' 
+                    lang === 'BN'
+                    ? 'bg-[var(--pm-accent)] text-white shadow-sm'
                     : 'text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]'
                   }`}
                 >
@@ -84,8 +84,8 @@ export const ThemeLangSwitcher = () => {
                 <button
                   onClick={() => setLang('EN')}
                   className={`flex-1 py-1 rounded-md text-[10px] font-black transition-all ${
-                    lang === 'EN' 
-                    ? 'bg-[var(--pm-accent)] text-white shadow-sm' 
+                    lang === 'EN'
+                    ? 'bg-[var(--pm-accent)] text-white shadow-sm'
                     : 'text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]'
                   }`}
                 >

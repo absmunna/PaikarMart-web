@@ -104,15 +104,15 @@ export function DemandDetail() {
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                demand.status === 'open' 
-                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+                demand.status === 'open'
+                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                   : 'bg-[var(--pm-accent-soft)] text-[var(--pm-accent)] border-[var(--pm-accent)]/30'
               }`}>
                 {demand.status === 'open' ? 'উন্মুক্ত' : 'ম্যাচড'}
               </span>
               <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                demand.urgency === 'urgent' 
-                  ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+                demand.urgency === 'urgent'
+                  ? 'bg-red-500/20 text-red-400 border-red-500/30'
                   : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
               }`}>
                 {demand.urgency === 'urgent' ? 'জরুরী' : 'সাধারণ'}
@@ -120,7 +120,7 @@ export function DemandDetail() {
             </div>
             <h1 className="text-xl md:text-2xl font-black text-[var(--pm-text)] leading-tight">{demand.title}</h1>
           </div>
-          
+
           <div className="flex flex-col gap-0.5 items-start md:items-end shrink-0">
             <span className="text-[10px] text-[var(--pm-text-muted)] font-black uppercase tracking-wider">বাজেট</span>
             <span className="text-2xl font-black text-[var(--pm-accent)]">{formatBDT(demand.budget)}</span>
@@ -188,12 +188,12 @@ export function DemandDetail() {
       {/* Matches */}
       <div className="mt-4 flex flex-col gap-4">
         <h2 className="text-sm font-black text-[var(--pm-text)]">ম্যাচড পাইকার বিক্রেতারা ({demand.matches?.length || 0})</h2>
-        
+
         {demand.matches && demand.matches.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {demand.matches.map(vendor => (
-              <div 
-                key={vendor.id} 
+              <div
+                key={vendor.id}
                 className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-4 flex gap-3.5 items-center shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="w-12 h-12 rounded-full border border-[var(--pm-border)] bg-[var(--pm-bg)] flex items-center justify-center text-3xl overflow-hidden shrink-0">

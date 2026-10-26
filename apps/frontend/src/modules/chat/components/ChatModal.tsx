@@ -16,20 +16,20 @@ interface ChatModalProps {
   onClose: () => void;
 }
 
-export function ChatModal({ 
-  vendorId, 
-  vendorName = 'বিক্রেতা', 
+export function ChatModal({
+  vendorId,
+  vendorName = 'বিক্রেতা',
   vendorAvatar,
   productId,
   productName,
-  isOpen, 
-  onClose 
+  isOpen,
+  onClose
 }: ChatModalProps) {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [initialMessage, setInitialMessage] = useState(
-    productName 
-      ? `আসসালামু আলাইকুম, "${productName}" পণ্যটি কি স্টকে আছে? পাইকারি দর কত রাখবেন?` 
+    productName
+      ? `আসসালামু আলাইকুম, "${productName}" পণ্যটি কি স্টকে আছে? পাইকারি দর কত রাখবেন?`
       : 'আসসালামু আলাইকুম, আমি আপনার পণ্যের বিষয়ে কথা বলতে চাচ্ছি।'
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +104,7 @@ export function ChatModal({
               <p className="text-[10px] text-zinc-400 font-medium">সরাসরি বিক্রেতার সাথে চ্যাট করুন</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="text-zinc-500 hover:text-white text-xs font-bold px-2 py-1"
           >

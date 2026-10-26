@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { 
-  ShoppingBag, Heart, Wallet, MapPin, 
+import {
+  ShoppingBag, Heart, Wallet, MapPin,
   ChevronRight, Star, Clock, ShieldCheck,
   Package, TrendingUp, CreditCard, Gift, Plus,
   Store, CheckCircle, Truck
@@ -34,9 +34,9 @@ export const BuyerCockpit: React.FC<BuyerCockpitProps> = ({ user, onNavigateTab 
               <div className="px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-black text-emerald-400">
                 +{user.loyaltyCoins || '0'} COINS
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="h-6 px-2 text-[9px] font-black uppercase text-zinc-500 hover:text-white"
                 onClick={() => onNavigateTab('wallet')}
               >
@@ -54,9 +54,9 @@ export const BuyerCockpit: React.FC<BuyerCockpitProps> = ({ user, onNavigateTab 
                   <Package className="w-3.5 h-3.5 text-sky-400" />
                   <span>Recent Orders</span>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-6 px-2 text-[9px] font-black uppercase text-zinc-500 hover:text-white"
                   onClick={() => onNavigateTab('orders')}
                 >
@@ -112,9 +112,9 @@ export const BuyerCockpit: React.FC<BuyerCockpitProps> = ({ user, onNavigateTab 
             {[1, 2, 3].map((i) => (
               <Card key={i} className="bg-[#111625] border-white/5 overflow-hidden group">
                 <div className="aspect-square relative">
-                  <img 
-                    src={`https://images.unsplash.com/photo-${1500000000000 + i * 1000000}?w=200&h=200&fit=crop`} 
-                    alt="Product" 
+                  <img
+                    src={`https://images.unsplash.com/photo-${1500000000000 + i * 1000000}?w=200&h=200&fit=crop`}
+                    alt="Product"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
                   <div className="absolute top-2 right-2">

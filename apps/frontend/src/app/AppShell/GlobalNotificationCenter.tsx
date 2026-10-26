@@ -55,7 +55,7 @@ export const GlobalNotificationCenter: React.FC<{ isOpen: boolean; onClose: () =
 
   return (
     <AnimatePresence>
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
@@ -75,7 +75,7 @@ export const GlobalNotificationCenter: React.FC<{ isOpen: boolean; onClose: () =
                     <X className="w-4 h-4" />
                 </button>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-2 max-h-[400px]">
                 {notifications.length === 0 ? (
                     <div className="p-12 text-center text-[var(--pm-text-muted)] text-xs font-bold uppercase tracking-widest italic">
@@ -83,8 +83,8 @@ export const GlobalNotificationCenter: React.FC<{ isOpen: boolean; onClose: () =
                     </div>
                 ) : (
                     notifications.map((n) => (
-                        <div 
-                          key={n.id} 
+                        <div
+                          key={n.id}
                           onClick={() => handleNotificationClick(n.id, n.actionUrl)}
                           className={cn(
                             "p-4 rounded-2xl hover:bg-white/5 transition-all group cursor-pointer border border-transparent",
@@ -107,13 +107,13 @@ export const GlobalNotificationCenter: React.FC<{ isOpen: boolean; onClose: () =
                 )}
             </div>
             <div className="p-4 bg-[var(--pm-card)] border-t border-[var(--pm-border)] flex items-center justify-between">
-                <button 
+                <button
                   onClick={() => { navigate('/notifications'); onClose(); }}
                   className="text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-widest hover:text-white transition-colors"
                 >
                   View All
                 </button>
-                <button 
+                <button
                   onClick={clearAll}
                   className="text-[10px] font-black text-[var(--pm-text-muted)] uppercase tracking-widest hover:text-rose-400 transition-colors"
                 >

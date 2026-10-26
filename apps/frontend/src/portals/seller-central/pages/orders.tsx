@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { 
-  ShoppingBag, 
-  Search, 
-  Filter, 
-  ArrowUpDown, 
-  Eye, 
-  Truck, 
-  CheckCircle2, 
-  Clock, 
+import {
+  ShoppingBag,
+  Search,
+  Filter,
+  ArrowUpDown,
+  Eye,
+  Truck,
+  CheckCircle2,
+  Clock,
   XCircle,
   MoreVertical,
   ChevronRight,
@@ -65,8 +65,8 @@ export default function Orders() {
             onClick={() => setActiveStatus(status)}
             className={`
               px-6 py-3 rounded-2xl font-bold text-sm whitespace-nowrap transition-all border
-              ${activeStatus === status 
-                ? "bg-[#FF7A00] text-white border-transparent shadow-lg shadow-[#FF7A00]/20" 
+              ${activeStatus === status
+                ? "bg-[#FF7A00] text-white border-transparent shadow-lg shadow-[#FF7A00]/20"
                 : "bg-[#1e2136] text-gray-500 border-white/5 hover:text-gray-300 hover:border-white/10"
               }
             `}

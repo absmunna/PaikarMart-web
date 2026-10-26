@@ -759,7 +759,7 @@ export const useListProducts = (params?: any, options?: any) => useQuery<any>({
 
     if (params?.q) {
       const query = params.q.toLowerCase().trim();
-      prods = prods.filter(p => 
+      prods = prods.filter(p =>
         (p.name && p.name.toLowerCase().includes(query)) ||
         (p.title && p.title.toLowerCase().includes(query)) ||
         (p.description && p.description.toLowerCase().includes(query)) ||

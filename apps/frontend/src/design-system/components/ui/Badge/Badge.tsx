@@ -7,7 +7,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 export const Badge: React.FC<BadgeProps> = ({ children, className = '', variant, ...props }) => {
-  const variantStyles = variant === 'destructive' 
+  const variantStyles = variant === 'destructive'
     ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
     : variant === 'secondary'
     ? 'bg-zinc-800 text-zinc-300 border border-zinc-700'

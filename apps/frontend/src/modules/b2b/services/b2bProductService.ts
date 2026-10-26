@@ -5,7 +5,7 @@ export const b2bProductService = {
   getProducts: async (): Promise<B2BProduct[]> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 800));
-    
+
     // In real app: return axios.get('/api/v1/b2b/products').then(res => res.data);
     return MOCK_B2B_PRODUCTS;
   },

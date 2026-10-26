@@ -7,8 +7,8 @@ The following packages are currently pending development or integration to achie
 - [x] Super App Hub Page (Implemented 10-portal grid with Squircle styling)
 - [x] Navigation Finalization (Bottom Nav with Apps/Messages sync)
 - [ ] B2C Retail Portal (Full backend integration and frontend components)
-- [x] Wallet Dashboard (Real balance tracking, transaction history, Add/Send/Recharge API integration)
-- [x] PK Store (Link with real product data with PK Coin cashbacks)
+- [ ] Wallet Dashboard (Real balance tracking, transaction history)
+- [ ] PK Store (Link with real product data with PK Coin cashbacks)
 
 ## Package 7: Feed & Interaction
 - [x] Social Feed UI Improvement (`CreatePostComposer` + Refined Layout)
@@ -29,7 +29,7 @@ The following packages are currently pending development or integration to achie
 - [ ] Analytics APIs for Admin and Seller dashboards
 
 ## Package 10 & 11: Deployment & PWA
-- [x] PWA Manifest and Offline Service Workers (manifest.json, custom SVG icons, sw.js, in-app install prompt)
+- [ ] PWA Manifest and Offline Service Workers
 - [ ] Deployment of Backend to Railway
 - [ ] Deployment of Frontend to Vercel
 - [ ] Set up complete CI/CD GitHub Actions pipeline

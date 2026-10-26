@@ -22,7 +22,7 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
   gradient = 'from-[#05050a] via-[#121220]/80 to-transparent'
 }) => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -4 }}
@@ -30,8 +30,8 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
     >
       {/* Background Image with Parallax & Scanning Effect */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={image} 
+        <img
+          src={image}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10s] ease-out opacity-50 grayscale group-hover:grayscale-0"
           referrerPolicy="no-referrer"
@@ -39,7 +39,7 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
         {/* Futuristic Scanning Line */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent h-20 w-full -translate-y-full group-hover:animate-[scan_3s_linear_infinite] pointer-events-none z-10" />
       </div>
-      
+
       {/* Gradients */}
       <div className={`absolute inset-0 bg-gradient-to-r ${gradient} z-10`} />
       <div className="absolute inset-0 bg-gradient-to-t from-[#05050a] via-transparent to-transparent z-10" />
@@ -47,7 +47,7 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
       {/* Content Layer */}
       <div className="absolute inset-0 z-20 p-5 sm:p-8 flex flex-col justify-center gap-2 sm:gap-3">
         {badge && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -61,7 +61,7 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
         )}
 
         <div className="max-w-[90%] sm:max-w-[70%]">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -69,7 +69,7 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
           >
             {title}
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -79,13 +79,13 @@ export const PortalHero: React.FC<PortalHeroProps> = ({
           </motion.p>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="mt-2 sm:mt-3"
         >
-          <button 
+          <button
             onClick={onCtaClick}
             className="group/btn px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-black text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2.5 shadow-xl active:scale-95 hover:bg-cyan-500 hover:text-white transition-all transform-gpu"
           >

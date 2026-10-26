@@ -7,7 +7,7 @@ export const NotFound = () => {
   const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-24 h-24 bg-[var(--pm-surface)] rounded-full flex items-center justify-center mb-6 shadow-xl shadow-black/5"
@@ -19,8 +19,8 @@ export const NotFound = () => {
       <p className="text-[var(--pm-text-secondary)] mb-8 max-w-sm">
         This portal or page is currently under construction. We are working hard to bring this feature to you!
       </p>
-      <button 
-        onClick={() => navigate('/')} 
+      <button
+        onClick={() => navigate('/')}
         className="px-8 py-3 bg-[var(--pm-accent)] text-white font-bold rounded-xl shadow-lg shadow-[var(--pm-accent)]/20 active:scale-95 transition-all"
       >
         Go Back Home

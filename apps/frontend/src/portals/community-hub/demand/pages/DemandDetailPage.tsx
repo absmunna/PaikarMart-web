@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Share2, AlertCircle, Clock, MapPin, Building2, Phone, MessageCircle, Send } from 'lucide-react';
-import { safeBack } from '@/lib/navigation';
 
 export default function DemandDetailPage() {
   const { id } = useParams();
@@ -11,11 +10,7 @@ export default function DemandDetailPage() {
   return (
     <div className="flex flex-col gap-6 pb-24 w-full max-w-2xl mx-auto px-4 pt-4">
       <div className="flex items-center justify-between">
-        <button 
-          onClick={() => safeBack(navigate, '/demand')} 
-          className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] active:scale-95 transition-all cursor-pointer"
-          title="ফিরে যান"
-        >
+        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] active:scale-95 transition-all">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <button className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] active:scale-95 transition-all">
@@ -59,8 +54,8 @@ export default function DemandDetailPage() {
         <div className="space-y-4">
           <h3 className="text-sm font-black text-[var(--pm-text)]">বিস্তারিত বিবরণ:</h3>
           <p className="text-sm text-[var(--pm-text-muted)] leading-relaxed">
-            আসসালামু আলাইকুম। আমাদের ই-কমার্স স্টোরের জন্য ১০০০ পিস প্রিমিয়াম কোয়ালিটি কটন টি-শার্ট প্রয়োজন। 
-            কাপড় ১৮০ জিএসএম হতে হবে। সাইজ এস, এম, এল, এক্সএল মিক্স থাকতে হবে। 
+            আসসালামু আলাইকুম। আমাদের ই-কমার্স স্টোরের জন্য ১০০০ পিস প্রিমিয়াম কোয়ালিটি কটন টি-শার্ট প্রয়োজন।
+            কাপড় ১৮০ জিএসএম হতে হবে। সাইজ এস, এম, এল, এক্সএল মিক্স থাকতে হবে।
             যারা সরাসরি ম্যানুফ্যাকচারার এবং দ্রুত সরবরাহ করতে পারবেন তারা যোগাযোগ করুন।
           </p>
         </div>

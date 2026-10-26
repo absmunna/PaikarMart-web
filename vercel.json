@@ -1,9 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build",
+  "buildCommand": "cd packages/database && npx prisma generate && cd ../../apps/frontend && npm run build",
   "outputDirectory": "apps/frontend/dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/(.*)",

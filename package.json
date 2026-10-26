@@ -8,20 +8,15 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "cd apps/backend && npx tsx server.ts",
-    "build": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build",
-    "build:backend": "cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build",
-    "build:all": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
-    "start": "node --no-deprecation apps/backend/dist/server.js",
-    "postinstall": "cd packages/database && npx --yes prisma generate",
+    "dev": "npm run dev --workspace=@paikarmart/backend",
+    "build": "npm run build --workspaces",
+    "start": "npm run start --workspace=@paikarmart/backend",
+    "postinstall": "cd packages/database && npx prisma generate",
     "typecheck": "npm run lint --workspace=@paikarmart/frontend",
     "lint": "npm run lint --workspace=@paikarmart/frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "typescript": "~5.8.2"
-  },
-  "dependencies": {
-    "recharts": "^3.10.1"
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { 
+import {
   ArrowLeft, Heart, ShieldCheck, Globe, Star, Users, Calculator,
   MessageCircle, FileText, ShoppingCart, ShoppingBag, Terminal, CheckCircle
 } from 'lucide-react';
@@ -15,9 +15,9 @@ interface B2BProductDetailViewProps {
   onNotify: (msg: string, type: 'success' | 'warning' | 'error') => void;
 }
 
-export const B2BProductDetailView: React.FC<B2BProductDetailViewProps> = ({ 
-  productId, 
-  onNavigate, 
+export const B2BProductDetailView: React.FC<B2BProductDetailViewProps> = ({
+  productId,
+  onNavigate,
   onBack,
   onNotify
 }) => {
@@ -28,7 +28,7 @@ export const B2BProductDetailView: React.FC<B2BProductDetailViewProps> = ({
   const [selectedQty, setSelectedQty] = useState<number>(product.moq);
   const [isSaved, setIsSaved] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  
+
   // RFQ proposal Form State
   const [rfqMessage, setRfqMessage] = useState('');
   const [rfqSubmitted, setRfqSubmitted] = useState(false);
@@ -105,7 +105,7 @@ export const B2BProductDetailView: React.FC<B2BProductDetailViewProps> = ({
 
         <h1 className="text-base sm:text-lg font-black text-white leading-snug">{product.name}</h1>
 
-        <div 
+        <div
           onClick={() => onNavigate('factory-profile', vendor.id)}
           className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 cursor-pointer transition flex items-center justify-between"
         >

@@ -121,7 +121,7 @@ export const updateCategoryConfig = async (req: Request, res: Response) => {
     const { defaultCommission, paymentReleaseRule, returnWindowDays, requiresKyc } = req.body;
 
     if (!process.env.DATABASE_URL) {
-      fallbackCategoryConfigs = fallbackCategoryConfigs.map(c => 
+      fallbackCategoryConfigs = fallbackCategoryConfigs.map(c =>
         c.id === id ? { ...c, defaultCommission: Number(defaultCommission), paymentReleaseRule, returnWindowDays: Number(returnWindowDays), requiresKyc: !!requiresKyc } : c
       );
       return res.json({ message: 'Category configuration updated in dev mode fallback.', config: fallbackCategoryConfigs.find(c => c.id === id) });

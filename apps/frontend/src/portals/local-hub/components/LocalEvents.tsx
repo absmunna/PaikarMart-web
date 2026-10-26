@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { 
+import {
   Calendar, MapPin, Users, ArrowRight,
   Clock, Share2, Heart, Plus, Search,
   Music, Utensils, Trophy, Users2,
@@ -64,8 +64,8 @@ export const LocalEvents: React.FC = () => {
     <div className="space-y-8">
       {/* Featured Event Hero */}
       <div className="relative h-64 rounded-[2.5rem] overflow-hidden group">
-        <img 
-          src={featuredEvent.image} 
+        <img
+          src={featuredEvent.image}
           alt={featuredEvent.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
@@ -124,7 +124,7 @@ export const LocalEvents: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {upcomingEvents.map((event) => (
-            <div 
+            <div
               key={event.id}
               className="bg-zinc-900 border border-white/5 rounded-3xl overflow-hidden hover:border-cyan-500/30 transition-all group"
             >

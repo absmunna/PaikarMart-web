@@ -38,7 +38,7 @@ export default function VaultDashboard() {
         id: doc.id,
         ...doc.data()
       })) as VaultFile[];
-      
+
       // Sort in memory as we didn't create a composite index for uploadedAt yet
       fetchedFiles.sort((a, b) => {
         const timeA = a.uploadedAt?.toMillis?.() || 0;
@@ -58,7 +58,7 @@ export default function VaultDashboard() {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0 || !user) return;
-    
+
     const file = e.target.files[0];
     setUploading(true);
     setUploadProgress(0);
@@ -67,21 +67,21 @@ export default function VaultDashboard() {
     const storageRef = ref(storage, `users/${user.id}/${Date.now()}_${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on('state_changed', 
+    uploadTask.on('state_changed',
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadProgress(progress);
-      }, 
+      },
       (error) => {
         console.error("Storage upload error", error);
         alert("Failed to upload file. Please check Firebase Storage Rules.");
         setUploading(false);
-      }, 
+      },
       async () => {
         // Upload completed successfully
         try {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          
+
           // Save metadata to Firestore
           await addDoc(collection(db, "client_vault_files"), {
             userId: user.id,
@@ -103,11 +103,11 @@ export default function VaultDashboard() {
 
   const handleDelete = async (file: VaultFile) => {
     if (!window.confirm(`Are you sure you want to delete ${file.name}?`)) return;
-    
+
     try {
       // 1. Delete from Firestore
       await deleteDoc(doc(db, "client_vault_files", file.id));
-      
+
       // 2. Delete from Storage (best effort based on URL, or ideally we'd store the storage path)
       // Since we didn't store the exact path, we can extract it from the URL or just rely on Firestore delete for this demo.
       // A more robust implementation would store the storageRef path in Firestore.
@@ -154,22 +154,22 @@ export default function VaultDashboard() {
       </div>
 
       {/* Upload Area */}
-      <div 
+      <div
         onClick={() => fileInputRef.current?.click()}
         className="border-2 border-dashed border-gray-300 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition-all group"
       >
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          onChange={handleFileUpload} 
-          className="hidden" 
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          className="hidden"
         />
         <div className="h-16 w-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
           <UploadCloud className="h-8 w-8" />
         </div>
         <h3 className="text-lg font-bold text-gray-900">Upload a new file</h3>
         <p className="text-gray-500 mt-2 max-w-sm">Click here or drag and drop your files into this area to securely upload them to your vault.</p>
-        
+
         {uploading && (
           <div className="w-full max-w-xs mt-6">
             <div className="flex justify-between text-xs font-semibold text-gray-600 mb-2">
@@ -177,7 +177,7 @@ export default function VaultDashboard() {
               <span>{Math.round(uploadProgress)}%</span>
             </div>
             <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-blue-600 transition-all duration-300 ease-out"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
@@ -189,7 +189,7 @@ export default function VaultDashboard() {
       {/* File List */}
       <div>
         <h2 className="text-xl font-bold text-gray-900 mb-4">Your Files</h2>
-        
+
         {loading ? (
           <div className="flex justify-center p-12">
             <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
@@ -234,16 +234,16 @@ export default function VaultDashboard() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <a 
+                          <a
                             href={file.url}
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             title="Download/View"
                           >
                             <Download className="h-5 w-5" />
                           </a>
-                          <button 
+                          <button
                             onClick={() => handleDelete(file)}
                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete File"
@@ -261,9 +261,9 @@ export default function VaultDashboard() {
         )}
       </div>
 
-      <DatabaseBackupModal 
-        isOpen={isBackupOpen} 
-        onClose={() => setIsBackupOpen(false)} 
+      <DatabaseBackupModal
+        isOpen={isBackupOpen}
+        onClose={() => setIsBackupOpen(false)}
       />
     </div>
   );

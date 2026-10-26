@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { 
-  SellerKPI, SellerProduct, SellerOrder, SellerAIInsight, SellerBid 
+import type {
+  SellerKPI, SellerProduct, SellerOrder, SellerAIInsight, SellerBid
 } from '../types';
 
 interface SellerDashboardState {
@@ -11,14 +11,14 @@ interface SellerDashboardState {
   bids: SellerBid[];
   insights: SellerAIInsight[];
   isLoading: boolean;
-  
+
   setKPIs: (kpis: SellerKPI) => void;
   setProducts: (products: SellerProduct[]) => void;
   setOrders: (orders: SellerOrder[]) => void;
   setBids: (bids: SellerBid[]) => void;
   setInsights: (insights: SellerAIInsight[]) => void;
   setLoading: (loading: boolean) => void;
-  
+
   addProduct: (product: SellerProduct) => void;
   updateProduct: (id: string, updates: Partial<SellerProduct>) => void;
   deleteProduct: (id: string) => void;
@@ -56,11 +56,11 @@ export const useSellerDashboardStore = create<SellerDashboardState>()(
       updateProduct: (id, updates) => set((state) => ({
         products: state.products.map(p => p.id === id ? { ...p, ...updates } : p)
       })),
-      
+
       deleteProduct: (id) => set((state) => ({
         products: state.products.filter(p => p.id !== id)
       })),
-      
+
       updateOrder: (id, status) => set((state) => ({
         orders: state.orders.map(o => o.id === id ? { ...o, status } : o)
       })),

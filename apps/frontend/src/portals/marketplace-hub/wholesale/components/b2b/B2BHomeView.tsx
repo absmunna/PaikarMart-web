@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-  Search, ShieldCheck, Factory, Sprout, Cpu, Settings, 
-  HardHat, Armchair, Wrench, Star, ArrowRight, Zap, PlusCircle, 
+import {
+  Search, ShieldCheck, Factory, Sprout, Cpu, Settings,
+  HardHat, Armchair, Wrench, Star, ArrowRight, Zap, PlusCircle,
   MapPin, CheckCircle2, MessageCircle, FileText
 } from 'lucide-react';
 import { B2B_CATEGORIES } from '@/modules/b2b';

@@ -59,10 +59,10 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(({
   if (lines > 1) {
     const lineWidths = ['w-full', 'w-[90%]', 'w-[75%]', 'w-[60%]', 'w-[80%]'];
     return (
-      <div 
-        ref={ref} 
-        role="status" 
-        aria-label="কনটেন্ট লোড হচ্ছে..." 
+      <div
+        ref={ref}
+        role="status"
+        aria-label="কনটেন্ট লোড হচ্ছে..."
         className={cn("flex flex-col gap-2 w-full", className)}
         {...props}
       >

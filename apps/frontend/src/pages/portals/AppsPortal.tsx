@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { 
-  Star, 
-  ShoppingBag, 
-  Building2, 
-  MapPin, 
-  Newspaper, 
-  Wrench, 
-  Monitor, 
-  Wallet, 
-  Truck, 
+import {
+  Star,
+  ShoppingBag,
+  Building2,
+  MapPin,
+  Newspaper,
+  Wrench,
+  Monitor,
+  Wallet,
+  Truck,
   Box,
   EyeOff,
   Eye,
@@ -25,12 +25,10 @@ import {
   ShoppingBasket,
   Shirt,
   Utensils,
-  Cpu,
-  ArrowLeft
+  Cpu
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '@/context/AuthContext';
-import { safeBack } from '@/lib/navigation';
 
 interface CategoryItem {
   id: string;
@@ -90,20 +88,19 @@ export default function AppsPortal() {
   const { user } = useAuth();
   const [showWallet, setShowWallet] = useState(false);
   const navigate = useNavigate();
-  
-  const walletBalance = "৳ ১২,৪৫০"; 
+
+  const walletBalance = "৳ ১২,৪৫০";
 
   return (
     <div className="flex flex-col gap-6 px-4 py-6 md:px-6 md:py-8 w-full text-[var(--pm-text)] pb-32">
-      
+
       {/* Header with Back Button */}
       <div className="flex items-center gap-4">
-        <button 
-          onClick={() => safeBack(navigate, '/')}
-          className="p-2.5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] transition-all active:scale-95 cursor-pointer shadow-xs"
-          title="ফিরে যান"
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2.5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] transition-all active:scale-95"
         >
-          <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
+          <ChevronDown className="w-5 h-5 rotate-90" />
         </button>
         <div>
           <h1 className="text-xl font-black tracking-tight text-[var(--pm-text)]">Super Apps Hub</h1>
@@ -132,9 +129,9 @@ export default function AppsPortal() {
               <ChevronDown className="h-3.5 w-3.5 ml-1 text-zinc-500" />
             </div>
           </div>
-          
+
           <div className="mt-6 flex items-center justify-between rounded-2xl bg-black/40 px-4 py-3 border border-white/5 backdrop-blur-sm">
-            <div 
+            <div
               onClick={() => navigate("/wallet")}
               className="cursor-pointer group flex-1"
             >
@@ -147,7 +144,7 @@ export default function AppsPortal() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => setShowWallet(!showWallet)}
                 className="p-2 hover:bg-white/10 rounded-xl transition-colors text-zinc-400 hover:text-white"
                 title={showWallet ? "ব্যালেন্স লুকান" : "ব্যালেন্স দেখুন"}
@@ -158,7 +155,7 @@ export default function AppsPortal() {
                   <EyeOff className="h-4 w-4 text-zinc-500" />
                 )}
               </button>
-              <Link 
+              <Link
                 to="/wallet"
                 className="px-3 py-1.5 rounded-xl bg-[#FF7A00] hover:bg-[#e06b00] text-white text-[11px] font-black transition-colors"
               >
@@ -182,16 +179,16 @@ export default function AppsPortal() {
               ন্যূনতম MOQ এবং ফ্যাক্টরি পাইকারি মূল্যে সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।
             </p>
           </div>
-          
+
           <div className="relative z-10 mt-6 flex items-center gap-3">
-            <Link 
-              to="/wholesale" 
+            <Link
+              to="/wholesale"
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#FF7A00] px-5 py-2.5 text-xs font-black text-white hover:bg-[#e06b00] transition-colors shadow-lg shadow-[#FF7A00]/25 active:scale-95"
             >
               পাইকারি বাজার <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-            <Link 
-              to="/demand" 
+            <Link
+              to="/demand"
               className="inline-flex items-center justify-center gap-1.5 rounded-2xl bg-white/10 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/20 transition-colors border border-white/10"
             >
               <Tag className="h-3.5 w-3.5 text-[#FF7A00]" /> ডিমান্ড দিন
@@ -222,7 +219,7 @@ export default function AppsPortal() {
           <AppIcon icon={Tag} label="Demand Hub" bangla="ডিমান্ড পোস্ট" gradient="from-orange-500 to-amber-600" href="/demand" />
           <AppIcon icon={Wrench} label="Services" bangla="সার্ভিসেস" gradient="from-emerald-500 to-teal-600" href="/services" />
           <AppIcon icon={Truck} label="Logistics" bangla="রাইড ও কুরিয়ার" gradient="from-amber-600 to-yellow-600" href="/logistics" />
-          
+
           <AppIcon icon={MapPin} label="Nearby Shops" bangla="লোকাল হাব" gradient="from-purple-500 to-indigo-600" href="/nearby" />
           <AppIcon icon={Monitor} label="Digital Goods" bangla="ডিজিটাল" gradient="from-cyan-500 to-blue-600" href="/digital" />
           <AppIcon icon={Box} label="Orders" bangla="অর্ডার ট্র্যাকিং" gradient="from-sky-500 to-blue-600" href="/orders" />
@@ -244,13 +241,13 @@ export default function AppsPortal() {
             সব দেখুন <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {FEATURED_CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
-              <Link 
-                key={cat.id} 
+              <Link
+                key={cat.id}
                 to={cat.link}
                 className="group relative overflow-hidden rounded-3xl bg-[#141624] border border-white/5 p-5 shadow-lg hover:border-white/15 transition-all duration-300 flex flex-col justify-between"
               >
@@ -271,7 +268,7 @@ export default function AppsPortal() {
                     {cat.nameEn}
                   </p>
                 </div>
-                
+
                 <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-zinc-400 group-hover:text-white transition-colors">
                   <span>পণ্য দেখুন</span>
                   <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform text-[#FF7A00]" />
@@ -285,18 +282,18 @@ export default function AppsPortal() {
   );
 }
 
-function AppIcon({ 
-  icon: Icon, 
-  label, 
-  bangla, 
-  gradient, 
+function AppIcon({
+  icon: Icon,
+  label,
+  bangla,
+  gradient,
   href,
   badge
-}: { 
-  icon: any; 
-  label: string; 
-  bangla?: string; 
-  gradient: string; 
+}: {
+  icon: any;
+  label: string;
+  bangla?: string;
+  gradient: string;
   href: string;
   badge?: string;
 }) {

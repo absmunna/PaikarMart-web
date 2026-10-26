@@ -52,7 +52,7 @@ export const getPaymentProviders = async (req: Request, res: Response) => {
 export const initiatePayment = async (req: Request, res: Response) => {
   try {
     const { orderId, amount, providerName, userId, customerPhone, callbackUrl } = req.body;
-    
+
     if (!orderId || !amount || !providerName) {
       return res.status(400).json({ error: 'orderId, amount, and providerName are required' });
     }
@@ -64,9 +64,9 @@ export const initiatePayment = async (req: Request, res: Response) => {
     }
 
     const effectiveUserId = userId || (req as any).user?.id || 'guest_buyer';
-    const response = await provider.initiate({ 
-      orderId, 
-      amount: Number(amount), 
+    const response = await provider.initiate({
+      orderId,
+      amount: Number(amount),
       userId: effectiveUserId,
       customerPhone,
       callbackUrl
@@ -90,7 +90,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
     if (!provider) {
       return res.status(400).json({ error: 'Unsupported provider' });
     }
-    
+
     const response = await provider.verify(transactionId);
     res.json(response);
   } catch (error: any) {
@@ -103,21 +103,21 @@ export const handlePaymentCallback = async (req: Request, res: Response) => {
   try {
     const providerName = req.params.provider as string;
     const provider = providers[providerName.toLowerCase()];
-    
+
     if (!provider) {
       return res.status(400).json({ error: 'Unsupported provider callback' });
     }
 
     const callbackData = await provider.handleCallback(req.body);
-    
+
     if (callbackData.status === 'success') {
-      const userId = (req.body.userId as string) || 'dev-munna-id'; 
+      const userId = (req.body.userId as string) || 'dev-munna-id';
       const amount = Number(req.body.amount) || 1000;
-      
+
       await WalletService.creditWallet(
-        userId, 
-        amount, 
-        `Payment via ${providerName.toUpperCase()}`, 
+        userId,
+        amount,
+        `Payment via ${providerName.toUpperCase()}`,
         `TxID: ${callbackData.transactionId}`
       ).catch(e => console.warn('Wallet credit in callback:', e));
     }

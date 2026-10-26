@@ -64,7 +64,7 @@ export const OrderListCard: React.FC<OrderListCardProps> = React.memo(({ order, 
               {formatBDT(order.total)}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-1 text-[var(--pm-text-secondary)] group-hover:text-cyan-400 transition-colors">
             <span className="text-[9px] font-bold uppercase tracking-wider hidden sm:inline">Track Detail</span>
             <ChevronRight className="w-4 h-4" />

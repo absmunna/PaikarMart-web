@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, ShieldCheck, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Mail, Phone, MapPin, Send, ShieldCheck } from 'lucide-react';
 import { useAppStore } from '@/modules/app';
 
 export default function ContactPage() {
@@ -21,13 +20,6 @@ export default function ContactPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link 
-        to="/" 
-        className="inline-flex items-center gap-2 text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] transition-colors mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {lang === 'EN' ? 'Back to Home' : 'হোম পেজে ফিরে যান'}
-      </Link>
       {/* Page Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-orange-500/15 via-orange-600/5 to-transparent border border-white/5 rounded-3xl p-6 md:p-8 mb-8 shadow-xl">
         <h1 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Contact support</h1>
@@ -41,7 +33,7 @@ export default function ContactPage() {
         <div className="lg:col-span-1 space-y-4">
           <div className="p-6 rounded-2xl bg-zinc-900 border border-white/5 space-y-4 shadow-sm">
             <h3 className="text-sm font-black text-white uppercase tracking-widest text-orange-500">আমাদের মূল পয়েন্টসমূহ</h3>
-            
+
             <div className="space-y-4 text-xs">
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
@@ -108,7 +100,7 @@ export default function ContactPage() {
                     className="p-3 bg-black/30 border border-white/10 rounded-xl text-xs text-white focus:border-orange-500 outline-none"
                   />
                 </div>
-                
+
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-black uppercase text-white/50 tracking-wider">ইমেইল ঠিকানা</label>
                   <input

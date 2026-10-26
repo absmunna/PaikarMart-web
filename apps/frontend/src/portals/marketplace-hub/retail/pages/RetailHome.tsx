@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ShoppingBag, Star, Heart, ShoppingCart, Zap, TrendingUp, Sparkles, 
+import {
+  ShoppingBag, Star, Heart, ShoppingCart, Zap, TrendingUp, Sparkles,
   Store, Package, Tag, Layers, MapPin, Truck, ShieldCheck, Search,
   MessageSquare, ChevronRight, SlidersHorizontal, ArrowRight, X, Clock,
   ChevronLeft, Award, ThumbsUp, AlertCircle, RefreshCw
 } from 'lucide-react';
+import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { ProductCard } from "@/modules/product";
-import { ProductListSkeleton } from "@/components/ui/ProductCard/ProductCardSkeleton";
 import { useCommerceCartStore } from '@modules/commerce/cart/useCartStore';
 import { formatBDT } from '@lib/format';
 import { Button } from '@ui/button';
@@ -289,12 +289,12 @@ export const RetailHome = () => {
   const filteredProducts = useMemo(() => {
     return normalizedProducts.filter((product) => {
       const q = searchQuery.toLowerCase();
-      const matchesSearch = (product.title || "").toLowerCase().includes(q) || 
+      const matchesSearch = (product.title || "").toLowerCase().includes(q) ||
                             (product.description || "").toLowerCase().includes(q) ||
                             (product.vendorName || "").toLowerCase().includes(q);
-      
+
       const matchesCategory = selectedCategory === "all" || product.categoryId === selectedCategory;
-      
+
       return matchesSearch && matchesCategory;
     }).sort((a, b) => {
       if (sortBy === "price_asc") return a.price - b.price;
@@ -346,11 +346,16 @@ export const RetailHome = () => {
 
   return (
     <div className="w-full max-w-[480px] md:max-w-4xl lg:max-w-6xl mx-auto px-4 pb-28 text-[var(--pm-text)] flex flex-col pt-0" id="retail-portal-root">
-      
+
+      {/* 1. MANDATORY STORY BAR */}
+      <section className="pt-2 -mx-4 md:mx-0">
+        <StoryBar context="retail" />
+      </section>
+
       {/* 2. MANDATORY STICKY PORTAL BAR */}
       <div className="md:sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-[var(--pm-border)]/50 -mx-4 px-4 mt-2">
-        <CategoryNavBar 
-          context="retail" 
+        <CategoryNavBar
+          context="retail"
           activeFilter={selectedCategory}
           onFilterChange={setSelectedCategory}
         />
@@ -405,7 +410,7 @@ export const RetailHome = () => {
               </button>
             )}
           </div>
-          
+
           <div className="relative shrink-0 select-none">
             <select
               value={sortBy}
@@ -425,7 +430,7 @@ export const RetailHome = () => {
       <div className="mt-5 flex items-center justify-between text-[11px] font-bold text-zinc-500 uppercase tracking-widest px-1">
         <span>গ্রুপকৃত {filteredProducts.length} টি পণ্য পাওয়া গেছে (Items matching)</span>
         {searchQuery || selectedCategory !== "all" ? (
-          <button 
+          <button
             onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}
             className="text-pink-400 hover:text-pink-300 font-black cursor-pointer flex items-center gap-1 lowercase"
           >
@@ -438,7 +443,19 @@ export const RetailHome = () => {
       <div className="mt-3">
         <AnimatePresence mode="popLayout">
           {isQueryLoading && filteredProducts.length === 0 ? (
-            <ProductListSkeleton count={8} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div key={idx} className="rounded-3xl border border-white/[0.04] bg-white/[0.02] overflow-hidden animate-pulse">
+                  <div className="aspect-square bg-white/5" />
+                  <div className="p-3 space-y-2.5">
+                    <div className="h-2 w-1/3 bg-white/5 rounded-full" />
+                    <div className="h-3 w-4/5 bg-white/5 rounded-full" />
+                    <div className="h-2 w-1/2 bg-white/5 rounded-full" />
+                    <div className="h-8 w-full bg-white/5 rounded-xl mt-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : filteredProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-white/[0.01] border border-dashed border-white/10 rounded-3xl gap-4 text-center">
               <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-600">
@@ -456,7 +473,7 @@ export const RetailHome = () => {
               </button>
             </div>
           ) : (
-            <motion.div 
+            <motion.div
               layout
               className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
             >
@@ -509,7 +526,7 @@ export const RetailHome = () => {
                 onClick={(e) => e.stopPropagation()}
                 className="w-full max-w-[440px] rounded-3xl bg-zinc-950 border border-white/10 overflow-hidden text-left relative text-white max-h-[85vh] flex flex-col justify-between"
               >
-                
+
                 {/* Header visual close */}
                 <button
                   onClick={() => setSelectedProduct(null)}
@@ -520,12 +537,12 @@ export const RetailHome = () => {
 
                 {/* Detail Content */}
                 <div className="overflow-y-auto p-5 space-y-4 no-scrollbar">
-                  
+
                   {/* Photo & overlays */}
                   <div className="aspect-[16/10] relative rounded-2xl overflow-hidden border border-white/5 bg-zinc-900 leading-none">
                     <img src={selectedProduct.images[0]} alt={selectedProduct.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    
+
                     <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5 items-center">
                       <span className="px-2 py-0.5 rounded-md bg-pink-500 text-[8px] font-black text-white uppercase tracking-widest leading-none">
                         B2C Retail Unit
@@ -561,7 +578,7 @@ export const RetailHome = () => {
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       onClick={(e) => { handleOpenChat(selectedProduct, e); setSelectedProduct(null); }}
                       className="px-3 py-1.5 rounded-lg bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 text-[9px] font-black text-pink-400 uppercase tracking-wider transition-all"
                     >
@@ -572,7 +589,7 @@ export const RetailHome = () => {
                   {/* Star rating breakdown distributions */}
                   <div className="space-y-2">
                     <h4 className="text-[9px] font-black uppercase text-zinc-400 tracking-wider">পরিষেবা ও রেটিং ব্রেকডাউন (Customer feedback ratios)</h4>
-                    
+
                     <div className="grid grid-cols-3 items-center gap-3 bg-white/[0.01] border border-white/[0.03] p-3 rounded-xl">
                       <div className="text-center border-r border-white/5 pr-1">
                         <span className="text-xl sm:text-2xl font-black text-white">{selectedProduct.rating}</span>
@@ -581,7 +598,7 @@ export const RetailHome = () => {
                         </div>
                         <p className="text-[7.5px] text-zinc-500 uppercase font-bold mt-1.5">Rating ratio</p>
                       </div>
-                      
+
                       <div className="col-span-2 space-y-1">
                         {[
                           { star: 5, pct: "84%" },
@@ -676,4 +693,3 @@ export const RetailHome = () => {
     </div>
   );
 };
-

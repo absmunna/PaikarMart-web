@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
+import {
   ShoppingBag, Search, Star, ShieldCheck, ArrowRight,
-  ShoppingCart, Plus, Minus, Store, ChevronRight, Zap, 
+  ShoppingCart, Plus, Minus, Store, ChevronRight, Zap,
   BadgePercent, X, Mic, RefreshCw, Layers, Award, Sparkles,
   Shirt, Laptop, Sofa, Grape, Smartphone, Trophy, Compass,
   LayoutGrid, Megaphone, HelpCircle, Flame, Grid, Gift
@@ -15,8 +15,8 @@ import { B2CStoreProfile } from './B2CStoreProfile';
 import { B2CBrandProfile } from './B2CBrandProfile';
 import { B2CDeals } from './B2CDeals';
 
-// Import UnifiedPostCard for standardized UI
-import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
+// Import Product interface and mock products list
+import { ProductCard } from "@/modules/product";
 import { Product } from '@/modules/product';
 import { mockProducts } from '@/portals/marketplace-hub/retail/data/products';
 
@@ -25,9 +25,9 @@ import { useNotificationStore } from '@/modules/notification';
 import { useAuth } from '@/modules/auth';
 import { useCartDrawerStore } from '@/modules/cart';
 import { HomeHeader } from '@/components/home/HomeHeader';
+import { StoryBar } from '@shared/StoryBar';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
-import { useCategoryStore } from '@/store/categoryStore';
 import { toast } from 'sonner';
 
 const CATEGORIES = [
@@ -94,7 +94,7 @@ const SPOTLIGHT_SLIDES = [
 export const B2CHome = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Dynamic navigation views states
   const [view, setView] = useState<'home' | 'product' | 'store' | 'brand' | 'deals'>('home');
   const [selectedEntityId, setSelectedEntityId] = useState<string>('');
@@ -107,14 +107,11 @@ export const B2CHome = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState('trending');
-  const { activeMainCategory, activeSubCategory, setMainCategory, setSubCategory } = useCategoryStore();
-  const effectiveCategory = searchParams.get('category') || activeMainCategory || activeCategory || 'all';
-  const effectiveSub = searchParams.get('sub') || activeSubCategory;
-  
+
   // Notice board and rating dropdowns
   const [showBanner, setShowBanner] = useState(true);
   const [ratingStore, setRatingStore] = useState<string | null>(null);
-  
+
   // Voice Search states
   const [voiceListening, setVoiceListening] = useState(false);
 
@@ -165,7 +162,7 @@ export const B2CHome = () => {
       setView('deals');
       return;
     }
-    
+
     // Fallback to Main landing
     setView('home');
   }, [searchParams]);
@@ -186,58 +183,21 @@ export const B2CHome = () => {
   // Filter products matching parameters
   const filteredProducts = mockProducts.filter((p: any) => {
     // Exclude strict B2B portal listings if B2C is browsed, unless matching category
-    const isB2COrPk = p.portal === 'b2c' || p.portal === 'pk-shop' || !p.portal || p.type === 'retail';
-    const matchesSearch = 
-      (p.title || p.name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const isB2COrPk = p.portal === 'b2c' || p.portal === 'pk-shop';
+    const matchesSearch =
+      (p.title || p.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (p.category || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (p.sellerId || p.seller || "").toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     // Normalize Category ID
-    let mappedCat = effectiveCategory.toLowerCase();
-    if (mappedCat === 'tech' || mappedCat === 'mobile') mappedCat = 'electronics';
-    
-    let matchesCategory = true;
-    if (mappedCat !== 'all') {
-      const pCat = (p.category || "").toLowerCase();
-      const pTitle = (p.title || p.name || "").toLowerCase();
-      if (mappedCat === 'fashion') {
-        matchesCategory = pCat.includes('পোশাক') || pCat.includes('শাড়ি') || pCat.includes('শাড়ি') || pCat.includes('ব্যাগ') || pCat.includes('fashion') || pTitle.includes('শাড়ি') || pTitle.includes('পাঞ্জাবি') || pTitle.includes('হ্যান্ডব্যাগ');
-      } else if (mappedCat === 'electronics') {
-        matchesCategory = pCat.includes('মোবাইল') || pCat.includes('ইলেকট্রনিক্স') || pCat.includes('সোলার') || pCat.includes('electronics') || pTitle.includes('galaxy') || pTitle.includes('iphone') || pTitle.includes('সোলার') || pTitle.includes('প্যানেল');
-      } else if (mappedCat === 'grocery') {
-        matchesCategory = pCat.includes('মাছ') || pCat.includes('চাল') || pCat.includes('খাদ্য') || pCat.includes('মাংস') || pCat.includes('grocery') || pTitle.includes('ইলিশ') || pTitle.includes('চাল') || pTitle.includes('মধু') || pTitle.includes('মাংস');
-      } else if (mappedCat === 'home') {
-        matchesCategory = pCat.includes('আসবাবপত্র') || pCat.includes('গৃহস্থালি') || pCat.includes('home') || pTitle.includes('আসবাবপত্র') || pTitle.includes('বেত');
-      } else {
-        matchesCategory = pCat.includes(mappedCat) || pTitle.includes(mappedCat);
-      }
-    }
+    let mappedCat = activeCategory;
+    if (activeCategory === 'tech') mappedCat = 'electronics';
 
-    let matchesSub = true;
-    if (effectiveSub && effectiveSub !== 'all') {
-      const subLower = effectiveSub.toLowerCase();
-      const pTitle = (p.title || p.name || "").toLowerCase();
-      const pDesc = (p.description || "").toLowerCase();
-      const pCat = (p.category || "").toLowerCase();
+    const matchesCategory = mappedCat === 'all'
+      ? true
+      : p.category === CATEGORIES.find(c => c.id === mappedCat)?.searchTag;
 
-      if (subLower === 't-shirts') {
-        matchesSub = pTitle.includes('টি-শার্ট') || pTitle.includes('পোলো') || pTitle.includes('t-shirt');
-      } else if (subLower === 'panjabi') {
-        matchesSub = pTitle.includes('পাঞ্জাবি') || pTitle.includes('পাজামা') || pTitle.includes('panjabi');
-      } else if (subLower === 'sarees') {
-        matchesSub = pTitle.includes('শাড়ি') || pTitle.includes('শাড়ি') || pTitle.includes('জামদানি') || pTitle.includes('saree');
-      } else if (subLower === 'denim') {
-        matchesSub = pTitle.includes('ডেনিম') || pTitle.includes('জিন্স') || pTitle.includes('denim');
-      } else if (subLower === 'rice') {
-        matchesSub = pTitle.includes('চাল') || pTitle.includes('রাইস') || pTitle.includes('বাসমতি') || pTitle.includes('মিনিকেট');
-      } else if (subLower === 'honey') {
-        matchesSub = pTitle.includes('মধু') || pTitle.includes('honey');
-      } else {
-        matchesSub = pTitle.includes(subLower) || pDesc.includes(subLower) || pCat.includes(subLower);
-      }
-    }
-
-    return isB2COrPk && matchesSearch && matchesCategory && matchesSub;
+    return isB2COrPk && matchesSearch && matchesCategory;
   });
 
   // Calculate sorted products dynamically (new add)
@@ -348,8 +308,15 @@ export const B2CHome = () => {
       <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        {/* ━━━ HERO ZONE ━━━ */}
+        {/* ━━━ HERO ZONE: Stories ━━━ */}
+        <section className="pt-2 animate-fade-in">
+          <StoryBar context="retail" />
+        </section>
 
+        {/* ━━━ STICKY PORTAL NAVIGATION CATEGORIES BAR ━━━ */}
+        <div className="sticky top-[154px] z-40 bg-[var(--pm-bg)]/95 backdrop-blur-lg border-b border-white/[0.06] mt-2 -mx-4 px-1">
+          <CategoryNavBar context="retail" />
+        </div>
 
       {/* ━━━ DISMISSIBLE HIGH-VISIBILITY NOTICE MARQUEE BANNER (v01 upgrade) ━━━ */}
       <AnimatePresence>
@@ -375,7 +342,7 @@ export const B2CHome = () => {
                 </p>
               </div>
             </div>
-            <button 
+            <button
               onClick={() => setShowBanner(false)}
               className="p-1 rounded-full text-zinc-500 hover:text-white transition-colors shrink-0"
               title="বন্ধ করুন"
@@ -390,15 +357,15 @@ export const B2CHome = () => {
       <div className="mt-4 flex gap-2">
         <div className="flex-1 h-11 bg-[var(--pm-surface)] rounded-xl border border-white/[0.08] px-3.5 flex items-center gap-2 focus-within:border-[var(--pm-accent)] transition-all">
           <Search className="w-4.5 h-4.5 text-[var(--pm-text-secondary)]" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="ফ্যাশন, ইলেকট্রনিক্স বা শপ খুঁজুন..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="flex-1 bg-transparent border-none text-[11px] text-white focus:outline-none placeholder-zinc-500 font-semibold"
           />
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery('')}
               className="p-1 rounded-full text-zinc-500 hover:text-white"
             >
@@ -406,7 +373,7 @@ export const B2CHome = () => {
             </button>
           )}
         </div>
-        <button 
+        <button
           onClick={handleTriggerVoice}
           className="w-11 h-11 rounded-xl bg-[var(--pm-surface)] border border-white/[0.08] flex items-center justify-center text-[var(--pm-accent)] transition-all active:scale-95 hover:bg-white/5 outline-none"
           title="ভয়েস ডিক্টেশন"
@@ -464,11 +431,11 @@ export const B2CHome = () => {
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          CONDITIONAL LANDING DISPLAY (Defaults when no query or category selected)
+          CONDITIONAL LANDING DISPLAY (Defaults when no query is typed)
           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      {searchQuery === '' && effectiveCategory === 'all' && (!effectiveSub || effectiveSub === 'all') ? (
+      {searchQuery === '' && activeCategory === 'all' ? (
         <div className="space-y-6 mt-4">
-          
+
           {/* ━━━ B2C HERO SPOTLIGHT CAROUSEL SECTION (update-v01) ━━━ */}
           <section className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-[var(--pm-surface)] h-[180px] sm:h-[220px] md:h-[260px] lg:h-[290px] flex flex-col justify-end p-4 sm:p-6 select-none">
             {/* Background Image Carousel with absolute transition */}
@@ -502,13 +469,12 @@ export const B2CHome = () => {
               <p className="text-[11px] sm:text-xs text-[var(--pm-text-secondary)] font-medium leading-normal line-clamp-2">
                 {SPOTLIGHT_SLIDES[activeHeroSlide].desc}
               </p>
-              
+
               <div className="pt-1 flex items-center gap-3.5">
                 <button
                   onClick={() => {
                     const slide = SPOTLIGHT_SLIDES[activeHeroSlide];
                     setActiveCategory(slide.category);
-                    setMainCategory(slide.category);
                     toast.success(`"${slide.title}" সেকশনে আপনাকে স্বাগতম!`);
                   }}
                   className="px-4 py-2 rounded-full bg-white text-black font-black text-[10px] sm:text-xs hover:bg-zinc-200 transition-all select-none duration-150 active:scale-95 shadow-md shadow-white/5 cursor-pointer flex items-center gap-1 hover:gap-1.5"
@@ -526,8 +492,8 @@ export const B2CHome = () => {
                   key={i}
                   onClick={() => setActiveHeroSlide(i)}
                   className={`h-1.5 rounded-full transition-all ${
-                    activeHeroSlide === i 
-                      ? 'w-4 bg-[var(--pm-accent)]' 
+                    activeHeroSlide === i
+                      ? 'w-4 bg-[var(--pm-accent)]'
                       : 'w-1.5 bg-white/30 hover:bg-white/60'
                   }`}
                   title={`স্লাইড ${i + 1}`}
@@ -535,7 +501,7 @@ export const B2CHome = () => {
               ))}
             </div>
           </section>
-          
+
           {/* FLASH DEALS COUNTDOWN TIMER COMPONENT */}
           <section className="p-4 rounded-3xl bg-gradient-to-br from-red-600/10 via-orange-600/5 to-transparent border border-red-500/15">
             <div className="flex items-center justify-between mb-3.5">
@@ -544,7 +510,7 @@ export const B2CHome = () => {
                 <span>ফ্ল্যাশ সেল</span>
                 <span className="bg-red-600 font-mono text-[9px] text-white px-2 py-0.5 rounded ml-1 animate-pulse">৩ ঘণ্টা বাকি</span>
               </div>
-              <button 
+              <button
                 onClick={() => setSearchParams({ b2cView: 'deals' })}
                 className="text-[9px] font-black uppercase text-[var(--pm-accent)] tracking-wider flex items-center gap-0.5"
               >
@@ -557,8 +523,8 @@ export const B2CHome = () => {
               {flashDeals.map((prod: any, index: number) => {
                 const claimed = (index * 17 + 29) % 100;
                 return (
-                  <div 
-                    key={prod.id} 
+                  <div
+                    key={prod.id}
                     onClick={() => handleSelectProduct(prod)}
                     className="w-32 bg-[var(--pm-surface)] border border-white/[0.04] p-2.5 rounded-2xl shrink-0 space-y-2 cursor-pointer relative hover:scale-102 transition-all"
                   >
@@ -587,7 +553,7 @@ export const B2CHome = () => {
             <h3 className="text-[11px] font-black uppercase text-zinc-400 tracking-wider">সেরা ব্র্যান্ড সমূহ</h3>
             <div className="grid grid-cols-3 gap-2.5">
               {BRANDS.map(br => (
-                <div 
+                <div
                   key={br.id}
                   onClick={() => handleSelectBrand(br.id)}
                   className="bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-white/[0.06] rounded-2xl p-3.5 text-center cursor-pointer transition-all hover:y-[-2px] hover:shadow-lg flex flex-col items-center gap-1.5"
@@ -613,7 +579,7 @@ export const B2CHome = () => {
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4">
               {mockProducts.slice(4, 9).map((prod: any) => (
-                <div 
+                <div
                   key={prod.id}
                   onClick={() => handleSelectProduct(prod)}
                   className="w-36 bg-[var(--pm-surface)] border border-white/[0.05] rounded-2xl p-2.5 shrink-0 space-y-2.5 text-left cursor-pointer hover:y-[-2px] transition-transform"
@@ -642,7 +608,7 @@ export const B2CHome = () => {
                 const IconComponent = sh.icon;
                 return (
                   <div key={index} className="flex flex-col gap-0 rounded-2xl bg-[var(--pm-surface)] border border-white/[0.05] overflow-hidden">
-                    <div 
+                    <div
                       onClick={() => handleSelectStore(sh.name)}
                       className="p-3.5 hover:bg-[var(--pm-surface-hover)] transition-all flex items-center gap-3.5 cursor-pointer text-left"
                     >
@@ -655,7 +621,7 @@ export const B2CHome = () => {
                           <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400/10 shrink-0" />
                         </div>
                         {/* Rating click triggers animated dropdown */}
-                        <div 
+                        <div
                           onClick={(e) => toggleRatingStore(e, sh.name)}
                           className="flex items-center gap-1.5 mt-0.5 text-[9px] text-[var(--pm-text-secondary)] font-bold hover:text-amber-400 transition-colors"
                           title="রিভিউ পরিসংখ্যান দেখুন"
@@ -694,7 +660,7 @@ export const B2CHome = () => {
                                 {metric.stars}★
                               </span>
                               <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                <motion.div 
+                                <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${metric.pct}%` }}
                                   transition={{ duration: 0.6 }}
@@ -717,36 +683,11 @@ export const B2CHome = () => {
           {/* RECOMMENDED FOR YOU (Vertical Grid list displaying live sorted items) */}
           <section className="space-y-3">
             <h3 className="text-[11px] font-black uppercase text-zinc-400 tracking-wider">আপনার জন্য সাজেকশনস</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="product-sink-grid">
               {getSortedProducts(mockProducts.filter((p: any) => p.portal === 'b2c' || p.portal === 'pk-shop')).slice(0, 8).map((prod: any) => (
-                <UnifiedPostCard 
-                  key={prod.id}
-                  post={{
-                    id: prod.id,
-                    type: 'product',
-                    domain: 'RETAIL',
-                    authorName: prod.seller || 'Verified Merchant',
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${prod.seller || 'merchant'}`,
-                    isVerified: true,
-                    authorRole: 'রিটেইল সেলার',
-                    timestamp: 'Recommended',
-                    content: prod.description || `${prod.title} আপনার জন্য সাজেক্ট করা হয়েছে।`,
-                    imageUrl: prod.image,
-                    location: 'Dhaka',
-                    likes: prod.reviewCount || 0,
-                    comments: 5,
-                    product: {
-                      id: prod.id,
-                      title: prod.title,
-                      price: prod.price,
-                      imageUrl: prod.image
-                    },
-                    metadata: {
-                      isPkExclusive: prod.portal === 'pk-shop',
-                      isOfficialBrand: ['Bata', 'Aarong', 'Apple', 'Samsung'].includes(prod.seller || '')
-                    }
-                  }}
-                />
+                <div key={prod.id} onClick={() => handleSelectProduct(prod)}>
+                  <ProductCard product={prod} />
+                </div>
               ))}
             </div>
           </section>
@@ -755,29 +696,9 @@ export const B2CHome = () => {
       ) : (
         /* FILTERED CATALOG SEARCH RESULTS GRID VIEW WITH SORT ENGINE */
         <div className="mt-5 space-y-4">
-          <div className="flex items-center justify-between text-xs select-none gap-2">
+          <div className="flex items-center justify-between text-xs select-none">
             <span className="text-[var(--pm-text-secondary)] font-black uppercase tracking-wider">ডিল অনুসন্ধান ফলাফল ({sortedFilteredProducts.length})</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-zinc-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
-                {effectiveCategory !== 'all' ? effectiveCategory.toUpperCase() : 'সব পণ্য'}{effectiveSub ? ` > ${effectiveSub}` : ''}
-              </span>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setActiveCategory('all');
-                  setMainCategory('all');
-                  setSubCategory(null);
-                  const newParams = new URLSearchParams(searchParams);
-                  newParams.delete('category');
-                  newParams.delete('sub');
-                  newParams.delete('cat');
-                  setSearchParams(newParams);
-                }}
-                className="px-2.5 py-1 rounded-lg bg-[var(--pm-accent)]/15 hover:bg-[var(--pm-accent)]/25 text-[var(--pm-accent)] text-[10px] font-black border border-[var(--pm-accent)]/30 transition-all cursor-pointer"
-              >
-                সব পণ্য দেখুন
-              </button>
-            </div>
+            <span className="text-[10px] font-bold text-zinc-500">ফিল্টারিং ক্যাটাগরি: {activeCategory.toUpperCase()}</span>
           </div>
 
           {sortedFilteredProducts.length === 0 ? (
@@ -787,37 +708,11 @@ export const B2CHome = () => {
               <p className="text-[10px] text-[var(--pm-text-secondary)] font-bold mt-1 max-w-[200px]">অনুগ্রহ করে অন্য শব্দ নিয়ে পুনরায় খুঁজুন অথবা ক্যাটাগরি পরিবর্তন করুন।</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="product-sink-grid">
               {sortedFilteredProducts.map(prod => (
-                <UnifiedPostCard 
-                  key={prod.id}
-                  post={{
-                    id: prod.id,
-                    type: 'product',
-                    domain: 'RETAIL',
-                    authorName: prod.seller || 'Verified Merchant',
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${prod.seller || 'merchant'}`,
-                    isVerified: true,
-                    authorRole: 'রিটেইল সেলার',
-                    timestamp: 'Active Now',
-                    content: prod.description || `${prod.title} এখন সাশ্রয়ী মূল্যে সহজলভ্য।`,
-                    imageUrl: prod.image,
-                    location: 'Dhaka',
-                    likes: prod.reviewCount || 0,
-                    comments: 8,
-                    product: {
-                      id: prod.id,
-                      title: prod.title,
-                      price: prod.price,
-                      imageUrl: prod.image
-                    },
-                    metadata: {
-                      isFlashSale: prod.isFlashSale,
-                      isOfficialBrand: ['Bata', 'Aarong', 'Apple', 'Samsung'].includes(prod.seller || ''),
-                      discountTag: prod.oldPrice ? `${Math.round(((prod.oldPrice - prod.price) / prod.oldPrice) * 100)}% ছাড়` : undefined
-                    }
-                  }}
-                />
+                <div key={prod.id} onClick={() => handleSelectProduct(prod)}>
+                  <ProductCard product={prod} />
+                </div>
               ))}
             </div>
           )}
@@ -846,7 +741,7 @@ export const B2CHome = () => {
               </div>
             </div>
 
-            <button 
+            <button
               onClick={handleTriggerCheckout}
               className="bg-white hover:bg-neutral-100 text-black px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 outline-none"
             >
@@ -860,7 +755,7 @@ export const B2CHome = () => {
       <AnimatePresence>
         {showGuestWarn && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -881,13 +776,13 @@ export const B2CHome = () => {
                 <p className="text-[10px] text-[var(--pm-text-secondary)] leading-relaxed font-semibold">সম্মানিত ভিজিটর, গেস্ট অ্যাকাউন্ট থেকে সরাসরি অর্ডার প্লেস করা সীমিত। অর্ডার সম্পন্ন করতে অনুগ্রহ করে লগইন করুন।</p>
               </div>
               <div className="flex gap-2 text-[10px] font-black select-none">
-                <button 
+                <button
                   onClick={() => setShowGuestWarn(false)}
                   className="flex-1 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white"
                 >
                   পরে করব
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     setShowGuestWarn(false);
                     navigate('/login');
@@ -907,7 +802,7 @@ export const B2CHome = () => {
         {voiceListening && (
           <div className="fixed inset-0 z-[10000] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}

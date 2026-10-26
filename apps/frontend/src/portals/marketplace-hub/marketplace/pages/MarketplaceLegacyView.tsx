@@ -52,7 +52,7 @@ export default function MarketplaceLegacyView({ initialTab }: { initialTab?: "re
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Marketplace</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Discover products from verified sellers across Bangladesh.</p>
         </div>
-        
+
         {/* Actions / Filters */}
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
@@ -89,19 +89,19 @@ export default function MarketplaceLegacyView({ initialTab }: { initialTab?: "re
       {/* Grid */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 md:gap-6">
         {(activeTab === "retail" ? MOCK_RETAIL : MOCK_WHOLESALE).map((product) => (
-          <ProductCard 
-            key={product.id} 
-            {...product} 
+          <ProductCard
+            key={product.id}
+            {...product}
             onQuickView={(p) => setSelectedProduct(p)}
           />
         ))}
       </div>
 
       {/* Quick View Modal */}
-      <QuickViewModal 
-        isOpen={!!selectedProduct} 
-        onClose={() => setSelectedProduct(null)} 
-        product={selectedProduct} 
+      <QuickViewModal
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        product={selectedProduct}
       />
     </div>
   );

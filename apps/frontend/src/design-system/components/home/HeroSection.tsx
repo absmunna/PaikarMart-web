@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, ArrowRight, Wallet, Sparkles, ChevronRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/modules/auth';
+import { useWalletStore } from '@/modules/wallet';
+import { LocationPicker } from '../navigation/LocationPicker';
 
 import heroMegaWholesale from '@/assets/images/hero_mega_wholesale_1791196538584.jpg';
 import heroFlashDeals from '@/assets/images/hero_flash_deals_1791196549956.jpg';
@@ -11,18 +14,18 @@ import heroPkExclusive from '@/assets/images/hero_pk_exclusive_1791196570502.jpg
 const banners = [
   {
     title: "মেগা হোলসেল",
-    subtitle: "৪০% পর্যন্ত মিল-গেট ছাড় সরাসরি কারখানা থেকে",
-    gradient: "from-purple-900/80 via-indigo-950/70 to-black/90",
+    subtitle: "৪০% পর্যন্ত মিল-গেট ছাড়",
+    gradient: "from-purple-600/70 via-indigo-900/50 to-black/80",
     image: heroMegaWholesale,
     emoji: "📦",
-    cta: "হোলসেল অর্ডারে যান",
+    cta: "কিনুন",
     path: "/wholesale",
     badge: "B2B ডিরেক্ট"
   },
   {
     title: "ফ্ল্যাশ ডিলস",
-    subtitle: "সীমিত সময়ের বিশেষ মূল্যছাড় ও সারপ্রাইজ ক্যাশব্যাক",
-    gradient: "from-orange-900/80 via-rose-950/70 to-black/90",
+    subtitle: "সীমিত সময়ের কারখানা অফার",
+    gradient: "from-orange-600/70 via-rose-900/50 to-black/80",
     image: heroFlashDeals,
     emoji: "⚡",
     cta: "অফার দেখুন",
@@ -31,8 +34,8 @@ const banners = [
   },
   {
     title: "তাজা ফসল",
-    subtitle: "সরাসরি কৃষক ও ক্ষেত থেকে সংগৃহীত পাইকারি বাজার",
-    gradient: "from-emerald-900/80 via-teal-950/70 to-black/90",
+    subtitle: "সরাসরি মাঠ থেকে পাইকারি দর",
+    gradient: "from-emerald-600/70 via-teal-900/50 to-black/80",
     image: heroFarmFresh,
     emoji: "🥬",
     cta: "অর্ডার করুন",
@@ -41,8 +44,8 @@ const banners = [
   },
   {
     title: "পিকে শপ এক্সক্লুসিভ",
-    subtitle: "কয়েন ক্যাশব্যাক ও অরিজিনাল গ্যাজেটের প্রিমিয়াম কালেকশন",
-    gradient: "from-violet-900/80 via-purple-950/70 to-black/90",
+    subtitle: "কয়েন ক্যাশব্যাক ও অরিজিনাল গ্যাজেট",
+    gradient: "from-violet-600/70 via-purple-900/50 to-black/80",
     image: heroPkExclusive,
     emoji: "⭐",
     cta: "কালেকশন দেখুন",
@@ -52,13 +55,16 @@ const banners = [
 ];
 
 export default function HeroSection() {
+  const { user, isAuthenticated } = useAuth();
+  const { balance, coins } = useWalletStore();
+  const [balanceVisible, setBalanceVisible] = useState(false);
   const [bannerIndex, setBannerIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
       setBannerIndex((prev) => (prev + 1) % banners.length);
-    }, 4500);
+    }, 4000);
 
     return () => clearInterval(timer);
   }, []);
@@ -66,26 +72,87 @@ export default function HeroSection() {
   const currentBanner = banners[bannerIndex];
 
   return (
-    <div className="w-full select-none">
-      {/* ━━━ Clean Full Width Hero Banner Carousel ━━━ */}
-      <motion.div 
-        className="w-full rounded-2xl sm:rounded-3xl relative overflow-hidden shadow-2xl border border-white/10 min-h-[180px] sm:min-h-[220px] md:min-h-[260px]"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+    <div className="w-full flex flex-row gap-2.5 sm:gap-4 select-none">
+      {/* ━━━ Left Card: Profile & Wallet Balance ━━━ */}
+      <motion.div
+        className="w-[45%] sm:w-[40%] md:w-[34%] flex-shrink-0 bg-[var(--pm-surface)] rounded-2xl sm:rounded-3xl p-3 sm:p-4.5 flex flex-col justify-between border border-[var(--pm-border)] shadow-sm relative overflow-hidden group"
+        initial={{ opacity: 0, x: -15 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Subtle decorative glow */}
+        <div className="absolute -top-10 -left-10 w-24 h-24 bg-[var(--pm-accent)]/10 rounded-full blur-2xl pointer-events-none" />
+
+        {/* Top Info: Greeting & Location */}
+        <div className="space-y-1 sm:space-y-1.5 relative z-10">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-extrabold text-[var(--pm-text-muted)]">
+              স্বাগতম! 👋
+            </span>
+            <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] font-black text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded-full border border-amber-500/20">
+              🪙 {coins ? coins.toLocaleString() : '১,২৫০'}
+            </span>
+          </div>
+
+          <h2 className="text-xs sm:text-sm font-black text-[var(--pm-text)] truncate leading-tight">
+            {isAuthenticated ? (user?.fullName || user?.name || user?.email?.split('@')[0]) : 'অতিথি ইউজার'}
+          </h2>
+        </div>
+
+        {/* Bottom Box: Live Wallet Balance */}
+        <div className="mt-2.5 sm:mt-3 p-2 sm:p-2.5 rounded-xl bg-gradient-to-r from-[var(--pm-accent)]/15 via-[var(--pm-accent)]/10 to-transparent border border-[var(--pm-accent)]/20 relative z-10">
+          <div className="flex items-center justify-between">
+            <Link
+              to="/wallet"
+              className="text-[8px] sm:text-[9px] font-black text-[var(--pm-accent)] uppercase flex items-center gap-1 hover:underline tracking-wider"
+            >
+              <Wallet className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> ওয়ালেট ব্যালেন্স
+            </Link>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setBalanceVisible(!balanceVisible);
+              }}
+              className="text-[var(--pm-accent)] hover:opacity-80 p-0.5 rounded transition-opacity"
+              title={balanceVisible ? "ব্যালেন্স লুকান" : "ব্যালেন্স দেখুন"}
+            >
+              {balanceVisible ? <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <EyeOff className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
+            </button>
+          </div>
+
+          <div className="flex items-baseline justify-between mt-1">
+            <p className="text-xs sm:text-base font-black text-[var(--pm-text)] tracking-tight">
+              {balanceVisible ? `৳ ${balance ? balance.toLocaleString() : '৪৫,২৮০'}` : '••••••••'}
+            </p>
+            <Link
+              to="/wallet"
+              className="text-[8px] sm:text-[9px] font-bold text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] flex items-center"
+            >
+              টপ-আপ <ChevronRight className="w-2.5 h-2.5" />
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ━━━ Right Card: Banner Carousel (Side by Side) ━━━ */}
+      <motion.div
+        className="flex-1 rounded-2xl sm:rounded-3xl relative overflow-hidden shadow-md border border-white/10 min-h-[145px] sm:min-h-[165px]"
+        initial={{ opacity: 0, x: 15 }}
+        animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
         <AnimatePresence mode="wait">
           <motion.div
             key={bannerIndex}
             className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.03 }}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.97 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.5 }}
           >
             {/* Background Image */}
-            <img 
-              src={currentBanner.image} 
+            <img
+              src={currentBanner.image}
               alt={currentBanner.title}
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -94,38 +161,36 @@ export default function HeroSection() {
                 target.style.opacity = '0';
               }}
             />
-            {/* Dark Scrim Gradient Overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-r ${currentBanner.gradient} backdrop-blur-[1px]`} />
-            
+            {/* Dark Scrim / Gradient Overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${currentBanner.gradient} backdrop-blur-[1px]`} />
+
             {/* Content Container */}
-            <div className="absolute inset-0 p-4 sm:p-6 md:p-8 flex flex-col justify-between z-10">
-              {/* Top Row: Badge only */}
-              <div className="flex items-center justify-end">
-                <span className="bg-white/15 backdrop-blur-md text-white text-[9px] sm:text-xs font-black uppercase px-3 py-1 rounded-full border border-white/20 shadow-sm">
+            <div className="absolute inset-0 p-3 sm:p-5 flex flex-col justify-between">
+              {/* Top row in banner: Emoji and Badge */}
+              <div className="flex items-center justify-between">
+                <span className="text-xl sm:text-2xl filter drop-shadow-md">{currentBanner.emoji}</span>
+                <span className="bg-white/10 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full border border-white/20 shadow-sm">
                   {currentBanner.badge}
                 </span>
               </div>
 
               {/* Middle Title & Subtitle */}
-              <div className="space-y-1 sm:space-y-1.5 my-auto py-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl filter drop-shadow-md">{currentBanner.emoji}</span>
-                  <h3 className="text-base sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-tight drop-shadow-lg">
-                    {currentBanner.title}
-                  </h3>
-                </div>
-                <p className="text-xs sm:text-sm md:text-base text-white/90 font-medium drop-shadow-md max-w-2xl line-clamp-2">
+              <div className="space-y-0.5 sm:space-y-1">
+                <h3 className="text-xs sm:text-lg font-black text-white uppercase tracking-tight leading-tight drop-shadow-lg line-clamp-1">
+                  {currentBanner.title}
+                </h3>
+                <p className="text-[9px] sm:text-sm text-white/90 font-medium line-clamp-1 drop-shadow-md">
                   {currentBanner.subtitle}
                 </p>
               </div>
 
               {/* Bottom Row: CTA Button & Pagination Dots */}
               <div className="flex items-center justify-between pt-1">
-                <button 
+                <button
                   onClick={() => navigate(currentBanner.path)}
-                  className="flex items-center gap-2 bg-white text-zinc-950 text-xs sm:text-sm font-black rounded-full px-4 sm:px-6 py-2 sm:py-2.5 shadow-xl hover:bg-[var(--pm-accent)] hover:text-white active:scale-95 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 bg-white text-zinc-950 text-[9px] sm:text-[11px] font-black rounded-full px-3.5 py-1.5 sm:py-2 shadow-xl hover:bg-zinc-100 active:scale-95 transition-all"
                 >
-                  {currentBanner.cta} <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  {currentBanner.cta} <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </button>
 
                 {/* Pagination Dots */}
@@ -134,8 +199,8 @@ export default function HeroSection() {
                     <button
                       key={i}
                       onClick={() => setBannerIndex(i)}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        i === bannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'
+                      className={`h-1 rounded-full transition-all duration-300 ${
+                        i === bannerIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/60'
                       }`}
                       aria-label={`Slide ${i + 1}`}
                     />

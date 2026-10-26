@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Search, 
-  Filter, 
-  Plus, 
-  MoreHorizontal, 
-  Edit2, 
-  Trash2, 
-  Eye, 
+import {
+  Search,
+  Filter,
+  Plus,
+  MoreHorizontal,
+  Edit2,
+  Trash2,
+  Eye,
   Package,
   ArrowUpDown,
   CheckCircle2,
@@ -36,7 +36,7 @@ export default function Inventory() {
       if (!user) return;
       try {
         const q = query(
-          collection(db, "posts"), 
+          collection(db, "posts"),
           where("sellerId", "==", user.id)
         );
         const querySnapshot = await getDocs(q);
@@ -54,7 +54,7 @@ export default function Inventory() {
     fetchInventory();
   }, [user]);
 
-  const filteredProducts = products.filter(p => 
+  const filteredProducts = products.filter(p =>
     p.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

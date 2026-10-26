@@ -75,27 +75,27 @@ export const SalesPerformanceChart = () => {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-          <XAxis 
-            dataKey="name" 
-            axisLine={false} 
-            tickLine={false} 
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
             tick={{ fill: '#6B7280', fontSize: 10, fontWeight: 600 }}
             dy={10}
           />
-          <YAxis 
-            axisLine={false} 
-            tickLine={false} 
+          <YAxis
+            axisLine={false}
+            tickLine={false}
             tick={{ fill: '#6B7280', fontSize: 10, fontWeight: 600 }}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Area 
-            type="monotone" 
-            dataKey="revenue" 
+          <Area
+            type="monotone"
+            dataKey="revenue"
             name="রেভিনিউ"
-            stroke="#FF7A00" 
+            stroke="#FF7A00"
             strokeWidth={3}
-            fillOpacity={1} 
-            fill="url(#colorRevenue)" 
+            fillOpacity={1}
+            fill="url(#colorRevenue)"
             animationDuration={2000}
           />
         </AreaChart>
@@ -110,19 +110,19 @@ export const InventoryStatusChart = () => {
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={inventoryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barSize={32}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-          <XAxis 
-            dataKey="category" 
-            axisLine={false} 
-            tickLine={false} 
+          <XAxis
+            dataKey="category"
+            axisLine={false}
+            tickLine={false}
             tick={{ fill: '#6B7280', fontSize: 10, fontWeight: 600 }}
             dy={10}
           />
-          <YAxis 
-            axisLine={false} 
-            tickLine={false} 
+          <YAxis
+            axisLine={false}
+            tickLine={false}
             tick={{ fill: '#6B7280', fontSize: 10, fontWeight: 600 }}
           />
-          <Tooltip 
+          <Tooltip
             cursor={{ fill: 'rgba(255,255,255,0.03)' }}
             content={({ active, payload, label }: any) => {
               if (active && payload && payload.length) {
@@ -138,16 +138,16 @@ export const InventoryStatusChart = () => {
               return null;
             }}
           />
-          <Bar 
-            dataKey="stock" 
+          <Bar
+            dataKey="stock"
             name="স্টক"
             radius={[8, 8, 0, 0]}
             animationDuration={1500}
           >
             {inventoryData.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={entry.stock < 50 ? '#F43F5E' : entry.stock < 100 ? '#3B82F6' : '#10B981'} 
+              <Cell
+                key={`cell-${index}`}
+                fill={entry.stock < 50 ? '#F43F5E' : entry.stock < 100 ? '#3B82F6' : '#10B981'}
                 fillOpacity={0.8}
               />
             ))}

@@ -1,26 +1,48 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Test connection document
-    match /test/{docId} {
-      allow read, write: if true;
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.get('admin', false) == true
+        || request.auth.token.get('role', '') in ['admin', 'super_admin']
+        || request.auth.token.get('roles', []).hasAny(['admin', 'super_admin'])
+      );
     }
 
-    // Users Collection
     match /users/{userId} {
-      allow read: if true;
-      allow create, update: if isOwner(userId);
-      allow delete: if false;
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'id', 'name', 'email', 'phone', 'role', 'roles', 'avatarUrl', 'createdAt'
+        ])
+        && request.resource.data.role == 'buyer'
+        && request.resource.data.roles == ['buyer'];
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'phone', 'avatarUrl'
+        ]);
+      allow delete: if isAdmin();
+    }
+
+    match /sellerApplications/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'userId', 'shopName', 'type', 'address', 'status', 'createdAt'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
     }
 
     // Products Collection
@@ -56,8 +78,7 @@ service cloud.firestore {
 
     // Chats & Messages Collection (Real-Time Buyer-Seller Communication)
     match /chats/{chatId} {
-      allow list: if isAuthenticated();
-      allow get: if isAuthenticated() && (request.auth.uid in resource.data.participants);
+      allow read: if isAuthenticated() && (request.auth.uid in resource.data.participants);
       allow create: if isAuthenticated() && (request.auth.uid in request.resource.data.participants);
       allow update: if isAuthenticated() && (request.auth.uid in resource.data.participants);
       allow delete: if false;
@@ -68,33 +89,5 @@ service cloud.firestore {
         allow update, delete: if isAuthenticated() && resource.data.senderId == request.auth.uid;
       }
     }
-
-    // Posts Collection (Social Commerce Feeds: Text, Photo, Video, File, Product)
-    match /posts/{postId} {
-      allow read: if true;
-      allow create: if isAuthenticated() && (
-        request.resource.data.authorId == request.auth.uid ||
-        request.resource.data.sellerId == request.auth.uid
-      );
-      allow update: if isAuthenticated();
-      allow delete: if isAuthenticated() && (
-        resource.data.authorId == request.auth.uid ||
-        resource.data.sellerId == request.auth.uid
-      );
-
-      // Comments subcollection
-      match /comments/{commentId} {
-        allow read: if true;
-        allow create: if isAuthenticated() && request.resource.data.authorId == request.auth.uid;
-        allow update, delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
-      }
-
-      // Likes subcollection
-      match /likes/{userId} {
-        allow read: if true;
-        allow create, delete: if isAuthenticated() && request.auth.uid == userId;
-      }
-    }
   }
 }
-

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Search, X, TrendingUp, Clock, ArrowRight, 
+import {
+  Search, X, TrendingUp, Clock, ArrowRight,
   ShoppingBag, Users, FileText, Sparkles,
   ChevronRight, History
 } from 'lucide-react';
@@ -103,7 +103,7 @@ export const MegaSearch: React.FC<MegaSearchProps> = ({ isOpen, onClose }) => {
                   <kbd className="hidden sm:flex h-8 items-center gap-1 rounded bg-zinc-900 border border-white/10 px-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
                     Enter to search
                   </kbd>
-                  <button 
+                  <button
                     onClick={() => handleSearch(query)}
                     className="w-12 h-12 bg-cyan-500 rounded-2xl flex items-center justify-center text-black hover:bg-cyan-400 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-cyan-500/20"
                   >
@@ -124,8 +124,8 @@ export const MegaSearch: React.FC<MegaSearchProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div className="flex flex-col gap-2">
                     {RECENT_SEARCHES.map((s, i) => (
-                      <button 
-                        key={i} 
+                      <button
+                        key={i}
                         onClick={() => handleSearch(s)}
                         className="text-left py-2 px-3 rounded-xl hover:bg-white/5 text-sm font-bold text-zinc-400 hover:text-white transition-all flex items-center justify-between group"
                       >
@@ -143,7 +143,7 @@ export const MegaSearch: React.FC<MegaSearchProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {TRENDING_KEYWORDS.map((k, i) => (
-                      <button 
+                      <button
                         key={i}
                         onClick={() => handleSearch(k)}
                         className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black text-zinc-300 hover:text-cyan-400 hover:border-cyan-400/30 transition-all uppercase tracking-widest"

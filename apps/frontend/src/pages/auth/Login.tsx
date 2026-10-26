@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LogIn, Mail, Lock, ArrowRight, Loader2, 
+import {
+  LogIn, Mail, Lock, ArrowRight, Loader2,
   Smartphone, ShieldCheck, Eye, EyeOff, ArrowLeft,
   KeyRound, CheckCircle2, Shield
 } from 'lucide-react';
 import { useAuthStore } from '@/modules/auth';
 import { useAuth } from '@/modules/auth';
-import { authService } from '@/modules/auth';
 import { toast } from 'sonner';
 
 export const Login: React.FC = () => {
   const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
   const [phoneLoginType, setPhoneLoginType] = useState<'password' | 'otp'>('password');
-  
+
   // Credentials
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // OTP state
   const [otpCode, setOtpCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  
+
   // State
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,38 +76,13 @@ export const Login: React.FC = () => {
           return;
         }
 
-        try {
-          if (contextLogin) {
-            const fbUser = await contextLogin(email.trim(), password);
-            handleAuthSuccess({
-              id: fbUser.id,
-              email: fbUser.email,
-              fullName: fbUser.fullName,
-              role: fbUser.role
-            });
-            return;
-          }
-        } catch (fbErr: any) {
-          console.warn('Firebase login attempt:', fbErr?.message);
-        }
-
-        try {
-          const res = await authService.login({ email, password });
-          handleAuthSuccess({
-            id: res.user?.id,
-            email: res.user?.email || email,
-            fullName: res.user?.name || (res.user as any)?.fullName || email.split('@')[0],
-            role: res.user?.role || 'buyer'
-          });
-          return;
-        } catch (apiErr: any) {
-          // Dev fallback
-          handleAuthSuccess({
-            email,
-            fullName: email.split('@')[0],
-            role: 'buyer'
-          });
-        }
+        const authenticatedUser = await contextLogin(email.trim(), password);
+        handleAuthSuccess({
+          id: authenticatedUser.id,
+          email: authenticatedUser.email || email,
+          fullName: authenticatedUser.fullName,
+          role: authenticatedUser.role
+        });
       } else {
         // Phone + Password
         const cleanPhone = phone.trim();
@@ -123,17 +97,7 @@ export const Login: React.FC = () => {
           return;
         }
 
-        try {
-          await contextLoginWithPhone(cleanPhone, password);
-        } catch {
-          // Fallback
-        }
-
-        handleAuthSuccess({
-          phone: cleanPhone,
-          fullName: `ইউজার (${cleanPhone.slice(-4)})`,
-          role: 'buyer'
-        });
+        await contextLoginWithPhone(cleanPhone, password);
       }
     } catch (err: any) {
       setError(err?.message || 'লগইন করতে সমস্যা হয়েছে। তথ্য যাচাই করুন।');
@@ -152,13 +116,7 @@ export const Login: React.FC = () => {
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOtpSent(true);
-      setCountdown(60);
-      toast.success(`${cleanPhone} নম্বরে ৪-সংখ্যার ওটিপি কোড পাঠানো হয়েছে!`);
-    }, 700);
+    setError('মোবাইল OTP সেবা এখনো কনফিগার করা হয়নি। অনুগ্রহ করে ইমেইল দিয়ে সাইন ইন করুন।');
   };
 
   // Verify OTP
@@ -170,15 +128,7 @@ export const Login: React.FC = () => {
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      handleAuthSuccess({
-        phone: phone.trim(),
-        fullName: `ইউজার (${phone.trim().slice(-4)})`,
-        role: 'buyer'
-      });
-    }, 600);
+    setError('মোবাইল OTP সেবা এখনো কনফিগার করা হয়নি।');
   };
 
   // Real Google Login
@@ -186,21 +136,10 @@ export const Login: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      if (contextLoginWithGoogle) {
-        await contextLoginWithGoogle();
-      }
-      handleAuthSuccess({
-        email: 'user@gmail.com',
-        fullName: 'Google User',
-        role: 'buyer'
-      });
+      await contextLoginWithGoogle();
+      navigate('/');
     } catch (err: any) {
-      console.warn('Google login fallback:', err);
-      handleAuthSuccess({
-        email: 'user@gmail.com',
-        fullName: 'Google User',
-        role: 'buyer'
-      });
+      setError(err?.message || 'Google দিয়ে সাইন ইন করা যায়নি।');
     } finally {
       setLoading(false);
     }
@@ -210,8 +149,8 @@ export const Login: React.FC = () => {
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-b from-[var(--pm-bg)] via-[var(--pm-surface)] to-[var(--pm-bg)] py-10 selection:bg-[var(--pm-accent)] selection:text-white">
       {/* Back to Home Link */}
       <div className="w-full max-w-md mb-4 flex items-center justify-between">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] transition-colors py-1.5 px-3 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] shadow-xs"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -223,7 +162,7 @@ export const Login: React.FC = () => {
         </span>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md bg-[var(--pm-surface)] p-6 sm:p-8 rounded-3xl border border-[var(--pm-border)] shadow-2xl relative overflow-hidden backdrop-blur-md"
@@ -246,8 +185,8 @@ export const Login: React.FC = () => {
 
         {/* Error Alert */}
         {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: -5 }} 
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-4 p-3 bg-red-500/10 border border-red-500/25 rounded-2xl text-red-500 text-xs font-semibold flex items-center gap-2"
           >
@@ -341,7 +280,7 @@ export const Login: React.FC = () => {
                     <span className="bg-[var(--pm-surface-hover)] px-3 py-2.5 text-xs font-black text-[var(--pm-text)] border-r border-[var(--pm-border)] flex items-center gap-1.5 shrink-0 select-none">
                       🇧🇩 +880
                     </span>
-                    <input 
+                    <input
                       type="tel"
                       required
                       value={phone}
@@ -365,7 +304,7 @@ export const Login: React.FC = () => {
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-                    <input 
+                    <input
                       type={showPassword ? "text" : "password"}
                       required
                       value={password}
@@ -397,7 +336,7 @@ export const Login: React.FC = () => {
                   </label>
                 </div>
 
-                <button 
+                <button
                   type="submit"
                   disabled={loading}
                   className="w-full bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white font-black py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[var(--pm-accent)]/20 text-xs mt-2 disabled:opacity-50"
@@ -418,7 +357,7 @@ export const Login: React.FC = () => {
                         <span className="bg-[var(--pm-surface-hover)] px-3 py-2.5 text-xs font-black text-[var(--pm-text)] border-r border-[var(--pm-border)] flex items-center gap-1.5 shrink-0 select-none">
                           🇧🇩 +880
                         </span>
-                        <input 
+                        <input
                           type="tel"
                           required
                           value={phone}
@@ -430,7 +369,7 @@ export const Login: React.FC = () => {
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       type="submit"
                       disabled={loading || phone.length < 11}
                       className="w-full bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white font-black py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[var(--pm-accent)]/20 text-xs disabled:opacity-50"
@@ -444,7 +383,7 @@ export const Login: React.FC = () => {
                       <label className="text-xs font-bold text-[var(--pm-text-secondary)] block">
                         <span className="text-[var(--pm-accent)] font-mono">{phone}</span> নম্বরে পাঠানো ৪ ডিজিট কোড দিন
                       </label>
-                      <input 
+                      <input
                         type="text"
                         required
                         maxLength={4}
@@ -473,7 +412,7 @@ export const Login: React.FC = () => {
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       type="submit"
                       disabled={loading || otpCode.length < 4}
                       className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-600/20 text-xs disabled:opacity-50"
@@ -496,7 +435,7 @@ export const Login: React.FC = () => {
               </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-                <input 
+                <input
                   type="email"
                   required
                   value={email}
@@ -518,7 +457,7 @@ export const Login: React.FC = () => {
               </div>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-                <input 
+                <input
                   type={showPassword ? "text" : "password"}
                   required
                   value={password}
@@ -550,7 +489,7 @@ export const Login: React.FC = () => {
               </label>
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white font-black py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[var(--pm-accent)]/20 text-xs mt-2 disabled:opacity-50"

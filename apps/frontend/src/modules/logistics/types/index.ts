@@ -1,4 +1,4 @@
-export type ShipmentStatus = 
+export type ShipmentStatus =
   | 'PENDING'
   | 'COURIER_PICKED_UP'
   | 'AT_SORTING_CENTER'
@@ -15,23 +15,23 @@ export type ShipmentStatus =
   | 'LOADING'
   | 'UNLOADING';
 
-export type LogisticsCategory = 
-  | 'RIDE' 
-  | 'DELIVERY' 
-  | 'TRANSPORT' 
-  | 'EMERGENCY' 
+export type LogisticsCategory =
+  | 'RIDE'
+  | 'DELIVERY'
+  | 'TRANSPORT'
+  | 'EMERGENCY'
   | 'RENTAL';
 
-export type VehicleType = 
-  | 'bike' 
-  | 'car_economy' 
-  | 'car_premium' 
-  | 'micro' 
-  | 'suv' 
-  | 'pickup' 
-  | 'truck_1ton' 
-  | 'truck_3ton' 
-  | 'truck_5ton' 
+export type VehicleType =
+  | 'bike'
+  | 'car_economy'
+  | 'car_premium'
+  | 'micro'
+  | 'suv'
+  | 'pickup'
+  | 'truck_1ton'
+  | 'truck_3ton'
+  | 'truck_5ton'
   | 'truck_10ton'
   | 'covered_van'
   | 'ambulance'

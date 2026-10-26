@@ -19,7 +19,7 @@ class EventBus extends EventEmitter {
     this.on('PRODUCT_ADDED', this.handleProductLifecycle);
     this.on('ORDER_CREATED', this.handleIntelligenceObservation);
     this.on('ORDER_CONFIRMED', this.handleIntelligenceObservation);
-    
+
     // Governance Layer observes critical events
     this.on('REACTION_ADDED', this.handleGovernanceEvaluation);
     this.on('COMMENT_CREATED', this.handleGovernanceEvaluation);
@@ -48,7 +48,7 @@ class EventBus extends EventEmitter {
     try {
       const { productId, sellerId, title } = event.payload;
       const product = await prisma.product.findUnique({ where: { id: productId } });
-      
+
       if (!product) return;
 
       // Automatically create a ContentItem (social feed post) for the new product
@@ -90,7 +90,7 @@ class EventBus extends EventEmitter {
   async emitEvent(eventName: string, payload: any) {
     const eventId = crypto.randomUUID();
     console.log(`[EventBus] Emitting ${eventName}: ${eventId}`);
-    
+
     try {
       // Ensure all event emissions are durably persisted to Database
       await prisma.platformEventLog.create({

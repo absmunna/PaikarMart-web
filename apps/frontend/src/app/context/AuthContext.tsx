@@ -1,6 +1,6 @@
-import { 
-  AuthProvider, 
-  useAuth as useFeatureAuth, 
+import {
+  AuthProvider,
+  useAuth as useFeatureAuth,
   AuthContextValue,
   AppUser
 } from '@/modules/auth';

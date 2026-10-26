@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Search, ArrowLeft, MapPin, Truck, Car, Bike, Package, 
-  ShieldCheck, Clock, Navigation, CheckCircle2, PhoneCall, 
+import {
+  Search, ArrowLeft, MapPin, Truck, Car, Bike, Package,
+  ShieldCheck, Clock, Navigation, CheckCircle2, PhoneCall,
   Sparkles, ArrowRight, DollarSign, Calendar, ChevronRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { HomeHeader } from "@/design-system/components/home/HomeHeader";
 import { SubPortalNav } from "@/design-system/components/navigation/SubPortalNav";
 import { toast } from "sonner";
-import { safeBack } from "@/lib/navigation";
 
 type TransportMode = "bike" | "car" | "truck" | "courier" | "ambulance";
 
@@ -165,14 +164,13 @@ export default function RideHome() {
       <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 text-[var(--pm-text)]">
-      
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => safeBack(navigate, '/')}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 shadow-xs cursor-pointer"
-            title="ফিরে যান"
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 shadow-xs"
           >
             <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
           </button>
@@ -232,7 +230,7 @@ export default function RideHome() {
 
       {/* Desktop 2-Column Booking Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Left Column: Interactive Fare & Booking Terminal (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="p-6 rounded-3xl bg-[var(--pm-surface)] border border-[var(--pm-border)] shadow-xl space-y-5">

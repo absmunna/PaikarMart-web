@@ -14,11 +14,11 @@ export const orderService = {
   createOrder: async (payload: CreateOrderPayload) => {
     // Simulate API call to backend
     console.log('Finalizing Order:', payload);
-    
+
     return new Promise((resolve) => {
       setTimeout(() => {
         const orderId = `PM-ORD-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-        
+
         // Add to tracking store
         const newOrder: Order = {
           id: orderId,

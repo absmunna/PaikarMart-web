@@ -32,8 +32,8 @@ const PrivateRoute = ({ children, allowedRoles }: { children: React.ReactNode, a
     return <Navigate to="/unauthorized" replace />;
   }
 
-  const isAllowed = hasRole(allowedRoles as any) || 
-    allowedRoles.includes(role || '') || 
+  const isAllowed = hasRole(allowedRoles as any) ||
+    allowedRoles.includes(role || '') ||
     (user.roles && user.roles.some(r => allowedRoles.includes(r)));
 
   if (!isAllowed) {
@@ -69,7 +69,7 @@ export const GlobalRouter: React.FC = () => {
         document.head.appendChild(metaDesc);
     }
     metaDesc.setAttribute('content', `Explore ${formattedTitle} on Paikar Mart - Bangladesh's leading social commerce super app for b2b, retail and wholesale sourcing.`);
-    
+
   }, [location]);
 
   return (
@@ -78,7 +78,7 @@ export const GlobalRouter: React.FC = () => {
             {ROUTES.map((route) => {
                 const Component = route.component;
                 return (
-                    <Route 
+                    <Route
                         key={route.path}
                         path={route.path}
                         element={

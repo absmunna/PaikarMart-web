@@ -26,7 +26,7 @@ export const CategorySection = () => {
 
       <div className="flex gap-4 overflow-x-auto px-6 pb-4 hide-scrollbar">
         {categories.map((cat) => (
-          <motion.div 
+          <motion.div
             key={cat.id}
             className="flex flex-col items-center gap-3 shrink-0 group cursor-pointer"
             whileTap={{ scale: 0.95 }}

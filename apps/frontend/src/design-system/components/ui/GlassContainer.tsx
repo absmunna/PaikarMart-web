@@ -8,14 +8,14 @@ interface GlassContainerProps {
   rounded?: 'xl' | '2xl' | '3xl' | 'full' | string;
 }
 
-export const GlassContainer = ({ 
-  children, 
+export const GlassContainer = ({
+  children,
   className,
   surfaceClassName,
-  rounded = '3xl' 
+  rounded = '3xl'
 }: GlassContainerProps) => {
   const isCustomRounded = !['xl', '2xl', '3xl', 'full'].includes(rounded);
-  
+
   const roundedClass = {
     'xl': 'rounded-2xl',
     '2xl': 'rounded-[24px]',
@@ -33,13 +33,13 @@ export const GlassContainer = ({
     )}>
       {/* 3D Border Glow (Outline) */}
       <div className={cn("absolute inset-0 bg-gradient-to-b from-white/20 via-white/5 to-transparent pointer-events-none z-0", finalRounded)} />
-      
+
       {/* Secondary Inner Border for depth */}
       <div className={cn("absolute inset-[1px] bg-gradient-to-tr from-white/10 via-transparent to-black/20 pointer-events-none z-20", finalRounded)} />
 
       {/* Surface Background */}
       <div className={cn(
-        "absolute inset-[1px] backdrop-blur-2xl -z-10", 
+        "absolute inset-[1px] backdrop-blur-2xl -z-10",
         surfaceClassName || "bg-[#030d06]/85",
         finalRounded
       )} />
@@ -47,7 +47,7 @@ export const GlassContainer = ({
       {/* Inner reflection shine */}
       <div className={cn("absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.05),transparent_60%)] pointer-events-none z-30", finalRounded)} />
 
-      <div className="relative z-40 w-full h-full"> 
+      <div className="relative z-40 w-full h-full">
         {children}
       </div>
     </div>

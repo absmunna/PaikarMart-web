@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export type UserRole = 'buyer' | 'seller' | 'admin' | 'super_admin' | 'moderator' | 'nearby_shop' | 'service_provider';
 
@@ -28,21 +27,16 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
-      setToken: (token) => set({ token }),
-      login: (user, token) => set({ user, token: token || 'mock-token', isAuthenticated: true }),
-      logout: () => set({ user: null, token: null, isAuthenticated: false }),
-      updateProfile: (data) => set((state) => ({
-        user: state.user ? { ...state.user, ...data } : null
-      })),
-    }),
-    {
-      name: 'pm-auth-storage',
-    }
-  )
+  (set) => ({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    setUser: (user) => set({ user, isAuthenticated: false }),
+    setToken: (token) => set({ token, isAuthenticated: false }),
+    login: (user, token) => set({ user, token: token || null, isAuthenticated: Boolean(token) }),
+    logout: () => set({ user: null, token: null, isAuthenticated: false }),
+    updateProfile: (data) => set((state) => ({
+      user: state.user ? { ...state.user, ...data } : null
+    })),
+  })
 );

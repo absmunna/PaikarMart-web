@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  CheckCircle2, ArrowLeft, ShieldCheck, ShoppingBag, 
-  PartyPopper, Home, ListTodo, Coins, Info, Lock, 
+import {
+  CheckCircle2, ArrowLeft, ShieldCheck, ShoppingBag,
+  PartyPopper, Home, ListTodo, Coins, Info, Lock,
   Sparkles, Calendar, Clock, MapPin, Truck, HelpCircle, FileText, Check
 } from 'lucide-react';
 import { useNavigate, useLocation, Link, useSearchParams } from 'react-router-dom';
@@ -16,8 +16,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useOrderTrackingStore, Order as StoreOrder } from '@/modules/orders';
 import { useLanguage } from '@/modules/language';
-import { safeBack } from '@/lib/navigation';
-import { useAuthStore } from '@/modules/auth/store/useAuthStore';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,8 +26,8 @@ export const CheckoutPage: React.FC = () => {
   // 1. DYNAMIC TYPE DETECTION
   // Can be passed via react-router state or query parameters (?type=wholesale, etc.)
   const checkoutType: UniversalCheckoutType = (
-    location.state?.checkoutType || 
-    searchParams.get('type') || 
+    location.state?.checkoutType ||
+    searchParams.get('type') ||
     'retail'
   ) as UniversalCheckoutType;
 
@@ -37,7 +35,7 @@ export const CheckoutPage: React.FC = () => {
   // If items are passed in state (e.g. from service booking, logistics booking, demand offer, direct buy now),
   // we bypass the shopping cart store and check out those items directly!
   const cartStore = useCartStore();
-  
+
   const customItems = location.state?.items;
   const customSubtotal = location.state?.subtotal;
   const discount = location.state?.discount || 0;
@@ -76,8 +74,8 @@ export const CheckoutPage: React.FC = () => {
             {isBn ? "চেকআউট করার জন্য কোনো আইটেম নেই" : "No Sourcing Items for Checkout"}
           </h2>
           <p className="text-zinc-400 text-xs sm:text-sm max-w-sm leading-relaxed">
-            {isBn 
-              ? "চেকআউট সম্পূর্ণ করার জন্য দয়া করে কার্টে প্রোডাক্ট যোগ করুন অথবা কোনো সার্ভিস সিলেক্ট করুন।" 
+            {isBn
+              ? "চেকআউট সম্পূর্ণ করার জন্য দয়া করে কার্টে প্রোডাক্ট যোগ করুন অথবা কোনো সার্ভিস সিলেক্ট করুন।"
               : "Please add products to your Cart or select a Service/Booking before accessing the checkout settlement terminal."}
           </p>
         </div>
@@ -97,35 +95,7 @@ export const CheckoutPage: React.FC = () => {
     payment: string;
     total: number;
     doubleAddresses?: { pickup: string; drop: string };
-    guestName?: string;
-    guestPhone?: string;
-    guestEmail?: string;
   }) => {
-    // 1. Guest auto account onboarding handling
-    const isUnauthenticated = !useAuthStore.getState().isAuthenticated;
-    if (isUnauthenticated || stepDetails.guestPhone) {
-      if (stepDetails.guestPhone && stepDetails.guestName) {
-        const guestResult = await confirmOrderService.guestCheckout({
-          fullName: stepDetails.guestName,
-          phone: stepDetails.guestPhone,
-          email: stepDetails.guestEmail,
-          deliveryAddress: stepDetails.address,
-          paymentMethod: stepDetails.payment,
-          cartItems: items
-        });
-
-        if (guestResult.scenario === 'EXISTING_USER') {
-          toast.error(isBn ? "এই ফোন নম্বরে একটি অ্যাকাউন্ট রয়েছে। দয়া করে লগইন করুন।" : guestResult.message || "An account with this phone already exists.");
-          return;
-        }
-
-        if (guestResult.success && guestResult.user && guestResult.sessionToken) {
-          useAuthStore.getState().login(guestResult.user, guestResult.sessionToken);
-          toast.success(isBn ? "স্বয়ংক্রিয় বায়ার অ্যাকাউন্ট তৈরি হয়েছে!" : "Automated buyer account created & logged in!");
-        }
-      }
-    }
-
     const payload: OrderConfirmationPayload = {
       items,
       address: stepDetails.address,
@@ -256,7 +226,7 @@ export const CheckoutPage: React.FC = () => {
   // DONE PAGE SUCCESS SCREEN
   if (isSuccess && placedOrderDetails) {
     const timeline = getTimelineSteps();
-    
+
     return (
       <div className="min-h-[90vh] bg-[#03060d] flex items-center justify-center px-4 py-12 text-white">
         <motion.div
@@ -267,7 +237,7 @@ export const CheckoutPage: React.FC = () => {
         >
           {/* Top aesthetic gradient header bar */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-400 via-cyan-400 to-teal-500" />
-          
+
           <motion.div
             initial={{ scale: 0, rotate: -20 }}
             animate={{ scale: 1, rotate: 0 }}
@@ -280,12 +250,12 @@ export const CheckoutPage: React.FC = () => {
           <span className="text-[10px] text-cyan-400 font-extrabold uppercase tracking-[0.2em] bg-cyan-400/5 border border-cyan-400/15 px-3 py-1 rounded-full mb-3 flex items-center gap-1.5">
             <PartyPopper className="w-3.5 h-3.5 shrink-0" /> {isBn ? "এসক্রো পেমেন্ট সিকিউরড!" : "Ecosystem Escrow Secured"}
           </span>
-          
+
           <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight mb-2">
             {isBn ? "অর্ডার সফলভাবে সম্পন্ন!" : "Handshake Secured Successfully!"}
           </h2>
           <p className="text-zinc-400 text-xs max-w-md leading-relaxed mb-6">
-            {isBn 
+            {isBn
               ? "আপনার সিকিউরড পেমেন্টটি এসক্রো ব্যালেন্সে লক করা হয়েছে। পণ্য/সার্ভিস বুঝে পেয়ে সঠিকতা নিশ্চিত করার সাথে সাথে বিক্রেতার অ্যাকাউন্টে ফান্ড রিলিজ করা হবে।"
               : "Your trade value has been logged on the Paikar ledger. Funds are locked in escrow and will be released to the vendor only after physical inspection."}
           </p>
@@ -329,7 +299,7 @@ export const CheckoutPage: React.FC = () => {
 
             {placedOrderDetails.gatewayRedirectUrl && (
               <div className="border-t border-white/5 pt-3 text-center">
-                <a 
+                <a
                   href={placedOrderDetails.gatewayRedirectUrl}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 text-[10px] font-black uppercase hover:bg-cyan-400/20 transition-all"
                 >
@@ -354,21 +324,21 @@ export const CheckoutPage: React.FC = () => {
             <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block mb-4 text-center">
               {isBn ? "লাইভ ট্র্যাকিং টাইমলাইন" : "Live Escrow Pipeline Timeline"}
             </span>
-            
+
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4">
               {timeline.map((item, idx) => (
                 <div key={item.label} className="flex flex-row sm:flex-col items-center gap-3 flex-1 relative w-full">
                   <div className="flex items-center">
                     <div className={cn(
                       "w-6.5 h-6.5 rounded-lg border flex items-center justify-center font-bold text-[10px]",
-                      item.active 
-                        ? "bg-cyan-400/10 border-cyan-400/40 text-cyan-400 shadow-[0_0_10px_rgba(0,230,118,0.1)]" 
+                      item.active
+                        ? "bg-cyan-400/10 border-cyan-400/40 text-cyan-400 shadow-[0_0_10px_rgba(0,230,118,0.1)]"
                         : "bg-zinc-900 border-white/5 text-zinc-600"
                     )}>
                       {item.active ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : idx + 1}
                     </div>
                   </div>
-                  
+
                   <div className="text-left sm:text-center">
                     <p className={cn(
                       "text-[10px] font-black uppercase tracking-wider",
@@ -411,14 +381,13 @@ export const CheckoutPage: React.FC = () => {
   return (
     <div className="min-h-screen text-white bg-[#03060d] font-sans pb-16">
       <div className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6">
-        
+
         {/* Navigation Breadcrumb headers */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5 select-none">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => safeBack(navigate, '/cart')}
+            <button
+              onClick={() => navigate(-1)}
               className="p-2.5 bg-zinc-900/60 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all border border-white/5 cursor-pointer"
-              title="ফিরে যান"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -439,7 +408,7 @@ export const CheckoutPage: React.FC = () => {
               </span>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-xs font-bold text-cyan-400 uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4" /> {isBn ? "নিরাপদ টার্মিনাল" : "SECURED TERMINAL"}
           </div>
@@ -447,7 +416,7 @@ export const CheckoutPage: React.FC = () => {
 
         {/* 2-Column Desktop Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* LEFT: Universal Stepper (8 columns) */}
           <div className="lg:col-span-8">
             <CheckoutStepper

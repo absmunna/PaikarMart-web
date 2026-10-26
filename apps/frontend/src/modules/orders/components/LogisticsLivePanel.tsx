@@ -29,7 +29,7 @@ export const LogisticsLivePanel: React.FC<LogisticsLivePanelProps> = ({ order })
            <MapPin className="w-8 h-8 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
            <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-tight">Geo-Sync Active</span>
         </div>
-        
+
         {/* Animated pulse at location */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <div className="w-12 h-12 rounded-full border border-cyan-400 animate-ping opacity-20" />

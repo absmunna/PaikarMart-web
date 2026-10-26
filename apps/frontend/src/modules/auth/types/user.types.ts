@@ -10,7 +10,7 @@ export interface User {
   followers?: number;
   rating?: number;
   about?: string;
-  
+
   // System behavior controls
   role?: UserRole;
   sellerType?: SellerType;

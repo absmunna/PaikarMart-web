@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { 
-  Heart, ShoppingBag, Trash2, ArrowRight, Star, 
-  Store, Check, AlertCircle, Share2, Sparkles, Package, Plus, ArrowLeft 
+import {
+  Heart, ShoppingBag, Trash2, ArrowRight, Star,
+  Store, Check, AlertCircle, Share2, Sparkles, Package, Plus
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/modules/cart";
-import { safeBack } from "@/lib/navigation";
 
 interface WishlistItem {
   id: string;
@@ -86,18 +85,9 @@ export const WishlistPage: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 pb-28 w-full mx-auto px-4 max-w-4xl mt-4">
       <div className="flex items-center justify-between pb-3 border-b border-[var(--pm-border)]">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => safeBack(navigate, '/')}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 text-[var(--pm-text)] shadow-xs cursor-pointer"
-            title="ফিরে যান"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-black text-[var(--pm-text)] tracking-tight">আমার পছন্দের তালিকা</h1>
-            <p className="text-xs text-[var(--pm-text-muted)]">সংরক্ষিত পণ্যের তালিকা ও অফার নোটিফিকেশন</p>
-          </div>
+        <div>
+          <h1 className="text-2xl font-black text-[var(--pm-text)] tracking-tight">আমার পছন্দের তালিকা</h1>
+          <p className="text-xs text-[var(--pm-text-muted)]">সংরক্ষিত পণ্যের তালিকা ও অফার নোটিফিকেশন</p>
         </div>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-[var(--pm-accent)]/10 text-[var(--pm-accent)]">
           {items.length} টি পণ্য

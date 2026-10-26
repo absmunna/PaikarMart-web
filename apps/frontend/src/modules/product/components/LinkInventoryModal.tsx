@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { 
+import {
   X, CheckCircle2, AlertCircle, Sparkles, TrendingDown,
   Truck, ShieldCheck, Box, Package, Tag, ArrowRight, Zap, RefreshCw
 } from "lucide-react";
@@ -113,7 +113,7 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div 
+      <div
         className="w-full max-w-2xl bg-[#141624] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden max-h-[92vh] flex flex-col text-left text-white"
         onClick={(e) => e.stopPropagation()}
       >
@@ -137,8 +137,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
               </h2>
             </div>
           </div>
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
           >
@@ -148,10 +148,10 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
 
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-6">
-          
+
           {/* Buy Box Live Competitive Analysis Banner */}
           <div className={`p-4 rounded-2xl border transition-all ${
-            willWinBuyBox 
+            willWinBuyBox
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
               : "bg-amber-500/10 border-amber-500/30 text-amber-300"
           }`}>
@@ -163,14 +163,14 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
               )}
               <div className="text-xs space-y-1">
                 <p className="font-black text-sm">
-                  {willWinBuyBox 
-                    ? "🏆 অভিনন্দন! আপনার এই অফারটি 'Buy Box' জয় করবে!" 
+                  {willWinBuyBox
+                    ? "🏆 অভিনন্দন! আপনার এই অফারটি 'Buy Box' জয় করবে!"
                     : "⚠️ সতর্কবার্তা: আপনার অফারটি বর্তমান 'Buy Box' এর চেয়ে বেশি।"}
                 </p>
                 <p className="text-[11px] opacity-90 leading-relaxed">
                   বর্তমান সেরা ল্যান্ডেড মূল্য: <strong className="underline">৳{currentBuyBoxLandedPrice}</strong> (পণ্য + শিপিং)।
                   আপনার ল্যান্ডেড মূল্য: <strong className="underline">৳{userLandedPrice}</strong> (৳{price} + ৳{shippingFee} শিপিং)।
-                  {willWinBuyBox 
+                  {willWinBuyBox
                     ? " গ্রাহকরা সরাসরি আপনার স্টক থেকে মূল 'অর্ডার করুন' বাটনে কিনবেন।"
                     : " ফিচার্ড স্পট পেতে আপনার মূল্য ৳" + (currentBuyBoxLandedPrice - 5) + " বা তার নিচে রাখুন।"}
                 </p>
@@ -179,7 +179,7 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
           </div>
 
           <form id="inventory-offer-form" onSubmit={handleSubmit} className="space-y-4">
-            
+
             {/* Row 1: SKU & Condition */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -188,8 +188,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 </label>
                 <div className="relative">
                   <Tag className="w-4 h-4 text-zinc-500 absolute left-3 top-3.5" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={sellerSku}
                     onChange={(e) => setSellerSku(e.target.value)}
                     placeholder="e.g. WH-TSHIRT-001"
@@ -203,7 +203,7 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5">
                   পণ্যের কন্ডিশন (Condition)
                 </label>
-                <select 
+                <select
                   value={condition}
                   onChange={(e: any) => setCondition(e.target.value)}
                   className="w-full bg-[#1c1f33] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:border-[#FF7A00] outline-none cursor-pointer"
@@ -224,8 +224,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 </label>
                 <div className="relative">
                   <span className="text-zinc-500 absolute left-3 top-2.5 font-bold text-xs">৳</span>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={price}
                     onChange={(e) => setPrice(Number(e.target.value))}
                     min={1}
@@ -241,8 +241,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 </label>
                 <div className="relative">
                   <span className="text-zinc-500 absolute left-3 top-2.5 font-bold text-xs">৳</span>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={originalPrice}
                     onChange={(e) => setOriginalPrice(Number(e.target.value))}
                     min={price}
@@ -260,8 +260,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 </label>
                 <div className="relative">
                   <Box className="w-4 h-4 text-zinc-500 absolute left-3 top-3.5" />
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={stock}
                     onChange={(e) => setStock(Number(e.target.value))}
                     min={1}
@@ -275,8 +275,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5">
                   সর্বনিম্ন অর্ডার পরিমাণ (MOQ)
                 </label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={minOrderQty}
                   onChange={(e) => setMinOrderQty(Number(e.target.value))}
                   min={1}
@@ -335,8 +335,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 </label>
                 <div className="relative">
                   <span className="text-zinc-500 absolute left-3 top-2.5 font-bold text-xs">৳</span>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={shippingFee}
                     onChange={(e) => setShippingFee(Number(e.target.value))}
                     min={0}
@@ -356,7 +356,7 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5">
                   শিপিং ডিসপ্যাচ টাইম (Dispatch Speed)
                 </label>
-                <select 
+                <select
                   value={dispatchDays}
                   onChange={(e) => setDispatchDays(Number(e.target.value))}
                   className="w-full bg-[#1c1f33] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:border-[#FF7A00] outline-none cursor-pointer"
@@ -371,8 +371,8 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5">
                   ওয়ারেন্টি ও রিপ্লেসমেন্ট পলিসি
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={warranty}
                   onChange={(e) => setWarranty(e.target.value)}
                   placeholder="e.g. 7 Days Replacement Warranty"
@@ -391,7 +391,7 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
             <span className="text-zinc-400">আপনার চূড়ান্ত ল্যান্ডেড প্রাইস: </span>
             <span className="text-base font-black text-[#FF7A00]">৳{userLandedPrice}</span>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <button
               type="button"

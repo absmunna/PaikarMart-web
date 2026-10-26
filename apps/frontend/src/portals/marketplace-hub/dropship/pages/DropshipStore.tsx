@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  ShoppingCart, Star, ShieldCheck, Truck, ArrowLeft, 
+import {
+  ShoppingCart, Star, ShieldCheck, Truck, ArrowLeft,
   Share2, Heart, Info, CheckCircle2, ChevronRight, Globe
 } from 'lucide-react';
 import { HomeHeader } from '@/design-system/components/home/HomeHeader';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
 import { ProductCard } from '@/design-system/components/ui/ProductCard';
 import { Button } from '@/components/ui/button';
-import { safeBack } from '@/lib/navigation';
 
 // Mock data for a specific dropship store
 const MOCK_STORES = {
@@ -93,11 +92,7 @@ export default function DropshipStore() {
         {/* Top Navbar Replacement with Branding Header already there */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => safeBack(navigate, '/')} 
-              className="p-2 hover:bg-[var(--pm-surface-hover)] rounded-full transition-colors border border-[var(--pm-border)] cursor-pointer"
-              title="ফিরে যান"
-            >
+            <button onClick={() => navigate(-1)} className="p-2 hover:bg-[var(--pm-surface-hover)] rounded-full transition-colors border border-[var(--pm-border)]">
               <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
             </button>
             <span className="font-black text-lg tracking-tight text-[var(--pm-text)]">{store.name}</span>
@@ -106,10 +101,10 @@ export default function DropshipStore() {
 
       {/* Hero Banner Section */}
       <section className="relative h-64 md:h-80 overflow-hidden">
-        <img 
+        <img
           referrerPolicy="no-referrer"
-          src={store.banner.img} 
-          alt="Hero" 
+          src={store.banner.img}
+          alt="Hero"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center p-6">
@@ -127,7 +122,7 @@ export default function DropshipStore() {
             <p className="text-white/80 text-sm md:text-base font-medium max-w-lg mx-auto">
               {store.subtitle}
             </p>
-            <Button 
+            <Button
               className="mt-6 rounded-full px-8 h-12 text-sm font-bold shadow-xl"
               style={{ backgroundColor: store.theme.primary }}
             >
@@ -173,7 +168,7 @@ export default function DropshipStore() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {store.products.map((product, i) => (
-            <ProductCard 
+            <ProductCard
               key={product.id}
               product={{
                 ...product,

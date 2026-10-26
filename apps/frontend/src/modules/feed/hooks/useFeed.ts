@@ -15,7 +15,7 @@ export const useFeed = (activeTab: 'social' | 'commerce', filter: string = 'all'
     setError(null);
     try {
       const district = userLocation || 'Dhaka';
-      
+
       if (activeTab === 'social') {
         const data = await feedApi.getSocialFeed({ district, filter });
         setSocialPosts(data.posts || []);

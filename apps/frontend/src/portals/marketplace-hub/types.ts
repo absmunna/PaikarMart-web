@@ -3,7 +3,7 @@
  * Defines the core structure for Portals, Seller Types, Categories & Subcategories
  */
 
-export type MarketplacePortalId = 
+export type MarketplacePortalId =
   | 'wholesale'
   | 'retail'
   | 'pk-shop'

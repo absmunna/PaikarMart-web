@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Star, Heart, CheckCircle2, Bookmark, Gift, ShieldAlert, BadgeInfo } from 'lucide-react';
-import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
+import { ProductCard } from "@/modules/product";
 import { Product } from '@/modules/product';
 import { toast } from 'sonner';
 
@@ -12,9 +12,9 @@ interface B2CBrandProfileProps {
   onSelectProduct: (product: Product) => void;
 }
 
-export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({ 
-  brandId, 
-  products, 
+export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
+  brandId,
+  products,
   onBack,
   onSelectProduct
 }) => {
@@ -24,7 +24,7 @@ export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
   // Mapped brand items
   const brandProducts = products.filter(p => {
     const bId = (brandId || "").toLowerCase();
-    return (p.sellerId && p.sellerId.toLowerCase().includes(bId)) || 
+    return (p.sellerId && p.sellerId.toLowerCase().includes(bId)) ||
            (p.seller && p.seller.toLowerCase().includes(bId)) ||
            (p.title && p.title.toLowerCase().includes(bId)) ||
            (p.name && p.name.toLowerCase().includes(bId));
@@ -75,7 +75,7 @@ export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
       {/* Search menu headers */}
       <div className="sticky top-16 z-50 bg-[var(--pm-bg)]/90 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-white/[0.08]">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={onBack}
             className="p-2 -ml-1 rounded-full hover:bg-white/5 text-[var(--pm-text)] transition-colors active:scale-95"
           >
@@ -100,10 +100,10 @@ export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
           <div className="w-16 h-16 rounded-2xl bg-[var(--pm-surface)] border-2 border-[var(--pm-bg)] flex items-center justify-center font-black text-2xl shadow-xl">
             {currentBrand.logo}
           </div>
-          <button 
+          <button
             onClick={handleFollowBrand}
             className={`px-4.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 ${
-              isLikedBrand 
+              isLikedBrand
                 ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
                 : 'bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white'
             }`}
@@ -133,69 +133,23 @@ export const B2CBrandProfile: React.FC<B2CBrandProfileProps> = ({
         {/* Product listing headline */}
         <div className="mt-6 space-y-4">
           <h3 className="text-[11px] font-black text-white uppercase tracking-wider">রিলিজড পার্টনার কালেকশনস</h3>
-          
+
           {brandProducts.length === 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
               {/* Fallback to display standard fashion/electronics elements of this sub layout */}
               {products.slice(0, 4).map(itm => (
-                <UnifiedPostCard
+                <ProductCard
                   key={itm.id}
-                  post={{
-                    id: itm.id,
-                    type: 'product',
-                    domain: 'RETAIL',
-                    authorName: brandId,
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${brandId}`,
-                    isVerified: true,
-                    authorRole: 'অফিশিয়াল ব্র্যান্ড',
-                    timestamp: 'Official Now',
-                    content: itm.description || `${itm.title} আমাদের স্টোরে এখন সহজলভ্য।`,
-                    imageUrl: itm.image,
-                    location: 'Dhaka',
-                    likes: itm.reviewCount || 0,
-                    comments: 5,
-                    product: {
-                      id: itm.id,
-                      title: itm.title,
-                      price: itm.price,
-                      imageUrl: itm.image
-                    },
-                    metadata: {
-                      isOfficialBrand: true
-                    }
-                  }}
+                  product={itm}
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
               {brandProducts.map(itm => (
-                <UnifiedPostCard
+                <ProductCard
                   key={itm.id}
-                  post={{
-                    id: itm.id,
-                    type: 'product',
-                    domain: 'RETAIL',
-                    authorName: brandId,
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${brandId}`,
-                    isVerified: true,
-                    authorRole: 'অফিশিয়াল ব্র্যান্ড',
-                    timestamp: 'Official Now',
-                    content: itm.description || `${itm.title} আমাদের স্টোরে এখন সহজলভ্য।`,
-                    imageUrl: itm.image,
-                    location: 'Dhaka',
-                    likes: itm.reviewCount || 0,
-                    comments: 5,
-                    product: {
-                      id: itm.id,
-                      title: itm.title,
-                      price: itm.price,
-                      imageUrl: itm.image
-                    },
-                    metadata: {
-                      isOfficialBrand: true
-                    }
-                  }}
+                  product={itm}
                 />
               ))}
             </div>

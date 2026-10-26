@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MessageSquare, X, Send, Bot, CheckCheck, 
-  Store, User, Sparkles, ChevronDown 
+import {
+  MessageSquare, X, Send, Bot, CheckCheck,
+  Store, User, Sparkles, ChevronDown
 } from 'lucide-react';
 import { create } from 'zustand';
 
@@ -24,9 +24,9 @@ interface ChatState {
 export const useLiveChatStore = create<ChatState>((set) => ({
   isOpen: false,
   activeVendorName: 'Paikar Mart সাপোর্ট ও পাইকারি আড়ত',
-  openChat: (vendorName) => set({ 
-    isOpen: true, 
-    activeVendorName: vendorName || 'Paikar Mart সাপোর্ট ও পাইকারি আড়ত' 
+  openChat: (vendorName) => set({
+    isOpen: true,
+    activeVendorName: vendorName || 'Paikar Mart সাপোর্ট ও পাইকারি আড়ত'
   }),
   closeChat: () => set({ isOpen: false }),
 }));

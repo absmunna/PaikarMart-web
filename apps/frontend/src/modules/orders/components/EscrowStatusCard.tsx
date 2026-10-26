@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  ShieldCheck, Info, AlertCircle, Lock, Unlock, 
+import {
+  ShieldCheck, Info, AlertCircle, Lock, Unlock,
   CheckCircle2, Clock, AlertTriangle, MessageSquare, Loader2
 } from 'lucide-react';
 import { Order, useOrderTrackingStore } from '@/modules/orders';
@@ -57,7 +57,7 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({ order }) => 
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -93,8 +93,8 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({ order }) => 
         </div>
         <div className={cn(
           "w-12 h-12 rounded-2xl border flex items-center justify-center transition-all",
-          escrowStatus.isReleased 
-            ? "border-cyan-400/30 bg-cyan-400/10 text-cyan-400" 
+          escrowStatus.isReleased
+            ? "border-cyan-400/30 bg-cyan-400/10 text-cyan-400"
             : isDisputed
             ? "border-rose-400/30 bg-rose-400/10 text-rose-400"
             : "border-amber-400/30 bg-amber-400/10 text-amber-400"
@@ -189,7 +189,7 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({ order }) => 
                 <AlertCircle className="w-4 h-4 text-rose-400" />
                 ৭-দিনের ইন্সপেকশন ডিসপুট দাখিল
               </h4>
-              <button 
+              <button
                 onClick={() => setShowDisputeModal(false)}
                 className="text-zinc-500 hover:text-white text-xs font-bold"
               >

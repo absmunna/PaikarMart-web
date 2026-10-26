@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/navigation/Navbar';
 import { BottomNav } from '@/components/navigation/BottomNav';
 import { UnifiedSidebar } from '@/design-system/components/navigation/UnifiedSidebar';
+import { FloatingNavButton } from '@/components/navigation/FloatingNavButton';
 import { ThemeBlobs } from '@/components/layout/ThemeBlobs';
 import { NakshiOverlay } from '@/components/layout/NakshiOverlay';
 import { CartDrawer } from '@/components/cart/CartDrawer';
@@ -11,13 +12,11 @@ import { NotificationDrawer } from '@/components/notifications/NotificationDrawe
 import { LiveChatDrawer, useLiveChatStore } from '@/components/chat/LiveChatDrawer';
 import { useAuth } from '@/modules/auth';
 import { useWalletStore } from '@/modules/wallet';
-import { 
-  Wallet, ShieldCheck, 
-  PhoneCall, 
+import {
+  Wallet, ShieldCheck,
+  PhoneCall,
   Truck, Flame
 } from 'lucide-react';
-import { CategoryBar } from '@/design-system/components/navigation/CategoryBar';
-import { GlobalLocationModal } from '@/modules/location';
 
 export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,16 +25,6 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const { balance, coins } = useWalletStore();
   const openChat = useLiveChatStore((state) => state.openChat);
   const navigate = useNavigate();
-  const location = useLocation();
-  const mainRef = useRef<HTMLElement>(null);
-
-  // Automatically scroll page and main container to top whenever route changes
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    if (mainRef.current) {
-      mainRef.current.scrollTo(0, 0);
-    }
-  }, [location.pathname, location.search]);
 
   return (
     <div className="h-[100dvh] w-full bg-[var(--pm-bg)] transition-colors duration-500 overflow-hidden">
@@ -51,15 +40,14 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
         {/* ━━━ Main Content Area (Mobile-friendly on small screens, Spacious on Desktop) ━━━ */}
         <div className="w-full max-w-[480px] sm:max-w-[560px] md:max-w-[640px] lg:max-w-none lg:flex-1 lg:shrink min-w-0 bg-[var(--pm-surface)] lg:bg-transparent sm:shadow-2xl lg:shadow-none relative border-x border-[var(--pm-border)] h-full flex flex-col overflow-hidden">
           <Navbar onMenuClick={() => setMenuOpen(true)} />
-          
+
           <UnifiedSidebar isMobileDrawer isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
           <CartDrawer isOpen={isOpen} onClose={close} />
           <NotificationDrawer />
           <LiveChatDrawer />
-          <GlobalLocationModal />
 
-          <main ref={mainRef} className="flex-1 pt-[60px] md:pt-[64px] pb-[80px] lg:pb-8 overflow-y-auto hide-scrollbar">
-            <CategoryBar className="sticky top-0 z-30" />
+          <main className="flex-1 pt-[60px] md:pt-[64px] pb-[80px] lg:pb-8 overflow-y-auto hide-scrollbar">
+            <FloatingNavButton />
             <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-2 max-w-[1400px] mx-auto">
               {children}
             </div>
@@ -73,7 +61,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
         {/* ━━━ Right Sidebar - Desktop Only (Interactive Commerce Cockpit) ━━━ */}
         <aside className="hidden xl:flex w-80 2xl:w-88 h-[100dvh] sticky top-0 flex-col p-5 xl:p-6 border-l border-[var(--pm-border)] bg-[var(--pm-surface)]/95 backdrop-blur-xl shrink-0 overflow-y-auto no-scrollbar z-30 select-none">
           <div className="flex flex-col gap-5">
-            
+
             {/* 1. লাইভ ওয়ালেট কার্ড (Connected to useWalletStore) */}
             <div className="p-5 rounded-3xl bg-gradient-to-br from-[var(--pm-accent-soft)] via-[var(--pm-surface)] to-[var(--pm-accent-soft)]/50 border border-[var(--pm-accent)]/25 shadow-lg relative overflow-hidden group">
               <div className="flex items-center justify-between mb-2">
@@ -84,7 +72,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
                   সক্রিয়
                 </span>
               </div>
-              
+
               <div className="my-1">
                 <p className="text-2xl 2xl:text-3xl font-black text-[var(--pm-accent)] tracking-tight">
                   ৳ {balance ? balance.toLocaleString('en-IN') : '৪৫,২৮০'}.০০
@@ -96,14 +84,14 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               <div className="mt-4 flex gap-2">
-                <NavLink 
-                  to="/wallet?tab=topup" 
+                <NavLink
+                  to="/wallet?tab=topup"
                   className="flex-1 py-2 px-3 bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white text-xs font-black rounded-xl text-center shadow-md shadow-[var(--pm-accent)]/20 transition-all active:scale-95"
                 >
                   রিচার্জ
                 </NavLink>
-                <NavLink 
-                  to="/wallet?tab=transactions" 
+                <NavLink
+                  to="/wallet?tab=transactions"
                   className="flex-1 py-2 px-3 bg-white/5 hover:bg-white/10 text-[var(--pm-text)] text-xs font-bold rounded-xl border border-[var(--pm-border)] text-center transition-all"
                 >
                   হিস্ট্রি
@@ -115,7 +103,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="p-4 rounded-2xl bg-[var(--pm-surface-hover)] border border-[var(--pm-border)]">
               <div className="flex items-center justify-between mb-2.5">
                 <h3 className="font-bold text-xs text-[var(--pm-text)] flex items-center gap-1.5">
-                  <Truck className="w-3.5 h-3.5 text-[var(--pm-accent)]" /> 
+                  <Truck className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
                   লাইভ অর্ডার ট্র্যাকিং
                 </h3>
                 <Link to="/orders" className="text-[10px] text-[var(--pm-accent)] font-bold hover:underline">
@@ -164,8 +152,8 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
                   { title: 'চকবাজারে ৫০ ডজন মেনস জেনুইন বেল্ট', time: '১ ঘন্টা আগে', budget: '৳ ৪৫,০০০' },
                   { title: 'যাত্রাবাড়িতে ১০০ বস্তা চিনিগুঁড়া আতপ চাল', time: '৩ ঘন্টা আগে', budget: '৳ ১,২০,০০০' }
                 ].map((demand, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     onClick={() => navigate('/demand')}
                     className="p-3 rounded-2xl bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all hover:border-[var(--pm-accent)]/30 group cursor-pointer"
                   >
@@ -193,7 +181,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 পণ্য হাতে পেয়ে নিশ্চিত না করা পর্যন্ত বিক্রেতা কোনো অর্থ উত্তোলন করতে পারেন না।
               </p>
               <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                <a 
+                <a
                   href="tel:09638022222"
                   className="text-[10px] font-black text-[var(--pm-accent)] flex items-center gap-1 hover:underline"
                 >
@@ -215,4 +203,3 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
-

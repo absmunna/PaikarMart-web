@@ -1,5 +1,5 @@
-import { 
-  MapPin, Navigation2, Clock, 
+import {
+  MapPin, Navigation2, Clock,
   Search, Filter, Star, ChevronRight, ShoppingBag,
   Zap, Heart, ShieldCheck, Map as MapIcon,
   Flame, Coffee, Pill, Smartphone, Utensils
@@ -45,14 +45,14 @@ export default function LocalLegacyView() {
             <button className="text-[#FF7A00] text-sm font-black ml-2 hover:underline tracking-tight uppercase">Change Location</button>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="relative group flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-            <input 
-              type="text" 
-              placeholder="Search shops or products nearby..." 
-              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl outline-none focus:border-emerald-500 transition-all font-medium text-sm text-gray-900 dark:text-white" 
+            <input
+              type="text"
+              placeholder="Search shops or products nearby..."
+              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl outline-none focus:border-emerald-500 transition-all font-medium text-sm text-gray-900 dark:text-white"
             />
           </div>
           <button className="p-3 rounded-2xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 text-zinc-500 hover:text-emerald-500 transition-all">
@@ -83,7 +83,7 @@ export default function LocalLegacyView() {
       <div className="relative rounded-[2.5rem] p-8 md:p-12 bg-[var(--pm-surface)] overflow-hidden mb-12 border border-[var(--pm-border)]">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[100px]" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/5 blur-[80px]" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="max-w-xl space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20">
@@ -99,7 +99,7 @@ export default function LocalLegacyView() {
               </button>
             </div>
           </div>
-          
+
           <div className="hidden lg:block w-72 h-72 rounded-[3rem] bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-white/10 p-6">
             <div className="w-full h-full rounded-[2.5rem] bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col items-center justify-center p-6 text-center space-y-4">
               <div className="h-16 w-16 rounded-full bg-emerald-500 flex items-center justify-center">
@@ -126,10 +126,10 @@ export default function LocalLegacyView() {
             View All <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {NEARBY_SHOPS.map((shop) => (
-            <motion.div 
+            <motion.div
               key={shop.id}
               whileHover={{ y: -5 }}
               className="group bg-white dark:bg-[#121522] rounded-[2.5rem] border border-gray-100 dark:border-white/10 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-black/5 transition-all"
@@ -148,7 +148,7 @@ export default function LocalLegacyView() {
                   <Heart className="h-4 w-4" />
                 </button>
               </div>
-              
+
               <div className="p-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-black text-[#FF7A00] uppercase tracking-widest">{shop.category}</span>
@@ -158,7 +158,7 @@ export default function LocalLegacyView() {
                   </div>
                 </div>
                 <h3 className="text-xl font-black text-gray-900 dark:text-white group-hover:text-emerald-500 transition-colors italic leading-none mb-4">{shop.name}</h3>
-                
+
                 <div className="flex items-center gap-6 pt-4 border-t border-gray-50 dark:border-white/5 text-xs font-bold text-zinc-500 uppercase tracking-widest">
                   <div className="flex items-center gap-2">
                     <Navigation2 className="h-3.5 w-3.5 text-emerald-500" /> {shop.distance}

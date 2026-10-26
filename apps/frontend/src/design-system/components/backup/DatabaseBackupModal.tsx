@@ -92,7 +92,7 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
               </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
           >
@@ -104,8 +104,8 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
         <div className="p-6 space-y-6">
           {statusMsg && (
             <div className={`flex items-start gap-3 p-4 rounded-2xl text-xs font-medium border ${
-              statusMsg.type === 'success' 
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' 
+              statusMsg.type === 'success'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
                 : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
             }`}>
               {statusMsg.type === 'success' ? (
@@ -163,12 +163,12 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
               <label className="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/10">
                 {restoring ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileCode className="w-4 h-4 text-emerald-400" />}
                 {restoring ? 'রিস্টোর হচ্ছে...' : 'Restore JSON File'}
-                <input 
-                  type="file" 
-                  accept=".json,application/json" 
-                  onChange={handleRestoreFile} 
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={handleRestoreFile}
                   disabled={restoring}
-                  className="hidden" 
+                  className="hidden"
                 />
               </label>
             </div>

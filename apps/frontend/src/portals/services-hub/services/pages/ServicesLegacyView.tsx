@@ -1,5 +1,5 @@
-import { 
-  Wrench, Briefcase, Scissors, MonitorPlay, 
+import {
+  Wrench, Briefcase, Scissors, MonitorPlay,
   Home as HomeIcon, Star, Search,
   ChevronRight, CheckCircle2, ShieldCheck,
   Calendar, UserCheck, MessageSquare, Hammer,
@@ -31,7 +31,7 @@ export default function ServicesLegacyView() {
       <div className="mb-12 relative rounded-[3rem] bg-indigo-950 p-8 md:p-16 overflow-hidden border border-white/5">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 blur-[100px]" />
-        
+
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em]">
@@ -47,10 +47,10 @@ export default function ServicesLegacyView() {
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="flex-1 w-full relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
-                <input 
-                  type="text" 
-                  placeholder="What service do you need?" 
-                  className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-white font-bold placeholder:text-zinc-600 placeholder:font-medium" 
+                <input
+                  type="text"
+                  placeholder="What service do you need?"
+                  className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-white font-bold placeholder:text-zinc-600 placeholder:font-medium"
                 />
               </div>
               <button className="w-full sm:w-auto bg-indigo-500 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-500/20">
@@ -58,7 +58,7 @@ export default function ServicesLegacyView() {
               </button>
             </div>
           </div>
-          
+
           <div className="hidden lg:grid grid-cols-2 gap-4">
              <div className="space-y-4 pt-12">
                <div className="h-40 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl p-6 flex flex-col justify-end">
@@ -92,7 +92,7 @@ export default function ServicesLegacyView() {
             Browse All <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        
+
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
           {SERVICE_CATEGORIES.map((cat, i) => (
             <motion.div
@@ -123,7 +123,7 @@ export default function ServicesLegacyView() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {FEATURED_PROVIDERS.map((provider) => (
-            <motion.div 
+            <motion.div
               key={provider.id}
               whileHover={{ y: -5 }}
               className="group bg-white dark:bg-[#121522] rounded-[2.5rem] border border-gray-100 dark:border-white/10 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all p-6"

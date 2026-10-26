@@ -23,7 +23,7 @@ export const RiskAnalyticsPanel: React.FC = () => {
                    <div className="flex items-center justify-between">
                        <span className="text-[11px] font-black text-white uppercase tracking-tight">{metric.title}</span>
                        <div className="flex items-center gap-1.5">
-                           {metric.trend === 'up' ? <TrendingUp className="w-3 h-3 text-rose-500" /> : 
+                           {metric.trend === 'up' ? <TrendingUp className="w-3 h-3 text-rose-500" /> :
                             metric.trend === 'down' ? <TrendingDown className="w-3 h-3 text-cyan-400" /> :
                             <Minus className="w-3 h-3 text-zinc-600" />}
                            <span className={cn(
@@ -34,12 +34,12 @@ export const RiskAnalyticsPanel: React.FC = () => {
                    </div>
 
                    <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-white/5">
-                        <div 
+                        <div
                             className={cn(
                                 "h-full transition-all duration-1000",
                                 metric.score > 50 ? "bg-rose-500" : metric.score > 25 ? "bg-amber-400" : "bg-cyan-400"
-                            )} 
-                            style={{ width: `${metric.score}%` }} 
+                            )}
+                            style={{ width: `${metric.score}%` }}
                         />
                    </div>
 

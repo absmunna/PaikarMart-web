@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export function PersonalVerificationTab() {
   const [nidFile, setNidFile] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsUploading(true);

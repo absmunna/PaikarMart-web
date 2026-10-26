@@ -15,7 +15,7 @@ export const InactiveSystemPortal = ({ portalName }: Props) => {
         {portalName} System Inactive
       </h1>
       <p className="text-sm text-[var(--pm-text-secondary)] max-w-sm">
-        This system layer is currently undergoing final calibration. 
+        This system layer is currently undergoing final calibration.
         Please check back after the next maintenance cycle.
       </p>
     </div>

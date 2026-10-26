@@ -36,8 +36,8 @@ export const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
               onClick={() => onSelectRole(type.id)}
               className={cn(
                 "flex flex-col text-left p-4 rounded-2xl transition-all border relative cursor-pointer group",
-                isSelected 
-                  ? "bg-orange-500/10 border-orange-500/60 shadow-[0_0_20px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/50" 
+                isSelected
+                  ? "bg-orange-500/10 border-orange-500/60 shadow-[0_0_20px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/50"
                   : "bg-white/[0.02] border-white/5 hover:bg-white/[0.05] hover:border-white/15"
               )}
             >
@@ -47,7 +47,7 @@ export const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
                 </div>
                 <TrustBadge level={type.expectedTrustLevel} interactive={false} size="sm" />
               </div>
-              
+
               <span className="text-white font-bold text-sm block mb-0.5">{type.labelBn}</span>
               <span className="text-zinc-400 font-medium text-xs block mb-1.5">{type.labelEn}</span>
               <p className="text-[11px] text-zinc-500 leading-snug line-clamp-2">{type.descBn}</p>
@@ -57,8 +57,8 @@ export const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
       </div>
 
       <div className="pt-3 border-t border-white/10">
-        <Button 
-          onClick={onNext} 
+        <Button
+          onClick={onNext}
           className="w-full bg-orange-500 hover:bg-orange-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl transition-all cursor-pointer shadow-lg shadow-orange-500/20"
         >
           পরবর্তী ধাপ (Continue) <ArrowRight className="w-4 h-4 ml-2" />

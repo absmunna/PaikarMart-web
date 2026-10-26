@@ -30,8 +30,8 @@ export const ModeratorDashboard = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                activeTab === tab.id 
-                ? 'bg-[var(--pm-accent)] text-white shadow-lg shadow-[var(--pm-accent)]/20' 
+                activeTab === tab.id
+                ? 'bg-[var(--pm-accent)] text-white shadow-lg shadow-[var(--pm-accent)]/20'
                 : 'bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] border border-[var(--pm-border)] hover:text-[var(--pm-text)]'
               }`}
             >
@@ -100,4 +100,3 @@ export const ModeratorDashboard = () => {
     </div>
   );
 };
-

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Search, ShoppingBag, ArrowLeft, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { StoryBar } from '@shared/StoryBar';
 import { PortalIconBar } from '@shared/PortalIconBar';
 import { HeroSpotlight } from '@shared/HeroSpotlight';
 import { CategoryNavBar, CategoryFilterItem } from '@shared/CategoryNavBar';
@@ -61,6 +62,7 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
     <div className="min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] pb-32">
       {/* ━━━ HEADER SECTION (Top Priority) ━━━ */}
       <section className="pt-4 px-2 space-y-1">
+        <StoryBar context={context} />
         <PortalIconBar context={context} />
       </section>
 

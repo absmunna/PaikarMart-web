@@ -47,4 +47,3 @@ export const PAYMENT_PROVIDERS = {
 };
 
 export const VAT_RATE = 0.05; // Bangladesh: 5% auto on checkout
-

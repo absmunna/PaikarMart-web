@@ -1,21 +1,22 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { 
-  onAuthStateChanged, 
-  signInWithPopup, 
+import {
+  onAuthStateChanged,
+  signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signOut as firebaseSignOut, 
-  User as FirebaseUser, 
+  signOut as firebaseSignOut,
+  User as FirebaseUser,
   GoogleAuthProvider,
   FacebookAuthProvider,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   signInAnonymously
 } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import { auth, db, googleProvider, facebookProvider } from "@/lib/firebase";
 import { safeStorage } from "@/modules/app";
-import { AppRole, RoleGroup, getRoleGroup, getPermissionsForRole } from "@/config/roles.config";
+import { AppRole, RoleGroup, ROLE_HIERARCHY, getRoleGroup, getPermissionsForRole } from "@/config/roles.config";
+import { useAuthStore, type UserRole } from "@/modules/auth/store/authStore";
 import { toast } from "sonner";
 
 export type { AppRole, RoleGroup };
@@ -92,7 +93,7 @@ export interface AuthContextValue {
   isVendor: boolean;
   isAdmin: boolean;
   isSeller: boolean;
-  
+
   // Auth Operations
   loginWithPhone: (phone: string, password: string) => Promise<AppUser>;
   login: (email: string, password: string) => Promise<AppUser>;
@@ -102,17 +103,17 @@ export interface AuthContextValue {
   loginAsGuest: () => Promise<void>;
   logout: () => Promise<void>;
   signOut: () => Promise<void>;
-  
+
   // Password & Verification
   sendPasswordReset: (email: string) => Promise<void>;
   reloadUser: () => Promise<void>;
   submitVerification: (data: VerificationData) => Promise<void>;
-  
+
   // Registration
   registerUser: (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string }) => Promise<AppUser>;
   registerSeller: (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string; seller: SellerProfileData }) => Promise<AppUser>;
   registerFactory: (input: { fullName: string; phone: string; email: string; password?: string; factory: Record<string, any> }) => Promise<AppUser>;
-  
+
   // Role & Permission Checks
   hasRole: (roles: AppRole | AppRole[] | string | string[]) => boolean;
   hasRoleGroup: (groups: RoleGroup | RoleGroup[]) => boolean;
@@ -121,24 +122,9 @@ export interface AuthContextValue {
   promoteToSeller: (shopName: string, type: "retail" | "wholesale" | "service", address: string) => void;
 }
 
-const STORAGE_KEY = "pm.auth.v2";
 const TOKEN_KEY = "pm.auth.token.v2";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function readStoredUser(): AppUser | null {
-  try {
-    const raw = safeStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AppUser) : null;
-  } catch {
-    return null;
-  }
-}
-
-function persistUser(u: AppUser | null) {
-  if (u) safeStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-  else safeStorage.removeItem(STORAGE_KEY);
-}
 
 function persistToken(t: string | null) {
   if (t) {
@@ -157,55 +143,73 @@ function uid(prefix = "u") {
   return `${prefix}_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 }
 
-async function syncUserWithBackend(payload: {
-  uid: string;
-  email?: string;
-  fullName?: string;
-  name?: string;
-  phone?: string;
-  role?: string;
-  avatarUrl?: string;
-}) {
-  try {
-    const res = await fetch('/api/v1/auth/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.token) {
-        persistToken(data.token);
-      }
-    }
-  } catch (err) {
-    console.warn('Backend sync non-blocking error:', err);
-  }
+async function getTrustedRoles(firebaseUser: FirebaseUser): Promise<AppRole[]> {
+  const { claims } = await firebaseUser.getIdTokenResult();
+  const claimRoles = Array.isArray(claims.roles) ? claims.roles : [claims.role];
+  const roles = claimRoles.filter(
+    (role): role is AppRole => typeof role === "string" && role in ROLE_HIERARCHY
+  );
+  return roles.length > 0 ? Array.from(new Set(roles)) : ["buyer"];
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<AppUser | null>(() => readStoredUser());
+  const [user, setUser] = useState<AppUser | null>(null);
 
-  // Sync state to storage
   useEffect(() => {
-    persistUser(user);
-  }, [user]);
+    if (!firebaseUser || !user) {
+      useAuthStore.getState().logout();
+      return;
+    }
 
-  // Sync Firebase Auth State with real Firestore and Supabase backend
+    let active = true;
+    const syncStore = async () => {
+      try {
+        const token = await firebaseUser.getIdToken();
+        if (!active) return;
+        const supportedRoles: UserRole[] = [
+          "buyer", "seller", "admin", "super_admin", "moderator", "nearby_shop", "service_provider"
+        ];
+        const role = supportedRoles.includes(user.role as UserRole) ? user.role as UserRole : "buyer";
+        useAuthStore.getState().login({
+          id: user.id,
+          name: user.fullName,
+          fullName: user.fullName,
+          email: user.email,
+          phone: user.phone,
+          avatar: user.avatar,
+          avatarUrl: user.avatarUrl,
+          role,
+        }, token);
+      } catch (error) {
+        if (active) {
+          useAuthStore.getState().logout();
+          console.warn("Auth store sync failed:", error);
+        }
+      }
+    };
+    void syncStore();
+
+    return () => {
+      active = false;
+    };
+  }, [firebaseUser, user]);
+
+  // Sync Firebase Auth State with real Firestore
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setFirebaseUser(currentUser);
       setLoading(false);
-      
+
       if (currentUser) {
         try {
+          const roles = await getTrustedRoles(currentUser);
+          const primaryRole = roles[0];
           const userRef = doc(db, "users", currentUser.uid);
           const snap = await getDoc(userRef);
           if (snap.exists()) {
             const data = snap.data();
-            const primaryRole: AppRole = (data.role as AppRole) || "buyer";
             const appUser: AppUser = {
               id: currentUser.uid,
               fullName: data.name || currentUser.displayName || "PaikarMart User",
@@ -215,7 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               avatarUrl: currentUser.photoURL || data.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name || currentUser.uid}`,
               avatar: currentUser.photoURL || data.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name || currentUser.uid}`,
               role: primaryRole,
-              roles: Array.isArray(data.roles) ? data.roles : [primaryRole],
+              roles,
               roleGroup: getRoleGroup(primaryRole),
               permissions: getPermissionsForRole(primaryRole, data.verification?.status === "verified"),
               emailVerified: currentUser.emailVerified,
@@ -224,19 +228,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               createdAt: data.createdAt || new Date().toISOString(),
             };
             setUser(appUser);
-            // Synchronize user into Supabase PostgreSQL
-            syncUserWithBackend({
-              uid: currentUser.uid,
-              email: appUser.email,
-              fullName: appUser.fullName,
-              phone: appUser.phone,
-              role: appUser.role,
-              avatarUrl: appUser.avatarUrl
-            });
             return;
           } else {
-            // First time auth - create document in real Firestore
-            const primaryRole: AppRole = "buyer";
             const newDoc = {
               id: currentUser.uid,
               name: currentUser.displayName || (currentUser.isAnonymous ? "Guest User" : "PaikarMart User"),
@@ -244,32 +237,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               phone: currentUser.phoneNumber || "",
               role: primaryRole,
               roles: [primaryRole],
-              walletBalance: 25000,
               avatarUrl: currentUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`,
               createdAt: new Date().toISOString(),
             };
             await setDoc(userRef, newDoc);
-            const newUser: AppUser = {
+            setUser({
               ...newDoc,
               fullName: newDoc.name,
               roleGroup: getRoleGroup(primaryRole),
               permissions: getPermissionsForRole(primaryRole, false),
               verification: { status: "unverified" },
-            } as AppUser;
-            setUser(newUser);
-            syncUserWithBackend({
-              uid: currentUser.uid,
-              email: newUser.email,
-              fullName: newUser.fullName,
-              phone: newUser.phone,
-              role: newUser.role,
-              avatarUrl: newUser.avatarUrl
-            });
+            } as AppUser);
             return;
           }
         } catch (err) {
           console.warn("Firestore user sync info:", err);
         }
+      } else {
+        setUser(null);
+        persistToken(null);
       }
     });
 
@@ -281,13 +267,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
         const u = result.user;
+        const roles = await getTrustedRoles(u);
+        const role = roles[0];
         const userRef = doc(db, "users", u.uid);
         const snap = await getDoc(userRef);
-        let role: AppRole = "buyer";
         let userData: any = null;
         if (snap.exists()) {
           userData = snap.data();
-          role = (userData.role as AppRole) || "buyer";
         } else {
           userData = {
             id: u.uid,
@@ -296,7 +282,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             phone: u.phoneNumber || "",
             role: "buyer",
             roles: ["buyer"],
-            walletBalance: 25000,
             avatarUrl: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
             createdAt: new Date().toISOString(),
           };
@@ -311,7 +296,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           avatarUrl: u.photoURL || userData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
           avatar: u.photoURL || userData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
           role,
-          roles: Array.isArray(userData.roles) ? userData.roles : [role],
+          roles,
           roleGroup: getRoleGroup(role),
           permissions: getPermissionsForRole(role, true),
           emailVerified: u.emailVerified,
@@ -322,39 +307,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(next);
         const token = await u.getIdToken();
         persistToken(token);
-        syncUserWithBackend({
-          uid: u.uid,
-          email: next.email,
-          fullName: next.fullName,
-          phone: next.phone,
-          role: next.role,
-          avatarUrl: next.avatarUrl
-        });
         toast.success("Successfully logged in with Google (Firebase Connected)!");
       }
     } catch (error) {
       if (error instanceof FirebaseError && (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request')) {
-        console.info("Google login popup closed by user");
-        return;
+        throw new Error("Google sign-in was cancelled.");
       }
-      console.warn("Google popup login fallback:", error);
-      const mockUser: AppUser = {
-        id: `google_${Date.now()}`,
-        fullName: "Google Test User",
-        name: "Google Test User",
-        email: "google.user@paikarmart.com",
-        phone: "01700000000",
-        avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
-        role: "buyer",
-        roles: ["buyer"],
-        roleGroup: getRoleGroup("buyer"),
-        permissions: getPermissionsForRole("buyer", true),
-        emailVerified: true,
-        verification: { status: "verified" },
-        createdAt: new Date().toISOString(),
-      };
-      setUser(mockUser);
-      toast.success("Logged in with Google");
+      throw error;
     }
   }, []);
 
@@ -393,29 +352,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginWithPhone = useCallback(async (phone: string, password: string): Promise<AppUser> => {
-    const role: AppRole = "buyer";
-    const next: AppUser = {
-      id: uid("u"),
-      fullName: phone,
-      name: phone,
-      phone,
-      role,
-      roles: ["buyer", role],
-      roleGroup: getRoleGroup(role),
-      permissions: getPermissionsForRole(role, false),
-      verification: { status: "unverified" },
-      createdAt: new Date().toISOString(),
-    };
-    setUser(next);
-    persistToken(`token_${Date.now()}`);
-    toast.success(`Welcome back ${phone}!`);
-    return next;
+    void phone;
+    void password;
+    throw new Error("Phone/password login is not configured. Use email/password or a verified phone OTP.");
   }, []);
 
   const login = useCallback(async (email: string, password: string): Promise<AppUser> => {
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       const u = cred.user;
+      const roles = await getTrustedRoles(u);
+      const primaryRole = roles[0];
       const userRef = doc(db, "users", u.uid);
       const snap = await getDoc(userRef);
       let userData: any = snap.exists() ? snap.data() : null;
@@ -426,14 +373,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           name: u.displayName || email.split("@")[0],
           role: "buyer",
           roles: ["buyer"],
-          walletBalance: 25000,
           createdAt: new Date().toISOString(),
         };
         await setDoc(userRef, userData);
       }
       const token = await u.getIdToken();
       persistToken(token);
-      const primaryRole: AppRole = (userData.role as AppRole) || "buyer";
       const appUser: AppUser = {
         id: u.uid,
         fullName: userData.name || u.displayName || email.split("@")[0],
@@ -443,7 +388,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         avatarUrl: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name || u.uid}`,
         avatar: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name || u.uid}`,
         role: primaryRole,
-        roles: Array.isArray(userData.roles) ? userData.roles : [primaryRole],
+        roles,
         roleGroup: getRoleGroup(primaryRole),
         permissions: getPermissionsForRole(primaryRole, userData.verification?.status === "verified"),
         emailVerified: u.emailVerified,
@@ -452,36 +397,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         createdAt: userData.createdAt || new Date().toISOString(),
       };
       setUser(appUser);
-      syncUserWithBackend({
-        uid: u.uid,
-        email: appUser.email,
-        fullName: appUser.fullName,
-        phone: appUser.phone,
-        role: appUser.role,
-        avatarUrl: appUser.avatarUrl
-      });
       toast.success("Logged in successfully (Firebase DB Connected)!");
       return appUser;
     } catch (err: any) {
-      console.warn("Firebase email login fallback:", err?.message);
-      const role: AppRole = "buyer";
-      const next: AppUser = {
-        id: uid("u"),
-        fullName: email.split("@")[0],
-        name: email.split("@")[0],
-        email,
-        phone: "",
-        role,
-        roles: ["buyer"],
-        roleGroup: getRoleGroup(role),
-        permissions: getPermissionsForRole(role, false),
-        verification: { status: "unverified" },
-        createdAt: new Date().toISOString(),
-      };
-      setUser(next);
-      persistToken(`token_${Date.now()}`);
-      toast.success("Logged in successfully!");
-      return next;
+      throw err;
     }
   }, []);
 
@@ -492,7 +411,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setFirebaseUser(null);
     persistToken(null);
-    safeStorage.removeItem(STORAGE_KEY);
     toast.info("Logged out successfully");
   }, []);
 
@@ -523,17 +441,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const registerUser = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string }): Promise<AppUser> => {
+    if (!input.password) {
+      throw new Error("A password is required to register.");
+    }
     const role: AppRole = "buyer";
     const userEmail = input.email || `${input.phone || Date.now()}@paikarmart.com`;
-    let userId = uid("u");
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, userEmail, (input as any).password || "Paikar123456!");
-      userId = cred.user.uid;
-      const token = await cred.user.getIdToken();
-      persistToken(token);
-    } catch (err: any) {
-      console.warn("Firebase Auth create error, using generated UID:", err?.message);
-    }
+    const cred = await createUserWithEmailAndPassword(auth, userEmail, input.password);
+    const userId = cred.user.uid;
+    persistToken(await cred.user.getIdToken());
 
     const profileDoc = {
       id: userId,
@@ -542,16 +457,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       phone: input.phone || "",
       role,
       roles: ["buyer"],
-      walletBalance: 25000,
       avatarUrl: input.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
       createdAt: new Date().toISOString(),
     };
-
-    try {
-      await setDoc(doc(db, "users", userId), profileDoc);
-    } catch (err) {
-      console.warn("Firestore profile save error:", err);
-    }
+    await setDoc(doc(db, "users", userId), profileDoc);
 
     const next: AppUser = {
       ...input,
@@ -566,30 +475,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       createdAt: profileDoc.createdAt,
     };
     setUser(next);
-    syncUserWithBackend({
-      uid: userId,
-      email: userEmail,
-      fullName: next.fullName,
-      phone: input.phone,
-      role: 'buyer',
-      avatarUrl: profileDoc.avatarUrl
-    });
-    toast.success("Account registered and saved in database!");
+    toast.success("Account registered successfully!");
     return next;
   }, []);
 
   const registerSeller = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { seller: SellerProfileData; password?: string }): Promise<AppUser> => {
-    const role: AppRole = "seller";
-    const userEmail = input.email || `${input.phone || Date.now()}@paikarmart.com`;
-    let userId = uid("s");
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, userEmail, (input as any).password || "Paikar123456!");
-      userId = cred.user.uid;
-      const token = await cred.user.getIdToken();
-      persistToken(token);
-    } catch (err: any) {
-      console.warn("Firebase Auth seller create error:", err?.message);
+    if (!input.password) {
+      throw new Error("A password is required to register.");
     }
+    const role: AppRole = "buyer";
+    const userEmail = input.email || `${input.phone || Date.now()}@paikarmart.com`;
+    const cred = await createUserWithEmailAndPassword(auth, userEmail, input.password);
+    const userId = cred.user.uid;
+    persistToken(await cred.user.getIdToken());
 
     const profileDoc = {
       id: userId,
@@ -597,18 +495,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: userEmail,
       phone: input.phone || "",
       role,
-      roles: ["buyer", "seller"],
-      seller: input.seller,
-      walletBalance: 25000,
+      roles: ["buyer"],
       avatarUrl: input.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
       createdAt: new Date().toISOString(),
     };
-
-    try {
-      await setDoc(doc(db, "users", userId), profileDoc);
-    } catch (err) {
-      console.warn("Firestore seller profile save error:", err);
-    }
+    await setDoc(doc(db, "users", userId), profileDoc);
+    await setDoc(doc(db, "sellerApplications", userId), {
+      userId,
+      shopName: input.seller.shopName,
+      type: input.seller.type,
+      address: input.seller.address || "",
+      status: "pending",
+      createdAt: profileDoc.createdAt,
+    });
 
     const next: AppUser = {
       ...input,
@@ -617,22 +516,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: profileDoc.name,
       email: userEmail,
       role,
-      roles: ["buyer", "seller"],
+      roles: ["buyer"],
       roleGroup: getRoleGroup(role),
       permissions: getPermissionsForRole(role, false),
       seller: input.seller,
       createdAt: profileDoc.createdAt,
     };
     setUser(next);
-    syncUserWithBackend({
-      uid: userId,
-      email: userEmail,
-      fullName: next.fullName,
-      phone: input.phone,
-      role: 'seller',
-      avatarUrl: profileDoc.avatarUrl
-    });
-    toast.success("Seller store registered and saved in database!");
+    toast.success("Seller application submitted for review.");
     return next;
   }, []);
 
@@ -674,7 +565,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const switchPersonaRole = useCallback((targetRole: AppRole) => {
-    if (user) {
+    if (!user || !user.roles.includes(targetRole)) {
+      toast.error("This account is not authorized for that role.");
+      return;
+    }
+
+    if (user.role !== targetRole) {
       setUser({
         ...user,
         role: targetRole,
@@ -686,34 +582,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const promoteToSeller = useCallback(async (shopName: string, type: "retail" | "wholesale" | "service", address: string) => {
-    if (user) {
-      const sellerData: SellerProfileData = { shopName, type, address };
-      const updated: AppUser = {
-        ...user,
-        role: "seller",
-        roles: Array.from(new Set([...user.roles, "seller" as AppRole])),
-        seller: sellerData,
-        roleGroup: getRoleGroup("seller"),
-        permissions: getPermissionsForRole("seller", false)
-      };
-      setUser(updated);
-      try {
-        await updateDoc(doc(db, "users", user.id), {
-          role: "seller",
-          roles: Array.from(new Set([...user.roles, "seller" as AppRole])),
-          seller: sellerData
-        });
-      } catch (err) {
-        console.warn("Firestore promoteToSeller update error:", err);
-      }
-      toast.success("Promoted to Seller! Saved in database.");
+    if (!user || !firebaseUser || user.id !== firebaseUser.uid) {
+      throw new Error("Sign in with a verified account before applying to become a seller.");
     }
-  }, [user]);
+
+    const applicationRef = doc(db, "sellerApplications", firebaseUser.uid);
+    const existingApplication = await getDoc(applicationRef);
+    if (existingApplication.exists()) {
+      toast.info("Your seller application is already under review.");
+      return;
+    }
+
+    const sellerData: SellerProfileData = { shopName, type, address };
+    await setDoc(applicationRef, {
+      userId: firebaseUser.uid,
+      shopName,
+      type,
+      address,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    });
+    setUser({ ...user, seller: sellerData });
+    toast.success("Seller application submitted for review.");
+  }, [user, firebaseUser]);
 
   const value: AuthContextValue = useMemo(() => ({
     user,
     firebaseUser,
-    isAuthenticated: !!user || !!firebaseUser,
+    isAuthenticated: !!firebaseUser,
     isLoading: loading,
     loading,
     role: user?.role ?? "buyer",
@@ -723,7 +619,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isVendor: (user?.roleGroup ?? getRoleGroup("buyer")) === "vendor" || user?.role === "factory",
     isAdmin: user?.role === "admin" || user?.role === "super_admin",
     isSeller: user?.role === "seller" || user?.roles?.includes("seller"),
-    
+
     loginWithPhone,
     login,
     loginWithGoogle,
@@ -732,15 +628,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loginAsGuest,
     logout,
     signOut: logout,
-    
+
     sendPasswordReset,
     reloadUser,
     submitVerification,
-    
+
     registerUser,
     registerSeller,
     registerFactory,
-    
+
     hasRole,
     hasRoleGroup,
     hasPermission,

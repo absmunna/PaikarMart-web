@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Laptop, ShoppingBag, Search, Filter, 
+import {
+  Laptop, ShoppingBag, Search, Filter,
   Zap, ShieldCheck, Star, Plus,
   ChevronRight, Smartphone, Video, Key,
   Download, Globe, Gamepad2, Gift
@@ -13,7 +13,6 @@ import { Card } from '@/components/ui/Card';
 import { useCartStore } from '@/modules/cart';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { ProductCard } from '@/design-system/components/ui/ProductCard/ProductCard';
 
 const DIGITAL_PRODUCTS = [
   { id: 'd1', title: 'Netflix Premium 4K (1 Month)', price: 350, type: 'Subscription', icon: Video, color: 'text-rose-500', rating: 4.9, reviews: 1200, delivery: 'Instant' },
@@ -81,8 +80,8 @@ export const DigitalPortal: React.FC = () => {
       {/* Search */}
       <div className="relative group">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-violet-400 transition-colors" />
-        <Input 
-          placeholder="Search for Netflix, Windows keys, or Game currency..." 
+        <Input
+          placeholder="Search for Netflix, Windows keys, or Game currency..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="bg-white/5 border-white/10 pl-12 h-14 rounded-2xl text-sm font-bold shadow-xl"
@@ -92,21 +91,38 @@ export const DigitalPortal: React.FC = () => {
       {/* Product List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
          {DIGITAL_PRODUCTS.map((prod) => (
-           <ProductCard 
-            key={prod.id} 
-            product={{
-              id: prod.id,
-              name: prod.title,
-              type: 'product',
-              portal: 'digital',
-              price: prod.price,
-              rating: prod.rating,
-              reviews: prod.reviews,
-              deliveryTime: prod.delivery,
-              vendor: 'Digital Hub',
-              image: `https://api.dicebear.com/7.x/initials/svg?seed=${prod.title}`
-            }}
-           />
+           <Card key={prod.id} className="bg-[#111625] border-white/5 p-5 rounded-3xl group hover:border-violet-500/30 transition-all duration-500 shadow-xl flex items-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                 <prod.icon className={cn("w-8 h-8", prod.color)} />
+              </div>
+              <div className="flex-1 min-w-0">
+                 <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="outline" className="bg-white/5 text-[7px] font-black uppercase border-white/10">{prod.type}</Badge>
+                    {prod.delivery === 'Instant' && (
+                      <Badge className="bg-emerald-500/10 text-emerald-400 text-[7px] font-black uppercase border-emerald-500/20">
+                         <Zap className="w-2.5 h-2.5 mr-1 fill-emerald-400" /> Instant Delivery
+                      </Badge>
+                    )}
+                 </div>
+                 <h3 className="text-sm font-black text-white uppercase tracking-tight truncate group-hover:text-violet-400 transition-colors">{prod.title}</h3>
+                 <div className="flex items-center gap-3 mt-1">
+                    <div className="flex items-center gap-1 text-amber-400 text-[10px] font-black">
+                       <Star className="w-3 h-3 fill-amber-400" /> {prod.rating}
+                    </div>
+                    <span className="text-[9px] text-zinc-600 font-bold uppercase">{prod.reviews} reviews</span>
+                 </div>
+              </div>
+              <div className="text-right shrink-0">
+                 <p className="text-xl font-black text-white tracking-tighter">৳{prod.price}</p>
+                 <Button
+                  onClick={() => handleAddToCart(prod)}
+                  size="sm"
+                  className="bg-violet-600 hover:bg-violet-500 text-white font-black text-[9px] uppercase tracking-widest h-8 px-4 rounded-lg mt-2"
+                 >
+                   Get Now
+                 </Button>
+              </div>
+           </Card>
          ))}
       </div>
 

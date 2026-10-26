@@ -1,12 +1,12 @@
-﻿import { 
-  collection, 
-  query, 
-  where, 
+import {
+  collection,
+  query,
+  where,
   getDocs,
   getDoc,
   doc,
-  orderBy, 
-  limit, 
+  orderBy,
+  limit,
   onSnapshot,
   addDoc,
   updateDoc,
@@ -295,8 +295,8 @@ export const productService = {
 
     if (!db) {
       const term = searchTerm.toLowerCase();
-      const filtered = MOCK_PRODUCTS.filter(p => 
-        p.title.toLowerCase().includes(term) || 
+      const filtered = MOCK_PRODUCTS.filter(p =>
+        p.title.toLowerCase().includes(term) ||
         p.categoryName.toLowerCase().includes(term)
       );
       callback(filtered);
@@ -305,7 +305,7 @@ export const productService = {
 
     const path = "products";
     const term = searchTerm.trim();
-    
+
     // Query for title prefix
     const qTitle = query(
       collection(db, path),

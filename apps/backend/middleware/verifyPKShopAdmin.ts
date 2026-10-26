@@ -1,6 +1,5 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "./auth";
-import { db } from "../config/database";
 
 export interface PKShopTeamMember {
   id: string;
@@ -14,19 +13,7 @@ export interface PKShopTeamMember {
   createdAt: string;
 }
 
-// In-memory persistent registry for PK Shop Managers/Moderators (resilient when DB offline)
-export const pkShopTeamRegistry: PKShopTeamMember[] = [
-  {
-    id: "pk-team-1",
-    userId: "admin-master",
-    email: "abs.munna1@gmail.com",
-    name: "System Super Admin",
-    role: "STORE_MANAGER",
-    permissions: ["products:write", "orders:write", "inventory:write", "team:write"],
-    addedBy: "system",
-    createdAt: new Date().toISOString()
-  }
-];
+export const pkShopTeamRegistry: PKShopTeamMember[] = [];
 
 export const isUserSuperAdmin = (req: AuthenticatedRequest): boolean => {
   if (!req.user) return false;
@@ -37,7 +24,7 @@ export const isUserSuperAdmin = (req: AuthenticatedRequest): boolean => {
 
 export const isUserPKShopStaff = (req: AuthenticatedRequest): { isStaff: boolean; role?: string; permissions?: string[] } => {
   if (!req.user) return { isStaff: false };
-  
+
   if (isUserSuperAdmin(req)) {
     return {
       isStaff: true,
@@ -50,7 +37,7 @@ export const isUserPKShopStaff = (req: AuthenticatedRequest): { isStaff: boolean
   const userId = req.user.id;
   const userPhone = req.user.phone;
 
-  const member = pkShopTeamRegistry.find(m => 
+  const member = pkShopTeamRegistry.find(m =>
     (userEmail && m.email.toLowerCase() === userEmail) ||
     (userId && m.userId === userId) ||
     (userPhone && m.phone === userPhone)

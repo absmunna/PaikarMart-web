@@ -1,17 +1,17 @@
-import { 
-  collection, 
-  doc, 
-  query, 
-  where, 
-  orderBy, 
-  onSnapshot, 
-  addDoc, 
+import {
+  collection,
+  doc,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  addDoc,
   setDoc,
   getDoc,
   getDocs,
-  updateDoc, 
-  serverTimestamp, 
-  Timestamp 
+  updateDoc,
+  serverTimestamp,
+  Timestamp
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '@/core/lib/firebase';
 
@@ -97,17 +97,15 @@ export function subscribeUserChats(
         onUpdate(conversations);
       },
       (error) => {
-        console.warn('Chats subscription permission or connection error:', error?.message);
+        handleFirestoreError(error, OperationType.LIST, 'chats');
         if (onError) onError(error);
-        else onUpdate([]);
       }
     );
 
     return unsubscribe;
   } catch (error) {
-    console.warn('Chats subscription failed:', error);
+    handleFirestoreError(error, OperationType.LIST, 'chats');
     if (onError) onError(error);
-    else onUpdate([]);
     return () => {};
   }
 }
@@ -148,17 +146,15 @@ export function subscribeChatMessages(
         onUpdate(msgs);
       },
       (error) => {
-        console.warn('Chat messages subscription error:', error?.message);
+        handleFirestoreError(error, OperationType.LIST, `chats/${chatId}/messages`);
         if (onError) onError(error);
-        else onUpdate([]);
       }
     );
 
     return unsubscribe;
   } catch (error) {
-    console.warn('Chat messages subscription failed:', error);
+    handleFirestoreError(error, OperationType.LIST, `chats/${chatId}/messages`);
     if (onError) onError(error);
-    else onUpdate([]);
     return () => {};
   }
 }
@@ -255,8 +251,8 @@ export async function getOrCreateConversation(
           isVerified: true,
         },
       },
-      lastMessage: context?.productName 
-        ? `ইনকোয়ারি: ${context.productName}` 
+      lastMessage: context?.productName
+        ? `ইনকোয়ারি: ${context.productName}`
         : 'চ্যাট শুরু হয়েছে',
       lastMessageTimestamp: serverTimestamp(),
       unreadCounts: {

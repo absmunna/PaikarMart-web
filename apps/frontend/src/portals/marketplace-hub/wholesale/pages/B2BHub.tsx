@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HomeHeader } from "@/components/home/HomeHeader";
+import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 
 // Import modular B2B sub-components (new add)
@@ -112,7 +113,7 @@ const COMMISSION_FLOW = [
 
 export default function B2BHub() {
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Custom router state inside B2B Portal
   const [view, setViewState] = useState<{ type: string; id?: string }>({
     type: searchParams.get('v') || 'home',
@@ -170,11 +171,14 @@ export default function B2BHub() {
 
   return (
     <div className="w-full max-w-[480px] md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 pb-28 text-[var(--pm-text)] flex flex-col gap-0 pt-4 min-h-screen bg-[var(--pm-bg)] transition-all duration-300">
-      
+
       {/* ━━━ TOP BRANDING & WALLET ━━━ */}
       <HomeHeader />
 
-
+      {/* ━━━ HERO ZONE: Stories ━━━ */}
+      <section className="pt-3">
+        <StoryBar context="wholesale" />
+      </section>
 
       {/* ━━━ STICKY NAV HUB (SUB ROUTER TABS + PORTAL BAR) ━━━ */}
       <div className="md:sticky top-16 z-40 bg-[var(--pm-bg)]/95 backdrop-blur-md border-b border-white/[0.08] mt-2 -mx-4 px-4 pb-2 pt-1.5 flex flex-col gap-2">
@@ -188,8 +192,8 @@ export default function B2BHub() {
                 onClick={() => handleNavigate(tab.id)}
                 className={cn(
                   "px-3.5 py-1 rounded-full text-[10px] font-black tracking-wide whitespace-nowrap transition-all uppercase",
-                  isActive 
-                    ? "bg-[var(--pm-accent)] text-white shadow-md scale-[1.02]" 
+                  isActive
+                    ? "bg-[var(--pm-accent)] text-white shadow-md scale-[1.02]"
                     : "bg-white/5 text-[var(--pm-text-secondary)] border border-white/5 hover:text-white hover:bg-white/10"
                 )}
               >
@@ -211,8 +215,8 @@ export default function B2BHub() {
             <span className="font-extrabold text-[var(--pm-accent)]">[লাইভ]</span> নারায়ণগঞ্জ নিটওয়্যারে জ্যাকার্ড উইভিং রোল স্টক Clearance!
           </p>
         </div>
-        <span 
-          onClick={() => handleNavigate('products')} 
+        <span
+          onClick={() => handleNavigate('products')}
           className="text-[9px] text-teal-400 underline font-extrabold cursor-pointer shrink-0 uppercase"
         >
           Check
@@ -223,15 +227,15 @@ export default function B2BHub() {
       <div className="flex flex-col gap-6 pt-2">
         {/* VIEW 1: B2B Home */}
         {view.type === 'home' && (
-          <B2BHomeView 
-            onNavigate={handleNavigate} 
-            onSearch={handleSearchTransfer} 
+          <B2BHomeView
+            onNavigate={handleNavigate}
+            onSearch={handleSearchTransfer}
           />
         )}
 
         {/* VIEW 2: B2B Showroom Listing */}
         {view.type === 'products' && (
-          <B2BProductsView 
+          <B2BProductsView
             initialCategory={searchCategory}
             initialMoq={searchMoq}
             initialSearch={searchQuery}
@@ -242,7 +246,7 @@ export default function B2BHub() {
 
         {/* VIEW 3: Granular bulk detail view */}
         {view.type === 'product-detail' && view.id && (
-          <B2BProductDetailView 
+          <B2BProductDetailView
             productId={view.id}
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('products')}
@@ -252,7 +256,7 @@ export default function B2BHub() {
 
         {/* VIEW 4: Millers Directory */}
         {view.type === 'factories' && (
-          <FactoryDirectoryView 
+          <FactoryDirectoryView
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('home')}
           />
@@ -260,7 +264,7 @@ export default function B2BHub() {
 
         {/* VIEW 5: Deep industrial corporate profiling */}
         {view.type === 'factory-profile' && view.id && (
-          <FactoryProfileView 
+          <FactoryProfileView
             factoryId={view.id}
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('factories')}
@@ -270,7 +274,7 @@ export default function B2BHub() {
 
         {/* VIEW 6: Combined importer supplier boards */}
         {view.type === 'directory' && (
-          <SupplierDirectoryView 
+          <SupplierDirectoryView
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('home')}
           />
@@ -278,7 +282,7 @@ export default function B2BHub() {
 
         {/* VIEW 7: RFQ Marketplace boards */}
         {view.type === 'rfq' && (
-          <RFQMarketplaceView 
+          <RFQMarketplaceView
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('home')}
             onNotify={triggerNotify}
@@ -287,7 +291,7 @@ export default function B2BHub() {
 
         {/* VIEW 8: Detail of RFQ bids */}
         {view.type === 'rfq-detail' && view.id && (
-          <RFQDetailView 
+          <RFQDetailView
             rfqId={view.id}
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('rfq')}
@@ -297,7 +301,7 @@ export default function B2BHub() {
 
         {/* VIEW 9: Social trading announcements */}
         {view.type === 'feed' && (
-          <B2BTradeFeedView 
+          <B2BTradeFeedView
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('home')}
             onNotify={triggerNotify}
@@ -453,8 +457,8 @@ export default function B2BHub() {
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px]">
           <div className={cn(
             "p-3.5 rounded-2xl border shadow-lg backdrop-blur-md flex items-center gap-2.5 transition-all animate-in fade-in-50 slide-in-from-bottom-5",
-            toast.type === 'success' ? "bg-cyan-950/90 text-cyan-300 border-cyan-500/30" : 
-            toast.type === 'warning' ? "bg-amber-950/90 text-amber-300 border-amber-500/30" : 
+            toast.type === 'success' ? "bg-cyan-950/90 text-cyan-300 border-cyan-500/30" :
+            toast.type === 'warning' ? "bg-amber-950/90 text-amber-300 border-amber-500/30" :
                                       "bg-rose-950/90 text-rose-300 border-rose-500/30"
           )}>
             <Info className="w-4 h-4 shrink-0" />

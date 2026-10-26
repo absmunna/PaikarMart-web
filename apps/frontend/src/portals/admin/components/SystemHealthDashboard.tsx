@@ -8,38 +8,38 @@ export const SystemHealthDashboard: React.FC = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4 select-none">
-      <HealthCard 
-        label="API Latency" 
-        value={`${health.apiLatency}ms`} 
-        icon={Zap} 
+      <HealthCard
+        label="API Latency"
+        value={`${health.apiLatency}ms`}
+        icon={Zap}
         status={health.apiLatency < 100 ? 'healthy' : 'warning'}
         subValue="P99: 142ms"
       />
-      <HealthCard 
-        label="Throughput" 
-        value={`${health.throughput}/s`} 
-        icon={Activity} 
+      <HealthCard
+        label="Throughput"
+        value={`${health.throughput}/s`}
+        icon={Activity}
         status={health.throughput > 500 ? 'healthy' : 'warning'}
         subValue="Peak: 1.8k/s"
       />
-      <HealthCard 
-        label="Database Load" 
-        value={`${health.dbLoad}%`} 
-        icon={Database} 
+      <HealthCard
+        label="Database Load"
+        value={`${health.dbLoad}%`}
+        icon={Database}
         status={health.dbLoad < 70 ? 'healthy' : 'warning'}
         subValue="QPS: 840"
       />
-      <HealthCard 
-        label="Error Rate" 
-        value={`${health.errorRate}%`} 
-        icon={AlertTriangle} 
+      <HealthCard
+        label="Error Rate"
+        value={`${health.errorRate}%`}
+        icon={AlertTriangle}
         status={health.errorRate < 0.1 ? 'healthy' : 'critical'}
         subValue="0 failures in 10m"
       />
-      <HealthCard 
-        label="Active Sessions" 
-        value={String(health.activeSessions)} 
-        icon={Globe} 
+      <HealthCard
+        label="Active Sessions"
+        value={String(health.activeSessions)}
+        icon={Globe}
         status="healthy"
         subValue="14% Inc (24h)"
       />

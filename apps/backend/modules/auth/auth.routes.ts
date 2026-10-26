@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { 
-  login, 
-  register, 
-  forgotPassword, 
-  sendOtp, 
-  verifyOtp, 
-  getCurrentUser, 
-  syncUser, 
-  getDbStatus 
+import {
+  login,
+  register,
+  forgotPassword,
+  sendOtp,
+  verifyOtp,
+  getCurrentUser,
+  syncUser,
+  getDbStatus
 } from './auth.controller';
 
 const router = Router();

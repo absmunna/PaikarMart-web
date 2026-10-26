@@ -393,7 +393,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     status: 'active',
     iconName: 'Newspaper'
   },
-  
+
   // --- SPECIALIZED HUB ---
   {
     id: 'electronics',

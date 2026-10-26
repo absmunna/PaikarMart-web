@@ -63,11 +63,11 @@ export const useKycStore = create<KycStoreState>()(
         ]
       })),
       updateStatus: (id, status, trustLevel) => set((state) => ({
-        submissions: state.submissions.map(item => 
-          item.id === id ? { 
-            ...item, 
-            status, 
-            trustLevel: trustLevel !== undefined ? trustLevel : (status === 'verified' ? 5 : item.trustLevel) 
+        submissions: state.submissions.map(item =>
+          item.id === id ? {
+            ...item,
+            status,
+            trustLevel: trustLevel !== undefined ? trustLevel : (status === 'verified' ? 5 : item.trustLevel)
           } : item
         )
       })),

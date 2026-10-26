@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Store, ShoppingBag, Star, Clock, ShieldCheck, 
-  MapPin, MessageSquare, Share2, Plus, 
+import {
+  Store, ShoppingBag, Star, Clock, ShieldCheck,
+  MapPin, MessageSquare, Share2, Plus,
   LayoutGrid, Grid, Info, Settings,
   Heart, ShoppingCart, Search, Filter,
   ArrowRight, ThumbsUp, MessageCircle, Send, Check
@@ -31,13 +31,13 @@ export const SellerStoreFront: React.FC<SellerStoreFrontProps> = ({ store, produ
       <div className="relative">
         {/* Cover & Avatar Header Area */}
         <div className="relative h-48 md:h-64 rounded-3xl overflow-hidden group">
-          <img 
-            src={store.coverUrl} 
-            alt={store.storeName} 
+          <img
+            src={store.coverUrl}
+            alt={store.storeName}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          
+
           {/* Avatar Overlay */}
           <div className="absolute -bottom-1 md:bottom-6 left-6 md:left-10 flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
             <div className="relative">
@@ -76,7 +76,7 @@ export const SellerStoreFront: React.FC<SellerStoreFrontProps> = ({ store, produ
                </Button>
              ) : (
                <>
-                 <Button 
+                 <Button
                    onClick={() => setIsFollowing(!isFollowing)}
                    className={cn(
                      "font-black text-[10px] uppercase tracking-widest h-9 px-6 rounded-xl transition-all shadow-lg",
@@ -130,8 +130,8 @@ export const SellerStoreFront: React.FC<SellerStoreFrontProps> = ({ store, produ
             onClick={() => setActiveTab(tab.id as any)}
             className={cn(
               "py-3 px-6 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all relative whitespace-nowrap",
-              activeTab === tab.id 
-                ? "text-sky-400 after:absolute after:bottom-0 after:left-0 after:w-full after:h-1 after:bg-sky-400" 
+              activeTab === tab.id
+                ? "text-sky-400 after:absolute after:bottom-0 after:left-0 after:w-full after:h-1 after:bg-sky-400"
                 : "text-zinc-500 hover:text-zinc-300"
             )}
           >
@@ -175,12 +175,12 @@ export const SellerStoreFront: React.FC<SellerStoreFrontProps> = ({ store, produ
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
-                  
+
                   {/* Post Content */}
                   <div className="px-4 pb-3">
                     <p className="text-xs text-zinc-300 font-bold leading-relaxed">
-                      {product.title} is now available in our {store.category} hub! Stock is limited, get yours now. 
-                      ৳{product.price.toLocaleString()} only. 
+                      {product.title} is now available in our {store.category} hub! Stock is limited, get yours now.
+                      ৳{product.price.toLocaleString()} only.
                     </p>
                   </div>
 

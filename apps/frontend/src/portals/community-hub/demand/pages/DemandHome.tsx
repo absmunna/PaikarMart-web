@@ -72,7 +72,7 @@ export default function DemandHome() {
           <p className="text-sm sm:text-base text-blue-100 max-w-md opacity-90 leading-relaxed">
             আপনার চাহিদাপত্র সাবমিট করুন এবং ভেরিফাইড বিক্রেতাদের কাছ থেকে সরাসরি সেরা অফার গ্রহণ করুন।
           </p>
-          
+
           <div className="flex flex-wrap gap-3 mt-8">
             <button className="bg-white text-blue-900 px-6 py-3 rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center gap-2">
               <Plus className="w-4 h-4" />
@@ -83,7 +83,7 @@ export default function DemandHome() {
             </button>
           </div>
         </div>
-        
+
         {/* Abstract Background Shapes */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -97,8 +97,8 @@ export default function DemandHome() {
               key={cat}
               onClick={() => setSelectedCat(cat)}
               className={`px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all border ${
-                selectedCat === cat 
-                  ? 'bg-blue-600 text-white border-blue-500 shadow-md' 
+                selectedCat === cat
+                  ? 'bg-blue-600 text-white border-blue-500 shadow-md'
                   : 'bg-[var(--pm-surface)] text-[var(--pm-text-muted)] border-[var(--pm-border)] hover:border-blue-400'
               }`}
             >
@@ -126,7 +126,7 @@ export default function DemandHome() {
             {post.urgent && (
               <div className="absolute top-0 left-0 h-full w-1 bg-red-500" />
             )}
-            
+
             <div className="flex flex-col sm:flex-row gap-5">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -144,15 +144,15 @@ export default function DemandHome() {
                     {post.timeAgo}
                   </span>
                 </div>
-                
+
                 <h3 className="text-base sm:text-lg font-black text-[var(--pm-text)] group-hover:text-blue-600 transition-colors leading-tight mb-2">
                   {post.title}
                 </h3>
-                
+
                 <p className="text-xs sm:text-sm text-[var(--pm-text-muted)] line-clamp-2 mb-4 leading-relaxed">
                   {post.description}
                 </p>
-                
+
                 <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-x-6 gap-y-2 pt-4 border-t border-[var(--pm-border)]/50">
                   <div className="flex items-center gap-1.5 text-xs text-[var(--pm-text-muted)]">
                     <Tag className="w-3.5 h-3.5 text-blue-500" />
@@ -168,7 +168,7 @@ export default function DemandHome() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex flex-row sm:flex-col justify-between items-center sm:items-end gap-3 pt-4 sm:pt-0">
                 <div className="text-right sm:block hidden">
                   <p className="text-[10px] text-[var(--pm-text-muted)]">পোস্ট করেছেন</p>

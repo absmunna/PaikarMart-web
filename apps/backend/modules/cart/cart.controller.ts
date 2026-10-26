@@ -30,7 +30,7 @@ export const getCart = async (req: Request, res: Response) => {
     }
 
     const userId = req.headers['x-user-id'] as string || 'dev-user-id';
-    
+
     // Find or create user to safeguard profile matches
     let user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
@@ -109,7 +109,7 @@ export const addCartItem = async (req: Request, res: Response) => {
     }
 
     const userId = req.headers['x-user-id'] as string || 'dev-user-id';
-    
+
     let user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
       user = await prisma.user.findFirst();
@@ -204,7 +204,7 @@ export const clearCart = async (req: Request, res: Response) => {
     }
 
     const userId = req.headers['x-user-id'] as string || 'dev-user-id';
-    
+
     let user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
       user = await prisma.user.findFirst();

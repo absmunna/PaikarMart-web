@@ -12,4 +12,3 @@ router.patch('/:id/status', updateOrderStatus);
 router.put('/:id/status', updateOrderStatus);
 
 export const orderRoutes = router;
-

@@ -47,7 +47,7 @@ export default function DigitalHome() {
         {/* Digital Hero Banner */}
         <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a0c2e] via-[#120a1f] to-[#0a050f] p-6 sm:p-8 shadow-2xl">
           <div className="absolute right-0 bottom-0 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
-          
+
           <div className="max-w-2xl relative z-10 space-y-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] font-black uppercase tracking-wider">
               <Laptop className="w-3.5 h-3.5" /> Premium Digital Assets
@@ -105,9 +105,9 @@ export default function DigitalHome() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filtered.map((p) => (
-              <ProductCard 
-                key={p.id} 
-                product={{...p, portal: 'digital'}} 
+              <ProductCard
+                key={p.id}
+                product={{...p, portal: 'digital'}}
                 activePortal="digital"
               />
             ))}

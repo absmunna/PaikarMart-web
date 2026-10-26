@@ -3,7 +3,6 @@ import { PlusCircle, MapPin, Tag, MessageSquare, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { safeBack } from "@/lib/navigation";
 
 interface DemandPost {
   id: string;
@@ -101,12 +100,11 @@ export default function DemandHub() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
         <div>
-          <button 
-            onClick={() => safeBack(navigate, '/')}
-            className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-2 transition-colors cursor-pointer"
-            title="ফিরে যান"
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-2 transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> ফিরে যান
+            <ArrowLeft className="h-4 w-4" /> Back
           </button>
           <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
             <Tag className="h-6 w-6 text-[#FF7A00]" /> Buyer Demand & Sourcing Hub
@@ -165,9 +163,9 @@ export default function DemandHub() {
 
             <div className="flex items-center justify-between pt-4 border-t border-white/10">
               <div className="flex items-center gap-2.5">
-                <img 
-                  src={demand.buyerAvatar} 
-                  alt={demand.buyerName} 
+                <img
+                  src={demand.buyerAvatar}
+                  alt={demand.buyerName}
                   className="h-8 w-8 rounded-full object-cover border border-white/10"
                   referrerPolicy="no-referrer"
                 />
@@ -192,7 +190,7 @@ export default function DemandHub() {
       <AnimatePresence>
         {isCreateModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -200,7 +198,7 @@ export default function DemandHub() {
             >
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
                 <h3 className="text-base font-black text-white">Post Buyer Demand</h3>
-                <button 
+                <button
                   onClick={() => setIsCreateModalOpen(false)}
                   className="text-zinc-400 hover:text-white text-xs font-bold"
                 >
@@ -211,11 +209,11 @@ export default function DemandHub() {
               <form onSubmit={handleCreateDemand} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-zinc-400 mb-1">What are you looking for?</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Looking for 200kg Basmati Rice..." 
+                    placeholder="e.g. Looking for 200kg Basmati Rice..."
                     className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                   />
                 </div>
@@ -223,7 +221,7 @@ export default function DemandHub() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-zinc-400 mb-1">Category</label>
-                    <select 
+                    <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
@@ -236,11 +234,11 @@ export default function DemandHub() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-zinc-400 mb-1">Required Quantity</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
-                      placeholder="e.g. 500 kg" 
+                      placeholder="e.g. 500 kg"
                       className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
@@ -249,35 +247,35 @@ export default function DemandHub() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-zinc-400 mb-1">Target Budget (BDT)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={budget}
                       onChange={(e) => setBudget(e.target.value)}
-                      placeholder="e.g. 35000" 
+                      placeholder="e.g. 35000"
                       className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-zinc-400 mb-1">Delivery Location</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="e.g. Uttara, Dhaka" 
+                      placeholder="e.g. Uttara, Dhaka"
                       className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setIsCreateModalOpen(false)}
                     className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-bold"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#e06b00] text-white text-xs font-black shadow-lg shadow-[#FF7A00]/25"
                   >

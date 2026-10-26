@@ -4,7 +4,6 @@ import { ShieldCheck, ArrowLeft, Loader2, CheckCircle2, Lock, Smartphone, KeyRou
 import { Button } from '@/components/ui/button';
 import { formatBDT } from '@/lib/format';
 import { toast } from 'sonner';
-import { safeBack } from '@/lib/navigation';
 
 export const SandboxGatewayPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -75,7 +74,7 @@ export const SandboxGatewayPage: React.FC = () => {
       setIsProcessing(false);
       setStep('success');
       toast.success(`${providerNameBn} সম্পন্ন হয়েছে!`);
-      
+
       // Auto return after 2 seconds
       setTimeout(() => {
         navigate('/cart', { state: { paymentSuccess: true, orderId, tx } });
@@ -99,21 +98,20 @@ export const SandboxGatewayPage: React.FC = () => {
 
       <div className="max-w-md w-full bg-[#0d1017] border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
         {/* Gateway Header */}
-        <div 
+        <div
           className="p-6 text-white text-center relative"
           style={{ backgroundColor: themeColor }}
         >
           <button
-            onClick={() => safeBack(navigate, '/checkout')}
-            className="absolute left-4 top-4 p-2 rounded-xl bg-black/20 hover:bg-black/30 transition-colors text-white cursor-pointer"
-            title="ফিরে যান"
+            onClick={() => navigate(-1)}
+            className="absolute left-4 top-4 p-2 rounded-xl bg-black/20 hover:bg-black/30 transition-colors text-white"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          
+
           <h1 className="text-xl font-black uppercase tracking-tight">{providerName}</h1>
           <p className="text-xs text-white/80 mt-1 font-medium">Merchant: Paikar Mart Super App</p>
-          
+
           <div className="mt-4 bg-black/20 backdrop-blur-md rounded-2xl py-2.5 px-4 inline-block">
             <span className="text-[10px] uppercase tracking-wider block opacity-80">মোট প্রদেয় মূল্য</span>
             <span className="text-xl font-black font-mono">{formatBDT(amount)}</span>

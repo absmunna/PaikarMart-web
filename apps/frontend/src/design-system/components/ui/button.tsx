@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export function buttonVariants({ variant = 'primary', size = 'md' }: { variant?: string; size?: string } = {}) {
   const base = "inline-flex items-center justify-center rounded-xl font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
-  
+
   const variants = {
     primary: 'bg-[var(--pm-accent)] text-white hover:opacity-90 shadow-lg shadow-[var(--pm-accent)]/20',
     default: 'bg-[var(--pm-accent)] text-white hover:opacity-90 shadow-lg shadow-[var(--pm-accent)]/20',

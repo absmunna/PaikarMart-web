@@ -1,4 +1,5 @@
 import React from 'react';
+import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { MessageCircle } from 'lucide-react';
@@ -6,6 +7,7 @@ import { MessageCircle } from 'lucide-react';
 export default function MessagesPortal() {
   return (
     <div className="min-h-screen pb-20">
+      <StoryBar context="messages" />
       <PortalIconBar context="messages" />
       <main className="p-4 space-y-4">
         <GlassCard className="p-6 flex items-center gap-4">

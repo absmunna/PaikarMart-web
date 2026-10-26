@@ -5,7 +5,6 @@ import { useAuth } from '@/modules/auth';
 import { useSeller } from '@/modules/seller';
 import { RoleBadge } from '@/components/common/RoleBadge';
 import { getRoleGroup, ROLE_GROUP_META } from '@/config/roles.config';
-import { RoleSwitcherWidget } from '@/modules/auth/components/RoleSwitcherWidget';
 import { cn } from '@/lib/utils';
 
 export function PersonalOverviewTab({ onNavigateTab }: { onNavigateTab?: (tab: string) => void }) {
@@ -265,10 +264,6 @@ export function PersonalOverviewTab({ onNavigateTab }: { onNavigateTab?: (tab: s
 
   return (
     <div className="space-y-6 text-left">
-      
-      {/* Real-time Role Switcher & RBAC Controller Widget */}
-      <RoleSwitcherWidget />
-
       {/* Cockpit Title header */}
       <div className="flex items-center justify-between border-b border-white/5 pb-4">
         <div>

@@ -3,28 +3,27 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetProduct, getGetProductQueryKey } from "@/modules/app";
 import { UnifiedPostDetail } from "@/components/common/UnifiedPostDetail";
 import { mapProductToFeedItem } from "@/modules/feed";
-import { 
-  ShieldCheck, Clock, CheckCircle2, Calendar, 
-  ArrowDownCircle, FileText, MessageSquare 
+import {
+  ShieldCheck, Clock, CheckCircle2, Calendar,
+  ArrowDownCircle, FileText, MessageSquare
 } from "lucide-react";
 import { toast } from 'sonner';
-import { safeBack } from '@/lib/navigation';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: product, isLoading } = useGetProduct(id ?? '', { 
-    query: { 
-      queryKey: getGetProductQueryKey(id ?? ''), 
-      enabled: !!id 
-    } 
+  const { data: product, isLoading } = useGetProduct(id ?? '', {
+    query: {
+      queryKey: getGetProductQueryKey(id ?? ''),
+      enabled: !!id
+    }
   });
 
   if (isLoading) return <div className="p-8 text-center text-zinc-500 font-black animate-pulse">Loading Product...</div>;
   if (!product) return <div className="p-8 text-center text-zinc-500 font-black">Product Not Found</div>;
 
   const feedItem = mapProductToFeedItem(product);
-  
+
   const isService = product.type === "service" || product.portal === "services";
   const isDigital = product.type === "digital" || product.portal === "digital";
 
@@ -68,7 +67,7 @@ export default function ProductDetail() {
                <p className="text-[10px] text-zinc-500 font-medium">100% Authentic & QC Checked</p>
              </div>
            </div>
-           
+
            <div className="pt-4 border-t border-white/[0.04] grid grid-cols-2 gap-4">
               <div className="space-y-1">
                  <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Category</span>
@@ -87,9 +86,9 @@ export default function ProductDetail() {
   const actionLabel = isService ? "Book Appointment" : isDigital ? "Instant Download" : "Add to Cart";
 
   return (
-    <UnifiedPostDetail 
-      item={feedItem} 
-      onBack={() => safeBack(navigate, '/marketplace')}
+    <UnifiedPostDetail
+      item={feedItem}
+      onBack={() => navigate(-1)}
       customFields={customFields}
       actionButtonLabel={actionLabel}
       onAction={() => {

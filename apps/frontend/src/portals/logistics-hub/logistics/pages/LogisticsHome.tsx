@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-  Package, MapPin, Truck, ShieldCheck, 
-  Search, Bell, ArrowRight, CheckCircle2, 
+import {
+  Package, MapPin, Truck, ShieldCheck,
+  Search, Bell, ArrowRight, CheckCircle2,
   Clock, AlertCircle, Phone, Navigation, Car,
   ShieldAlert, Sparkles, Building, Info, Star, Check,
   ChevronRight, ArrowUpRight, HelpCircle, AlertTriangle,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -61,16 +62,16 @@ export default function LogisticsPortal() {
   const { detectLocation, watchLocation } = useGeolocation();
   const { city, lat, lng, isAutoDetected } = useLocationStore();
   const { balance, coins, updateBalance, addTransaction } = useWalletStore();
-  
+
   const [activeCategory, setActiveCategory] = useState<LogisticsCategory | null>(null);
   const [isBilingual, setIsBilingual] = useState(true);
   const [pickup, setPickup] = useState('Panthapath, Dhaka');
   const [drop, setDrop] = useState('Uttara Sector 11, Dhaka');
-  
+
   // Multi-stop Drop Locations State
   const [multiStops, setMultiStops] = useState<string[]>([]);
   const [showMultiStop, setShowMultiStop] = useState(false);
-  
+
   // Booking State Machine
   const [bookingStep, setBookingStep] = useState<'selection' | 'custom_details' | 'vehicle' | 'payment' | 'tracking'>('selection');
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
@@ -93,11 +94,11 @@ export default function LogisticsPortal() {
   // ── Category-specific Interactive States ──
   // Rental
   const [rentType, setRentType] = useState<'daily' | 'weekly' | 'monthly'>('daily');
-  
+
   // Food Delivery
   const [selectedRestaurant, setSelectedRestaurant] = useState<string>('star_kabab');
   const [foodCart, setFoodCart] = useState<Record<string, number>>({});
-  
+
   // Courier
   const [courierZone, setCourierZone] = useState<'inside' | 'outside' | 'nationwide'>('inside');
   const [senderName, setSenderName] = useState('');
@@ -144,10 +145,10 @@ export default function LogisticsPortal() {
 
   // Commerce Center Tabs
   const [logisticsTab, setLogisticsTab] = useState<'providers' | 'coverage' | 'b2b' | 'returns' | 'wallet'>('providers');
-  
+
   // Selected Storefront
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
-  
+
   // Coverage District Filter
   const [selectedDivision, setSelectedDivision] = useState<string>('Dhaka');
   const [districtSearch, setDistrictSearch] = useState<string>('');
@@ -232,10 +233,10 @@ export default function LogisticsPortal() {
     let surchargeMultiplier = 1;
     if (weatherCondition === 'rainy') surchargeMultiplier += 0.25; // Rain Surge (+25%)
     if (trafficCongestion === 'rush_hour') surchargeMultiplier += 0.35; // Traffic Surge (+35%)
-    
+
     const multiplier = surchargeMultiplier + (multiStops.length * 0.4); // 40% surcharge per extra stop
     const basePrice = Math.round(vehicle.price * multiplier);
-    
+
     setSelectedVehicle({
       ...vehicle,
       price: basePrice,
@@ -253,7 +254,7 @@ export default function LogisticsPortal() {
     const newOrderId = `PM-L${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     setCurrentOrderId(newOrderId);
     setBookingStep('tracking');
-    
+
     // Deduct from logistics wallet credits first, or fallback to user wallet store
     if (method === 'wallet') {
       if (shippingCredits >= selectedVehicle.price) {
@@ -389,11 +390,11 @@ export default function LogisticsPortal() {
   const calculatedCourierCharge = useMemo(() => {
     const base = courierZone === 'inside' ? 60 : courierZone === 'outside' ? 120 : 150;
     let baseCharge = base + (weightKg - 1) * 25;
-    
+
     let multiplier = 1;
     if (weatherCondition === 'rainy') multiplier += 0.25;
     if (trafficCongestion === 'rush_hour') multiplier += 0.35;
-    
+
     return Math.round(baseCharge * multiplier);
   }, [courierZone, weightKg, weatherCondition, trafficCongestion]);
 
@@ -473,14 +474,15 @@ export default function LogisticsPortal() {
 
   return (
     <div className="min-h-screen text-white bg-[#03060d] pb-24">
-      
+
       {/* ━━━ PORTAL HOMEPAGE HEADER ━━━ */}
       <section className="pt-4 px-2 space-y-1">
+        <StoryBar context="logistics" />
         <PortalIconBar context="transport" />
       </section>
 
       <div className="w-full max-w-[1280px] mx-auto px-4 mt-6 space-y-8">
-        
+
         {/* Banner with Premium Graphics */}
         <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-cyan-900/10 via-[#0b101d]/80 to-black/65 border border-white/5 overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none animate-pulse" />
@@ -509,14 +511,14 @@ export default function LogisticsPortal() {
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">
-              <Button 
+              <Button
                 onClick={() => setShowFleetStudio(!showFleetStudio)}
                 className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 text-xs rounded-xl font-bold h-10 px-5"
               >
                 <Layers className="w-4 h-4 mr-2" />
                 {t('Fleet & Driver Studio', 'ফ্লিট ও ড্রাইভার স্টুডিও')}
               </Button>
-              <Button 
+              <Button
                 onClick={() => setIsBilingual(!isBilingual)}
                 variant="outline"
                 className="border-white/10 hover:bg-white/5 text-xs rounded-xl font-bold h-10 px-5 text-slate-300"
@@ -546,9 +548,9 @@ export default function LogisticsPortal() {
                     <h3 className="text-sm font-black text-white">{t('Logistics Provider Fleet Management', 'লজিস্টিকস প্রোভাইডার ফ্লিট ড্যাশবোর্ড')}</h3>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowFleetStudio(false)}
                   className="rounded-full bg-white/5 hover:bg-white/10"
                 >
@@ -600,8 +602,8 @@ export default function LogisticsPortal() {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('My Registered Fleet', 'আমার নিবন্ধিত যানবাহন')}</h4>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       onClick={() => {
                         const plate = prompt('Enter vehicle license plate (DHAKA-METRO-XXXX):');
                         if (plate) {
@@ -689,7 +691,7 @@ export default function LogisticsPortal() {
 
         {/* ── 1. UNIFIED LOGISTICS HOME (QUICK BOOK & INTELLIGENCE) ── */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Quick Booking Engine (Left 7 Columns) */}
           <div className="lg:col-span-7 p-6 rounded-[2.5rem] bg-white/[0.02] border border-white/10 space-y-6 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl" />
@@ -730,12 +732,12 @@ export default function LogisticsPortal() {
             </div>
 
             {/* Shared Search Inputs */}
-            <LogisticsSearchArea 
-              pickup={pickup} 
-              drop={drop} 
-              setPickup={setPickup} 
-              setDrop={setDrop} 
-              isBilingual={isBilingual} 
+            <LogisticsSearchArea
+              pickup={pickup}
+              drop={drop}
+              setPickup={setPickup}
+              setDrop={setDrop}
+              isBilingual={isBilingual}
             />
 
             {/* Custom parameters based on Passenger vs Package */}
@@ -747,8 +749,8 @@ export default function LogisticsPortal() {
                     <span className="text-[10px] text-slate-500">{t('Includes driver limits', 'চালকের আসন বাদে')}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Button 
-                      size="icon" 
+                    <Button
+                      size="icon"
                       variant="outline"
                       onClick={() => setPassengerCount(Math.max(1, passengerCount - 1))}
                       className="w-8 h-8 rounded-lg border-white/10"
@@ -756,8 +758,8 @@ export default function LogisticsPortal() {
                       <Minus className="w-3.5 h-3.5" />
                     </Button>
                     <span className="text-sm font-black w-6 text-center">{passengerCount}</span>
-                    <Button 
-                      size="icon" 
+                    <Button
+                      size="icon"
                       variant="outline"
                       onClick={() => setPassengerCount(Math.min(8, passengerCount + 1))}
                       className="w-8 h-8 rounded-lg border-white/10"
@@ -773,10 +775,10 @@ export default function LogisticsPortal() {
                       <label className="text-xs font-bold text-slate-400 uppercase">{t('Package Weight (Kg)', 'প্যাকেজের আনুমানিক ওজন')}</label>
                       <span className="text-xs font-black text-cyan-400">{packageWeight} Kg</span>
                     </div>
-                    <input 
-                      type="range" 
-                      min="1" 
-                      max="1000" 
+                    <input
+                      type="range"
+                      min="1"
+                      max="1000"
                       value={packageWeight}
                       onChange={e => setPackageWeight(Number(e.target.value))}
                       className="w-full accent-cyan-400"
@@ -812,13 +814,13 @@ export default function LogisticsPortal() {
                     {t('Schedule Booking', 'বুকিং শিডিউল')}
                   </label>
                   <div className="flex bg-white/5 p-0.5 rounded-lg border border-white/10">
-                    <button 
+                    <button
                       onClick={() => setBookingMode('now')}
                       className={`px-2 py-1 text-[9px] font-bold rounded ${bookingMode === 'now' ? 'bg-cyan-500 text-black' : 'text-slate-400'}`}
                     >
                       Now
                     </button>
-                    <button 
+                    <button
                       onClick={() => setBookingMode('schedule')}
                       className={`px-2 py-1 text-[9px] font-bold rounded ${bookingMode === 'schedule' ? 'bg-cyan-500 text-black' : 'text-slate-400'}`}
                     >
@@ -828,32 +830,32 @@ export default function LogisticsPortal() {
                 </div>
 
                 {bookingMode === 'schedule' && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -5 }} 
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-2 pt-1"
                   >
                     <div className="grid grid-cols-2 gap-2">
-                      <input 
-                        type="date" 
+                      <input
+                        type="date"
                         value={scheduleDate}
                         onChange={e => setScheduleDate(e.target.value)}
                         className="bg-black/40 border border-white/10 rounded-lg p-2 text-xs text-white"
                       />
-                      <input 
-                        type="time" 
+                      <input
+                        type="time"
                         value={scheduleTime}
                         onChange={e => setScheduleTime(e.target.value)}
                         className="bg-black/40 border border-white/10 rounded-lg p-2 text-xs text-white"
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
-                        id="recurring_check" 
+                      <input
+                        type="checkbox"
+                        id="recurring_check"
                         checked={isRecurring}
                         onChange={e => setIsRecurring(e.target.checked)}
-                        className="rounded accent-cyan-500" 
+                        className="rounded accent-cyan-500"
                       />
                       <label htmlFor="recurring_check" className="text-[10px] text-slate-300">
                         {t('Set as B2B Recurring Delivery', 'B2B রিকারিং ডেলিভারি সেট করুন')}
@@ -884,14 +886,14 @@ export default function LogisticsPortal() {
                     <MapIcon className="w-4 h-4 text-cyan-400" />
                     {t('Multi-Stop Routing', 'মাল্টি-স্টপ ড্রপ-অফ')}
                   </label>
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={showMultiStop}
                     onChange={e => {
                       setShowMultiStop(e.target.checked);
                       if (!e.target.checked) setMultiStops([]);
                     }}
-                    className="rounded accent-cyan-500 h-4 w-4" 
+                    className="rounded accent-cyan-500 h-4 w-4"
                   />
                 </div>
                 <p className="text-[10px] text-slate-500 leading-tight">
@@ -942,8 +944,8 @@ export default function LogisticsPortal() {
                     toast.info(weatherCondition === 'clear' ? t('Monsoon Rain Mode Activated! 🌧️ +25% Surge applied.', 'বৃষ্টির মোড চালু হয়েছে! 🌧️ +২৫% সারচার্জ যুক্ত হয়েছে।') : t('Weather Cleared. ☀️ Normal rates applied.', 'আবহাওয়া পরিষ্কার। ☀️ সাধারণ রেট প্রযোজ্য।'));
                   }}
                   className={`p-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                    weatherCondition === 'rainy' 
-                      ? 'bg-blue-500/15 border-blue-500/50 text-blue-400 shadow-lg shadow-blue-500/5' 
+                    weatherCondition === 'rainy'
+                      ? 'bg-blue-500/15 border-blue-500/50 text-blue-400 shadow-lg shadow-blue-500/5'
                       : 'bg-white/5 border-white/5 text-slate-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -956,8 +958,8 @@ export default function LogisticsPortal() {
                     toast.info(trafficCongestion === 'normal' ? t('Peak Rush Hour Activated! 🚗 +35% Surge applied.', 'ব্যস্ত ট্রাফিক মোড চালু হয়েছে! 🚗 +৩৫% সারচার্জ যুক্ত হয়েছে।') : t('Traffic Cleared. 🟢 Normal speed rates applied.', 'ট্রাফিক জ্যাম নেই। 🟢 সাধারণ রেট প্রযোজ্য।'));
                   }}
                   className={`p-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                    trafficCongestion === 'rush_hour' 
-                      ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/5' 
+                    trafficCongestion === 'rush_hour'
+                      ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/5'
                       : 'bg-white/5 border-white/5 text-slate-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -966,7 +968,7 @@ export default function LogisticsPortal() {
               </div>
             </div>
 
-            <Button 
+            <Button
               onClick={processQuickBook}
               className="w-full h-14 bg-gradient-to-r from-cyan-500 to-teal-500 hover:opacity-90 text-black font-black text-xs uppercase tracking-widest rounded-2xl cursor-pointer"
             >
@@ -1003,13 +1005,13 @@ export default function LogisticsPortal() {
                   </p>
 
                   <div className="flex gap-2">
-                    <Button 
+                    <Button
                       onClick={() => setQuickBookResult(null)}
                       className="flex-1 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-white h-10"
                     >
                       {t('Decline', 'বাতিল')}
                     </Button>
-                    <Button 
+                    <Button
                       onClick={selectQuickBookResult}
                       className="flex-1 bg-cyan-500 hover:bg-cyan-400 rounded-xl text-xs font-bold text-black h-10"
                     >
@@ -1035,53 +1037,53 @@ export default function LogisticsPortal() {
             {/* Interactive Logistics Feed List */}
             <div className="space-y-4 max-h-[580px] overflow-y-auto pr-1">
               {[
-                { 
-                  id: 'feed_1', 
-                  titleEn: 'Savar to Dhanmondi Empty Return Bike', 
-                  titleBn: 'সাভার থেকে ধানমন্ডি এম্পটি রিটার্ন বাইক', 
-                  badgeEn: 'Nearby Courier Offers', 
-                  badgeBn: 'নিকটবর্তী কুরিয়ার অফার', 
-                  price: 150, 
-                  descEn: 'Bike courier returning empty to base, offering lightweight parcel dispatch at 60% discount.', 
+                {
+                  id: 'feed_1',
+                  titleEn: 'Savar to Dhanmondi Empty Return Bike',
+                  titleBn: 'সাভার থেকে ধানমন্ডি এম্পটি রিটার্ন বাইক',
+                  badgeEn: 'Nearby Courier Offers',
+                  badgeBn: 'নিকটবর্তী কুরিয়ার অফার',
+                  price: 150,
+                  descEn: 'Bike courier returning empty to base, offering lightweight parcel dispatch at 60% discount.',
                   descBn: 'সাভার থেকে ধানমন্ডি ফেরত যাওয়ার সময় কম মূল্যে পার্সেল ডেলিভারি অফার করছেন রাইডার।',
                   verified: true,
                   role: 'rider',
                   user: 'Imran K.'
                 },
-                { 
-                  id: 'feed_2', 
-                  titleEn: 'Chittagong-Dhaka 10T covered van backhaul', 
-                  titleBn: 'চট্টগ্রাম-ঢাকা ১০টি কাভার্ড ভ্যান ব্যাকহল', 
-                  badgeEn: 'Truck Available', 
-                  badgeBn: 'ফ্রি ট্রাক এভেইলেবল', 
-                  price: 8000, 
-                  descEn: 'Full size covered freighter empty container returning to Dhaka port tonight. Half standard price.', 
+                {
+                  id: 'feed_2',
+                  titleEn: 'Chittagong-Dhaka 10T covered van backhaul',
+                  titleBn: 'চট্টগ্রাম-ঢাকা ১০টি কাভার্ড ভ্যান ব্যাকহল',
+                  badgeEn: 'Truck Available',
+                  badgeBn: 'ফ্রি ট্রাক এভেইলেবল',
+                  price: 8000,
+                  descEn: 'Full size covered freighter empty container returning to Dhaka port tonight. Half standard price.',
                   descBn: 'চট্টগ্রাম থেকে সম্পূর্ণ খালি ১০ টনের কাভার্ড ভ্যান আজ রাতে ঢাকায় ফিরবে। ভাড়া অর্ধেক।',
                   verified: true,
                   role: 'business',
                   user: 'Chittagong Fleet Co.'
                 },
-                { 
-                  id: 'feed_3', 
-                  titleEn: 'Daily food merchant pickup subscription', 
-                  titleBn: 'ফুড মার্চেন্ট ডেইলি পিকআপ সাবস্ক্রিপশন', 
-                  badgeEn: 'Business Transport Deals', 
-                  badgeBn: 'কর্পোরেট বিজেনস ডিল', 
-                  price: 3500, 
-                  descEn: 'Establish recurring dispatch routes for your online kitchen with dedicated hot-bag courier.', 
+                {
+                  id: 'feed_3',
+                  titleEn: 'Daily food merchant pickup subscription',
+                  titleBn: 'ফুড মার্চেন্ট ডেইলি পিকআপ সাবস্ক্রিপশন',
+                  badgeEn: 'Business Transport Deals',
+                  badgeBn: 'কর্পোরেট বিজেনস ডিল',
+                  price: 3500,
+                  descEn: 'Establish recurring dispatch routes for your online kitchen with dedicated hot-bag courier.',
                   descBn: 'অনলাইন কিচেনের জন্য ডেডিকেটেড রাইডার সাবস্ক্রিপশন ডিল। ১ মাসের রেগুলার ডেলিভারি।',
                   verified: false,
                   role: 'seller',
                   user: 'Food Hub Ltd.'
                 },
-                { 
-                  id: 'feed_4', 
-                  titleEn: 'Pathao Courier Hub - Uttara 11', 
-                  titleBn: 'পাঠাও কুরিয়ার হাব - উত্তরা ১১', 
-                  badgeEn: 'Verified Logistics Providers', 
-                  badgeBn: 'ভেরিফাইড লজিস্টিকস প্রোভাইডার', 
-                  rating: '4.9 ★', 
-                  descEn: 'Official logistics drop-off point with secure warehouse storage, NID check, and cash-on-delivery handling.', 
+                {
+                  id: 'feed_4',
+                  titleEn: 'Pathao Courier Hub - Uttara 11',
+                  titleBn: 'পাঠাও কুরিয়ার হাব - উত্তরা ১১',
+                  badgeEn: 'Verified Logistics Providers',
+                  badgeBn: 'ভেরিফাইড লজিস্টিকস প্রোভাইডার',
+                  rating: '4.9 ★',
+                  descEn: 'Official logistics drop-off point with secure warehouse storage, NID check, and cash-on-delivery handling.',
                   descBn: 'অফিসিয়াল লজিস্টিকস হাব যেখানে রয়েছে ওয়্যারহাউস স্টোরেজ, এনআইডি চেক ও সিওডি কালেকশন।',
                   verified: true,
                   role: 'business',
@@ -1119,7 +1121,7 @@ export default function LogisticsPortal() {
                       <User className="w-3 h-3 text-cyan-500" />
                       Posted by: {feed.user}
                     </span>
-                    <button 
+                    <button
                       onClick={() => {
                         setPickup('Savar, Dhaka');
                         setDrop('Dhanmondi, Dhaka');
@@ -1148,9 +1150,9 @@ export default function LogisticsPortal() {
               {t('Browse 6-Layer Service Grid', 'সব সার্ভিস এবং কাস্টম ডেলিভারি বুকিং')}
             </h2>
           </div>
-          
-          <LogisticsServiceGrid 
-            onSelect={handleCategorySelect} 
+
+          <LogisticsServiceGrid
+            onSelect={handleCategorySelect}
             activeCategory={activeCategory || undefined}
             isBilingual={isBilingual}
           />
@@ -1167,9 +1169,9 @@ export default function LogisticsPortal() {
             >
               {/* Close Button */}
               <div className="absolute top-4 right-4 z-10">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => {
                     setActiveCategory(null);
                     setBookingStep('selection');
@@ -1208,7 +1210,7 @@ export default function LogisticsPortal() {
               {/* ── STEP 1: CUSTOM SERVICE FLOW DETAILS ── */}
               {bookingStep === 'custom_details' && (
                 <div className="space-y-6">
-                  
+
                   {/* Category: Rent A Car */}
                   {activeCategory === 'rent_car' && (
                     <div className="space-y-6">
@@ -1245,8 +1247,8 @@ export default function LogisticsPortal() {
                                 <span className="text-base font-black text-white">৳{car.pricePerDay.toLocaleString()}</span>
                                 <span className="text-[9px] text-slate-500 block">/{t('Day', 'দিন')}</span>
                               </div>
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 onClick={() => handleVehicleSelect({ id: car.id, nameEn: car.nameEn, price: car.pricePerDay })}
                                 className="bg-cyan-500 hover:opacity-90 text-black rounded-xl font-bold text-xs cursor-pointer"
                               >
@@ -1271,8 +1273,8 @@ export default function LogisticsPortal() {
                               setFoodCart({});
                             }}
                             className={`p-4 rounded-2xl border text-left flex items-center gap-4 transition-all cursor-pointer ${
-                              selectedRestaurant === rest.id 
-                                ? 'bg-[#e2136e]/10 border-[#e2136e]' 
+                              selectedRestaurant === rest.id
+                                ? 'bg-[#e2136e]/10 border-[#e2136e]'
                                 : 'bg-white/[0.02] border-white/5 hover:border-white/10'
                             }`}
                           >
@@ -1339,7 +1341,7 @@ export default function LogisticsPortal() {
                             <span className="text-xs text-slate-400 block">{t('Subtotal Amount', 'মোট খাবার মূল্য')}</span>
                             <span className="text-lg font-black text-white">৳{calculatedFoodTotal.toLocaleString()}</span>
                           </div>
-                          <Button 
+                          <Button
                             onClick={() => handleVehicleSelect({ id: 'food_dispatch', nameEn: 'Express Food Delivery', price: calculatedFoodTotal + 40 })}
                             className="bg-[#e2136e] hover:opacity-90 rounded-xl font-bold px-6 h-12 cursor-pointer"
                           >
@@ -1364,8 +1366,8 @@ export default function LogisticsPortal() {
                                 key={p}
                                 onClick={() => setPackageType(p)}
                                 className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
-                                  packageType === p 
-                                    ? 'bg-cyan-500/10 border-cyan-500 text-cyan-400' 
+                                  packageType === p
+                                    ? 'bg-cyan-500/10 border-cyan-500 text-cyan-400'
                                     : 'bg-white/[0.02] border-white/5 text-slate-300'
                                 }`}
                               >
@@ -1390,8 +1392,8 @@ export default function LogisticsPortal() {
                                   key={slot.id}
                                   onClick={() => setTimeSlot(slot.id as any)}
                                   className={`p-4 rounded-xl border text-left flex justify-between items-center transition-all cursor-pointer ${
-                                    timeSlot === slot.id 
-                                      ? 'bg-cyan-500/10 border-cyan-500' 
+                                    timeSlot === slot.id
+                                      ? 'bg-cyan-500/10 border-cyan-500'
                                       : 'bg-white/[0.02] border-white/5'
                                   }`}
                                 >
@@ -1438,15 +1440,15 @@ export default function LogisticsPortal() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-4">
                           <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{t('Sender Details', 'প্রেরকের বিবরণ')}</h4>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             placeholder={t('Sender Name', 'প্রেরকের নাম')}
                             value={senderName}
                             onChange={e => setSenderName(e.target.value)}
                             className="w-full h-12 px-4 rounded-xl bg-black/40 border border-white/10 text-sm focus:border-cyan-500 outline-none"
                           />
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             placeholder={t('Sender Phone', 'প্রেরকের মোবাইল নম্বর')}
                             value={senderPhone}
                             onChange={e => setSenderPhone(e.target.value)}
@@ -1456,15 +1458,15 @@ export default function LogisticsPortal() {
 
                         <div className="space-y-4">
                           <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{t('Receiver Details', 'প্রাপকের বিবরণ')}</h4>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             placeholder={t('Receiver Name', 'প্রাপকের নাম')}
                             value={receiverName}
                             onChange={e => setReceiverName(e.target.value)}
                             className="w-full h-12 px-4 rounded-xl bg-black/40 border border-white/10 text-sm focus:border-cyan-500 outline-none"
                           />
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             placeholder={t('Receiver Phone', 'প্রাপকের মোবাইল নম্বর')}
                             value={receiverPhone}
                             onChange={e => setReceiverPhone(e.target.value)}
@@ -1478,10 +1480,10 @@ export default function LogisticsPortal() {
                           <label className="text-xs font-bold text-slate-400 uppercase">{t('Package Weight (Kg)', 'প্যাকেজের ওজন (কেজি)')}</label>
                           <span className="text-sm font-black text-white">{weightKg} Kg</span>
                         </div>
-                        <input 
-                          type="range" 
-                          min="1" 
-                          max="20" 
+                        <input
+                          type="range"
+                          min="1"
+                          max="20"
                           value={weightKg}
                           onChange={e => setWeightKg(Number(e.target.value))}
                           className="w-full accent-cyan-500"
@@ -1493,7 +1495,7 @@ export default function LogisticsPortal() {
                           <span className="text-xs text-slate-400 block">{t('Calculated Rate', 'ক্যালকুলেটেড রেট')}</span>
                           <span className="text-lg font-black text-cyan-400">৳{calculatedCourierCharge.toLocaleString()}</span>
                         </div>
-                        <Button 
+                        <Button
                           onClick={() => handleVehicleSelect({ id: 'courier_express', nameEn: 'Express Doorstep Courier', price: calculatedCourierCharge })}
                           className="bg-cyan-500 hover:opacity-95 text-black rounded-xl font-bold px-6 h-12 cursor-pointer"
                         >
@@ -1516,8 +1518,8 @@ export default function LogisticsPortal() {
                             key={item.id}
                             onClick={() => setEmergencyType(item.id as any)}
                             className={`p-5 rounded-2xl border text-left flex flex-col gap-3 transition-all cursor-pointer ${
-                              emergencyType === item.id 
-                                ? 'bg-red-500/10 border-red-500' 
+                              emergencyType === item.id
+                                ? 'bg-red-500/10 border-red-500'
                                 : 'bg-white/[0.02] border-white/5'
                             }`}
                           >
@@ -1556,8 +1558,8 @@ export default function LogisticsPortal() {
 
               {/* ── STEP 2: Vehicle Selection Flow ── */}
               {bookingStep === 'vehicle' && (
-                <LogisticsVehicleSelection 
-                  category={activeCategory} 
+                <LogisticsVehicleSelection
+                  category={activeCategory}
                   onSelect={handleVehicleSelect}
                   selectedId={selectedVehicle?.id}
                   isBilingual={isBilingual}
@@ -1605,7 +1607,7 @@ export default function LogisticsPortal() {
                       <span className="text-cyan-400 font-mono">৳{selectedVehicle.price}</span>
                     </div>
                   </div>
-                  
+
                   {/* Embedded triple wallet stats */}
                   <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/10 grid grid-cols-3 gap-2 text-center text-[10px]">
                     <div className="border-r border-white/5">
@@ -1622,9 +1624,9 @@ export default function LogisticsPortal() {
                     </div>
                   </div>
 
-                  <UnifiedPaymentForm 
-                    amount={selectedVehicle.price} 
-                    orderId={`PEND-${Date.now().toString(36).toUpperCase()}`} 
+                  <UnifiedPaymentForm
+                    amount={selectedVehicle.price}
+                    orderId={`PEND-${Date.now().toString(36).toUpperCase()}`}
                     onSuccess={handlePaymentSuccess}
                     isBilingual={isBilingual}
                   />
@@ -1634,11 +1636,11 @@ export default function LogisticsPortal() {
               {/* ── STEP 4: Live Delivery Tracking with Route Visualizer & POD ── */}
               {bookingStep === 'tracking' && currentOrderId && (
                 <div className="max-w-md mx-auto space-y-6">
-                  
+
                   {/* Route Visualizer Simulated Box */}
                   <div className="h-28 rounded-2xl bg-black/40 border border-white/5 relative overflow-hidden flex items-center justify-center">
                     <div className="absolute left-6 right-6 h-0.5 bg-dashed bg-white/10" style={{ backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 50%)', backgroundSize: '10px 2px' }} />
-                    
+
                     {/* Start point */}
                     <div className="absolute left-6 flex flex-col items-center gap-1">
                       <div className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500 flex items-center justify-center text-cyan-400">
@@ -1651,14 +1653,14 @@ export default function LogisticsPortal() {
                     {selectedVehicle && selectedVehicle.stopsCount > 0 && Array.from({ length: selectedVehicle.stopsCount }).map((_, sIdx) => {
                       const percentagePosition = ((sIdx + 1) / (selectedVehicle.stopsCount + 1)) * 100;
                       return (
-                        <div 
-                          key={sIdx} 
+                        <div
+                          key={sIdx}
                           className="absolute flex flex-col items-center gap-1"
                           style={{ left: `calc(1.5rem + (100% - 3rem) * ${percentagePosition / 100})`, transform: 'translateX(-50%)' }}
                         >
                           <div className={`w-5 h-5 rounded-full flex items-center justify-center border text-[8px] font-black transition-all ${
-                            mapProgress >= percentagePosition 
-                              ? 'bg-blue-500/20 border-blue-400 text-blue-300 ring-2 ring-blue-500/20' 
+                            mapProgress >= percentagePosition
+                              ? 'bg-blue-500/20 border-blue-400 text-blue-300 ring-2 ring-blue-500/20'
                               : 'bg-zinc-900 border-zinc-700 text-zinc-500'
                           }`}>
                             {sIdx + 1}
@@ -1669,7 +1671,7 @@ export default function LogisticsPortal() {
                     })}
 
                     {/* Animated moving vehicle */}
-                    <div 
+                    <div
                       className="absolute left-6 right-6 transition-all duration-300"
                       style={{ transform: `translateX(${mapProgress}%)` }}
                     >
@@ -1687,9 +1689,9 @@ export default function LogisticsPortal() {
                     </div>
                   </div>
 
-                  <UnifiedDeliveryTracking 
-                    status={mapProgress >= 100 ? "DELIVERED" : "RIDER_ASSIGNED"} 
-                    orderId={currentOrderId} 
+                  <UnifiedDeliveryTracking
+                    status={mapProgress >= 100 ? "DELIVERED" : "RIDER_ASSIGNED"}
+                    orderId={currentOrderId}
                     isBilingual={isBilingual}
                   />
 
@@ -1699,7 +1701,7 @@ export default function LogisticsPortal() {
                       <div className="w-10 h-10 rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">MR</div>
                       <div>
                         <h4 className="text-xs font-bold text-white flex items-center gap-1">
-                          Masud Rana 
+                          Masud Rana
                           <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
                         </h4>
                         <p className="text-[9px] text-slate-400">Reputation Score: <span className="text-cyan-400">99.1% On-Time</span></p>
@@ -1716,7 +1718,7 @@ export default function LogisticsPortal() {
 
                   {/* ── Proof of Delivery (POD) Interactive Section ── */}
                   {mapProgress >= 100 && podStep !== 'verified' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="p-5 rounded-2xl bg-[#0b130e] border border-cyan-500/30 space-y-4"
@@ -1735,7 +1737,7 @@ export default function LogisticsPortal() {
                             {podPhoto ? (
                               <img src={podPhoto} alt="POD" className="object-cover h-full w-full" referrerPolicy="no-referrer" />
                             ) : (
-                              <button 
+                              <button
                                 onClick={() => {
                                   setPodPhoto('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=300&q=80');
                                   toast.success('Simulated photo upload complete!');
@@ -1761,7 +1763,7 @@ export default function LogisticsPortal() {
                             {t('Collect recipient digital signature below:', 'প্রাপকের ডিজিটাল স্বাক্ষর গ্রহণ করুন:')}
                           </p>
                           <div className="border border-white/10 rounded-xl overflow-hidden bg-black relative">
-                            <canvas 
+                            <canvas
                               ref={canvasRef}
                               width={320}
                               height={120}
@@ -1771,15 +1773,15 @@ export default function LogisticsPortal() {
                               onMouseMove={draw}
                               className="w-full h-[120px] cursor-crosshair"
                             />
-                            <button 
-                              onClick={clearCanvas} 
+                            <button
+                              onClick={clearCanvas}
                               className="absolute top-2 right-2 text-[8px] bg-white/10 px-2 py-1 rounded font-bold"
                             >
                               Clear
                             </button>
                           </div>
-                          <Button 
-                            onClick={() => setPodStep('otp')} 
+                          <Button
+                            onClick={() => setPodStep('otp')}
                             disabled={!podSignature}
                             className="w-full bg-cyan-500 text-black font-bold h-10 text-xs disabled:opacity-50"
                           >
@@ -1794,8 +1796,8 @@ export default function LogisticsPortal() {
                             {t('Verify destination recipient via SMS secure OTP code:', 'সিকিউর এসএমএস ওটিপি কোড দিয়ে ভেরিফাই করুন:')}
                           </p>
                           <div className="flex gap-2">
-                            <input 
-                              type="text" 
+                            <input
+                              type="text"
                               placeholder="Enter 4-digit code"
                               value={podOtp}
                               onChange={e => setPodOtp(e.target.value)}
@@ -1818,7 +1820,7 @@ export default function LogisticsPortal() {
                   )}
 
                   {podStep === 'verified' && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0.95 }}
                       animate={{ scale: 1 }}
                       className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3"
@@ -1836,7 +1838,7 @@ export default function LogisticsPortal() {
                       <Phone className="w-4 h-4 mr-1.5 text-cyan-400" />
                       {t('Call Dispatch Hub', 'হাব বা চালককে কল দিন')}
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => {
                         setActiveCategory(null);
                         setBookingStep('selection');
@@ -1897,8 +1899,8 @@ export default function LogisticsPortal() {
                   setSelectedProviderId(null);
                 }}
                 className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                  logisticsTab === tab.id 
-                    ? 'bg-cyan-500 text-black shadow-lg shadow-cyan-500/20 font-black' 
+                  logisticsTab === tab.id
+                    ? 'bg-cyan-500 text-black shadow-lg shadow-cyan-500/20 font-black'
                     : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white'
                 }`}
               >
@@ -1962,7 +1964,7 @@ export default function LogisticsPortal() {
                       </button>
                       <span className="text-[10px] font-mono text-cyan-400 uppercase font-black tracking-widest">Active Rate Matrix</span>
                     </div>
-                    
+
                     {selectedProviderId === 'pathao' && (
                       <div className="space-y-4">
                         <h4 className="font-black text-white text-base">Pathao Courier Storefront & Service Level Agreement</h4>
@@ -1986,7 +1988,7 @@ export default function LogisticsPortal() {
                         </div>
                       </div>
                     )}
-                    
+
                     {selectedProviderId !== 'pathao' && (
                       <div className="space-y-4">
                         <h4 className="font-black text-white text-base uppercase">SLA & Corporate Rates</h4>
@@ -2040,8 +2042,8 @@ export default function LogisticsPortal() {
                           key={div}
                           onClick={() => setSelectedDivision(div)}
                           className={`p-2 px-3 rounded-xl text-xs font-bold text-left transition-all cursor-pointer ${
-                            selectedDivision === div 
-                              ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' 
+                            selectedDivision === div
+                              ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30'
                               : 'bg-transparent text-slate-400 hover:text-white'
                           }`}
                         >
@@ -2049,7 +2051,7 @@ export default function LogisticsPortal() {
                         </button>
                       ))}
                     </div>
-                    
+
                     <div className="space-y-1.5 pt-2">
                       <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest block">{t('Search District/Area', 'জেলা/এরিয়া খুঁজুন')}</label>
                       <div className="relative">
@@ -2071,7 +2073,7 @@ export default function LogisticsPortal() {
                       <span className="text-[10px] uppercase text-slate-400 font-extrabold">{t(`Coverage Area List (${selectedDivision})`, `কভারেজ হাব তালিকা (${selectedDivision})`)}</span>
                       <span className="text-[9px] bg-cyan-500/15 text-cyan-400 px-2 py-0.5 rounded-full font-bold">Nationwide Reach 100%</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-1">
                       {[
                         { division: 'Dhaka', district: 'Dhanmondi Hub', zip: '1209', agent: 'Kamrul Islam', phone: '01899123456', time: 'Same Day (6h)', hubs: '🟢 Active Hub' },
@@ -2117,7 +2119,7 @@ export default function LogisticsPortal() {
                         {t('Active Corporate Subscriptions', 'সক্রিয় কর্পোরেট শিডিউলার')}
                       </h4>
                       <p className="text-[11px] text-slate-400 leading-normal">Configure automated daily/weekly shipping dispatches for your e-commerce shop without manual checkout each time.</p>
-                      
+
                       <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1 mt-3">
                         {recurringSubscriptions.map(sub => (
                           <div key={sub.id} className="p-3 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center text-xs">
@@ -2143,7 +2145,7 @@ export default function LogisticsPortal() {
                         ))}
                       </div>
                     </div>
-                    
+
                     <Button
                       size="sm"
                       onClick={() => {
@@ -2167,7 +2169,7 @@ export default function LogisticsPortal() {
                         {t('B2B Bulk CSV / Text Ingestion', 'বিটুবি বাল্ক অর্ডার আপলোড')}
                       </h4>
                       <p className="text-[11px] text-slate-400 mt-1 leading-normal">Paste multiple deliveries in comma-separated format (Format: Customer Name, Location, Phone, COD Amount) to dispatch instantly!</p>
-                      
+
                       <textarea
                         rows={3}
                         placeholder="Anika Fashion, Dhanmondi, 01712345678, 1200&#10;Bhai Bhai Store, Savar, 01911122233, 850&#10;Dhaka Tech, Uttara, 01555443322, 3100"
@@ -2283,7 +2285,7 @@ export default function LogisticsPortal() {
                       {t('File Reverse Return & Merchant Exchange', 'রিভার্স কাস্টমার রিটার্ন ফর্ম')}
                     </h4>
                     <p className="text-[11px] text-slate-400 leading-normal">Request quick reverse carrier pickup from buyer doorstep to easily process exchange, refund, or quality evaluation.</p>
-                    
+
                     <div className="space-y-3 pt-2">
                       <div>
                         <label className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Item Name</label>
@@ -2355,7 +2357,7 @@ export default function LogisticsPortal() {
                       {t('Active Return Carrier Logs', 'চলতি রিভার্স রিটার্ন ট্র্যাকিং লগ')}
                     </h4>
                     <p className="text-[11px] text-slate-400 leading-normal">Watch returns as they flow backwards into your warehouse with full automated verification checks.</p>
-                    
+
                     <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
                       {activeReturns.map(ret => (
                         <div key={ret.id} className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-2 text-xs">
@@ -2386,7 +2388,7 @@ export default function LogisticsPortal() {
                       {t('Merchant Logistics Wallet Balance', 'মার্চেন্ট লজিস্টিকস শিপিং ওয়ালেট')}
                     </h4>
                     <p className="text-[11px] text-slate-400 leading-normal">Preload BDT credit with bKash/Nagad and get auto-deducted corporate rates. Get up to 10% cashbacks on bulk top-ups!</p>
-                    
+
                     <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-600/40 to-slate-900 border border-blue-500/20 text-white flex flex-col justify-between h-36 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-xl" />
                       <div className="flex justify-between items-start">
@@ -2452,7 +2454,7 @@ export default function LogisticsPortal() {
                       {t('Pre-Negotiated Corporate Discount Coupons', 'কর্পোরেট শিপিং ডিসকাউন্ট কুপন')}
                     </h4>
                     <p className="text-[11px] text-slate-400 leading-normal">Enjoy custom discounted rates established automatically based on your high monthly package dispatches.</p>
-                    
+
                     <div className="space-y-2 mt-2">
                       {[
                         { code: 'VIP-CARGO-500', value: '৳500 Discount on Cargo', active: true, desc: 'Applies automatically to heavy freight shipments over 150kg.' },
@@ -2484,7 +2486,7 @@ export default function LogisticsPortal() {
 
         {/* 4. RECENT ACTIVITY & PROMOTIONS GRID */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
               <History className="w-4 h-4" />
@@ -2522,7 +2524,7 @@ export default function LogisticsPortal() {
                 <Zap className="absolute right-[-10px] top-[-10px] w-24 h-24 text-cyan-500/5 rotate-12" />
                 <h4 className="text-xs font-black text-cyan-400 uppercase tracking-wider">Express Logistics Discount</h4>
                 <p className="text-[10px] text-cyan-200/60 mt-1">Get up to ৳200 off on inter-city transport & pickup booking today.</p>
-                <button 
+                <button
                   onClick={() => {
                     toast.success('Coupon ALOOPEXPRESS applied!');
                   }}

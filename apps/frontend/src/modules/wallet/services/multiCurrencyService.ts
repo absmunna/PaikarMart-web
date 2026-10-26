@@ -6,9 +6,9 @@ export const convertCurrency = (amount: number, fromCurrency: string, toCurrency
     BDT: 118,
     EUR: 0.92,
   };
-  
+
   const fromRate = rates[fromCurrency] || 1;
   const toRate = rates[toCurrency] || 1;
-  
+
   return (amount / fromRate) * toRate;
 };

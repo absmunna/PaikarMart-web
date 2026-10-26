@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { 
-  getCategoryConfigs, 
-  updateCategoryConfig, 
-  getSellerProfile, 
-  createOrUpdateSellerProfile, 
-  submitRefundRequest, 
-  getRefundTickets, 
-  fileComplaint, 
-  getComplaints 
+import {
+  getCategoryConfigs,
+  updateCategoryConfig,
+  getSellerProfile,
+  createOrUpdateSellerProfile,
+  submitRefundRequest,
+  getRefundTickets,
+  fileComplaint,
+  getComplaints
 } from './compliance.controller';
 
 const router = Router();

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, Star, ShoppingBag, ShieldCheck, Truck, Plus, Minus, 
-  Store, CheckCircle2, ArrowRight, Heart 
+import {
+  X, Star, ShoppingBag, ShieldCheck, Truck, Plus, Minus,
+  Store, CheckCircle2, ArrowRight, Heart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '@/modules/cart';
@@ -32,10 +32,10 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
   const unitPrice = product.price;
 
   // Wholesale tiered pricing calculation
-  const effectivePrice = currentQuantity >= 50 
-    ? Math.round(unitPrice * 0.82) 
-    : currentQuantity >= 10 
-      ? Math.round(unitPrice * 0.90) 
+  const effectivePrice = currentQuantity >= 50
+    ? Math.round(unitPrice * 0.82)
+    : currentQuantity >= 10
+      ? Math.round(unitPrice * 0.90)
       : unitPrice;
 
   const totalPrice = effectivePrice * currentQuantity;
@@ -92,7 +92,7 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
 
             {/* Content Scrollable */}
             <div className="overflow-y-auto p-5 sm:p-7 flex flex-col md:flex-row gap-6">
-              
+
               {/* Product Image Column */}
               <div className="md:w-1/2 flex flex-col gap-3">
                 <div className="relative aspect-square rounded-2xl overflow-hidden bg-zinc-900 border border-white/5">

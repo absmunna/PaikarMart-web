@@ -30,7 +30,7 @@ export function UnifiedPaymentForm({ amount, orderId, onSuccess, isBilingual = f
           return;
         }
       }
-      
+
       // For COD and MFS we simulate success in this unified demo
       await new Promise(resolve => setTimeout(resolve, 1500));
       toast.success(t('Payment successful!', 'পেমেন্ট সফল হয়েছে!'));
@@ -55,8 +55,8 @@ export function UnifiedPaymentForm({ amount, orderId, onSuccess, isBilingual = f
           <button
             onClick={() => setSelectedMethod('wallet')}
             className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
-              selectedMethod === 'wallet' 
-                ? 'bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]' 
+              selectedMethod === 'wallet'
+                ? 'bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]'
                 : 'bg-white/5 border-white/5 hover:border-white/20'
             }`}
           >
@@ -74,8 +74,8 @@ export function UnifiedPaymentForm({ amount, orderId, onSuccess, isBilingual = f
           <button
             onClick={() => setSelectedMethod('cod')}
             className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
-              selectedMethod === 'cod' 
-                ? 'bg-blue-500/10 border-blue-500' 
+              selectedMethod === 'cod'
+                ? 'bg-blue-500/10 border-blue-500'
                 : 'bg-white/5 border-white/5 hover:border-white/20'
             }`}
           >

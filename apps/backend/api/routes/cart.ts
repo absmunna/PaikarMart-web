@@ -11,7 +11,7 @@ router.get("/cart", async (req, res) => {
     }
 
     const userId = req.headers['x-user-id'] as string || 'dev-user-id';
-    
+
     // Find or create default user in database
     let user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
@@ -83,7 +83,7 @@ router.post("/cart", async (req, res) => {
     }
 
     const userId = req.headers['x-user-id'] as string || 'dev-user-id';
-    
+
     let user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
       user = await prisma.user.findFirst();
@@ -158,7 +158,7 @@ router.delete("/cart/:itemId", async (req, res) => {
     }
 
     const userId = req.headers['x-user-id'] as string || 'dev-user-id';
-    
+
     // Check if the cart item exists link
     const item = await prisma.cartItem.findUnique({ where: { id: itemId } });
     if (item) {
@@ -169,7 +169,7 @@ router.delete("/cart/:itemId", async (req, res) => {
     let user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) user = await prisma.user.findFirst();
 
-    const cartItems = user 
+    const cartItems = user
       ? await prisma.cartItem.findMany({ where: { userId: user.id }, include: { product: true } })
       : [];
 
@@ -199,4 +199,3 @@ router.delete("/cart/:itemId", async (req, res) => {
 });
 
 export default router;
-

@@ -69,10 +69,10 @@ export class ViralityService {
       );
 
       // Core engagement score weightings (shares and bookmarks are premium factors)
-      const totalEngagementPoints = 
-        (reactionsCount * 5) + 
-        (commentsCount * 10) + 
-        (bookmarksCount * 15) + 
+      const totalEngagementPoints =
+        (reactionsCount * 5) +
+        (commentsCount * 10) +
+        (bookmarksCount * 15) +
         (sharesCount * 25);
 
       // Fetch or instantiate base reach stats
@@ -86,7 +86,7 @@ export class ViralityService {
       // Calculate ratios
       const engagementRate = totalEngagementPoints / adjustedViews;
       const velocity = totalEngagementPoints / hoursSinceCreated;
-      
+
       // Share multiplication amplification index
       const shareMultiplier = 1.0 + (sharesCount * 0.4);
       const viralityIndex = velocity * shareMultiplier;

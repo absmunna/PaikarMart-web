@@ -41,7 +41,7 @@ export const SendMoneyPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess
     setIsLoading(true);
     // Simulate P2P transfer
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     updateBalance(val, 'debit');
     addTransaction({
       type: 'debit',
@@ -50,7 +50,7 @@ export const SendMoneyPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess
       sublabel: isBn ? `প্রাপক: ${recipient}` : `To: ${recipient}`,
       status: 'success'
     });
-    
+
     toast.success(isBn ? `৳${val} সফলভাবে পাঠানো হয়েছে!` : `৳${val} sent successfully!`);
     setIsLoading(false);
     onSuccess?.();
@@ -63,7 +63,7 @@ export const SendMoneyPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess
           {isBn ? "প্রাপকের আইডি বা মোবাইল নম্বর" : "Recipient ID or Phone"}
         </label>
         <div className="relative">
-          <input 
+          <input
             value={recipient}
             onChange={e => setRecipient(e.target.value)}
             placeholder="PM-XX-XXXX or 01XXXXXXXXX"
@@ -77,7 +77,7 @@ export const SendMoneyPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess
         <label className="text-[10px] text-zinc-500 font-black uppercase tracking-widest block mb-2">
           {isBn ? "টাকার পরিমাণ (৳)" : "Amount (৳)"}
         </label>
-        <input 
+        <input
           type="number"
           value={amount}
           onChange={e => setAmount(e.target.value)}
@@ -89,7 +89,7 @@ export const SendMoneyPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess
         </p>
       </div>
 
-      <Button 
+      <Button
         onClick={handleSend}
         disabled={!amount || !recipient || isLoading}
         className="w-full h-14 bg-orange-500 text-white font-black text-sm rounded-2xl hover:bg-orange-600 shadow-lg shadow-orange-500/20 cursor-pointer transition-all"

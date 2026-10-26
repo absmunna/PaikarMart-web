@@ -59,15 +59,15 @@ export const useFeedStore = create<FeedState & FeedActions>()(
       })),
 
       addComment: (postId, comment) => set((state) => ({
-        posts: state.posts.map((p) => 
+        posts: state.posts.map((p) =>
           p.id === postId ? { ...p, comments: p.comments + 1 } : p
         )
       })),
 
       toggleLike: (postId) => set((state) => ({
         posts: state.posts.map((p) =>
-          p.id === postId 
-            ? { ...p, likes: p.isLiked ? p.likes - 1 : p.likes + 1, isLiked: !p.isLiked } 
+          p.id === postId
+            ? { ...p, likes: p.isLiked ? p.likes - 1 : p.likes + 1, isLiked: !p.isLiked }
             : p
         )
       })),

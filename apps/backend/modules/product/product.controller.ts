@@ -103,14 +103,14 @@ export const getProducts = async (req: Request, res: Response) => {
 export const addProduct = async (req: Request, res: Response) => {
   try {
     const { name, description, price, originalPrice, images, isPKStore, category, stock } = req.body;
-    
+
     // Check user role from headers (simulated) or authenticated request user context
     const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-seller-id';
     const userRole = req.headers['x-user-role'] as string || (req as any).user?.role || 'buyer';
 
     const allowedSellerRoles = [
-      'seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'factory', 'rural', 'wholesale', 
-      'exporter', 'importer', 'brand_seller', 'b2b_seller', 'food_seller', 'grocery_seller', 'rural_seller', 
+      'seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'factory', 'rural', 'wholesale',
+      'exporter', 'importer', 'brand_seller', 'b2b_seller', 'food_seller', 'grocery_seller', 'rural_seller',
       'nearby_shop', 'service_provider', 'digital_seller', 'business', 'admin', 'super_admin'
     ];
 
@@ -294,7 +294,7 @@ export const addProductReview = async (req: Request, res: Response) => {
   try {
     const { id: productId } = req.params;
     const { rating, comment, userName, images } = req.body;
-    
+
     const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-user-id';
 
     if (!db.isConnected()) {
@@ -397,7 +397,7 @@ export const getProductPricing = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { quantity } = req.query;
-    
+
     if (quantity) {
       const qty = parseInt(quantity as string, 10);
       const calc = await CommercialPricingService.calculateTieredPricing(id, qty);
@@ -410,4 +410,3 @@ export const getProductPricing = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message || 'Failed to fetch product pricing tiers' });
   }
 };
-

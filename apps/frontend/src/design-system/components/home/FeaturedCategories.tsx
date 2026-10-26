@@ -17,7 +17,7 @@ export const FeaturedCategories = () => {
         <h2 className="font-bold text-[var(--pm-text)]">ফিচার্ড ক্যাটাগরি</h2>
         <button className="text-[var(--pm-accent)] text-sm font-medium">সব দেখুন →</button>
       </div>
-      
+
       <div className="flex flex-row gap-3 overflow-x-auto hide-scrollbar px-4 pb-2">
         {categories.map((cat, i) => (
           <motion.div

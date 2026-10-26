@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type OrderState = 
+export type OrderState =
   | 'ORDER_CREATED'
   | 'PAYMENT_CONFIRMED'
   | 'PACKING'

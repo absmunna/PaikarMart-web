@@ -127,7 +127,7 @@ export const trackOrder = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const match = mockOrders.find(o => o.id === id) || mockOrders[0];
-    
+
     return res.json({
       orderId: id,
       status: match.status,
@@ -154,12 +154,12 @@ export const trackOrder = async (req: Request, res: Response) => {
 
 export const addOrder = async (req: Request, res: Response) => {
   try {
-    const { 
-      productId, 
-      items, 
-      quantity, 
-      totalAmount, 
-      deliveryAddress, 
+    const {
+      productId,
+      items,
+      quantity,
+      totalAmount,
+      deliveryAddress,
       paymentMethod,
       deliveryType,
       scheduledSlot,
@@ -208,8 +208,8 @@ export const addOrder = async (req: Request, res: Response) => {
 
     // 3. Digital Asset Verification if digital
     let digitalDelivery = null;
-    const isDigitalProduct = targetProductId.startsWith('prod-digital') || 
-                             targetProductId.startsWith('prod-ott') || 
+    const isDigitalProduct = targetProductId.startsWith('prod-digital') ||
+                             targetProductId.startsWith('prod-ott') ||
                              targetProductId.startsWith('prod-ebook');
 
     if (isDigitalProduct || paymentMethod?.toLowerCase().includes('digital')) {
@@ -335,4 +335,3 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to update order status' });
   }
 };
-

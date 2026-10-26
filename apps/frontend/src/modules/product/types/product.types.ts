@@ -76,4 +76,3 @@ export interface MasterProductCatalog {
   priceRange?: { min: number; max: number } | null;
   createdAt: string;
 }
-

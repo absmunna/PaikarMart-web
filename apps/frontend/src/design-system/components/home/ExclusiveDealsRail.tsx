@@ -44,13 +44,13 @@ export function ExclusiveDealsRail() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => scroll('left')}
             className="p-2 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <button 
+          <button
             onClick={() => scroll('right')}
             className="p-2 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all"
           >
@@ -59,20 +59,20 @@ export function ExclusiveDealsRail() {
         </div>
       </div>
 
-      <div 
+      <div
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth"
       >
         {DEALS.map((deal) => (
-          <Link 
+          <Link
             key={deal.id}
             to={`/product/${deal.id}`}
             className="flex-shrink-0 w-[180px] group"
           >
             <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/5 bg-white/[0.02]">
-              <img 
-                src={deal.image} 
-                alt={deal.title} 
+              <img
+                src={deal.image}
+                alt={deal.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute top-3 left-3 bg-[#FF7A00] text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-lg">

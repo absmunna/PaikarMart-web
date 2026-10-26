@@ -25,11 +25,11 @@ export const PhoneLoginForm = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="phone">Phone Number</Label>
-        <Input 
-          id="phone" 
-          type="tel" 
-          placeholder="+880 1XXX-XXXXXX" 
-          value={phone} 
+        <Input
+          id="phone"
+          type="tel"
+          placeholder="+880 1XXX-XXXXXX"
+          value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
         />

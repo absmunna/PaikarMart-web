@@ -19,7 +19,7 @@ const tierConfig = {
 
 export const MerchantTierRing: React.FC<Props> = ({ tier, size = 64, imageUrl, alt }) => {
   const config = tierConfig[tier];
-  
+
   return (
     <span className="relative flex items-center justify-center p-1" style={{ width: size, height: size }}>
       <motion.svg

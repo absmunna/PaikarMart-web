@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { 
+import {
   Search, X, Star, Wallet, ShoppingBag, Heart,
   HelpCircle, Sparkles, ChevronRight
 } from 'lucide-react';
@@ -25,9 +25,9 @@ export const AppLauncher: React.FC = () => {
   const filteredHubs = useMemo(() => {
     if (!searchQuery.trim()) return HUB_REGISTRY;
     return HUB_REGISTRY.map(hub => {
-      const filteredPortals = PORTAL_REGISTRY.filter(p => 
-        p.hubId === hub.id && 
-        (p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const filteredPortals = PORTAL_REGISTRY.filter(p =>
+        p.hubId === hub.id &&
+        (p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
          p.nameBn.includes(searchQuery))
       );
       if (filteredPortals.length > 0) return { ...hub, filteredPortals };
@@ -43,7 +43,7 @@ export const AppLauncher: React.FC = () => {
   return (
     <AnimatePresence>
       {isAppLauncherOpen && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -54,7 +54,7 @@ export const AppLauncher: React.FC = () => {
             <div className="max-w-[1280px] mx-auto px-6 h-20 flex items-center justify-between gap-6">
               <div className="flex-1 relative group">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-[var(--pm-accent)] transition-colors" />
-                <input 
+                <input
                   type="text"
                   placeholder={isBn ? "সুপার অ্যাপস খুঁজুন..." : "Search Super Apps..."}
                   value={searchQuery}
@@ -62,7 +62,7 @@ export const AppLauncher: React.FC = () => {
                   className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 text-sm font-black uppercase tracking-wider focus:outline-none focus:border-[var(--pm-accent)]/50 transition-all placeholder:text-zinc-600"
                 />
                 {searchQuery && (
-                  <button 
+                  <button
                     onClick={() => setSearchQuery("")}
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10"
                   >
@@ -70,7 +70,7 @@ export const AppLauncher: React.FC = () => {
                   </button>
                 )}
               </div>
-              <button 
+              <button
                 onClick={closeAppLauncher}
                 className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer"
               >
@@ -90,8 +90,8 @@ export const AppLauncher: React.FC = () => {
                       const HubIcon = ICON_COMPONENTS_MAP[hub.iconName] || Star;
 
                       return (
-                        <motion.section 
-                          key={hub.id} 
+                        <motion.section
+                          key={hub.id}
                           className="space-y-8"
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -110,7 +110,7 @@ export const AppLauncher: React.FC = () => {
                               </p>
                             </div>
                           </div>
-                          
+
                           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-y-10 gap-x-6">
                             {hubPortals.map((tile: any) => {
                               const IconComponent = ICON_COMPONENTS_MAP[tile.iconName] || Star;
@@ -130,7 +130,7 @@ export const AppLauncher: React.FC = () => {
                                       strokeWidth={2}
                                     />
                                     <div className={`absolute inset-0 bg-gradient-to-br ${tile.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                                    
+
                                     {tile.status === 'upcoming' && (
                                       <span className="absolute top-1.5 right-1.5 bg-amber-500 text-black text-[7px] font-black px-1.5 rounded-full uppercase py-0.5">
                                         New
@@ -166,7 +166,7 @@ export const AppLauncher: React.FC = () => {
               {/* Right Column: User Overview */}
               <div className="lg:col-span-4 space-y-8">
                 {/* WALLET CARD */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="p-8 rounded-[40px] bg-white/[0.01] border border-white/5 shadow-2xl space-y-8"
@@ -196,7 +196,7 @@ export const AppLauncher: React.FC = () => {
                       <span className="text-[9px] font-black text-[var(--pm-accent)]">Level 4</span>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleNavigate('/wallet')}
                     className="w-full h-14 rounded-2xl bg-[var(--pm-accent)] hover:opacity-90 text-black text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-[var(--pm-accent)]/20"
                   >

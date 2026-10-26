@@ -1,5 +1,5 @@
-import { 
-  Gamepad2, Music, Video, FileText, Gift, 
+import {
+  Gamepad2, Music, Video, FileText, Gift,
   Download, Globe, Zap, ShieldCheck, Star,
   Monitor, Cpu, Layers, HardDrive, Smartphone,
   ShoppingBag, CheckCircle2, Flame, Sparkles
@@ -133,7 +133,7 @@ export default function DigitalPortal() {
       <div className="mt-20 relative rounded-[3rem] bg-[#0f111a] p-10 md:p-16 overflow-hidden border border-white/5">
         <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 blur-[100px] -ml-32 -mt-32" />
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px] -mr-32 -mb-32" />
-        
+
         <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto space-y-8">
           <div className="h-16 w-16 rounded-[1.5rem] bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/20">
             <Globe className="h-8 w-8 text-white" />

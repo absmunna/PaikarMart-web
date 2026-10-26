@@ -50,8 +50,6 @@ node_modules/
 # ------------------------------------------------------------------------------
 dist/
 **/dist/
-!dist/server.cjs
-!dist/server.js
 dist-ssr/
 build/
 **/build/
@@ -108,8 +106,6 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
-.aistudio/
-public/assets/aistudio/
 
 # ------------------------------------------------------------------------------
 # 7. LOCAL DATABASES & PRISMA RUNTIME CACHE
@@ -120,3 +116,9 @@ public/assets/aistudio/
 *.sqlite-journal
 prisma/*.db
 prisma/*.sqlite
+
+# Local-only exports and backups (may contain personal/customer data)
+/backups/
+
+# Local setup report may contain environment-specific values
+SETUP_COMPLETE.md

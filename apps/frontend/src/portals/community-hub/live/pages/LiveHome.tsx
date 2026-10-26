@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Play, Radio, User, Users, 
-  MessageSquare, Heart, Share2, 
+import {
+  Play, Radio, User, Users,
+  MessageSquare, Heart, Share2,
   Eye, Calendar, Star, Search,
   Bell, Globe, ShoppingCart, Zap,
   Flame, Sparkles, ChevronRight, Video, Megaphone, Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -26,7 +27,7 @@ const UPCOMING_STREAMS = [
 export default function LiveHome() {
   const [isBilingual, setIsBilingual] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'shopping' | 'community' | 'news'>('all');
-  
+
   const t = (en: string, bn: string) => isBilingual ? bn : en;
 
   const handleRemind = (title: string) => {
@@ -37,18 +38,19 @@ export default function LiveHome() {
     <div className="w-full text-[var(--pm-text)] pb-32">
       {/* Portal Header Rule */}
       <section className="pt-4 px-2 space-y-1">
+        <StoryBar context="live" />
         <PortalIconBar context="community" />
       </section>
 
       <div className="max-w-7xl mx-auto px-4 mt-6 space-y-10">
         {/* Live Hero */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative rounded-[3rem] bg-gradient-to-br from-rose-950/20 via-zinc-950 to-black border border-white/5 p-8 md:p-12 overflow-hidden shadow-2xl"
         >
           <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 rounded-full blur-3xl animate-pulse" />
-          
+
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 space-y-6">
               <div className="flex items-center gap-3">
@@ -56,19 +58,19 @@ export default function LiveHome() {
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
                   LIVE NOW
                 </span>
-                <button 
+                <button
                   onClick={() => setIsBilingual(!isBilingual)}
                   className="text-[10px] text-zinc-500 hover:text-white"
                 >
                   {isBilingual ? 'English' : 'বাংলা'}
                 </button>
               </div>
-              
+
               <h1 className="text-4xl md:text-7xl font-black tracking-tighter leading-none">
                 {t('Connect in', 'যুক্ত হোন')} <br />
                 <span className="text-rose-500">{t('Real-Time', 'রিয়েল-টাইমে')}</span>
               </h1>
-              
+
               <p className="text-zinc-400 text-sm max-w-md leading-relaxed">
                 {t(
                   'Watch live shopping, community events, and product reviews from verified sellers and creators.',
@@ -91,7 +93,7 @@ export default function LiveHome() {
                 </div>
               </div>
             </div>
-            
+
             <div className="w-full md:w-80 aspect-[9/16] rounded-[2.5rem] bg-zinc-900/40 border border-white/10 relative overflow-hidden group shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
               <div className="absolute inset-0 flex items-center justify-center text-7xl opacity-50 group-hover:scale-110 transition-transform">
@@ -117,7 +119,7 @@ export default function LiveHome() {
             </h2>
             <div className="flex gap-2">
               {['all', 'shopping', 'community'].map(tab => (
-                <button 
+                <button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
                   className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase border transition-all ${
@@ -132,7 +134,7 @@ export default function LiveHome() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {LIVE_STREAMS.map((stream, idx) => (
-              <motion.div 
+              <motion.div
                 key={stream.id}
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -146,7 +148,7 @@ export default function LiveHome() {
                     {stream.viewers}
                   </div>
                 </div>
-                
+
                 <div className="p-6 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-2xl bg-zinc-800 flex items-center justify-center text-zinc-500">
@@ -157,7 +159,7 @@ export default function LiveHome() {
                       <p className="text-[10px] text-zinc-500 font-bold uppercase">{stream.host}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <Button className="flex-1 bg-rose-600/10 border border-rose-500/20 text-rose-500 hover:bg-rose-600 hover:text-white rounded-xl text-xs font-bold h-10 transition-all">
                       {t('Join Stream', 'যুক্ত হোন')}
@@ -179,10 +181,10 @@ export default function LiveHome() {
               <Calendar className="h-5 w-5 text-rose-500" />
               {t('Upcoming Streams', 'আসন্ন লাইভ স্ট্রীম')}
             </h2>
-            
+
             <div className="grid gap-4">
               {UPCOMING_STREAMS.map(stream => (
-                <div 
+                <div
                   key={stream.id}
                   className="p-5 rounded-[2rem] bg-zinc-900/20 border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
@@ -199,7 +201,7 @@ export default function LiveHome() {
                       </div>
                     </div>
                   </div>
-                  <Button 
+                  <Button
                     onClick={() => handleRemind(t(stream.titleEn, stream.titleBn))}
                     className="rounded-xl bg-white/5 border border-white/10 hover:border-rose-500/50 hover:bg-rose-500/10 text-zinc-400 hover:text-rose-500 text-xs font-bold h-10 px-6"
                   >

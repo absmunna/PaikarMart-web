@@ -13,7 +13,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, shopI
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,7 +77,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, shopI
     }
   };
 
-  const averageRating = reviews.length > 0 
+  const averageRating = reviews.length > 0
     ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1)
     : '0.0';
 
@@ -97,7 +97,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, shopI
       {user ? (
         <form onSubmit={handleSubmit} className="mb-8 bg-white/5 p-5 rounded-2xl border border-white/10">
           <h4 className="text-sm font-bold text-white mb-3">Leave a Review</h4>
-          
+
           <div className="flex items-center gap-1 mb-4">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -106,8 +106,8 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, shopI
                 onClick={() => setRating(star)}
                 className="focus:outline-none"
               >
-                <Star 
-                  className={`w-6 h-6 ${star <= rating ? 'fill-amber-400 text-amber-400' : 'text-zinc-600'} transition-colors`} 
+                <Star
+                  className={`w-6 h-6 ${star <= rating ? 'fill-amber-400 text-amber-400' : 'text-zinc-600'} transition-colors`}
                 />
               </button>
             ))}
@@ -161,9 +161,9 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, shopI
                     <h5 className="text-sm font-bold text-white">{review.userName}</h5>
                     <div className="flex items-center gap-1 mt-1">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <Star 
-                          key={star} 
-                          className={`w-3.5 h-3.5 ${star <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-zinc-700'}`} 
+                        <Star
+                          key={star}
+                          className={`w-3.5 h-3.5 ${star <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-zinc-700'}`}
                         />
                       ))}
                     </div>

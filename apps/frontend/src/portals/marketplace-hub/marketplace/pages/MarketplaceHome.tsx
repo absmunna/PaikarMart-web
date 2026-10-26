@@ -1,18 +1,18 @@
 import * as React from "react";
 import { useState, useMemo } from "react";
-import { 
-  Search, ShoppingBag, Flame, Zap, ChevronRight, Filter, 
-  Layers, Package, MapPin, Building2, TrendingDown, Clock, 
+import {
+  Search, ShoppingBag, Flame, Zap, ChevronRight, Filter,
+  Layers, Package, MapPin, Building2, TrendingDown, Clock,
   Sparkles, ShieldCheck, ArrowRight, FileText, Plus, Check, X,
   BadgeAlert, Globe, Star
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/modules/language";
+import { StoryBar } from "@shared/StoryBar";
 import { PortalIconBar } from "@shared/PortalIconBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { HeroSpotlight } from "@shared/HeroSpotlight";
 import { ProductCard } from "@/components/ui/ProductCard";
-import { UnifiedPostCard, UnifiedPost } from "@/design-system/components/feed/UnifiedPostCard";
 import { motion, AnimatePresence } from "motion/react";
 import { useProductStore } from '@/modules/product';
 import { useB2BRFQStore } from '@/modules/b2b';
@@ -48,82 +48,82 @@ interface WholesaleProduct {
 // B2B Mock Wholesale Products
 const B2B_PRODUCTS: WholesaleProduct[] = [
   {
-    id: "w1", 
-    name: "Ready-Made Garments (Export T-Shirts)", 
+    id: "w1",
+    name: "Ready-Made Garments (Export T-Shirts)",
     category: "apparel",
     priceTiers: [
       { moq: 100, price: 180, unit: "pcs", label: "Starter" },
       { moq: 500, price: 150, unit: "pcs", label: "Business" },
       { moq: 2000, price: 110, unit: "pcs", label: "Enterprise" },
     ],
-    minOrderQty: 100, 
-    inStock: true, 
-    rating: 4.8, 
+    minOrderQty: 100,
+    inStock: true,
+    rating: 4.8,
     reviews: 312,
-    supplier: "Dhaka Garments Ltd.", 
+    supplier: "Dhaka Garments Ltd.",
     location: "Gazipur, Dhaka",
-    leadTime: "14 days", 
+    leadTime: "14 days",
     verified: true,
     image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&q=80",
-    description: "100% combed cotton ready-made T-shirts, premium export quality. Custom brand print & labels accepted.", 
+    description: "100% combed cotton ready-made T-shirts, premium export quality. Custom brand print & labels accepted.",
     certification: "BSCI, Oeko-Tex Standard 100",
   },
   {
-    id: "w2", 
-    name: "Industrial Ceramic Tiles (60x60cm Premium)", 
+    id: "w2",
+    name: "Industrial Ceramic Tiles (60x60cm Premium)",
     category: "raw_materials",
     priceTiers: [
       { moq: 100, price: 85, unit: "sqft", label: "Standard" },
       { moq: 500, price: 70, unit: "sqft", label: "Bulk" },
       { moq: 2000, price: 58, unit: "sqft", label: "Factory direct" },
     ],
-    minOrderQty: 100, 
-    inStock: true, 
-    rating: 4.7, 
+    minOrderQty: 100,
+    inStock: true,
+    rating: 4.7,
     reviews: 189,
-    supplier: "Akij Ceramic Industries", 
+    supplier: "Akij Ceramic Industries",
     location: "Mymensingh, Dhaka",
-    leadTime: "7 days", 
+    leadTime: "7 days",
     verified: true,
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=80",
     description: "High-density ceramic floor tiles with matte anti-slip finish. BSTI & ISO certified for commercial malls.",
   },
   {
-    id: "w3", 
-    name: "Aromatic Chinigura Rice (50kg Bulk Bags)", 
+    id: "w3",
+    name: "Aromatic Chinigura Rice (50kg Bulk Bags)",
     category: "raw_materials",
     priceTiers: [
       { moq: 20, price: 3400, unit: "bags", label: "Wholesaler" },
       { moq: 100, price: 3100, unit: "bags", label: "Distributor" },
       { moq: 500, price: 2850, unit: "bags", label: "Mill direct" },
     ],
-    minOrderQty: 20, 
-    inStock: true, 
-    rating: 4.9, 
+    minOrderQty: 20,
+    inStock: true,
+    rating: 4.9,
     reviews: 567,
-    supplier: "Nawabganj Automated Rice Mill", 
+    supplier: "Nawabganj Automated Rice Mill",
     location: "Nawabganj, Rajshahi",
-    leadTime: "4 days", 
+    leadTime: "4 days",
     verified: true,
     image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300&q=80",
     description: "Authentic Chinigura aromatic rice, machine-sorted & triple-polished. Excellent smell and grain length.",
   },
   {
-    id: "w4", 
-    name: "Heavy-Duty PVC Conduit Pipes", 
+    id: "w4",
+    name: "Heavy-Duty PVC Conduit Pipes",
     category: "packaging",
     priceTiers: [
       { moq: 200, price: 140, unit: "pcs", label: "Standard" },
       { moq: 1000, price: 110, unit: "pcs", label: "Bulk Lot" },
       { moq: 5000, price: 85, unit: "pcs", label: "Industrial" },
     ],
-    minOrderQty: 200, 
-    inStock: true, 
-    rating: 4.6, 
+    minOrderQty: 200,
+    inStock: true,
+    rating: 4.6,
     reviews: 134,
-    supplier: "National Plastics BD Ltd.", 
+    supplier: "National Plastics BD Ltd.",
     location: "Narayanganj, Dhaka",
-    leadTime: "5 days", 
+    leadTime: "5 days",
     verified: false,
     image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?w=300&q=80",
     description: "Premium durable fire-retardant PVC conduit pipes for electrical wiring and high pressure setups.",
@@ -171,7 +171,7 @@ export function MarketplaceHome() {
   const retailProducts = useMemo(() => {
     const retailItems = storeProducts.filter(p => p.portal !== 'b2b' && !p.isNearMe);
     const combined = [...retailItems, ...JUST_FOR_YOU];
-    
+
     // De-duplicate based on ID
     const seen = new Set();
     const unique = combined.filter(item => {
@@ -183,8 +183,8 @@ export function MarketplaceHome() {
 
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
-      return unique.filter((p: any) => 
-        (p.name || p.title || "").toLowerCase().includes(q) || 
+      return unique.filter((p: any) =>
+        (p.name || p.title || "").toLowerCase().includes(q) ||
         (p.category || "").toLowerCase().includes(q)
       );
     }
@@ -199,8 +199,8 @@ export function MarketplaceHome() {
     }
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(q) || 
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(q) ||
         p.supplier.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q)
       );
@@ -223,6 +223,7 @@ export function MarketplaceHome() {
     <div className="w-full text-[var(--pm-text)] pb-24">
       {/* ━━━ PORTAL HOMEPAGE HEADER (Top Priority) ━━━ */}
       <section className="pt-4 space-y-1">
+        <StoryBar context="marketplace" />
         <PortalIconBar context="marketplace" />
       </section>
 
@@ -231,8 +232,8 @@ export function MarketplaceHome() {
         <div className="flex items-center gap-3">
           <div className="flex-1 relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder={
                 layer === 'retail'
                   ? (isBn ? "পণ্য বা ব্র্যান্ড খুঁজুন..." : "Search brands or products...")
@@ -250,11 +251,11 @@ export function MarketplaceHome() {
 
         {/* Dual Layer Segment Control - Highly Crafted */}
         <div className="mt-3 bg-zinc-950 p-1.5 rounded-2xl border border-white/5 flex gap-2">
-          <button 
+          <button
             onClick={() => { setLayer('retail'); setCategoryFilter('all'); }}
             className={cn(
               "flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2",
-              layer === 'retail' 
+              layer === 'retail'
                 ? "bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]/30 text-[var(--pm-accent)] shadow-md"
                 : "bg-transparent border border-transparent text-zinc-500 hover:text-zinc-300"
             )}
@@ -263,12 +264,12 @@ export function MarketplaceHome() {
             <ShoppingBag className="w-4 h-4" />
             <span>{isBn ? "খুচরা বাজার (B2C)" : "Retail Commerce"}</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => { setLayer('wholesale'); setCategoryFilter('all'); }}
             className={cn(
               "flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2",
-              layer === 'wholesale' 
+              layer === 'wholesale'
                 ? "bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/30 text-blue-400 shadow-md"
                 : "bg-transparent border border-transparent text-zinc-500 hover:text-zinc-300"
             )}
@@ -283,8 +284,8 @@ export function MarketplaceHome() {
       {/* Layer Sub-Header */}
       <section className={cn(
         "mt-2 text-center py-4 border-b border-white/[0.03] transition-all",
-        layer === 'retail' 
-          ? "bg-gradient-to-b from-[var(--pm-accent)]/10 to-transparent" 
+        layer === 'retail'
+          ? "bg-gradient-to-b from-[var(--pm-accent)]/10 to-transparent"
           : "bg-gradient-to-b from-blue-950/20 to-transparent"
       )}>
         <div className="flex items-center justify-center gap-2 mb-1">
@@ -301,22 +302,22 @@ export function MarketplaceHome() {
           )}
         </div>
         <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">
-          {layer === 'retail' 
+          {layer === 'retail'
             ? (isBn ? "খুচরা কেনাকাটার ডিজিটাল স্বর্গ" : "Hub for Global & Digital Brands")
             : (isBn ? "বাংলাদেশী সাপ্লায়ার ও ফ্যাক্টরির ডিজিটাল সংযোগ" : "Connecting Bangladesh Factories & Suppliers")}
         </p>
       </section>
 
       {/* CategoryNavBar - Context-Aware */}
-      <CategoryNavBar 
-        context={layer} 
-        activeFilter={categoryFilter} 
-        onFilterChange={(id) => setCategoryFilter(id)} 
+      <CategoryNavBar
+        context={layer}
+        activeFilter={categoryFilter}
+        onFilterChange={(id) => setCategoryFilter(id)}
         topOffset="136px"
       />
 
       <div className="px-3 space-y-8 mt-6">
-        
+
         {/* RETAIL COMMERCE LAYER VIEWS */}
         {layer === 'retail' && (
           <>
@@ -384,7 +385,7 @@ export function MarketplaceHome() {
                     {isBn ? "সরাসরি ফ্যাক্টরি কোটেশন জমা দিন" : "Submit factory quotation to live leads"}
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => navigate('/b2b')}
                   className="text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-1"
                 >
@@ -421,7 +422,7 @@ export function MarketplaceHome() {
                           {isBn ? "পরিমাণ:" : "Qty:"} <span className="text-zinc-100 font-black">{rfq.quantity} Pcs</span>
                         </div>
                       </div>
-                      <button 
+                      <button
                         onClick={() => {
                           toast.success(isBn ? "কোটেশন প্যানেল খুলছে..." : "Connecting with B2B Demand workspace...");
                           navigate('/b2b');
@@ -448,7 +449,7 @@ export function MarketplaceHome() {
                     {isBn ? "বাংলাদেশী ১০০% কমপ্লায়েন্ট ফ্যাক্টরি সমূহ" : "Top compliant factories with fast turnaround"}
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => navigate('/vendors')}
                   className="text-[10px] font-black text-[var(--pm-accent)] uppercase flex items-center gap-1 group"
                 >
@@ -503,41 +504,67 @@ export function MarketplaceHome() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {wholesaleProducts.map((product) => (
-                  <UnifiedPostCard 
-                    key={product.id}
-                    post={{
-                      id: product.id,
-                      type: 'product',
-                      domain: 'WHOLESALE',
-                      authorName: product.supplier,
-                      authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.supplier}`,
-                      isVerified: product.verified,
-                      authorRole: 'ফ্যাক্টরি / সাপ্লায়ার',
-                      timestamp: 'Active Now',
-                      content: product.description,
-                      imageUrl: product.image,
-                      location: product.location,
-                      likes: product.reviews || 0,
-                      comments: 15,
-                      product: {
-                        id: product.id,
-                        title: product.name,
-                        price: product.priceTiers[0].price,
-                        imageUrl: product.image,
-                        moq: product.minOrderQty
-                      },
-                      metadata: {
-                        isOfficialBrand: product.verified,
-                        deliveryTime: product.leadTime
-                      }
-                    }}
-                  />
+                  <div key={product.id} className="bg-zinc-950 rounded-3xl border border-white/5 overflow-hidden flex flex-col md:flex-row gap-4 p-4 hover:border-blue-500/20 transition-all">
+                    {/* Image Area */}
+                    <div className="w-full md:w-40 h-40 rounded-2xl overflow-hidden shrink-0 relative bg-zinc-900 border border-white/5">
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      {product.verified && (
+                        <div className="absolute top-2 left-2 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest flex items-center gap-0.5">
+                          <ShieldCheck className="w-2.5 h-2.5" /> B2B Verified
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content Area */}
+                    <div className="flex-1 flex flex-col justify-between space-y-3">
+                      <div>
+                        <div className="flex justify-between items-center text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
+                          <span>{product.category}</span>
+                          <span className="flex items-center gap-1 text-zinc-400">
+                            <MapPin className="w-3 h-3 text-blue-400" /> {product.location}
+                          </span>
+                        </div>
+                        <h4 className="text-xs font-black text-white mt-1 leading-snug">{product.name}</h4>
+                        <p className="text-[10px] text-zinc-500 line-clamp-2 mt-1 leading-normal">{product.description}</p>
+                      </div>
+
+                      {/* Bulk Tier Prices Container */}
+                      <div className="bg-[#020604] border border-white/[0.04] p-3 rounded-2xl space-y-1.5">
+                        <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest block">Wholesale Bulk Pricing</span>
+                        <div className="grid grid-cols-3 gap-2">
+                          {product.priceTiers.map((tier, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setRfqModal({ product, tier })}
+                              className="p-2 rounded-xl bg-white/[0.02] hover:bg-blue-500/10 border border-white/[0.04] hover:border-blue-500/20 text-center transition-all group"
+                            >
+                              <p className="text-[8px] text-zinc-500 font-black uppercase tracking-wider group-hover:text-blue-400 transition-colors">{tier.label}</p>
+                              <p className="text-[10px] text-white font-extrabold mt-0.5">৳{tier.price}</p>
+                              <p className="text-[7px] text-zinc-600 font-medium tracking-tight mt-0.5">MOQ: {tier.moq} {tier.unit}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-white/[0.03]">
+                        <div className="text-[9px] text-zinc-500 font-bold">
+                          Supplier: <span className="text-zinc-300 font-black">{product.supplier}</span>
+                        </div>
+                        <button
+                          onClick={() => setRfqModal({ product, tier: product.priceTiers[0] })}
+                          className="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white font-black text-[10px] rounded-xl uppercase tracking-wider transition-all flex items-center gap-1"
+                        >
+                          <FileText className="w-3.5 h-3.5" /> {isBn ? "কোটেশন পাঠান" : "Inquire Lot"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ))}
 
                 {wholesaleProducts.length === 0 && (
-                  <div className="col-span-1 text-center py-10 text-zinc-500 font-bold text-xs uppercase tracking-widest">
+                  <div className="col-span-2 text-center py-10 text-zinc-500 font-bold text-xs uppercase tracking-widest">
                     {isBn ? "কোনো পণ্য খুঁজে পাওয়া যায়নি!" : "No wholesale products found matching category filter!"}
                   </div>
                 )}
@@ -550,15 +577,15 @@ export function MarketplaceHome() {
       {/* B2B RFQ POPUP MODAL */}
       <AnimatePresence>
         {rfqModal && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
           >
-            <motion.div 
-              initial={{ y: 50, scale: 0.95 }} 
-              animate={{ y: 0, scale: 1 }} 
+            <motion.div
+              initial={{ y: 50, scale: 0.95 }}
+              animate={{ y: 0, scale: 1 }}
               exit={{ y: 50, scale: 0.95 }}
               className="w-full max-w-[500px] bg-zinc-950 border border-white/10 rounded-t-3xl sm:rounded-3xl p-6 flex flex-col max-h-[90vh] text-white"
             >
@@ -588,11 +615,11 @@ export function MarketplaceHome() {
                   <div className="space-y-3">
                     <div>
                       <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block mb-1.5">Required Quantity ({rfqModal.tier.unit})</label>
-                      <input 
-                        type="number" 
-                        min={rfqModal.tier.moq} 
+                      <input
+                        type="number"
+                        min={rfqModal.tier.moq}
                         placeholder={`Min order is ${rfqModal.tier.moq}`}
-                        value={quoteQty} 
+                        value={quoteQty}
                         onChange={e => setQuoteQty(e.target.value)}
                         required
                         className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-blue-500/40"
@@ -605,11 +632,11 @@ export function MarketplaceHome() {
                     </div>
                     <div>
                       <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block mb-1.5">Additional customization requirements</label>
-                      <textarea 
-                        value={quoteNote} 
-                        onChange={e => setQuoteNote(e.target.value)} 
+                      <textarea
+                        value={quoteNote}
+                        onChange={e => setQuoteNote(e.target.value)}
                         placeholder="Detail design patterns, certifications required, packaging styles, etc."
-                        rows={3} 
+                        rows={3}
                         className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-xs text-white outline-none resize-none"
                       />
                     </div>
@@ -624,9 +651,9 @@ export function MarketplaceHome() {
                 </form>
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-                  <motion.div 
-                    initial={{ scale: 0 }} 
-                    animate={{ scale: 1 }} 
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
                     className="w-16 h-16 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center"
                   >
                     <Check className="w-8 h-8 text-blue-400" />
@@ -637,13 +664,13 @@ export function MarketplaceHome() {
                       {rfqModal.product.supplier} representative will respond on your messages within 4 hours.
                     </p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       setRfqModal(null);
                       setQuoteQty("");
                       setQuoteNote("");
                       setQuoteSent(false);
-                    }} 
+                    }}
                     className="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest"
                   >
                     Close Modal

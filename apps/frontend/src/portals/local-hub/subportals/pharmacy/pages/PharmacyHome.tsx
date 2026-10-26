@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  HeartPulse, Search, UploadCloud, ShieldCheck, 
-  Plus, Check, FileText, AlertCircle, PhoneCall, CheckCircle2 
+import {
+  HeartPulse, Search, UploadCloud, ShieldCheck,
+  Plus, Check, FileText, AlertCircle, PhoneCall, CheckCircle2
 } from 'lucide-react';
 import { HomeHeader } from '@/design-system/components/home/HomeHeader';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
@@ -214,7 +214,7 @@ export const PharmacyHome: React.FC = () => {
       {/* Medicine Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {filtered.map((item) => (
-          <ProductCard 
+          <ProductCard
             key={item.id}
             product={{
               ...item,

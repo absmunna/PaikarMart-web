@@ -74,7 +74,7 @@ export const locationService = {
 
       const result = data.results[0];
       const components = result.address_components;
-      
+
       let division = "";
       let district = "";
       let upazila = "";
@@ -107,7 +107,7 @@ export const locationService = {
         }
       };
     } catch (error) {
-      console.warn("[locationService] Error in reverseGeocode:", error);
+      console.error("Error in reverseGeocode:", error);
       throw error;
     }
   }

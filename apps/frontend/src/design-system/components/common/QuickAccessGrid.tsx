@@ -70,10 +70,10 @@ export default function QuickAccessGrid() {
                         className={`w-7 h-7 bg-gradient-to-br ${tile.color} bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300`}
                         strokeWidth={2}
                       />
-                      
+
                       {/* Subtle background glow on hover */}
                       <div className={`absolute inset-0 bg-gradient-to-br ${tile.color} opacity-0 group-hover:opacity-10 transition-opacity rounded-[24px]`} />
-                      
+
                       {tile.status === 'upcoming' && (
                         <span className="absolute top-1 right-1 bg-amber-500 text-black text-[7px] font-black px-1 rounded-full uppercase leading-none py-0.5 shadow-sm">
                           New

@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CategoryTabs } from '../components/CategoryTabs';
-import { UnifiedPostCard, UnifiedPost } from '@/design-system/components/feed/UnifiedPostCard';
+import { NewsCard } from '../components/NewsCard';
 import { MOCK_NEWS_ARTICLES } from '../data/mockNewsData';
+import { StoryBar } from '@shared/StoryBar';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
-import { 
-  Search, 
-  Sparkles, 
-  TrendingUp, 
-  BookOpen, 
+import {
+  Search,
+  Sparkles,
+  TrendingUp,
+  BookOpen,
   Newspaper,
   BellRing,
   Globe,
@@ -27,12 +28,12 @@ export const NewsPage: React.FC = () => {
   const filteredArticles = useMemo(() => {
     return MOCK_NEWS_ARTICLES.filter(article => {
       const matchesCategory = activeCategory === 'all' || article.category === activeCategory;
-      const matchesSearch = 
+      const matchesSearch =
         article.titleBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.summaryBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.summary.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       return matchesCategory && matchesSearch;
     });
   }, [activeCategory, searchQuery]);
@@ -45,7 +46,10 @@ export const NewsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background/30 backdrop-blur-3xl text-white pb-28">
-      {/* 2nd Element: Portals list icons top nav bar */}
+      {/* 1st Element: Promotional Stories context bar */}
+      <section className="pt-2 px-6">
+        <StoryBar context="media" />
+      </section>
 
       {/* 2nd Element: Portals list icons top nav bar */}
       <div className="sticky top-16 z-40 bg-[var(--pm-bg)]/90 backdrop-blur-lg border-b border-white/[0.08] px-6 mt-2">
@@ -55,10 +59,10 @@ export const NewsPage: React.FC = () => {
       {/* Top Banner section with dual-gradient glass glow */}
       <header className="relative py-12 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-radial-gradient from-[var(--pm-accent)]/20 via-transparent to-transparent pointer-events-none" />
-        
+
         {/* Subtle decorative grid mesh background */}
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-        
+
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--pm-accent)]/10 border border-[var(--pm-accent)]/20 rounded-full text-xs font-black text-[var(--pm-accent)] uppercase tracking-widest leading-none">
@@ -102,8 +106,8 @@ export const NewsPage: React.FC = () => {
 
             {/* Premium, glassmorphic search box */}
             <div className="relative flex-1 md:max-w-xs group">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ম্যাগাজিন খবর খুঁজুন..."
@@ -113,9 +117,9 @@ export const NewsPage: React.FC = () => {
             </div>
           </div>
 
-          <CategoryTabs 
-            activeCategory={activeCategory} 
-            onCategoryChange={setActiveCategory} 
+          <CategoryTabs
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
           />
         </div>
       </section>
@@ -123,35 +127,16 @@ export const NewsPage: React.FC = () => {
       {/* Main News Stream Column Layout */}
       <main className="max-w-5xl mx-auto px-4 md:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           {/* Left Main Stream Grid: 8 columns wide */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 space-y-8">
             <AnimatePresence mode="popLayout">
               {filteredArticles.length > 0 ? (
-                filteredArticles.map((article) => {
-                  const post: UnifiedPost = {
-                    id: article.id,
-                    type: 'news',
-                    domain: 'SOCIAL',
-                    authorName: article.source,
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${article.source}`,
-                    isVerified: true,
-                    authorRole: 'News Source',
-                    timestamp: article.publishedAt,
-                    content: article.summaryBn,
-                    imageUrl: article.imageUrl,
-                    likes: article.initialLikes,
-                    comments: 5, // Mock comments count
-                    metadata: {
-                       readTime: article.readTimeBn,
-                       views: article.views,
-                       urgency: article.isPremium ? 'High' : 'Normal'
-                    }
-                  };
-                  return <UnifiedPostCard key={article.id} post={post} />;
-                })
+                filteredArticles.map((article) => (
+                  <NewsCard key={article.id} article={article} />
+                ))
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
@@ -169,7 +154,7 @@ export const NewsPage: React.FC = () => {
 
           {/* Right Editorial Spotlight Sidebar: 4 columns wide */}
           <aside className="lg:col-span-4 space-y-6">
-            
+
             {/* SME Support Widget */}
             <section className="p-6 rounded-[2.5rem] bg-gradient-to-br from-[var(--pm-accent)]/10 via-white/[0.02] to-transparent border border-white/5 space-y-4">
               <div className="flex items-center gap-2 text-[var(--pm-accent)] font-bold text-sm">
@@ -197,22 +182,22 @@ export const NewsPage: React.FC = () => {
 
               <AnimatePresence mode="wait">
                 {!isSubscribed ? (
-                  <motion.form 
+                  <motion.form
                     key="sub-form"
-                    onSubmit={handleSubscribe} 
+                    onSubmit={handleSubscribe}
                     className="space-y-3"
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       required
                       value={newsAlertEmail}
                       onChange={(e) => setNewsAlertEmail(e.target.value)}
                       placeholder="আপনার ইমেইল দিন..."
                       className="w-full bg-white/5 text-xs text-white placeholder-zinc-500 rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-amber-500 border border-white/5"
                     />
-                    <button 
+                    <button
                       type="submit"
                       className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
                     >
@@ -220,7 +205,7 @@ export const NewsPage: React.FC = () => {
                     </button>
                   </motion.form>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     key="sub-success"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}

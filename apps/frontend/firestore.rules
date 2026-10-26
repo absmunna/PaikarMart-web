@@ -34,12 +34,38 @@ service cloud.firestore {
       );
     }
 
+    // Entity Validation: UserProfile
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'name', 'role']) &&
+             data.keys().hasOnly(['uid', 'email', 'name', 'phone', 'role', 'avatarUrl', 'createdAt', 'updatedAt']) &&
+             data.uid is string && data.uid == request.auth.uid &&
+             data.email is string && data.email.size() > 3 && data.email.size() <= 256 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 120 &&
+             data.role in ['buyer', 'seller', 'wholesale_seller', 'service_provider', 'nearby_shop', 'rider', 'delivery_agent', 'admin'] &&
+             (!('phone' in data) || (data.phone is string && data.phone.size() <= 20)) &&
+             (!('avatarUrl' in data) || (data.avatarUrl is string && data.avatarUrl.size() <= 1000));
+    }
+
+    // Entity Validation: Order
+    function isValidOrder(data) {
+      return data.keys().hasAll(['id', 'userId', 'totalAmount', 'status']) &&
+             data.keys().hasOnly(['id', 'userId', 'totalAmount', 'status', 'deliveryAddress', 'createdAt']) &&
+             data.id is string && isValidId(data.id) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.status in ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'] &&
+             (!('deliveryAddress' in data) || (data.deliveryAddress is string && data.deliveryAddress.size() <= 500));
+    }
+
     // Users Collection (PII Isolated & ABAC Protected)
     match /users/{userId} {
       allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
       allow list: if isAdmin();
-      allow create: if isValidId(userId) && isOwner(userId);
-      allow update: if isValidId(userId) && (isAdmin() || isOwner(userId));
+      allow create: if isValidId(userId) && isOwner(userId) && isValidUserProfile(incoming());
+      allow update: if isValidId(userId) && (
+        isAdmin() ||
+        (isOwner(userId) && isValidUserProfile(incoming()) && incoming().uid == existing().uid)
+      );
       allow delete: if isAdmin();
     }
 
@@ -47,69 +73,12 @@ service cloud.firestore {
     match /orders/{orderId} {
       allow get: if isValidId(orderId) && (isAdmin() || (isSignedIn() && existing().userId == request.auth.uid));
       allow list: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
-      allow create: if isValidId(orderId) && isSignedIn();
-      allow update: if isValidId(orderId) && (isAdmin() || (isSignedIn() && existing().userId == request.auth.uid));
+      allow create: if isValidId(orderId) && isSignedIn() && isValidOrder(incoming());
+      allow update: if isValidId(orderId) && (
+        isAdmin() ||
+        (isSignedIn() && existing().userId == request.auth.uid && isValidOrder(incoming()) && incoming().userId == existing().userId)
+      );
       allow delete: if isAdmin();
-    }
-
-    // Chats Collection & Messages Subcollection
-    match /chats/{chatId} {
-      allow get: if isValidId(chatId) && (isAdmin() || (isSignedIn() && request.auth.uid in existing().participants));
-      allow list: if isSignedIn() && (isAdmin() || request.auth.uid in resource.data.participants);
-      allow create: if isValidId(chatId) && isSignedIn() && request.auth.uid in incoming().participants;
-      allow update: if isValidId(chatId) && isSignedIn() && (isAdmin() || request.auth.uid in existing().participants);
-      allow delete: if isAdmin();
-
-      match /messages/{messageId} {
-        allow get, list: if isSignedIn();
-        allow create: if isValidId(messageId) && isSignedIn();
-        allow update, delete: if isAdmin();
-      }
-    }
-
-    // Products Collection (Public Read Catalog)
-    match /products/{productId} {
-      allow read: if true;
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Categories Collection (Public Read)
-    match /categories/{categoryId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    // Demands Collection (Public Read)
-    match /demands/{demandId} {
-      allow read: if true;
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Posts Collection (Public Read Feed)
-    match /posts/{postId} {
-      allow read: if true;
-      allow create, update, delete: if isSignedIn();
-    }
-
-    // Sellers Collection
-    match /sellers/{sellerId} {
-      allow read: if true;
-      allow create, update: if isSignedIn() && (isAdmin() || request.auth.uid == sellerId);
-      allow delete: if isAdmin();
-    }
-
-    // Wallets Collection
-    match /wallets/{userId} {
-      allow read, write: if isSignedIn() && (isAdmin() || request.auth.uid == userId);
-
-      match /transactions/{transactionId} {
-        allow read, write: if isSignedIn() && (isAdmin() || request.auth.uid == userId);
-      }
-    }
-
-    // Client Vault Files
-    match /client_vault_files/{fileId} {
-      allow read, write: if isSignedIn();
     }
 
     // Test connection doc

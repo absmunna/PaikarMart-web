@@ -1,11 +1,11 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
 } from '@/design-system/components/ui/dialog';
 import { Button } from '@/design-system/components/ui/button';
 import { LogIn, UserPlus } from 'lucide-react';
@@ -18,9 +18,9 @@ interface AuthBarrierProps {
   description?: string;
 }
 
-export const AuthBarrier: React.FC<AuthBarrierProps> = ({ 
-  children, 
-  fallback, 
+export const AuthBarrier: React.FC<AuthBarrierProps> = ({
+  children,
+  fallback,
   title = "Authentication Required",
   description = "Please log in or register to continue with this action."
 }) => {
@@ -59,29 +59,29 @@ export const AuthBarrier: React.FC<AuthBarrierProps> = ({
               {description}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid grid-cols-2 gap-4 py-4">
-            <Button 
+            <Button
               onClick={() => {
                 setShowModal(false);
                 navigate('/auth/login');
-              }} 
+              }}
               className="bg-[var(--pm-accent)] hover:opacity-90 text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2"
             >
               <LogIn className="h-4 w-4" /> Login
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setShowModal(false);
                 navigate('/auth/register');
-              }} 
+              }}
               className="border-[var(--pm-border)] text-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/10 font-bold h-12 rounded-xl flex items-center justify-center gap-2"
             >
               <UserPlus className="h-4 w-4" /> Register
             </Button>
           </div>
-          
+
           <div className="mt-2 text-center">
             <p className="text-[10px] text-[var(--pm-muted)] uppercase tracking-widest font-black">
               PaikarMart Secure Session

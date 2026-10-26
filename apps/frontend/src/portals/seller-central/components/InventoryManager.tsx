@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ products }) => {
   const { updateProduct } = useSellerContext();
-  
+
   // Search, Filter, Sort
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -35,7 +35,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
   const handleSave = async (id: string) => {
     const numStock = parseInt(editForm.stock, 10);
     const numPrice = parseFloat(editForm.price);
-    
+
     if (isNaN(numStock) || numStock < 0) {
       toast.error("Invalid stock value.");
       return;
@@ -83,7 +83,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
         case 'price_desc': return (b.price || 0) - (a.price || 0);
         case 'stock_asc': return (a.stock || 0) - (b.stock || 0);
         case 'stock_desc': return (b.stock || 0) - (a.stock || 0);
-        case 'newest': 
+        case 'newest':
         default:
           return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
       }
@@ -104,7 +104,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
             Manage your stock and product visibility
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
@@ -116,7 +116,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                className="w-full bg-[#1e2136] border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-xs font-bold text-white outline-none focus:border-[#FF7A00] transition-colors"
              />
           </div>
-          
+
           <div className="flex gap-3">
             <div className="relative">
               <Filter className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
@@ -131,7 +131,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                 <option value="out_of_stock">Out of Stock</option>
               </select>
             </div>
-            
+
             <div className="relative">
               <ArrowUpDown className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
               <select
@@ -173,7 +173,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
               ) : (
                 processedProducts.map((p) => {
                   const isEditing = editingId === p.id;
-                  
+
                   return (
                     <tr key={p.id} className="hover:bg-white/[0.04] transition-colors group">
                       <td className="px-6 py-4">
@@ -186,9 +186,9 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                         {isEditing ? (
                           <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">৳</span>
-                            <input 
-                              type="number" 
-                              value={editForm.price} 
+                            <input
+                              type="number"
+                              value={editForm.price}
                               onChange={(e) => setEditForm({...editForm, price: e.target.value})}
                               className="w-24 bg-zinc-950 border border-white/10 rounded-lg pl-6 pr-2 py-1.5 text-xs text-white outline-none focus:border-cyan-500"
                             />
@@ -199,9 +199,9 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                       </td>
                       <td className="px-6 py-4">
                         {isEditing ? (
-                          <input 
-                            type="number" 
-                            value={editForm.stock} 
+                          <input
+                            type="number"
+                            value={editForm.stock}
                             onChange={(e) => setEditForm({...editForm, stock: e.target.value})}
                             className="w-20 bg-zinc-950 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500"
                           />
@@ -211,8 +211,8 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                       </td>
                       <td className="px-6 py-4">
                          {isEditing ? (
-                           <select 
-                             value={editForm.status} 
+                           <select
+                             value={editForm.status}
                              onChange={(e) => setEditForm({...editForm, status: e.target.value})}
                              className="bg-zinc-950 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white outline-none focus:border-cyan-500"
                            >
@@ -232,14 +232,14 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                       <td className="px-6 py-4 text-right">
                         {isEditing ? (
                           <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={() => handleSave(p.id)} 
+                            <button
+                              onClick={() => handleSave(p.id)}
                               disabled={isSaving}
                               className="bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500 hover:text-white p-2 rounded-lg transition-all"
                             >
                               <Check className="w-4 h-4" />
                             </button>
-                            <button 
+                            <button
                               onClick={cancelEdit}
                               disabled={isSaving}
                               className="bg-zinc-500/20 text-zinc-400 hover:bg-zinc-500 hover:text-white p-2 rounded-lg transition-all"
@@ -248,8 +248,8 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                             </button>
                           </div>
                         ) : (
-                          <button 
-                            onClick={() => startEdit(p)} 
+                          <button
+                            onClick={() => startEdit(p)}
                             className="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-all cursor-pointer text-zinc-400 hover:text-white"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -263,7 +263,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
             </tbody>
           </table>
         </div>
-        
+
         {/* Mobile View */}
         <div className="md:hidden divide-y divide-white/5">
           {processedProducts.length === 0 ? (
@@ -294,7 +294,7 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                       )}
                     </div>
                     {!isEditing && (
-                      <button 
+                      <button
                         onClick={() => startEdit(p)}
                         className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-zinc-400 hover:text-white transition-all shrink-0"
                       >
@@ -308,18 +308,18 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                       <div className="flex gap-3">
                         <div className="flex-1 space-y-1">
                           <label className="text-[9px] uppercase font-bold text-zinc-500 tracking-wider">Price (৳)</label>
-                          <input 
-                            type="number" 
-                            value={editForm.price} 
+                          <input
+                            type="number"
+                            value={editForm.price}
                             onChange={(e) => setEditForm({...editForm, price: e.target.value})}
                             className="w-full bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500"
                           />
                         </div>
                         <div className="flex-1 space-y-1">
                           <label className="text-[9px] uppercase font-bold text-zinc-500 tracking-wider">Stock</label>
-                          <input 
-                            type="number" 
-                            value={editForm.stock} 
+                          <input
+                            type="number"
+                            value={editForm.stock}
                             onChange={(e) => setEditForm({...editForm, stock: e.target.value})}
                             className="w-full bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500"
                           />
@@ -327,8 +327,8 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] uppercase font-bold text-zinc-500 tracking-wider">Status</label>
-                        <select 
-                           value={editForm.status} 
+                        <select
+                           value={editForm.status}
                            onChange={(e) => setEditForm({...editForm, status: e.target.value})}
                            className="w-full bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500"
                          >
@@ -338,14 +338,14 @@ export const InventoryManager: React.FC<{ products: SellerProduct[] }> = ({ prod
                          </select>
                       </div>
                       <div className="flex gap-2 pt-2 border-t border-white/5">
-                        <button 
-                          onClick={() => handleSave(p.id)} 
+                        <button
+                          onClick={() => handleSave(p.id)}
                           disabled={isSaving}
                           className="flex-1 flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-400 font-bold uppercase text-[10px] tracking-wider py-2 rounded-lg"
                         >
                           <Check className="w-3.5 h-3.5" /> Save
                         </button>
-                        <button 
+                        <button
                           onClick={cancelEdit}
                           disabled={isSaving}
                           className="flex-1 flex items-center justify-center gap-2 bg-zinc-500/20 text-zinc-400 font-bold uppercase text-[10px] tracking-wider py-2 rounded-lg"

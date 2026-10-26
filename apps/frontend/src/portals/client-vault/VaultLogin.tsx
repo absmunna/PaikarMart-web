@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FolderLock, Mail, Phone, Lock, User, Loader2, ArrowRight } from "lucide-react";
 import { auth } from '@/lib/firebase';
-import { 
-  createUserWithEmailAndPassword, 
+import {
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   RecaptchaVerifier,
   signInWithPhoneNumber,
@@ -17,11 +17,11 @@ declare const grecaptcha: any;
 export default function VaultLogin() {
   const [authMode, setAuthMode] = useState<"email" | "phone">("email");
   const [isLogin, setIsLogin] = useState(true);
-  
+
   // Email state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   // Phone state
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -88,10 +88,10 @@ export default function VaultLogin() {
   const verifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!confirmationResult) return;
-    
+
     setError("");
     setLoading(true);
-    
+
     try {
       await confirmationResult.confirm(otp);
       navigate("/client-vault");
@@ -106,7 +106,7 @@ export default function VaultLogin() {
   return (
     <div className="min-h-screen bg-[#0f111a] flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,rgba(59,130,246,0.15),transparent)] pointer-events-none"></div>
-      
+
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-10">
           <div className="h-20 w-20 bg-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-blue-600/20 rotate-3">
@@ -142,12 +142,12 @@ export default function VaultLogin() {
 
           <AnimatePresence mode="wait">
             {authMode === "email" ? (
-              <motion.form 
+              <motion.form
                 key="email"
                 initial={{ opacity: 0, x: 5 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -5 }}
-                onSubmit={handleEmailSubmit} 
+                onSubmit={handleEmailSubmit}
                 className="space-y-5"
               >
                 <div className="space-y-4">
@@ -155,8 +155,8 @@ export default function VaultLogin() {
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500" />
                     </div>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -164,13 +164,13 @@ export default function VaultLogin() {
                       placeholder="Email Address"
                     />
                   </div>
-                  
+
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500" />
                     </div>
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -180,8 +180,8 @@ export default function VaultLogin() {
                   </div>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={loading}
                   className="w-full bg-gray-900 text-white rounded-2xl py-4 font-bold hover:bg-black transition-all mt-4 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
@@ -189,9 +189,9 @@ export default function VaultLogin() {
                 </button>
 
                 <div className="text-center">
-                  <button 
+                  <button
                     type="button"
-                    onClick={() => { setIsLogin(!isLogin); setError(""); }} 
+                    onClick={() => { setIsLogin(!isLogin); setError(""); }}
                     className="text-sm text-blue-600 hover:underline font-bold"
                   >
                     {isLogin ? "Need an account? Create one" : "Already have an account? Sign In"}
@@ -199,7 +199,7 @@ export default function VaultLogin() {
                 </div>
               </motion.form>
             ) : (
-              <motion.div 
+              <motion.div
                 key="phone"
                 initial={{ opacity: 0, x: 5 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -213,8 +213,8 @@ export default function VaultLogin() {
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                           <Phone className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500" />
                         </div>
-                        <input 
-                          type="tel" 
+                        <input
+                          type="tel"
                           required
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
@@ -223,11 +223,11 @@ export default function VaultLogin() {
                         />
                       </div>
                     </div>
-                    
+
                     <div id="recaptcha-container"></div>
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       disabled={loading || !phoneNumber}
                       className="w-full bg-blue-600 text-white rounded-2xl py-4 font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2"
                     >
@@ -247,8 +247,8 @@ export default function VaultLogin() {
                       <p className="text-sm text-gray-500">Enter the 6-digit code sent to your phone.</p>
                     </div>
 
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
@@ -258,8 +258,8 @@ export default function VaultLogin() {
                       autoFocus
                     />
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       disabled={loading || otp.length !== 6}
                       className="w-full bg-gray-900 text-white rounded-2xl py-4 font-bold hover:bg-black transition-all flex items-center justify-center gap-2"
                     >
@@ -291,4 +291,3 @@ declare global {
     recaptchaVerifier: any;
   }
 }
-

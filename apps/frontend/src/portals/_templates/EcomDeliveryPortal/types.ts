@@ -8,18 +8,18 @@ export interface EcomProduct {
   category: string;
   unit?: string;
   inStock: boolean;
-  
+
   // Food-specific fields
   veg?: boolean;
   spicy?: boolean;
   popular?: boolean;
-  
+
   // Pharmacy-specific fields
   requiresRx?: boolean;
   generic?: string;
   brand?: string;
   description?: string;
-  
+
   // Grocery-specific fields
   isOrganic?: boolean;
   isFeatured?: boolean;

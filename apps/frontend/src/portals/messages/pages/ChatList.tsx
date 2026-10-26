@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  MessageSquare, Search, Filter, ShieldCheck, 
+import {
+  MessageSquare, Search, Filter, ShieldCheck,
   ArrowLeft, Bot, CheckCheck, Loader2, Sparkles, Store
 } from 'lucide-react';
 import { useChatStore, useChatEngine, ChatWidget } from '@/modules/ai';
@@ -65,7 +65,7 @@ function formatTimestamp(ts: any): string {
     const date = ts.toDate ? ts.toDate() : new Date(ts);
     const now = new Date();
     const diffMin = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
+
     if (diffMin < 1) return 'এইমাত্র';
     if (diffMin < 60) return `${diffMin} মিনিট আগে`;
     const diffHours = Math.floor(diffMin / 60);
@@ -106,9 +106,9 @@ export default function ChatList() {
   }, [currentUserId]);
 
   // AI Assistant Chat Widget states
-  const { 
-    sessions, 
-    activeSessionId 
+  const {
+    sessions,
+    activeSessionId
   } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const activeSession = sessions[activeSessionId];
@@ -164,7 +164,7 @@ export default function ChatList() {
     ...(mappedLiveChats.length > 0 ? mappedLiveChats : FALLBACK_CHATS)
   ];
 
-  const filteredChats = displayList.filter(chat => 
+  const filteredChats = displayList.filter(chat =>
     chat.senderName.toLowerCase().includes(search.toLowerCase()) ||
     chat.lastMessage.toLowerCase().includes(search.toLowerCase()) ||
     (chat.productContext && chat.productContext.toLowerCase().includes(search.toLowerCase()))
@@ -174,7 +174,7 @@ export default function ChatList() {
     return (
       <div className="flex flex-col h-screen bg-[#05050a] text-white overflow-hidden relative pb-20">
         <div className="p-4 border-b border-white/5 bg-black/40 backdrop-blur-2xl flex items-center gap-3 z-20 sticky top-0">
-          <button 
+          <button
             onClick={() => setIsAiOpen(false)}
             className="w-10 h-10 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center hover:bg-white/[0.05] transition-all cursor-pointer text-white/70 hover:text-white"
           >
@@ -218,7 +218,7 @@ export default function ChatList() {
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-          <input 
+          <input
             type="text"
             placeholder="ভেন্ডর, বায়ার বা পণ্যের নাম খুঁজুন..."
             value={search}
@@ -286,22 +286,22 @@ export default function ChatList() {
                     </span>
                   </div>
                 )}
-                
+
                 <div className="flex items-center justify-between">
                   <p className={`text-xs truncate pr-4 ${chat.id === 'ai' ? 'text-zinc-300 font-medium' : 'text-white/60'}`}>
                     {chat.lastMessage}
                   </p>
                   {chat.unreadCount > 0 && (
                     <span className={`text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-2 shadow-sm shrink-0 ${
-                      chat.id === 'ai' 
-                        ? 'bg-orange-500 ring-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]' 
+                      chat.id === 'ai'
+                        ? 'bg-orange-500 ring-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]'
                         : 'bg-[var(--pm-accent)] ring-[var(--pm-accent)] shadow-[0_0_10px_rgba(249,115,22,0.3)]'
                     }`}>
                       {chat.unreadCount}
                     </span>
                   )}
                 </div>
-                
+
                 <div className="flex items-center gap-2 mt-2">
                   <div className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[8px] font-black uppercase text-white/40">
                     {chat.type}

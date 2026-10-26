@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { 
-  Star, ShieldCheck, Truck, Store as StoreIcon, CheckCircle2, 
+import {
+  Star, ShieldCheck, Truck, Store as StoreIcon, CheckCircle2,
   Heart, Plus, Minus, ShoppingCart, ArrowLeft,
   Sparkles, MessageSquare, Calendar, Clock, Lock, Key, Download, ShieldAlert,
   Copy, Check, Package, Zap
@@ -10,14 +10,13 @@ import { ProductReviews } from "@/components/reviews/ProductReviews";
 import { useCartStore } from "@/modules/cart";
 import { toast } from "sonner";
 import { mockProducts } from "@/lib/workspace-stub";
-import { 
-  ECOMMERCE_PRODUCTS, 
-  MultiSellerOffersSection, 
-  LinkInventoryModal, 
-  type SellerProductOffer 
+import {
+  ECOMMERCE_PRODUCTS,
+  MultiSellerOffersSection,
+  LinkInventoryModal,
+  type SellerProductOffer
 } from "@/modules/product";
 import { ChatModal } from "@/modules/chat";
-import { safeBack } from "@/lib/navigation";
 
 export default function ProductDetailsView() {
   const { id } = useParams();
@@ -210,8 +209,8 @@ export default function ProductDetailsView() {
     rating: activeOffer?.sellerRating || matched?.rating || 4.8,
     reviews: matched?.reviewCount || 124,
     sold: 1542,
-    images: (matched as any)?.images && (matched as any).images.length > 0 
-      ? (matched as any).images 
+    images: (matched as any)?.images && (matched as any).images.length > 0
+      ? (matched as any).images
       : [
           matched?.image || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
           "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800",
@@ -274,8 +273,8 @@ export default function ProductDetailsView() {
     }
 
     // Direct redirection to universal checkout passing state
-    navigate("/checkout", { 
-      state: { 
+    navigate("/checkout", {
+      state: {
         checkoutType,
         items: [{
           id: product.id,
@@ -286,33 +285,32 @@ export default function ProductDetailsView() {
           vendorName: product.seller.name
         }],
         subtotal: product.price * quantity
-      } 
+      }
     });
     toast.info('ইউনিভার্সাল পেমেন্ট টার্মিনালে রিডাইরেক্ট করা হচ্ছে...');
   };
 
   return (
     <div className="px-4 py-6 md:px-6 md:py-8 max-w-7xl mx-auto min-h-screen text-white pb-32">
-      
+
       {/* Back Button */}
-      <button 
-        onClick={() => safeBack(navigate, '/')} 
+      <button
+        onClick={() => navigate(-1)}
         className="inline-flex items-center gap-2 text-xs font-black text-zinc-400 hover:text-white mb-6 transition-colors cursor-pointer"
-        title="ফিরে যান"
       >
         <ArrowLeft className="h-4 w-4" /> আগের পৃষ্ঠায় ফিরুন
       </button>
 
       {/* Main Details Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-[#141624] p-5 md:p-8 rounded-[2rem] border border-white/5 shadow-2xl items-start">
-        
+
         {/* LEFT: Gallery (col-span-5) */}
         <div className="lg:col-span-5 flex flex-col gap-4">
           <div className="aspect-square w-full rounded-2xl overflow-hidden bg-black/40 border border-white/10 relative group">
-            <img 
-              src={product.images[activeImageIndex]} 
-              alt={product.title} 
-              className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500" 
+            <img
+              src={product.images[activeImageIndex]}
+              alt={product.title}
+              className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
               referrerPolicy="no-referrer"
             />
             {isWholesaleItem && (
@@ -353,7 +351,7 @@ export default function ProductDetailsView() {
         {/* RIGHT: Specs & Action Controls (col-span-7) */}
         <div className="lg:col-span-7 flex flex-col justify-between h-full space-y-6">
           <div className="space-y-4">
-            
+
             {/* Tag headers & Amazon ASIN Catalog Bar */}
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -394,7 +392,7 @@ export default function ProductDetailsView() {
             <h1 className="text-xl sm:text-2xl font-black text-white leading-tight">
               {product.title}
             </h1>
-            
+
             {/* Reviews count & ASIN barcode */}
             <div className="flex items-center gap-4 flex-wrap text-xs select-none">
               <div className="flex items-center gap-1.5">
@@ -464,7 +462,7 @@ export default function ProductDetailsView() {
 
             {/* DYNAMIC MODE CONFIGURATION SELECTOR FIELDS */}
             <div className="space-y-5 pt-2 border-t border-white/[0.04]">
-              
+
               {/* IF: SERVICE BOOKING PANEL */}
               {isServiceItem && (
                 <div className="space-y-4 text-left">
@@ -473,13 +471,13 @@ export default function ProductDetailsView() {
                     <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-2">সার্ভিস বুকিং তারিখ নির্ধারণ:</h3>
                     <div className="flex gap-2 flex-wrap select-none">
                       {["আজকে (Today)", "আগামীকাল (Tomorrow)", "পরশু (Day After)"].map((d) => (
-                        <button 
-                          key={d} 
+                        <button
+                          key={d}
                           type="button"
                           onClick={() => setBookingDate(d)}
                           className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer outline-none ${
-                            bookingDate === d 
-                              ? "bg-purple-600 text-white border-transparent shadow-lg shadow-purple-600/25 scale-[1.02]" 
+                            bookingDate === d
+                              ? "bg-purple-600 text-white border-transparent shadow-lg shadow-purple-600/25 scale-[1.02]"
                               : "bg-white/5 text-zinc-300 border-white/10 hover:border-white/20"
                           }`}
                         >
@@ -494,13 +492,13 @@ export default function ProductDetailsView() {
                     <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-2">উপযুক্ত সময় নির্বাচন:</h3>
                     <div className="flex gap-2 flex-wrap select-none">
                       {["সকাল ১০:০০ - দুপুর ১২:০০", "দুপুর ১২:০০ - বিকাল ৩:০০", "বিকাল ৪:০০ - সন্ধ্যা ৬:০০"].map((slot) => (
-                        <button 
-                          key={slot} 
+                        <button
+                          key={slot}
                           type="button"
                           onClick={() => setBookingSlot(slot)}
                           className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer outline-none ${
-                            bookingSlot === slot 
-                              ? "bg-purple-600 text-white border-transparent shadow-lg shadow-purple-600/25 scale-[1.02]" 
+                            bookingSlot === slot
+                              ? "bg-purple-600 text-white border-transparent shadow-lg shadow-purple-600/25 scale-[1.02]"
                               : "bg-white/5 text-zinc-300 border-white/10 hover:border-white/20"
                           }`}
                         >
@@ -523,13 +521,13 @@ export default function ProductDetailsView() {
                     <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-2">লাইসেন্স টাইপ নির্বাচন করুন:</h3>
                     <div className="flex gap-2 flex-wrap select-none">
                       {["সিঙ্গেল লাইসেন্স (Personal Keys)", "আনলিমিটেড ডেভেলপার প্যাক (Unlimited)"].map((lic) => (
-                        <button 
-                          key={lic} 
+                        <button
+                          key={lic}
                           type="button"
                           onClick={() => setLicenseType(lic)}
                           className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer outline-none ${
-                            licenseType === lic 
-                              ? "bg-violet-600 text-white border-transparent shadow-lg shadow-violet-600/25 scale-[1.02]" 
+                            licenseType === lic
+                              ? "bg-violet-600 text-white border-transparent shadow-lg shadow-violet-600/25 scale-[1.02]"
                               : "bg-white/5 text-zinc-300 border-white/10 hover:border-white/20"
                           }`}
                         >
@@ -554,13 +552,13 @@ export default function ProductDetailsView() {
                     <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-2">সাইজ বা পরিমাপ নির্বাচন:</h3>
                     <div className="flex gap-2 flex-wrap select-none">
                       {product.variants.map((v) => (
-                        <button 
-                          key={v} 
+                        <button
+                          key={v}
                           type="button"
                           onClick={() => setSelectedSize(v)}
                           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer outline-none ${
-                            selectedSize === v 
-                              ? "bg-[#FF7A00] text-white border-transparent shadow-lg shadow-orange-500/25 scale-[1.02]" 
+                            selectedSize === v
+                              ? "bg-[#FF7A00] text-white border-transparent shadow-lg shadow-orange-500/25 scale-[1.02]"
                               : "bg-white/5 text-zinc-300 border-white/10 hover:border-white/20"
                           }`}
                         >
@@ -575,13 +573,13 @@ export default function ProductDetailsView() {
                     <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-2">কালার নির্বাচন:</h3>
                     <div className="flex gap-2 flex-wrap select-none">
                       {product.colors.map((col) => (
-                        <button 
-                          key={col} 
+                        <button
+                          key={col}
                           type="button"
                           onClick={() => setSelectedColor(col)}
                           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer outline-none ${
-                            selectedColor === col 
-                              ? "bg-white text-zinc-950 border-transparent shadow-md scale-[1.02]" 
+                            selectedColor === col
+                              ? "bg-white text-zinc-950 border-transparent shadow-md scale-[1.02]"
                               : "bg-white/5 text-zinc-300 border-white/10 hover:border-white/20"
                           }`}
                         >
@@ -599,21 +597,21 @@ export default function ProductDetailsView() {
                   {isWholesaleItem ? `পরিমাণ (ন্যূনতম MOQ: ${product.moq} পিস):` : 'পরিমাণ বা লট সাইজ:'}
                 </h3>
                 <div className="flex items-center gap-3.5 w-36 border border-white/10 rounded-2xl bg-black/40 p-1">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => {
                       // Restrict below MOQ for wholesale
                       const minLimit = isWholesaleItem ? product.moq : 1;
                       setQuantity(Math.max(minLimit, quantity - 1));
-                    }} 
+                    }}
                     className="p-1.5 text-zinc-400 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer outline-none"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
                   <span className="flex-1 text-center font-bold text-white text-sm">{quantity}</span>
-                  <button 
+                  <button
                     type="button"
-                    onClick={() => setQuantity(quantity + 1)} 
+                    onClick={() => setQuantity(quantity + 1)}
                     className="p-1.5 text-zinc-400 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer outline-none"
                   >
                     <Plus className="h-4 w-4" />
@@ -632,10 +630,10 @@ export default function ProductDetailsView() {
           {/* Unified Central Settle Actions Panel */}
           <div className="pt-6 border-t border-white/[0.04] space-y-4">
             <div className="flex gap-3 flex-wrap sm:flex-nowrap">
-              
+
               {/* Cart insertion (bypassed for services direct buy flow) */}
               {!isServiceItem && (
-                <button 
+                <button
                   type="button"
                   onClick={handleAddToCart}
                   className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 px-6 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 border border-white/10 active:scale-95 cursor-pointer outline-none"
@@ -645,7 +643,7 @@ export default function ProductDetailsView() {
               )}
 
               {/* Settle Instant checkout triggers */}
-              <button 
+              <button
                 type="button"
                 onClick={handleBuyNow}
                 className="flex-1 bg-gradient-to-r from-orange-500 to-[#FF7A00] hover:from-orange-600 hover:to-[#e06b00] text-white py-4 px-6 rounded-2xl font-black text-sm transition-all shadow-xl shadow-orange-500/10 flex items-center justify-center gap-2 active:scale-95 cursor-pointer outline-none"
@@ -668,7 +666,7 @@ export default function ProductDetailsView() {
                 )}
               </button>
 
-              <button 
+              <button
                 type="button"
                 onClick={() => {
                   setIsWishlisted(!isWishlisted);
@@ -734,14 +732,14 @@ export default function ProductDetailsView() {
         </div>
 
         <div className="flex items-center gap-3 select-none">
-          <button 
+          <button
             type="button"
             onClick={() => setIsChatModalOpen(true)}
             className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-zinc-300 border border-white/10 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <MessageSquare className="h-3.5 w-3.5 text-[#FF7A00]" /> ইনবক্স মেসেজ
           </button>
-          <Link 
+          <Link
             to={`/store/${product.seller.id}`}
             className="px-5 py-2.5 bg-[#FF7A00] hover:bg-[#e06b00] text-white rounded-xl text-xs font-black transition-all shadow-md shadow-[#FF7A00]/20 cursor-pointer"
           >

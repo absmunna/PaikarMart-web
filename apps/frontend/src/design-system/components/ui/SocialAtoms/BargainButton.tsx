@@ -8,9 +8,9 @@ interface Props {
 
 export const BargainButton: React.FC<Props> = ({ onClick }) => {
   return (
-    <Button 
-      variant="outline" 
-      size="sm" 
+    <Button
+      variant="outline"
+      size="sm"
       onClick={onClick}
       className="gap-2 border-[var(--pm-accent)]/30 text-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/10"
     >

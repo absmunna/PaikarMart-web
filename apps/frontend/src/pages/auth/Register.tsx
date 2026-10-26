@@ -1,20 +1,57 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  UserPlus, Mail, Lock, User, Phone, 
-  Store, ArrowRight, Loader2, 
+import {
+  UserPlus, Mail, Lock, User, Phone,
+  Building2, Store, Truck, ArrowRight, Loader2,
   CheckCircle2, ArrowLeft, ShieldCheck, Eye, EyeOff, Shield
 } from 'lucide-react';
 import { useAuthStore } from '@/modules/auth';
 import { useAuth } from '@/modules/auth';
-import { authService } from '@/modules/auth';
 import { toast } from 'sonner';
 
+const ROLES = [
+  {
+    id: 'buyer',
+    label: 'সাধারণ ক্রেতা',
+    subtitle: 'Buyer / Retail',
+    desc: 'খুচরা কেনাকাটা, পিকে শপ ক্যাশব্যাক ও হোম ডেলিভারি',
+    icon: User,
+    color: 'hover:border-orange-500/40'
+  },
+  {
+    id: 'seller',
+    label: 'পাইকারি বিক্রেতা',
+    subtitle: 'Wholesale & Mill',
+    desc: 'মিল-গেট রেটে বাল্ক সেলস, আড়ত লিস্টিং ও বড় বায়ার নেটওয়ার্ক',
+    icon: Building2,
+    color: 'hover:border-blue-500/40'
+  },
+  {
+    id: 'nearby_shop',
+    label: 'লোকাল শপ',
+    subtitle: 'Neighborhood Store',
+    desc: 'মহল্লার দোকান, গ্রোসারি ও ৩০ মিনিটের ইনস্ট্যান্ট লোকাল ডেলিভারি',
+    icon: Store,
+    color: 'hover:border-emerald-500/40'
+  },
+  {
+    id: 'rider',
+    label: 'রাইডার ও লজিস্টিকস',
+    subtitle: 'Delivery Partner',
+    desc: 'পণ্য পরিবহন, ট্রাক ও বাইক দিয়ে ডেলিভারি করে আয় করুন',
+    icon: Truck,
+    color: 'hover:border-purple-500/40'
+  },
+];
+
 export const Register: React.FC = () => {
+  const [role, setRole] = useState<'buyer' | 'seller' | 'nearby_shop' | 'rider'>('buyer');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [shopName, setShopName] = useState('');
+  const [tradeLicense, setTradeLicense] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,9 +62,10 @@ export const Register: React.FC = () => {
 
   const navigate = useNavigate();
   const { login: storeLogin, setUser: setStoreUser } = useAuthStore();
-  const { 
-    registerUser, 
-    loginWithGoogle: contextLoginWithGoogle 
+  const {
+    registerUser,
+    registerSeller,
+    loginWithGoogle: contextLoginWithGoogle
   } = useAuth();
 
   // Password strength calculation
@@ -64,6 +102,11 @@ export const Register: React.FC = () => {
       return;
     }
 
+    if ((role === 'seller' || role === 'nearby_shop') && !shopName.trim()) {
+      setError('আপনার দোকান বা প্রতিষ্ঠানের নাম প্রদান করুন');
+      return;
+    }
+
     if (!agreeTerms) {
       setError('পাইকার মার্টের ব্যবহারের শর্তাবলী ও নীতি মেনে নেওয়া বাধ্যতামূলক');
       return;
@@ -72,44 +115,45 @@ export const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      // 1. Try real backend API register
-      try {
-        await authService.register({
+      const registeredUser = role === 'seller' || role === 'nearby_shop'
+        ? await registerSeller({
+          fullName: name.trim(),
           name: name.trim(),
-          email: email.trim() || `${cleanPhone}@paikarmart.com`,
+          phone: cleanPhone,
+          email: email.trim(),
           password,
-          role: 'buyer',
-        });
-      } catch (apiErr: any) {
-        console.warn('API register fallback applied:', apiErr?.message);
-      }
-
-      // 2. Try AuthContext register
-      if (registerUser) {
-        await registerUser({
+          seller: {
+            shopName: shopName.trim(),
+            type: role === 'seller' ? 'wholesale' : 'retail',
+            nidOrTradeLicense: tradeLicense.trim() || undefined,
+          }
+        })
+        : await registerUser({
           fullName: name.trim(),
           name: name.trim(),
           phone: cleanPhone,
           email: email.trim(),
           password,
         });
-      }
 
-      // 3. Sync to AuthStore
       const userProfile = {
-        id: `usr_${Date.now()}`,
+        id: registeredUser.id,
         name: name.trim(),
         fullName: name.trim(),
-        email: email.trim() || `${cleanPhone}@paikarmart.com`,
+        email: registeredUser.email,
         phone: cleanPhone,
         role: 'buyer' as const,
+        businessName: shopName.trim() || undefined,
+        tradeLicense: tradeLicense.trim() || undefined,
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name.trim()}`
       };
 
       storeLogin(userProfile);
       setStoreUser(userProfile as any);
 
-      toast.success('অভিনন্দন! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।');
+      toast.success(role === 'buyer'
+        ? 'অভিনন্দন! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।'
+        : 'অ্যাকাউন্ট তৈরি হয়েছে; বিক্রেতা আবেদন অনুমোদনের অপেক্ষায় আছে।');
       navigate('/');
     } catch (err: any) {
       setError(err?.message || 'অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
@@ -122,24 +166,10 @@ export const Register: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      if (contextLoginWithGoogle) {
-        await contextLoginWithGoogle();
-      }
-      const userProfile = {
-        id: `usr_${Date.now()}`,
-        name: 'Google User',
-        fullName: 'Google User',
-        email: 'user@gmail.com',
-        role: 'buyer' as const,
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=GoogleUser'
-      };
-      storeLogin(userProfile);
-      setStoreUser(userProfile as any);
-      toast.success('Google অ্যাকাউন্ট দিয়ে সফলভাবে সাইন আপ হয়েছে!');
+      await contextLoginWithGoogle();
       navigate('/');
-    } catch {
-      toast.success('Google অ্যাকাউন্ট দিয়ে সফলভাবে সাইন আপ হয়েছে!');
-      navigate('/');
+    } catch (err: any) {
+      setError(err?.message || 'Google অ্যাকাউন্ট দিয়ে সাইন আপ করা যায়নি।');
     } finally {
       setLoading(false);
     }
@@ -149,8 +179,8 @@ export const Register: React.FC = () => {
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-b from-[var(--pm-bg)] via-[var(--pm-surface)] to-[var(--pm-bg)] py-10 selection:bg-[var(--pm-accent)] selection:text-white">
       {/* Back to Home Link */}
       <div className="w-full max-w-lg mb-4 flex items-center justify-between">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] transition-colors py-1.5 px-3 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] shadow-xs"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -162,7 +192,7 @@ export const Register: React.FC = () => {
         </span>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-lg bg-[var(--pm-surface)] p-6 sm:p-8 rounded-3xl border border-[var(--pm-border)] shadow-2xl relative overflow-hidden backdrop-blur-md"
@@ -171,7 +201,7 @@ export const Register: React.FC = () => {
         <div className="absolute -top-16 -right-16 w-36 h-36 bg-[var(--pm-accent)]/15 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand Header */}
-        <div className="text-center mb-5 relative z-10">
+        <div className="text-center mb-6 relative z-10">
           <div className="w-14 h-14 bg-gradient-to-tr from-[var(--pm-accent)] to-amber-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[var(--pm-accent)]/25">
             <UserPlus className="w-7 h-7" />
           </div>
@@ -179,37 +209,14 @@ export const Register: React.FC = () => {
             নতুন অ্যাকাউন্ট তৈরি করুন
           </h1>
           <p className="text-xs text-[var(--pm-text-muted)] font-medium mt-1">
-            পাইকার মার্টে কেনাকাটা, পিকে ক্যাশব্যাক ও দ্রুত হোম ডেলিভারি পান
+            পাইকার মার্টে যুক্ত হয়ে কেনাকাটা বা পাইকারি ব্যবসা শুরু করুন
           </p>
-        </div>
-
-        {/* Dedicated Seller Portal Callout Banner */}
-        <div className="mb-5 p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-[var(--pm-accent)]/10 to-orange-500/10 border border-amber-500/25 flex items-center justify-between gap-3 relative z-10">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-xs">
-              <Store className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-black text-[var(--pm-text)] truncate">
-                পাইকারি বা মার্চেন্ট সেলার হতে চান?
-              </p>
-              <p className="text-[10px] text-[var(--pm-text-muted)] truncate">
-                মিল-গেট, আড়ত বা লোকাল শপের জন্য সেলার পেজে যান
-              </p>
-            </div>
-          </div>
-          <Link
-            to="/become-seller"
-            className="px-3 py-1.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white text-[11px] font-black transition-all shrink-0 shadow-xs flex items-center gap-1 active:scale-95"
-          >
-            সেলার ফরম <ArrowRight className="w-3 h-3" />
-          </Link>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: -5 }} 
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-4 p-3 bg-red-500/10 border border-red-500/25 rounded-2xl text-red-500 text-xs font-semibold flex items-center gap-2"
           >
@@ -219,6 +226,45 @@ export const Register: React.FC = () => {
         )}
 
         <form onSubmit={handleRegister} className="space-y-4">
+          {/* Account Role Selection */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
+              আপনার অ্যাকাউন্টের ধরন নির্বাচন করুন
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {ROLES.map((r) => {
+                const isSelected = role === r.id;
+                const IconComp = r.icon;
+                return (
+                  <button
+                    type="button"
+                    key={r.id}
+                    onClick={() => {
+                      setRole(r.id as any);
+                      setError(null);
+                    }}
+                    className={`p-3 rounded-2xl border text-left flex flex-col justify-between transition-all cursor-pointer relative overflow-hidden ${
+                      isSelected
+                        ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] shadow-sm font-black ring-1 ring-[var(--pm-accent)]'
+                        : 'border-[var(--pm-border)] bg-[var(--pm-bg)] text-[var(--pm-text)] hover:border-[var(--pm-border)]/80'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <IconComp className={`w-4 h-4 ${isSelected ? 'text-[var(--pm-accent)]' : 'text-[var(--pm-text-muted)]'}`} />
+                        <span className="font-black text-xs">{r.label}</span>
+                      </div>
+                      {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[var(--pm-accent)] shrink-0" />}
+                    </div>
+                    <span className="text-[9px] text-[var(--pm-text-muted)] font-medium line-clamp-1 leading-tight">
+                      {r.desc}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Full Name */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
@@ -226,7 +272,7 @@ export const Register: React.FC = () => {
             </label>
             <div className="relative">
               <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
+              <input
                 type="text"
                 required
                 value={name}
@@ -237,6 +283,48 @@ export const Register: React.FC = () => {
             </div>
           </div>
 
+          {/* Business / Shop Name (if seller or nearby shop) */}
+          {(role === 'seller' || role === 'nearby_shop') && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="space-y-3 pt-1"
+            >
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
+                  প্রতিষ্ঠান বা দোকানের নাম <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Store className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
+                  <input
+                    type="text"
+                    required
+                    value={shopName}
+                    onChange={(e) => setShopName(e.target.value)}
+                    className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl py-2.5 pl-10 pr-4 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] outline-none font-medium transition-all"
+                    placeholder="যেমন: হাজী রফিক টেক্সটাইল অ্যান্ড গার্মেন্টস"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
+                  ট্রেড লাইসেন্স বা ব্যবসায়িক আইডি <span className="text-[var(--pm-text-muted)] font-normal">(ঐচ্ছিক)</span>
+                </label>
+                <div className="relative">
+                  <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
+                  <input
+                    type="text"
+                    value={tradeLicense}
+                    onChange={(e) => setTradeLicense(e.target.value)}
+                    className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl py-2.5 pl-10 pr-4 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] outline-none font-medium transition-all"
+                    placeholder="TRAD/DSCC/0123456"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Mobile Number with +880 badge */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
@@ -246,7 +334,7 @@ export const Register: React.FC = () => {
               <span className="bg-[var(--pm-surface-hover)] px-3 py-2.5 text-xs font-black text-[var(--pm-text)] border-r border-[var(--pm-border)] flex items-center gap-1.5 shrink-0 select-none">
                 🇧🇩 +880
               </span>
-              <input 
+              <input
                 type="tel"
                 required
                 value={phone}
@@ -265,7 +353,7 @@ export const Register: React.FC = () => {
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
+              <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -282,7 +370,7 @@ export const Register: React.FC = () => {
             </label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
+              <input
                 type={showPassword ? "text" : "password"}
                 required
                 minLength={6}
@@ -326,7 +414,7 @@ export const Register: React.FC = () => {
             </label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
+              <input
                 type={showPassword ? "text" : "password"}
                 required
                 minLength={6}
@@ -357,7 +445,7 @@ export const Register: React.FC = () => {
           </div>
 
           {/* Submit Button */}
-          <button 
+          <button
             type="submit"
             disabled={loading || !agreeTerms}
             className="w-full bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white font-black py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[var(--pm-accent)]/20 text-xs mt-2 disabled:opacity-50"

@@ -15,6 +15,6 @@ export const Button = ({ variant = 'primary', className = '', ...props }: Button
     ghost: "bg-transparent text-zinc-400 hover:text-white hover:bg-white/5",
     danger: "bg-red-600 text-white hover:bg-red-700"
   };
-  
+
   return <button className={`${baseClass} ${variants[variant] || variants.primary} ${className}`} {...props} />;
 };

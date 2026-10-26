@@ -32,8 +32,8 @@ export const TransactionList = () => {
           <p className="text-xs text-[var(--pm-text-muted)] text-center py-4">No transactions found.</p>
         ) : (
           transactions.map((tx) => (
-            <div 
-              key={tx.id} 
+            <div
+              key={tx.id}
               className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.02] border border-[var(--pm-border)]/20 hover:border-[var(--pm-accent)]/20 transition-colors group"
             >
               <div className="flex items-center gap-3">

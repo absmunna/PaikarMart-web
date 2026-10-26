@@ -22,11 +22,11 @@ export const translations: Translations = {
   vendor_dir: { BN: 'মার্চেন্ট ডিরেক্টরি', EN: 'Vendors' },
   messages: { BN: 'মেসেজ', EN: 'Messages' },
   apps: { BN: 'অ্যাপস', EN: 'Apps' },
-  
+
   // Auth / Profile
   login: { BN: 'লগইন করুন', EN: 'Login' },
   guest: { BN: 'অতিথি ইউজার', EN: 'Guest User' },
-  
+
   // Misc
   themes: { BN: 'থিম', EN: 'Themes' },
   language: { BN: 'ভাষা', EN: 'Language' },

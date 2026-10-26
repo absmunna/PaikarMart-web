@@ -14,8 +14,8 @@ export default function DevNotes() {
         <div className="w-full md:w-64 shrink-0 flex flex-col gap-2 sticky top-24">
           <h3 className="font-semibold text-white mb-2 px-3">Contents</h3>
           {devNotes.map((note, i) => (
-            <a 
-              key={i} 
+            <a
+              key={i}
               href={`#section-${i}`}
               className="px-3 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
             >

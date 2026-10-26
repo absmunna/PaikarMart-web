@@ -125,7 +125,7 @@ export default function QNAPage() {
     setActiveReplyPostId(null);
   };
 
-  const filteredPosts = posts.filter(p => 
+  const filteredPosts = posts.filter(p =>
     p.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.user.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -195,7 +195,7 @@ export default function QNAPage() {
 
           <div className="space-y-4">
             {filteredPosts.map((post) => (
-              <div 
+              <div
                 key={post.id}
                 className="p-5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:border-white/10 transition-all flex flex-col gap-4 shadow-sm"
               >

@@ -118,7 +118,7 @@ export const WithdrawalRequest: React.FC<{ onSuccess?: () => void }> = ({ onSucc
               <label className="text-[10px] text-zinc-500 font-black uppercase tracking-widest block mb-2">
                 {isBn ? "অ্যাকাউন্ট বা মোবাইল নম্বর" : "Account Number / Phone"}
               </label>
-              <input 
+              <input
                 value={account}
                 onChange={e => setAccount(e.target.value)}
                 placeholder={method === 'bank' ? "Bank account number..." : "01XXXXXXXXX"}
@@ -131,7 +131,7 @@ export const WithdrawalRequest: React.FC<{ onSuccess?: () => void }> = ({ onSucc
                 {isBn ? "টাকার পরিমাণ (৳)" : "Amount (৳)"}
               </label>
               <div className="relative">
-                <input 
+                <input
                   type="number"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
@@ -145,7 +145,7 @@ export const WithdrawalRequest: React.FC<{ onSuccess?: () => void }> = ({ onSucc
               </p>
             </div>
 
-            <Button 
+            <Button
               onClick={handleWithdraw}
               disabled={!amount || !account || isLoading}
               className="w-full h-14 bg-white text-black font-black text-sm rounded-2xl hover:bg-zinc-200 transition-all cursor-pointer"

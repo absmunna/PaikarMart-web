@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  FileText, Send, Building2, Package, 
+import {
+  FileText, Send, Building2, Package,
   Target, Calendar, Phone, CheckCircle2,
   ShieldCheck, AlertCircle, Info, Plus
 } from 'lucide-react';
@@ -71,7 +71,7 @@ export const RFQPortal: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="space-y-2">
                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Product Name</label>
-                   <Input 
+                   <Input
                     placeholder="e.g. 100% Cotton Plain T-shirts"
                     value={formData.productName}
                     onChange={(e) => setFormData({...formData, productName: e.target.value})}
@@ -81,7 +81,7 @@ export const RFQPortal: React.FC = () => {
                  </div>
                  <div className="space-y-2">
                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Quantity Needed</label>
-                   <Input 
+                   <Input
                     type="number"
                     placeholder="e.g. 500"
                     value={formData.quantity}
@@ -95,7 +95,7 @@ export const RFQPortal: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="space-y-2">
                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Target Price (Optional)</label>
-                   <Input 
+                   <Input
                     placeholder="e.g. ৳২৫০ / unit"
                     value={formData.targetPrice}
                     onChange={(e) => setFormData({...formData, targetPrice: e.target.value})}
@@ -104,7 +104,7 @@ export const RFQPortal: React.FC = () => {
                  </div>
                  <div className="space-y-2">
                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Deadline for Quotes</label>
-                   <Input 
+                   <Input
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => setFormData({...formData, deadline: e.target.value})}
@@ -115,7 +115,7 @@ export const RFQPortal: React.FC = () => {
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Detailed Description</label>
-                <Textarea 
+                <Textarea
                   placeholder="Mention size charts, GSM, material quality, and other specifics..."
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -126,7 +126,7 @@ export const RFQPortal: React.FC = () => {
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Contact Phone</label>
-                <Input 
+                <Input
                   placeholder="e.g. 017xxxxxxxx"
                   value={formData.contactPhone}
                   onChange={(e) => setFormData({...formData, contactPhone: e.target.value})}

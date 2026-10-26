@@ -1,4 +1,4 @@
-﻿import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db, storage, auth, handleFirestoreError, OperationType } from "@/lib/firebase";
 

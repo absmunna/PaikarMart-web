@@ -10,7 +10,7 @@ export class GovernanceService {
       // Example rule: Rapid engagement detection (spam)
       if (eventName === 'REACTION_ADDED' || eventName === 'COMMENT_CREATED') {
         const { userId, contentItemId } = payload;
-        
+
         // Check for high-frequency activity for this user in last 60 seconds
         const recentActionCount = await prisma.contentReaction.count({
           where: {

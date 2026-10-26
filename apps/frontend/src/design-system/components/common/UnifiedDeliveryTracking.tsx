@@ -48,8 +48,8 @@ export function UnifiedDeliveryTracking({ status, orderId, isBilingual = false }
       <div className="relative">
         {/* Step Line */}
         <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-white/10" />
-        <div 
-          className="absolute left-4 top-0 w-0.5 bg-cyan-500 transition-all duration-1000" 
+        <div
+          className="absolute left-4 top-0 w-0.5 bg-cyan-500 transition-all duration-1000"
           style={{ height: `${(currentStepIdx / (STEPS.length - 1)) * 100}%` }}
         />
 
@@ -72,7 +72,7 @@ export function UnifiedDeliveryTracking({ status, orderId, isBilingual = false }
                     {isBilingual ? config.labelBn : config.labelEn}
                   </h4>
                   {isActive && (
-                    <motion.p 
+                    <motion.p
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-[10px] text-cyan-400 mt-1"

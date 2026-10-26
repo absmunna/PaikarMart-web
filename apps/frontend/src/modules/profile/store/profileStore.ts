@@ -27,7 +27,7 @@ interface ProfileState {
   profile: UserProfile | null;
   viewMode: UserRole;
   isLoading: boolean;
-  
+
   setProfile: (profile: UserProfile) => void;
   setViewMode: (mode: UserRole) => void;
   setLoading: (loading: boolean) => void;

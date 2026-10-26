@@ -6,21 +6,21 @@ const TabsContext = React.createContext<{
   onValueChange: (value: string) => void;
 } | null>(null);
 
-export const Tabs = ({ 
-  defaultValue, 
-  value, 
-  onValueChange, 
-  children, 
-  className 
-}: { 
-  defaultValue?: string; 
-  value?: string; 
+export const Tabs = ({
+  defaultValue,
+  value,
+  onValueChange,
+  children,
+  className
+}: {
+  defaultValue?: string;
+  value?: string;
   onValueChange?: (value: string) => void;
   children: React.ReactNode;
   className?: string;
 }) => {
   const [currentValue, setCurrentValue] = React.useState(value || defaultValue || "");
-  
+
   const handleValueChange = React.useCallback((val: string) => {
     setCurrentValue(val);
     onValueChange?.(val);
@@ -44,7 +44,7 @@ export const TabsList = ({ children, className }: { children: React.ReactNode; c
 export const TabsTrigger = ({ value, children, className }: { value: string; children: React.ReactNode; className?: string }) => {
   const context = React.useContext(TabsContext);
   if (!context) return null;
-  
+
   const isActive = context.value === value;
 
   return (

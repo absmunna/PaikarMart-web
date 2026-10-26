@@ -35,12 +35,12 @@ interface WalletStoreState {
   updateCoins: (amount: number, type: 'credit' | 'debit') => void;
   updateWallet: (fiat: number, coins: number) => void;
   addTransaction: (tx: any) => void;
-  
+
   // High-level wallet functions
   topUp: (amount: number) => void;
   sendMoney: (amount: number, receiver: string) => boolean;
   addCoins: (amount: number) => void;
-  
+
   fetchWalletData: () => Promise<void>;
   processPayment: (amount: number, label: string) => Promise<boolean>;
   redeemCoins: (coins: number) => Promise<number>;
@@ -114,7 +114,7 @@ export const useWalletStore = create<WalletStoreState>()(
       topUp: (amount) => {
         const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const timeStr = new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, day: '2-digit', month: 'short' });
-        
+
         set((state) => {
           const nextBalance = state.balance + amount;
           const newTx: WalletTransaction = {
@@ -208,7 +208,7 @@ export const useWalletStore = create<WalletStoreState>()(
         if (balance < amount) return false;
 
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         updateBalance(amount, 'debit');
         addTransaction({
           type: 'debit',
@@ -217,7 +217,7 @@ export const useWalletStore = create<WalletStoreState>()(
           sublabel: 'Payment via Wallet',
           status: 'success'
         });
-        
+
         return true;
       },
 
@@ -226,7 +226,7 @@ export const useWalletStore = create<WalletStoreState>()(
         if (coins < coinsToRedeem) return 0;
 
         const currencyValue = Math.floor(coinsToRedeem / 10);
-        
+
         updateCoins(coinsToRedeem, 'debit');
         addTransaction({
           type: 'credit',
@@ -243,7 +243,7 @@ export const useWalletStore = create<WalletStoreState>()(
             fiatBalance: nextBalance
           };
         });
-        
+
         return currencyValue;
       },
 

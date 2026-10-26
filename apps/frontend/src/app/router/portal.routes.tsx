@@ -45,8 +45,8 @@ export const portalRoutes = (
 
     {/* Core Retail / B2C Portals */}
     <Route path="/shop" element={<B2CHome />} />
-    <Route 
-      path="/b2c/*" 
+    <Route
+      path="/b2c/*"
       element={
         <B2CLayout>
           <Routes>
@@ -54,29 +54,29 @@ export const portalRoutes = (
             <Route path="/product/:id" element={<ProductDetails />} />
           </Routes>
         </B2CLayout>
-      } 
+      }
     />
     {/* Marketplace Hub Main Entry & Subroutes */}
     <Route path="/marketplace" element={<MarketplaceHubPortal />} />
     <Route path="/marketplace/hub" element={<MarketplaceHubPortal />} />
-    <Route 
-      path="/marketplace/*" 
+    <Route
+      path="/marketplace/*"
       element={
         <Routes>
           <Route path="/" element={<MarketplaceHubPortal />} />
           <Route path="/all" element={<B2CLayout><B2CHome /></B2CLayout>} />
           <Route path="/product/:id" element={<ProductDetails />} />
         </Routes>
-      } 
+      }
     />
-    <Route 
-      path="/pk-shop/*" 
+    <Route
+      path="/pk-shop/*"
       element={
         <Routes>
           <Route path="/" element={<PKShopHome />} />
           <Route path="/admin" element={<PKShopAdminView />} />
         </Routes>
-      } 
+      }
     />
     <Route path="/pk-shop/admin" element={<PKShopAdminView />} />
     <Route path="/portals/pk-shop/admin" element={<PKShopAdminView />} />
@@ -91,8 +91,8 @@ export const portalRoutes = (
     <Route path="/auto/*" element={<AutoPortal />} />
 
     {/* B2B / Wholesale Portals */}
-    <Route 
-      path="/wholesale/*" 
+    <Route
+      path="/wholesale/*"
       element={
         <B2BLayout>
           <Routes>
@@ -102,10 +102,10 @@ export const portalRoutes = (
             <Route path="/orders" element={<B2BOrders />} />
           </Routes>
         </B2BLayout>
-      } 
+      }
     />
-    <Route 
-      path="/b2b/*" 
+    <Route
+      path="/b2b/*"
       element={
         <B2BLayout>
           <Routes>
@@ -115,7 +115,7 @@ export const portalRoutes = (
             <Route path="/orders" element={<B2BOrders />} />
           </Routes>
         </B2BLayout>
-      } 
+      }
     />
 
     {/* Become Seller */}

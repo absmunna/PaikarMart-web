@@ -1,11 +1,11 @@
 /**
  * Paikar Mart - Role-Based Authentication & Verification Type Definitions
- * 
+ *
  * This file maintains the type definitions, interfaces, and permissions schemas
  * for Paikar Mart's Progressive Verification & Role-Permission Matrix.
- * 
- * Consistent with our hybrid social e-commerce model, a single user profile 
- * can possess multiple roles simultaneously to allow fluid B2B, B2C, Riders, 
+ *
+ * Consistent with our hybrid social e-commerce model, a single user profile
+ * can possess multiple roles simultaneously to allow fluid B2B, B2C, Riders,
  * and Local Service portal access.
  */
 
@@ -38,7 +38,7 @@ export type AppPermission =
   | "CAN_CREATE_POST"
   | "CAN_POST_REELS"
   | "CAN_MODERATE_CHAT"
-  
+
   // E-Commerce Permissions (B2C & B2B)
   | "CAN_BUY"
   | "CAN_SELL_RETAIL"
@@ -46,16 +46,16 @@ export type AppPermission =
   | "CAN_MANAGE_INVENTORY"
   | "CAN_SUBMIT_BID"
   | "CAN_POST_DEMAND"
-  
+
   // Ride-Sharing & Logistic Permissions
   | "CAN_ACCEPT_RIDES"
   | "CAN_DISPATCH_RIDER"
   | "CAN_DRIVE"
-  
+
   // Service Provider Permissions
   | "CAN_LST_SERVICES"
   | "CAN_MANAGE_APPOINTMENTS"
-  
+
   // System Administative Permissions
   | "CAN_ACCESS_DASHBOARD"
   | "CAN_VERIFY_DOCUMENTS"

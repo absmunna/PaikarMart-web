@@ -1,10 +1,10 @@
-﻿import { 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  getDocs, 
-  updateDoc, 
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  updateDoc,
   deleteDoc,
   query,
   where,
@@ -76,10 +76,10 @@ export const sellerService = {
         createdAt: serverTimestamp(),
       };
       await setDoc(newDocRef, newProduct);
-      return { 
-        id: newDocRef.id, 
-        ...newProduct, 
-        createdAt: new Date().toISOString() 
+      return {
+        id: newDocRef.id,
+        ...newProduct,
+        createdAt: new Date().toISOString()
       } as SellerProduct;
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, "products");

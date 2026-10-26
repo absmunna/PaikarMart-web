@@ -12,7 +12,7 @@ export const auditMiddleware = (req: Request, res: Response, next: NextFunction)
   if (isSensitive) {
     const timestamp = new Date().toISOString();
     console.log(`[API-AUDIT] ${timestamp} - ${req.method} ${url} - IP: ${req.ip}`);
-    
+
     if (req.body && typeof req.body === 'object') {
       const bodyKeys = Object.keys(req.body);
       if (bodyKeys.length > 0) {
@@ -20,6 +20,6 @@ export const auditMiddleware = (req: Request, res: Response, next: NextFunction)
       }
     }
   }
-  
+
   next();
 };

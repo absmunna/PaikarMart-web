@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { 
-  Play, Radio, Film, Compass, Heart, Share2, ShoppingBag, 
+import {
+  Play, Radio, Film, Compass, Heart, Share2, ShoppingBag,
   MessageCircle, PlusCircle, Sparkles, TrendingUp, User, Eye, CheckCircle2, Flame
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -171,13 +171,13 @@ export default function VideoHubPortal() {
             <div>
               {/* Thumbnail Container */}
               <div className="relative aspect-video w-full overflow-hidden bg-zinc-900">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                 />
-                
+
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex items-center gap-2">
                   {video.isLive ? (
@@ -206,10 +206,10 @@ export default function VideoHubPortal() {
               {/* Video Info */}
               <div className="p-5">
                 <Link to={`/video/channel/${video.creator.id}`} className="flex items-center gap-3 mb-3 group/creator">
-                  <img 
-                    src={video.creator.avatar} 
-                    alt={video.creator.name} 
-                    className="h-9 w-9 rounded-full object-cover border border-white/10 group-hover/creator:border-[#FF7A00] transition-colors" 
+                  <img
+                    src={video.creator.avatar}
+                    alt={video.creator.name}
+                    className="h-9 w-9 rounded-full object-cover border border-white/10 group-hover/creator:border-[#FF7A00] transition-colors"
                     referrerPolicy="no-referrer"
                   />
                   <div>
@@ -231,10 +231,10 @@ export default function VideoHubPortal() {
             {video.linkedProduct && (
               <div className="mx-5 mb-5 p-3 rounded-2xl bg-zinc-900/60 border border-white/5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={video.linkedProduct.image} 
-                    alt={video.linkedProduct.name} 
-                    className="h-12 w-12 rounded-xl object-cover shrink-0 border border-white/10" 
+                  <img
+                    src={video.linkedProduct.image}
+                    alt={video.linkedProduct.name}
+                    className="h-12 w-12 rounded-xl object-cover shrink-0 border border-white/10"
                     referrerPolicy="no-referrer"
                   />
                   <div className="min-w-0">
@@ -258,7 +258,7 @@ export default function VideoHubPortal() {
       <AnimatePresence>
         {uploadModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -266,7 +266,7 @@ export default function VideoHubPortal() {
             >
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
                 <h3 className="text-base font-black text-white">Upload Commerce Video or Short</h3>
-                <button 
+                <button
                   onClick={() => setUploadModalOpen(false)}
                   className="text-zinc-400 hover:text-white text-xs font-bold"
                 >
@@ -286,9 +286,9 @@ export default function VideoHubPortal() {
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-400 mb-1">Video Title</label>
-                  <input 
-                    type="text" 
-                    placeholder="Enter catchy title..." 
+                  <input
+                    type="text"
+                    placeholder="Enter catchy title..."
                     className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                   />
                 </div>
@@ -303,13 +303,13 @@ export default function VideoHubPortal() {
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-                  <button 
+                  <button
                     onClick={() => setUploadModalOpen(false)}
                     className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-bold"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     onClick={() => {
                       alert("Video uploaded and sent for review successfully!");
                       setUploadModalOpen(false);

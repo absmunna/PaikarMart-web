@@ -12,14 +12,14 @@ export const handleMarketSearch = async (req: Request, res: Response) => {
     }
 
     const result = await GeminiService.verifyProductWithSearch(query);
-    
+
     res.status(200).json({
       status: 'success',
       data: result
     });
   } catch (error: any) {
     console.error('[AI Controller Market Search] Error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to process market search request',
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
@@ -40,13 +40,13 @@ export const handleAIChat = async (req: Request, res: Response) => {
     try {
       const wallet = await WalletService.getOrCreateWallet(userId);
       const escrow = await WalletService.getEscrowSummary(userId);
-      
+
       contextInstructions = `
         USER CONTEXT:
         - User ID: ${userId}
         - Wallet Balance: ৳${wallet.balance.toLocaleString()}
         - PK Coins: ${wallet.coins}
-        
+
         MERCHANT ESCROW:
         - Held: ৳${escrow.totalHeld.toLocaleString()}
         - Released: ৳${escrow.totalReleased.toLocaleString()}
@@ -102,9 +102,9 @@ export const handleAIChat = async (req: Request, res: Response) => {
                 },
                 take: 5
               });
-              res.write(`data: ${JSON.stringify({ 
-                toolCall: name, 
-                result: products.map(p => ({ id: p.id, name: p.title, price: Number(p.price) })) 
+              res.write(`data: ${JSON.stringify({
+                toolCall: name,
+                result: products.map(p => ({ id: p.id, name: p.title, price: Number(p.price) }))
               })}\n\n`);
             }
           }

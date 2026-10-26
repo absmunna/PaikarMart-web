@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { 
-  User, Briefcase, FileText, Landmark, CheckCircle, 
+import {
+  User, Briefcase, FileText, Landmark, CheckCircle,
   ChevronRight, ChevronLeft, ShieldAlert, FileCheck, Check, Loader2
 } from 'lucide-react';
 
@@ -162,7 +162,7 @@ export const SellerApplication: React.FC = () => {
       setIsUploadingDoc(prev => ({ ...prev, [docType]: true }));
       const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
       const { storage } = await import("@/core/lib/firebase");
-      
+
       const fileRef = ref(storage, `seller-docs/${docType}_${Date.now()}_${file.name}`);
       const snapshot = await uploadBytes(fileRef, file);
       const url = await getDownloadURL(snapshot.ref);
@@ -297,7 +297,7 @@ export const SellerApplication: React.FC = () => {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-[#0f111a] text-white">
       <div className="max-w-4xl mx-auto">
-        
+
         {/* Banner/Notice */}
         <div className="mb-8 p-4 rounded-2xl bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/10 flex items-start gap-3.5">
           <ShieldAlert className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
@@ -328,10 +328,10 @@ export const SellerApplication: React.FC = () => {
                 <div key={s.num} className="flex flex-col items-center gap-2">
                   <div className={cn(
                     "h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300 border",
-                    isCompleted 
-                      ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20" 
-                      : isActive 
-                        ? "bg-[#FF7A00] border-[#FF7A00] text-white shadow-lg shadow-orange-500/20 scale-110" 
+                    isCompleted
+                      ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20"
+                      : isActive
+                        ? "bg-[#FF7A00] border-[#FF7A00] text-white shadow-lg shadow-orange-500/20 scale-110"
                         : "bg-zinc-900 border-white/5 text-zinc-500"
                   )}>
                     {isCompleted ? <Check className="h-5 w-5" /> : <Icon className="h-4 w-4" />}
@@ -351,7 +351,7 @@ export const SellerApplication: React.FC = () => {
         {/* Main Step Panel */}
         <div className="bg-[#141624] border border-white/5 rounded-3xl p-6 md:p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             {/* STEP 1: Personal Details */}
             {currentStep === 1 && (
               <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -363,8 +363,8 @@ export const SellerApplication: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Full Legal Name</label>
-                    <Input 
-                      placeholder="e.g. Md Munna" 
+                    <Input
+                      placeholder="e.g. Md Munna"
                       value={formData.legalName}
                       onChange={(e) => handleInputChange('legalName', e.target.value)}
                       required
@@ -372,8 +372,8 @@ export const SellerApplication: React.FC = () => {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Contact Phone Number</label>
-                    <Input 
-                      placeholder="e.g. +88017XXXXXXXX" 
+                    <Input
+                      placeholder="e.g. +88017XXXXXXXX"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       required
@@ -384,9 +384,9 @@ export const SellerApplication: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Contact Email (Merchant Account)</label>
-                    <Input 
+                    <Input
                       type="email"
-                      placeholder="e.g. support@paikarmart.com" 
+                      placeholder="e.g. support@paikarmart.com"
                       value={formData.contactEmail}
                       onChange={(e) => handleInputChange('contactEmail', e.target.value)}
                       required
@@ -394,8 +394,8 @@ export const SellerApplication: React.FC = () => {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">National ID (NID) or Passport No</label>
-                    <Input 
-                      placeholder="e.g. 199XXXXXXXXXXXXXX" 
+                    <Input
+                      placeholder="e.g. 199XXXXXXXXXXXXXX"
                       value={formData.nidNumber}
                       onChange={(e) => handleInputChange('nidNumber', e.target.value)}
                       required
@@ -405,7 +405,7 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="space-y-1 max-w-sm">
                   <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Date of Birth</label>
-                  <Input 
+                  <Input
                     type="date"
                     value={formData.dob}
                     onChange={(e) => handleInputChange('dob', e.target.value)}
@@ -433,8 +433,8 @@ export const SellerApplication: React.FC = () => {
                         onClick={() => handleInputChange('primaryOffering', o.id)}
                         className={cn(
                           "p-4 rounded-2xl border text-left flex items-start gap-3 transition-all",
-                          formData.primaryOffering === o.id 
-                            ? "bg-[#FF7A00]/10 border-[#FF7A00] text-white shadow-lg" 
+                          formData.primaryOffering === o.id
+                            ? "bg-[#FF7A00]/10 border-[#FF7A00] text-white shadow-lg"
                             : "bg-zinc-950/40 border-white/5 text-zinc-400 hover:bg-white/5"
                         )}
                       >
@@ -456,8 +456,8 @@ export const SellerApplication: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Shop or Brand Name</label>
-                    <Input 
-                      placeholder="e.g. Munna Fashion & Wholesales" 
+                    <Input
+                      placeholder="e.g. Munna Fashion & Wholesales"
                       value={formData.shopName}
                       onChange={(e) => handleInputChange('shopName', e.target.value)}
                       required
@@ -465,7 +465,7 @@ export const SellerApplication: React.FC = () => {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Seller Entity Type</label>
-                    <select 
+                    <select
                       className="w-full bg-zinc-950 border border-white/5 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                       value={formData.sellerType}
                       onChange={(e) => handleInputChange('sellerType', e.target.value)}
@@ -480,7 +480,7 @@ export const SellerApplication: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Business Niche / Category</label>
-                    <select 
+                    <select
                       className="w-full bg-zinc-950 border border-white/5 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                       value={formData.businessCategory}
                       onChange={(e) => handleInputChange('businessCategory', e.target.value)}
@@ -494,7 +494,7 @@ export const SellerApplication: React.FC = () => {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Primary Operating Area</label>
-                    <select 
+                    <select
                       className="w-full bg-zinc-950 border border-white/5 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                       value={formData.operatingArea}
                       onChange={(e) => handleInputChange('operatingArea', e.target.value)}
@@ -510,8 +510,8 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Business Address (Warehouse/Retail/Headquarters)</label>
-                  <Input 
-                    placeholder="Provide full location details" 
+                  <Input
+                    placeholder="Provide full location details"
                     value={formData.physicalAddress}
                     onChange={(e) => handleInputChange('physicalAddress', e.target.value)}
                     required
@@ -520,7 +520,7 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Shop Bio & Merchant Tagline</label>
-                  <textarea 
+                  <textarea
                     className="w-full bg-zinc-950 border border-white/5 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#FF7A00] min-h-[90px]"
                     placeholder="Explain your products, MOQ requirements, service values, or shipping speed to potential buyers..."
                     value={formData.shopDescription}
@@ -541,8 +541,8 @@ export const SellerApplication: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Trade License Number (Option/Req for Registered Business)</label>
-                    <Input 
-                      placeholder="e.g. TRAD/DNCC/XXXXXX" 
+                    <Input
+                      placeholder="e.g. TRAD/DNCC/XXXXXX"
                       value={formData.tradeLicenseNo}
                       onChange={(e) => handleInputChange('tradeLicenseNo', e.target.value)}
                       required={formData.sellerType === 'Registered Business'}
@@ -550,8 +550,8 @@ export const SellerApplication: React.FC = () => {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">E-TIN Registration Number (Optional)</label>
-                    <Input 
-                      placeholder="e.g. XXXXXXXXXXXX" 
+                    <Input
+                      placeholder="e.g. XXXXXXXXXXXX"
                       value={formData.tinNumber}
                       onChange={(e) => handleInputChange('tinNumber', e.target.value)}
                     />
@@ -560,8 +560,8 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="space-y-1 max-w-md">
                   <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">DBID (Digital Business ID No - Optional)</label>
-                  <Input 
-                    placeholder="Enter Bangladesh government DBID number" 
+                  <Input
+                    placeholder="Enter Bangladesh government DBID number"
                     value={formData.dbidNumber}
                     onChange={(e) => handleInputChange('dbidNumber', e.target.value)}
                   />
@@ -570,7 +570,7 @@ export const SellerApplication: React.FC = () => {
                 {/* Upload Verification Files */}
                 <div className="bg-zinc-950/40 border border-white/5 rounded-2xl p-4 space-y-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-[#FF7A00]">Upload Supporting Documents</p>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <label
                       className="p-3 bg-zinc-900 hover:bg-zinc-800 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-1.5 transition-colors group cursor-pointer"
@@ -583,11 +583,11 @@ export const SellerApplication: React.FC = () => {
                       <span className="text-[10px] font-black uppercase text-zinc-300">
                         {isUploadingDoc['nid'] ? 'Uploading...' : 'Attach NID Copy'}
                       </span>
-                      <input 
-                        type="file" 
-                        accept="image/*,application/pdf" 
-                        onChange={(e) => { const file = e.target.files?.[0]; if (file) handleDocUpload('nid', file); }} 
-                        className="hidden" 
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => { const file = e.target.files?.[0]; if (file) handleDocUpload('nid', file); }}
+                        className="hidden"
                         disabled={isUploadingDoc['nid']}
                       />
                     </label>
@@ -603,11 +603,11 @@ export const SellerApplication: React.FC = () => {
                       <span className="text-[10px] font-black uppercase text-zinc-300">
                         {isUploadingDoc['trade'] ? 'Uploading...' : 'Attach Trade License'}
                       </span>
-                      <input 
-                        type="file" 
-                        accept="image/*,application/pdf" 
-                        onChange={(e) => { const file = e.target.files?.[0]; if (file) handleDocUpload('trade', file); }} 
-                        className="hidden" 
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => { const file = e.target.files?.[0]; if (file) handleDocUpload('trade', file); }}
+                        className="hidden"
                         disabled={isUploadingDoc['trade']}
                       />
                     </label>
@@ -623,11 +623,11 @@ export const SellerApplication: React.FC = () => {
                       <span className="text-[10px] font-black uppercase text-zinc-300">
                         {isUploadingDoc['tin'] ? 'Uploading...' : 'Attach TIN Certificate'}
                       </span>
-                      <input 
-                        type="file" 
-                        accept="image/*,application/pdf" 
-                        onChange={(e) => { const file = e.target.files?.[0]; if (file) handleDocUpload('tin', file); }} 
-                        className="hidden" 
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => { const file = e.target.files?.[0]; if (file) handleDocUpload('tin', file); }}
+                        className="hidden"
                         disabled={isUploadingDoc['tin']}
                       />
                     </label>
@@ -661,20 +661,20 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="bg-[#141624] border border-white/5 rounded-2xl p-4 space-y-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Commercial Bank Settlement</p>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Bank Name</label>
-                      <Input 
-                        placeholder="e.g. Islami Bank Bangladesh PLC" 
+                      <Input
+                        placeholder="e.g. Islami Bank Bangladesh PLC"
                         value={formData.bankName}
                         onChange={(e) => handleInputChange('bankName', e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Bank Branch Name</label>
-                      <Input 
-                        placeholder="e.g. Motijheel Branch, Dhaka" 
+                      <Input
+                        placeholder="e.g. Motijheel Branch, Dhaka"
                         value={formData.bankBranch}
                         onChange={(e) => handleInputChange('bankBranch', e.target.value)}
                       />
@@ -684,16 +684,16 @@ export const SellerApplication: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1 md:col-span-2">
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Account Name (Full Holder Name)</label>
-                      <Input 
-                        placeholder="e.g. Md Munna" 
+                      <Input
+                        placeholder="e.g. Md Munna"
                         value={formData.accountHolderName}
                         onChange={(e) => handleInputChange('accountHolderName', e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Bank Routing Number</label>
-                      <Input 
-                        placeholder="e.g. 125273389" 
+                      <Input
+                        placeholder="e.g. 125273389"
                         value={formData.routingNumber}
                         onChange={(e) => handleInputChange('routingNumber', e.target.value)}
                       />
@@ -702,8 +702,8 @@ export const SellerApplication: React.FC = () => {
 
                   <div className="space-y-1 max-w-md">
                     <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Bank Account Number</label>
-                    <Input 
-                      placeholder="e.g. 2050XXXXXXXXXXXXXXXX" 
+                    <Input
+                      placeholder="e.g. 2050XXXXXXXXXXXXXXXX"
                       value={formData.accountNumber}
                       onChange={(e) => handleInputChange('accountNumber', e.target.value)}
                     />
@@ -712,20 +712,20 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="bg-[#141624] border border-white/5 rounded-2xl p-4 space-y-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-[#FF7A00]">Mobile Payout Wallet (Optional)</p>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">bKash Merchant/Personal Number</label>
-                      <Input 
-                        placeholder="e.g. 017XXXXXXXX" 
+                      <Input
+                        placeholder="e.g. 017XXXXXXXX"
                         value={formData.bkashNumber}
                         onChange={(e) => handleInputChange('bkashNumber', e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Nagad Merchant/Personal Number</label>
-                      <Input 
-                        placeholder="e.g. 019XXXXXXXX" 
+                      <Input
+                        placeholder="e.g. 019XXXXXXXX"
                         value={formData.nagadNumber}
                         onChange={(e) => handleInputChange('nagadNumber', e.target.value)}
                       />
@@ -761,9 +761,9 @@ export const SellerApplication: React.FC = () => {
 
                 <div className="space-y-4 pt-2">
                   <div className="flex items-start gap-3">
-                    <input 
-                      type="checkbox" 
-                      id="agreeToPolicies" 
+                    <input
+                      type="checkbox"
+                      id="agreeToPolicies"
                       checked={formData.agreeToPolicies}
                       onChange={(e) => handleInputChange('agreeToPolicies', e.target.checked)}
                       className="mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-950 text-[#FF7A00] focus:ring-[#FF7A00]"
@@ -775,9 +775,9 @@ export const SellerApplication: React.FC = () => {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <input 
-                      type="checkbox" 
-                      id="agreeToCompliance" 
+                    <input
+                      type="checkbox"
+                      id="agreeToCompliance"
                       checked={formData.agreeToCompliance}
                       onChange={(e) => handleInputChange('agreeToCompliance', e.target.checked)}
                       className="mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-950 text-[#FF7A00] focus:ring-[#FF7A00]"
@@ -794,8 +794,8 @@ export const SellerApplication: React.FC = () => {
             {/* Form Footer Action Buttons */}
             <div className="flex items-center justify-between pt-6 border-t border-white/5">
               {currentStep > 1 ? (
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   onClick={prevStep}
                   className="bg-white/5 hover:bg-white/10 text-white font-bold py-2.5 px-4 rounded-xl flex items-center gap-2 text-xs transition-all active:scale-95 border border-white/5"
                 >
@@ -806,15 +806,15 @@ export const SellerApplication: React.FC = () => {
               )}
 
               {currentStep < steps.length ? (
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   onClick={nextStep}
                   className="bg-[#FF7A00] hover:bg-[#e06b00] text-white font-bold py-2.5 px-5 rounded-xl flex items-center gap-2 text-xs shadow-lg shadow-orange-500/15 transition-all active:scale-95"
                 >
                   Continue <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button 
+                <Button
                   type="submit"
                   disabled={isSubmitting || !formData.agreeToPolicies || !formData.agreeToCompliance}
                   className="bg-emerald-500 hover:bg-emerald-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-white font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 text-xs shadow-lg shadow-emerald-500/10 transition-all active:scale-95"

@@ -687,16 +687,16 @@ export function calculateBuyBox(asin: string) {
     }
 
     const landedPrice = offer.price + offer.shippingFee;
-    
+
     // Landed price component
     const priceScore = Math.max(0, 1000 - (landedPrice * 0.5));
-    
+
     // Fulfillment bonus: PaikarMart Express / FBA priority
     const fulfillmentBonus = offer.fulfillmentType === "paikar_express" ? 60 : 0;
-    
+
     // Seller rating bonus
     const ratingBonus = (offer.sellerRating || 4.0) * 15;
-    
+
     // Dispatch speed penalty
     const speedPenalty = (offer.dispatchTimeDays - 1) * 12;
 

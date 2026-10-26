@@ -17,13 +17,13 @@ router.get('/ride/availability', async (req, res) => {
       Number(lng),
       type as string
     );
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       data: vehicles,
       meta: {
         count: vehicles.length,
-        surge: 1.0 
+        surge: 1.0
       }
     });
   } catch (error) {
@@ -37,9 +37,9 @@ router.get('/transport/availability', async (req, res) => {
   try {
     // For now, we can use a similar nearby search or a generalized one
     const vehicles = await LogisticsService.getNearbyVehicles(0, 0, "TRUCK");
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       data: vehicles.map(v => ({
         id: v.id,
         type: v.type,
@@ -63,8 +63,8 @@ router.get('/rent/list', async (req, res) => {
   try {
     // Fetch vehicles of type CAR/VAN that are available for rent
     const vehicles = await LogisticsService.getNearbyVehicles(0, 0, "CAR");
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       data: vehicles.map(v => ({
         id: v.id,
         name: v.model,

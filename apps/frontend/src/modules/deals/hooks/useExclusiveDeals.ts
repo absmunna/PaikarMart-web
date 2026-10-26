@@ -17,7 +17,7 @@ export const useExclusiveDeals = () => {
       setDeals(Array.isArray(data) ? data : []);
     } catch (err: any) {
       setError(err.message);
-      
+
       // Fallback mock data for demo
       const mockDeals: ExclusiveDeal[] = [
         {

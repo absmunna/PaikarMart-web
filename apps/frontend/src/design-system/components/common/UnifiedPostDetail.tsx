@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Star, ShieldCheck, Heart, Store, MessageSquare, ChevronRight, 
+import {
+  Star, ShieldCheck, Heart, Store, MessageSquare, ChevronRight,
   MapPin, Clock, ArrowLeft, ShoppingCart, Send, ThumbsUp, HelpCircle,
   Share2, MoreVertical, Wrench, Package, Briefcase, Gavel, Flame, Navigation,
   Plus, Minus
@@ -21,8 +21,8 @@ interface UnifiedPostDetailProps {
   onAction?: () => void;
 }
 
-export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({ 
-  item, 
+export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
+  item,
   onBack,
   customFields,
   actionButtonLabel,
@@ -86,7 +86,7 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
       {/* ━━━ STICKY HEADER ━━━ */}
       <header className="sticky top-16 z-50 bg-[#010804]/80 backdrop-blur-3xl px-4 h-16 flex items-center justify-between border-b border-white/[0.04]">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={onBack}
             className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center transition-all text-white active:scale-90"
           >
@@ -101,15 +101,15 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
             </span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-1.5">
-          <button 
+          <button
             onClick={handleShare}
             className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-zinc-400 active:scale-90 transition-all"
           >
             <Share2 className="w-4.5 h-4.5" />
           </button>
-          <button 
+          <button
             onClick={handleLike}
             className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center transition-all active:scale-90"
           >
@@ -121,16 +121,16 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
       {/* ━━━ MEDIA GALLERY (1:1) ━━━ */}
       <section className="px-4 mt-4">
         <div className="aspect-square rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#050D08] relative group shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)]">
-          <motion.img 
+          <motion.img
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            src={mainMedia} 
+            src={mainMedia}
             alt={item.content.title}
             className="w-full h-full object-cover"
           />
-          
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none opacity-40" />
-          
+
           {/* Badge overlays */}
           <div className="absolute top-6 left-6 flex flex-col gap-2">
             <div className="px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 text-[9px] font-black text-cyan-400 uppercase tracking-[0.2em]">
@@ -187,7 +187,7 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
               )}
             </div>
           </div>
-          
+
           <div className="flex flex-col items-end gap-1.5">
             <div className="flex items-center gap-1.5 bg-amber-500/10 text-amber-500 px-3 py-1.5 rounded-xl border border-amber-500/10">
               <Star className="w-3.5 h-3.5 fill-current" />
@@ -207,7 +207,7 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
         )}
 
         {/* Seller/Author Mini Info */}
-        <div 
+        <div
           onClick={() => navigate(`/u/${item.author.id}`)}
           className="p-5 rounded-[2rem] bg-[#050D08] border border-[#1e3425] flex items-center gap-4 group active:scale-[0.98] transition-all cursor-pointer shadow-lg"
         >
@@ -324,8 +324,8 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
                   </div>
                 ))}
               </div>
-              
-              <button 
+
+              <button
                  onClick={() => navigate(`/marketplace/product/${item.id}/comments`)}
                  className="w-full py-4 rounded-[2rem] bg-white/[0.03] border border-white/5 text-[11px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-all flex items-center justify-center gap-2"
                >
@@ -346,7 +346,7 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
                    <p className="text-[12px] text-zinc-500 font-bold italic">Yes, all our products include a digital warranty card and physical receipt.</p>
                  </div>
                </div>
-               <button 
+               <button
                  onClick={() => navigate(`/marketplace/product/${item.id}/comments`)}
                  className="w-full py-4 rounded-[2rem] bg-white/[0.03] border border-white/5 text-[11px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-all flex items-center justify-center gap-2"
                >
@@ -362,14 +362,14 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
             <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Related Items (সম্পর্কিত)</h3>
             <button className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">See All</button>
           </div>
-          
+
           <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
             {[1, 2, 3].map(i => (
               <div key={i} className="min-w-[160px] space-y-2 group cursor-pointer">
                 <div className="aspect-square rounded-3xl bg-[#050D08] border border-white/5 overflow-hidden">
-                  <img 
-                    src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&q=80&sig=${i}`} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  <img
+                    src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&q=80&sig=${i}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
                 <div>
@@ -392,8 +392,8 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
             <button onClick={incrementQty} className="p-3 text-zinc-500 hover:text-white transition-all"><Plus className="w-4 h-4" /></button>
           </div>
         )}
-        
-        <button 
+
+        <button
           onClick={() => {
             navigate('/messages');
             toast.info("Wholesale inquiry chat initiated...");
@@ -403,7 +403,7 @@ export const UnifiedPostDetail: React.FC<UnifiedPostDetailProps> = ({
           <MessageSquare className="w-5 h-5" />
         </button>
 
-        <button 
+        <button
           onClick={handleAddToCart}
           className="flex-1 h-14 bg-cyan-400 rounded-[18px] flex items-center justify-center gap-2 text-black font-black uppercase tracking-[0.2em] text-[12px] shadow-[0_8px_32px_rgba(0,230,118,0.25)] active:scale-[0.98] transition-all outline-none"
         >

@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  X, ShoppingBag, Factory, MapPin, 
-  Rss, Wrench, Laptop, Wallet, 
+import {
+  X, ShoppingBag, Factory, MapPin,
+  Rss, Wrench, Laptop, Wallet,
   Truck, Package, FileText, Star,
   Grid
 } from 'lucide-react';
@@ -39,15 +39,15 @@ export const PortalsModal: React.FC<PortalsModalProps> = ({ isOpen, onClose }) =
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="absolute inset-0 bg-black/80 backdrop-blur-md"
           />
-          
-          <motion.div 
+
+          <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -63,7 +63,7 @@ export const PortalsModal: React.FC<PortalsModalProps> = ({ isOpen, onClose }) =
                   <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Select a portal to continue</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={onClose}
                 className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 transition-all"
               >

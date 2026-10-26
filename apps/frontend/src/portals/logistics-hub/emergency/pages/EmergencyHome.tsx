@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  AlertTriangle, Phone, MapPin, Search, 
-  ShieldAlert, Activity, HeartPulse, 
-  Flame, Shield, LifeBuoy, Info, 
+import {
+  AlertTriangle, Phone, MapPin, Search,
+  ShieldAlert, Activity, HeartPulse,
+  Flame, Shield, LifeBuoy, Info,
   Navigation, Clock, ChevronRight, PhoneCall,
   UserCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -29,7 +30,7 @@ const NEARBY_HOSPITALS = [
 export default function EmergencyHome() {
   const [isBilingual, setIsBilingual] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const t = (en: string, bn: string) => isBilingual ? bn : en;
 
   const handleCall = (number: string) => {
@@ -41,36 +42,37 @@ export default function EmergencyHome() {
     <div className="min-h-screen bg-[#050505] text-white pb-32">
       {/* Portal Header Rule */}
       <section className="pt-4 px-2 space-y-1">
+        <StoryBar context="emergency" />
         <PortalIconBar context="logistics" />
       </section>
 
       <div className="max-w-7xl mx-auto px-4 mt-6 space-y-8">
         {/* Urgent Hero */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-rose-950/40 via-[#0a0a0a] to-black border border-rose-500/20 p-8 shadow-2xl"
         >
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl" />
-          
+
           <div className="relative z-10 space-y-4">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-500 text-[10px] font-black uppercase tracking-widest">
                 {t('Emergency Hub', 'জরুরি সেবা হাব')}
               </span>
-              <button 
+              <button
                 onClick={() => setIsBilingual(!isBilingual)}
                 className="text-[10px] text-zinc-500 hover:text-white underline underline-offset-4"
               >
                 {isBilingual ? 'English' : 'বাংলা'}
               </button>
             </div>
-            
+
             <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
               {t('Immediate Assistance', 'তাত্ক্ষণিক সহায়তা')} <br />
               <span className="text-rose-500">{t('Within Reach', 'আপনার পাশেই')}</span>
             </h1>
-            
+
             <p className="text-zinc-500 text-sm max-w-lg">
               {t(
                 'Connect with verifyed emergency services, hospitals, and critical responders across Bangladesh in seconds.',
@@ -81,7 +83,7 @@ export default function EmergencyHome() {
             <div className="pt-4">
               <div className="relative max-w-md">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-                <input 
+                <input
                   type="text"
                   placeholder={t('Search hospitals or services...', 'হাসপাতাল বা সেবা খুঁজুন...')}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-rose-500/50 transition-colors"
@@ -127,7 +129,7 @@ export default function EmergencyHome() {
 
             <div className="grid gap-4">
               {NEARBY_HOSPITALS.map((hospital) => (
-                <div 
+                <div
                   key={hospital.id}
                   className="group p-5 rounded-[2rem] bg-zinc-900/20 border border-white/5 hover:bg-zinc-900/40 transition-all flex items-center justify-between"
                 >
@@ -147,8 +149,8 @@ export default function EmergencyHome() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => handleCall(hospital.phone)}
                       className="rounded-xl border-white/10 hover:bg-rose-500 hover:text-white"
@@ -168,14 +170,14 @@ export default function EmergencyHome() {
               <Info className="h-5 w-5 text-rose-500" />
               {t('First Aid Guides', 'ফার্স্ট এইড গাইড')}
             </h2>
-            
+
             <div className="space-y-3">
               {[
                 { title: 'Choking', titleBn: 'শ্বাসরোধ বা গলায় কিছু আটকানো', icon: AlertTriangle },
                 { title: 'Severe Bleeding', titleBn: 'তীব্র রক্তপাত', icon: Activity },
                 { title: 'Heat Stroke', titleBn: 'হিট স্ট্রোক', icon: Flame },
               ].map((tip, idx) => (
-                <button 
+                <button
                   key={idx}
                   className="w-full p-4 rounded-2xl bg-zinc-900/40 border border-white/5 flex items-center justify-between hover:bg-zinc-900/60 transition-colors"
                 >

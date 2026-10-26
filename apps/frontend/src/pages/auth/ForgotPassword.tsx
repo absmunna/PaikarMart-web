@@ -26,7 +26,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--pm-bg)]">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-md bg-[var(--pm-surface)] p-8 rounded-2xl border border-[var(--pm-border)] shadow-xl"
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
               <label className="text-sm font-medium text-[var(--pm-text-secondary)] block ml-1">ইমেইল ঠিকানা</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--pm-text-secondary)]" />
-                <input 
+                <input
                   type="email"
                   required
                   value={email}
@@ -74,7 +74,7 @@ const ForgotPassword = () => {
               </div>
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-[var(--pm-accent)] text-white font-bold py-3 px-6 rounded-xl hover:bg-[var(--pm-accent)]/90 transition-all flex items-center justify-center gap-2"

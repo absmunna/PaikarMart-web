@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingBag, 
-  Wallet, 
-  BarChart3, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingBag,
+  Wallet,
+  BarChart3,
+  Settings,
   Menu,
   X,
   Bell,
@@ -45,7 +45,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
     <div className="min-h-screen bg-[#0f111a] text-white flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -75,8 +75,8 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
                   to={item.path}
                   className={`
                     flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium transition-all duration-200 group
-                    ${isActive 
-                      ? "bg-[#FF7A00] text-white shadow-lg shadow-[#FF7A00]/20" 
+                    ${isActive
+                      ? "bg-[#FF7A00] text-white shadow-lg shadow-[#FF7A00]/20"
                       : "text-gray-400 hover:bg-white/5 hover:text-white"
                     }
                   `}
@@ -100,7 +100,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
                 <p className="text-sm font-bold text-white truncate">{user?.name || "Seller Name"}</p>
                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ভেরিফাইড সেলার</p>
               </div>
-              <button 
+              <button
                 onClick={handleSignOut}
                 className="p-2 text-gray-500 hover:text-rose-400 transition-colors rounded-xl hover:bg-white/5"
               >
@@ -115,7 +115,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
       <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Header */}
         <header className="h-20 flex items-center justify-between px-4 md:px-8 bg-[#0f111a]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-30">
-          <button 
+          <button
             className="p-2 text-gray-400 hover:text-white lg:hidden"
             onClick={() => setIsSidebarOpen(true)}
           >
@@ -125,9 +125,9 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
           <div className="hidden md:flex items-center gap-3 flex-1 max-w-md ml-4">
             <div className="relative w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <input 
-                type="text" 
-                placeholder="অর্ডার বা প্রোডাক্ট খুঁজুন..." 
+              <input
+                type="text"
+                placeholder="অর্ডার বা প্রোডাক্ট খুঁজুন..."
                 className="w-full bg-[#1e2136] border border-white/5 rounded-2xl pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:border-[#FF7A00]/50 transition-all text-white placeholder:text-gray-600"
               />
             </div>

@@ -25,7 +25,7 @@ export const RiderCard: React.FC<RiderCardProps> = ({
   return (
     <div className="bg-[#030604] rounded-3xl border border-white/[0.04] p-5 shadow-2xl relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 blur-3xl rounded-full -mr-12 -mt-12" />
-      
+
       <div className="flex items-center justify-between mb-4">
         <span className="text-[8px] font-black text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-lg uppercase tracking-widest flex items-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5" />
@@ -57,13 +57,13 @@ export const RiderCard: React.FC<RiderCardProps> = ({
 
         {/* Action button triggers call with min 44px target */}
         <div className="flex gap-2">
-          <a 
+          <a
             href={`tel:${phone}`}
             className="w-11 h-11 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-lg shadow-cyan-500/15 min-h-[44px] min-w-[44px]"
           >
             <Phone className="w-4.5 h-4.5" />
           </a>
-          <button 
+          <button
             onClick={() => window.location.href = `/messages`}
             className="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white flex items-center justify-center transition-all duration-300 cursor-pointer min-h-[44px] min-w-[44px]"
           >

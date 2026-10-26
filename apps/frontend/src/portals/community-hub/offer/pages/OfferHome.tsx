@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { 
-  Tag, Percent, Zap, Flame, 
+import {
+  Tag, Percent, Zap, Flame,
   Clock, ArrowRight, Star, Gift,
   Filter, ShoppingBag, Timer, CheckCircle2,
   TrendingUp, Sparkles, Megaphone
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -24,7 +25,7 @@ const COUPONS = [
 
 export default function OfferHome() {
   const [isBilingual, setIsBilingual] = useState(true);
-  
+
   const t = (en: string, bn: string) => isBilingual ? bn : en;
 
   const handleClaim = (item: string) => {
@@ -35,12 +36,13 @@ export default function OfferHome() {
     <div className="w-full text-[var(--pm-text)] pb-32">
       {/* Portal Header Rule */}
       <section className="pt-4 px-2 space-y-1">
+        <StoryBar context="offer" />
         <PortalIconBar context="marketplace" />
       </section>
 
       <div className="max-w-7xl mx-auto px-4 mt-6 space-y-10">
         {/* Flash Sale Banner */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           className="relative rounded-[3rem] bg-gradient-to-br from-pink-900/40 via-zinc-900/40 to-black border border-pink-500/20 p-8 md:p-12 overflow-hidden shadow-2xl"
@@ -53,19 +55,19 @@ export default function OfferHome() {
                   <Flame className="h-4 w-4 animate-pulse" />
                   {t('Flash Sale Live', 'ফ্ল্যাশ সেল লাইভ')}
                 </span>
-                <button 
+                <button
                   onClick={() => setIsBilingual(!isBilingual)}
                   className="text-[10px] text-zinc-500 hover:text-white"
                 >
                   {isBilingual ? 'English' : 'বাংলা'}
                 </button>
               </div>
-              
+
               <h1 className="text-4xl md:text-7xl font-black tracking-tighter leading-none">
                 {t('Massive Savings', 'বিশাল সেভিংস')} <br />
                 <span className="text-pink-500">{t('Ends Tonight', 'আজ রাতেই শেষ')}</span>
               </h1>
-              
+
               <div className="flex items-center gap-6 pt-2">
                 <div className="space-y-1">
                   <p className="text-[10px] text-zinc-500 uppercase font-black">{t('Ends In', 'সময় বাকি')}</p>
@@ -82,7 +84,7 @@ export default function OfferHome() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="hidden md:block w-72 h-72 rounded-full bg-pink-500/10 border border-pink-500/20 flex items-center justify-center relative">
               <div className="absolute inset-0 bg-gradient-to-t from-pink-500/20 to-transparent rounded-full animate-pulse" />
               <Percent className="h-32 w-32 text-pink-500 opacity-40" />
@@ -106,8 +108,8 @@ export default function OfferHome() {
                     <p className="text-xs text-zinc-400">{t(coupon.descEn, coupon.descBn)}</p>
                     <p className="text-[10px] text-zinc-500 font-bold uppercase">{t(`Min Spend: ৳${coupon.minSpend}`, `ন্যূনতম খরচ: ৳${coupon.minSpend}`)}</p>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => handleClaim(coupon.code)}
                     className="rounded-xl border-pink-500/30 text-pink-500 hover:bg-pink-500 hover:text-white font-bold"
                   >
@@ -131,7 +133,7 @@ export default function OfferHome() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {FLASH_DEALS.map((deal, idx) => (
-              <motion.div 
+              <motion.div
                 key={deal.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -144,20 +146,20 @@ export default function OfferHome() {
                     {deal.discount} OFF
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h3 className="font-bold text-white group-hover:text-pink-500 transition-colors">{t(deal.titleEn, deal.titleBn)}</h3>
                   <div className="flex items-center gap-3">
                     <span className="text-xl font-black text-white">৳{deal.price}</span>
                     <span className="text-sm text-zinc-600 line-through">৳{deal.oldPrice}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between pt-4">
                     <div className="flex items-center gap-2 text-pink-500">
                       <Timer className="h-3 w-3" />
                       <span className="text-[10px] font-black uppercase">{deal.timeLeft}</span>
                     </div>
-                    <Button 
+                    <Button
                       size="sm"
                       onClick={() => handleClaim(t(deal.titleEn, deal.titleBn))}
                       className="rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold h-10 px-6"

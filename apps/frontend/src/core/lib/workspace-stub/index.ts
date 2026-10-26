@@ -156,7 +156,7 @@ export const mockProducts: Product[] = [
   { id: '15', name: 'Plumbing Service Call', price: 500, originalPrice: 700, discount: 15, image: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=400', category: 'Plumbing', seller: 'Quick Fix Plumbers', rating: 4.6, reviewCount: 45, stock: 999, type: 'service', portal: 'services' },
   { id: '16', name: 'Web Development Package', price: 12000, originalPrice: 15000, discount: 20, image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400', category: 'Tech', seller: 'Digital Crafters', rating: 5.0, reviewCount: 23, stock: 999, type: 'service', portal: 'services' },
   { id: '17', name: 'Legal Consultation', price: 2500, originalPrice: 3000, discount: 16, image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400', category: 'Legal', seller: 'Rahman & Associates', rating: 4.8, reviewCount: 56, stock: 999, type: 'service', portal: 'services' },
-  
+
   // Rides
   { id: '18', name: 'Bike Ride (City Center)', price: 150, image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400', category: 'Bike', seller: 'Pathao Rider', rating: 4.8, reviewCount: 1500, stock: 999, type: 'ride', portal: 'ride' },
   { id: '19', name: 'Car Ride (Premium)', price: 450, image: 'https://images.unsplash.com/photo-1549317661-bc32c0734c81?w=400', category: 'Car', seller: 'Uber Driver', rating: 4.9, reviewCount: 890, stock: 999, type: 'ride', portal: 'ride' },
@@ -270,8 +270,8 @@ const mockNotifications: Notification[] = [
 // ─── Hooks — all list hooks return arrays directly ────────
 
 export const useListProducts = (_params?: any, _opts?: any) =>
-  useQuery({ 
-    queryKey: getListProductsQueryKey(_params), 
+  useQuery({
+    queryKey: getListProductsQueryKey(_params),
     queryFn: async () => {
       let result = [...mockProducts];
       if (_params?.type) {
@@ -281,8 +281,8 @@ export const useListProducts = (_params?: any, _opts?: any) =>
         result = result.filter(p => p.categoryId === _params.categoryId || p.category?.toLowerCase() === _params.categoryId.toLowerCase());
       }
       return result;
-    }, 
-    staleTime: 60000 
+    },
+    staleTime: 60000
   });
 
 export const useGetProduct = (id: string, _opts?: any) =>

@@ -70,9 +70,9 @@ export const useNotificationStore = create<NotificationState>()(
     (set) => ({
       notifications: INITIAL_NOTIFICATIONS,
       unreadCount: INITIAL_NOTIFICATIONS.filter(n => !n.isRead).length,
-      
+
       addNotification: (notifOrTitle, type = 'system', description = '') => set((state) => {
-        const payload: Omit<UserNotification, 'id' | 'isRead' | 'timestamp'> = 
+        const payload: Omit<UserNotification, 'id' | 'isRead' | 'timestamp'> =
           typeof notifOrTitle === 'string'
             ? { title: notifOrTitle, type: type as UserNotificationCategory, description }
             : notifOrTitle;
@@ -91,7 +91,7 @@ export const useNotificationStore = create<NotificationState>()(
       }),
 
       markAsRead: (id) => set((state) => {
-        const updated = state.notifications.map(n => 
+        const updated = state.notifications.map(n =>
           n.id === id ? { ...n, isRead: true } : n
         );
         return {

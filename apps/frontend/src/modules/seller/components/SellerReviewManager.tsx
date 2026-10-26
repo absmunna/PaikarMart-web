@@ -6,19 +6,19 @@ import { GlassCard } from '@/components/ui';
 export const SellerReviewManager: React.FC = () => {
   // Mock reviews for the dashboard visibility
   const reviews = [
-    { 
-      id: 'r1', 
-      user: 'Nirjon M.', 
-      rating: 5, 
-      text: 'Original product quality is quite exceptional. The packaging was also very secure for long distance shipping.', 
+    {
+      id: 'r1',
+      user: 'Nirjon M.',
+      rating: 5,
+      text: 'Original product quality is quite exceptional. The packaging was also very secure for long distance shipping.',
       date: '2h ago',
       verified: true
     },
-    { 
-      id: 'r2', 
-      user: 'Rahima B.', 
-      rating: 4, 
-      text: 'Good value for money. Sizing was slightly smaller than expected but still fits well.', 
+    {
+      id: 'r2',
+      user: 'Rahima B.',
+      rating: 4,
+      text: 'Good value for money. Sizing was slightly smaller than expected but still fits well.',
       date: '1d ago',
       verified: true
     }

@@ -27,7 +27,7 @@ export const AuditLogStream: React.FC = () => {
            <div className="col-span-4">Target Resource</div>
            <div className="col-span-1 text-right">Sev</div>
         </div>
-        
+
         <div className="flex flex-col max-h-[400px] overflow-y-auto">
            {logs.length === 0 ? (
                <div className="p-12 text-center text-zinc-600 text-xs font-bold uppercase tracking-widest italic">

@@ -8,7 +8,7 @@ interface Props {
 
 export const MoqIndicator: React.FC<Props> = ({ current, moq, label }) => {
   const percentage = Math.min((current / moq) * 100, 100);
-  
+
   return (
     <div className="w-full space-y-1">
       <div className="flex justify-between text-[10px] font-bold text-white/50 uppercase tracking-wider">
@@ -16,7 +16,7 @@ export const MoqIndicator: React.FC<Props> = ({ current, moq, label }) => {
         <span>{current} / {moq}</span>
       </div>
       <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-        <div 
+        <div
           className="h-full bg-[var(--pm-accent)] transition-all duration-300"
           style={{ width: `${percentage}%` }}
         />

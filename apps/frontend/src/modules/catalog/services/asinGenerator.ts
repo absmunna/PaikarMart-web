@@ -44,7 +44,7 @@ export function calculateBuyBox(offers: SellerOffer[]): BuyBoxResult | null {
 
   const scoredOffers = activeInStockOffers.map(offer => {
     const landedPrice = offer.price + (offer.shippingFee || 0);
-    
+
     // Price score (0-45 pts): 45 if equal to lowest, diminishes if higher
     const priceRatio = lowestLandedPrice / landedPrice;
     const priceScore = 45 * Math.max(0, Math.min(1, priceRatio));

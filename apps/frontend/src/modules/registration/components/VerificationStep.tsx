@@ -39,9 +39,9 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-200">
       <div>
-        <button 
+        <button
           type="button"
-          onClick={onBack} 
+          onClick={onBack}
           className="flex items-center text-xs font-bold text-zinc-400 hover:text-white mb-2 cursor-pointer transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> পেছনে যান (Back)
@@ -89,10 +89,10 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
 
           <div className="space-y-1.5">
             <Label className="text-xs font-bold text-zinc-300">পরিচয়পত্র নম্বর (NID/Passport No) *</Label>
-            <Input 
-              value={form.idNumber} 
-              onChange={(e) => onInput("idNumber", e.target.value)} 
-              placeholder="যেমন: ১২৩৪৫৬৭৮৯০" 
+            <Input
+              value={form.idNumber}
+              onChange={(e) => onInput("idNumber", e.target.value)}
+              placeholder="যেমন: ১২৩৪৫৬৭৮৯০"
               className="bg-zinc-950 border-white/10 rounded-xl"
             />
           </div>
@@ -103,10 +103,10 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
               "w-full h-24 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:bg-white/[0.02] hover:border-orange-500/30",
               form.idFile && "border-emerald-500/30 bg-emerald-500/5"
             )}>
-              <input 
-                type="file" 
-                className="hidden" 
-                accept="image/*" 
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
                 onChange={handleFileUpload}
                 disabled={isUploading}
               />
@@ -128,8 +128,8 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
         </div>
       </div>
 
-      <Button 
-        onClick={onSubmit} 
+      <Button
+        onClick={onSubmit}
         disabled={busy}
         className="w-full bg-orange-500 hover:bg-orange-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl cursor-pointer shadow-lg shadow-orange-500/20"
       >

@@ -30,7 +30,7 @@ export const EscrowPanel: React.FC<{ items: EscrowItem[] }> = ({ items }) => {
 
       <div className="space-y-3">
         {items.map((item) => (
-          <motion.div 
+          <motion.div
             key={item.id}
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}

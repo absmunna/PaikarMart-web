@@ -8,9 +8,9 @@ router.get("/vendors/nearby", async (req, res) => {
   const { area } = req.query as { area?: string };
   try {
     const shops = await prisma.user.findMany({
-      where: { 
-        role: "seller", 
-        addressArea: area || undefined 
+      where: {
+        role: "seller",
+        addressArea: area || undefined
       },
       take: 10
     });

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Star, MapPin, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { safeBack } from "@/lib/navigation";
 
 export default function StoreProfileView() {
   const { id } = useParams();
@@ -9,12 +8,11 @@ export default function StoreProfileView() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 text-white">
-      <button 
-        onClick={() => safeBack(navigate, '/')}
-        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors cursor-pointer"
-        title="ফিরে যান"
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" /> ফিরে যান
+        <ArrowLeft className="h-4 w-4" /> Back
       </button>
 
       {/* Store Cover */}
@@ -25,9 +23,9 @@ export default function StoreProfileView() {
       {/* Store Header */}
       <div className="relative px-4 -mt-16 md:-mt-20 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-end gap-5">
-          <img 
-            src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&q=80&w=250" 
-            alt="Store Logo" 
+          <img
+            src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&q=80&w=250"
+            alt="Store Logo"
             className="h-28 w-28 md:h-36 md:w-36 rounded-3xl object-cover border-4 border-[#0f111a] shadow-2xl bg-zinc-900"
             referrerPolicy="no-referrer"
           />
@@ -63,9 +61,9 @@ export default function StoreProfileView() {
           <div key={i} className="bg-[#141624] border border-white/5 rounded-3xl overflow-hidden p-4 flex flex-col justify-between shadow-xl">
             <div>
               <div className="aspect-square w-full rounded-2xl bg-zinc-900 mb-3 overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=400" 
-                  alt="Product" 
+                <img
+                  src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=400"
+                  alt="Product"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />

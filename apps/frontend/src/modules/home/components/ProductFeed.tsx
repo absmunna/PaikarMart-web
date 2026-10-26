@@ -52,9 +52,9 @@ export const ProductFeed = () => {
         {forYou.length > 0 ? (
           <div className="grid grid-cols-2 gap-3.5">
             {forYou.map((p: any) => (
-              <ProductCard key={p.id} product={{ 
+              <ProductCard key={p.id} product={{
                 ...p,
-                portal: "b2c" 
+                portal: "b2c"
               }} />
             ))}
           </div>

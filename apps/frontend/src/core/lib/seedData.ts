@@ -110,7 +110,7 @@ export async function seedProducts() {
   try {
     const productsCol = collection(db, "products");
     const snapshot = await getDocs(productsCol);
-    
+
     // Only attempt seed writes if products collection is empty and user is authenticated
     if (snapshot.empty && auth.currentUser) {
       console.log("Seeding initial products to Firestore...");

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  ShieldCheck, Package, ShoppingCart, Users, Plus, 
-  Search, CheckCircle2, Clock, AlertCircle, Trash2, 
-  Edit3, RefreshCw, ChevronRight, Lock, Phone, 
+import {
+  ShieldCheck, Package, ShoppingCart, Users, Plus,
+  Search, CheckCircle2, Clock, AlertCircle, Trash2,
+  Edit3, RefreshCw, ChevronRight, Lock, Phone,
   MapPin, DollarSign, Eye, X, ArrowLeft, Send, UserPlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -183,7 +183,7 @@ export const PKShopAdminView: React.FC = () => {
 
   return (
     <div className="w-full pb-28 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
-      
+
       {/* ─── TOP HEADER ─── */}
       <div className="border-b border-[var(--pm-border)] bg-[var(--pm-surface)]/70 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
@@ -568,7 +568,7 @@ export const PKShopAdminView: React.FC = () => {
         {activeTab === 'team' && isSuperAdmin && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* Form to Invite / Assign Staff */}
               <div className="p-6 rounded-3xl bg-[var(--pm-surface)] border border-[var(--pm-border)] space-y-4 lg:col-span-1 shadow-sm">
                 <div className="space-y-1">

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Building2, Ship, Truck, Globe, Search, ShieldCheck, Star, 
+import {
+  Building2, Ship, Truck, Globe, Search, ShieldCheck, Star,
   MapPin, ArrowLeft, CheckCircle2, Award
 } from 'lucide-react';
 import { MOCK_B2B_VENDORS } from '@/modules/b2b';
@@ -20,12 +20,12 @@ export const SupplierDirectoryView: React.FC<SupplierDirectoryViewProps> = ({ on
       if (v.type === 'factory' && activeType !== 'all') {
         return false;
       }
-      
+
       const typeMatch = activeType === 'all' || v.type === activeType;
-      const searchMatch = v.name.toLowerCase().includes(search.toLowerCase()) || 
+      const searchMatch = v.name.toLowerCase().includes(search.toLowerCase()) ||
                           v.industry.toLowerCase().includes(search.toLowerCase()) ||
                           v.location.toLowerCase().includes(search.toLowerCase());
-      
+
       return typeMatch && searchMatch;
     });
   }, [search, activeType]);
@@ -89,8 +89,8 @@ export const SupplierDirectoryView: React.FC<SupplierDirectoryViewProps> = ({ on
             key={cat.id}
             onClick={() => setActiveType(cat.id as any)}
             className={`flex-1 text-center py-2 px-3 rounded-xl text-xs font-black whitespace-nowrap ${
-              activeType === cat.id 
-                ? 'bg-[#1f2833] text-white shadow-sm' 
+              activeType === cat.id
+                ? 'bg-[#1f2833] text-white shadow-sm'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -139,7 +139,7 @@ export const SupplierDirectoryView: React.FC<SupplierDirectoryViewProps> = ({ on
                   <h3 className="text-xs font-black text-white group-hover:text-[var(--pm-accent)] transition mt-1.5 truncate leading-tight">
                     {sup.name}
                   </h3>
-                  
+
                   <p className="text-[10px] text-[var(--pm-text-secondary)] font-medium flex items-center gap-1 mt-0.5 truncate leading-normal">
                     <MapPin className="w-3 h-3 text-red-400 shrink-0" /> {sup.location}
                   </p>

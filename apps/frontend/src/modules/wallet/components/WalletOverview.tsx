@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useWalletStore } from '@/modules/wallet';
 import { useAuth } from '@/modules/auth';
 import { useLanguage } from "@/modules/language";
-import { 
-  Wallet, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  RefreshCcw, 
-  Plus, 
+import {
+  Wallet,
+  ArrowUpRight,
+  ArrowDownLeft,
+  RefreshCcw,
+  Plus,
   History,
   ShieldCheck,
   CreditCard,
@@ -38,7 +38,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
   return (
     <div className="space-y-6 pb-20">
       {/* Wallet Card */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden p-6 rounded-[32px] bg-zinc-950 border border-white/5 shadow-2xl"
@@ -71,7 +71,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
                 <span className="text-[10px] text-zinc-500">৳ {Math.floor(coins / 10)}</span>
               </div>
             </div>
-            
+
             <div className="flex-1 p-3 rounded-2xl bg-white/5 border border-white/5">
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">
                 {isBn ? "অবস্থা" : "Status"}
@@ -87,7 +87,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
-        <Button 
+        <Button
           onClick={() => onAction?.('topup')}
           className="h-14 rounded-2xl bg-[var(--pm-accent)] hover:opacity-90 text-white font-black text-sm gap-2 cursor-pointer"
         >
@@ -95,8 +95,8 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
           {isBn ? "ক্যাশ ইন" : "Cash In"}
         </Button>
         {isSeller && (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onAction?.('withdraw')}
             className="h-14 rounded-2xl bg-white/5 border-white/10 text-white hover:bg-white/10 font-black text-sm gap-2 cursor-pointer"
           >
@@ -105,8 +105,8 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
           </Button>
         )}
         {!isSeller && (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onAction?.('send')}
             className="h-14 rounded-2xl bg-white/5 border-white/10 text-white hover:bg-white/10 font-black text-sm gap-2 cursor-pointer"
           >
@@ -188,7 +188,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({ onAction }) => {
               </motion.div>
             ))}
           </AnimatePresence>
-          
+
           {filteredTransactions.length === 0 && (
             <div className="py-12 flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4">

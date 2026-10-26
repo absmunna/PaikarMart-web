@@ -6,7 +6,7 @@ interface ChatStore {
   sessions: Record<string, ChatSession>;
   activeSessionId: string;
   isOpen: boolean;
-  
+
   // Actions
   toggleChat: () => void;
   setOpen: (open: boolean) => void;
@@ -34,7 +34,7 @@ export const useChatStore = create<ChatStore>()(
 
       toggleChat: () => set((state) => ({ isOpen: !state.isOpen })),
       setOpen: (open) => set({ isOpen: open }),
-      
+
       addMessage: (sessionId, message) => set((state) => {
         const session = state.sessions[sessionId] || { id: sessionId, messages: [], status: 'idle' };
         const newMessage: ChatMessage = {
@@ -42,7 +42,7 @@ export const useChatStore = create<ChatStore>()(
           id: Math.random().toString(36).substring(7),
           timestamp: new Date().toISOString(),
         };
-        
+
         return {
           sessions: {
             ...state.sessions,

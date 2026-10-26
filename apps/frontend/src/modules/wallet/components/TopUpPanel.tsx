@@ -87,7 +87,7 @@ export const TopUpPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) 
         <label className="text-[10px] text-zinc-500 font-black uppercase tracking-widest block mb-2">
           {isBn ? "টাকার পরিমাণ (৳)" : "Amount (৳)"}
         </label>
-        <input 
+        <input
           type="number"
           value={amount}
           onChange={e => setAmount(e.target.value)}
@@ -96,8 +96,8 @@ export const TopUpPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) 
         />
         <div className="flex gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide">
           {QUICK_AMOUNTS.map(qa => (
-            <button 
-              key={qa} 
+            <button
+              key={qa}
               onClick={() => setAmount(qa.toString())}
               className={cn(
                 "px-4 py-2 rounded-xl text-[11px] font-black border whitespace-nowrap transition-all cursor-pointer",
@@ -110,7 +110,7 @@ export const TopUpPanel: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) 
         </div>
       </div>
 
-      <Button 
+      <Button
         onClick={handleTopUp}
         disabled={!amount || isLoading}
         className="w-full h-14 bg-white text-black font-black text-sm rounded-2xl hover:bg-zinc-200 gap-2 cursor-pointer"

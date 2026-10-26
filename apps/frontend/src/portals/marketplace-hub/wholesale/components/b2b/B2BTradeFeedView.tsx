@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Share2, Heart, MessageCircle, ArrowLeft, Plus, Image, Globe, CheckCircle, 
+import {
+  Share2, Heart, MessageCircle, ArrowLeft, Plus, Image, Globe, CheckCircle,
   Tag, Send, MessageSquare, Megaphone, CheckCircle2, Factory, Sparkles
 } from 'lucide-react';
 import { B2BPost } from '@/modules/b2b';
@@ -12,8 +12,8 @@ interface B2BTradeFeedViewProps {
   onNotify: (msg: string, type: 'success' | 'warning' | 'error') => void;
 }
 
-export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({ 
-  onNavigate, 
+export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({
+  onNavigate,
   onBack,
   onNotify
 }) => {
@@ -29,7 +29,7 @@ export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({
 
   // Likes structure map tracker
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
-  
+
   // Comment panel states
   const [activeCommentsPostId, setActiveCommentsPostId] = useState<string | null>(null);
   const [commentInput, setCommentInput] = useState('');
@@ -132,7 +132,7 @@ export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({
 
       {/* Grid wrapper for desktop scale */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
+
         {/* LEFT COLUMN: Main Feed stream (Col-span 8 on LG) */}
         <div className="lg:col-span-8 space-y-5">
           {/* 1. Header Banner */}
@@ -232,8 +232,8 @@ export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({
                 key={sh.id}
                 onClick={() => setActiveFilter(sh.id as any)}
                 className={`flex-1 text-center py-2 px-3.5 rounded-xl text-xs font-black whitespace-nowrap ${
-                  activeFilter === sh.id 
-                    ? 'bg-[#1f2833] text-white shadow-sm' 
+                  activeFilter === sh.id
+                    ? 'bg-[#1f2833] text-white shadow-sm'
                     : 'text-white/60 hover:text-white'
                 }`}
               >
@@ -362,7 +362,7 @@ export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({
 
         {/* RIGHT COLUMN: Desktop Sidebar (Live Bangladesh Wholesale Indices Tracker) */}
         <div className="hidden lg:flex lg:col-span-4 flex-col gap-4.5 sticky top-52">
-          
+
           {/* Market Indices Tracker */}
           <div className="rounded-2xl border p-4.5 bg-[var(--pm-surface)] border-[var(--pm-border)] space-y-3.5">
             <div className="flex items-center justify-between border-b border-white/5 pb-2">
@@ -429,7 +429,7 @@ export const B2BTradeFeedView: React.FC<B2BTradeFeedViewProps> = ({
             <p className="text-[9.5px] text-white/50 leading-relaxed">
               বাল্ক শিপমেন্ট, ল্যান্ডপোর্ট ডিউটি বা কার্গো ফ্রেইট ভেকরের রেট নিয়ে সরাসরি আমাদের মডারেটরদের সাহায্য চান।
             </p>
-            <button 
+            <button
               onClick={() => onNotify('ট্রেড হেল্পলাইনে কল রিকোয়েস্ট পাঠানো হয়েছে, একজন কনসালট্যান্ট আপনাকে কল করবেন!', 'success')}
               className="w-full mt-1.5 py-2.5 bg-indigo-600/95 hover:bg-indigo-600 text-white text-[10px] font-black rounded-xl uppercase tracking-wider transition duration-150 active:scale-95"
             >

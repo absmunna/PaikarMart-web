@@ -1,11 +1,11 @@
-import { 
-  doc, 
-  getDoc, 
-  collection, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
   getDocs,
   onSnapshot,
   Timestamp
@@ -60,7 +60,7 @@ export const walletService = {
       } else {
         callback(null);
       }
-    }, (error) => console.warn("Wallet subscription error:", error?.message));
+    }, (error) => handleFirestoreError(error, OperationType.GET, `wallets/${userId}`));
   },
 
   /**
@@ -99,6 +99,6 @@ export const walletService = {
         ...doc.data()
       })) as Transaction[];
       callback(txs);
-    }, (error) => console.warn("Transactions subscription error:", error?.message));
+    }, (error) => handleFirestoreError(error, OperationType.LIST, `wallets/${userId}/transactions`));
   }
 };

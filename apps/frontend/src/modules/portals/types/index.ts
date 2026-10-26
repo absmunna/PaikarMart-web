@@ -24,7 +24,7 @@ export interface PortalProduct {
   rating: number;
   reviews: number;
   stock: number;
-  
+
   // Wholesale specific
   moq?: number;
   tieredPricing?: Array<{
@@ -42,7 +42,7 @@ export interface PortalProduct {
 
   // Digital specific
   isInstantDelivery?: boolean;
-  
+
   // Service specific
   isServiceProvider?: boolean;
 }

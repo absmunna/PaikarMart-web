@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Zap, 
-  Clock, 
-  Flame, 
-  ShoppingBag, 
+import {
+  Zap,
+  Clock,
+  Flame,
+  ShoppingBag,
   ArrowRight,
   ShieldCheck,
   TrendingUp
@@ -58,12 +58,12 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
 
       {/* Image Section */}
       <div className="relative w-full md:w-56 h-56 md:h-64 rounded-3xl overflow-hidden shrink-0">
-        <img 
+        <img
           src={(deal.product.images && deal.product.images[0]) || deal.product.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800'}
           alt={deal.product.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        
+
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           <div className="bg-orange-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl shadow-orange-600/20">
@@ -146,7 +146,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
               <span className="text-white">{deal.currentStock} Remaining</span>
             </div>
             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${stockPercentage}%` }}
                 className={cn(
@@ -159,7 +159,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
         </div>
 
         <div className="flex items-center gap-3 mt-6">
-          <Button 
+          <Button
             className="flex-1 bg-white text-black hover:bg-zinc-200 h-12 rounded-2xl font-black uppercase tracking-tight gap-3 transition-transform active:scale-95"
             onClick={() => addToCart({
                id: deal.product.id,
@@ -174,7 +174,7 @@ export const FlashDealCard: React.FC<FlashDealCardProps> = ({ deal, className })
             <ShoppingBag className="w-5 h-5" />
             Claim Deal
           </Button>
-          <Button 
+          <Button
             variant="outline"
             className="aspect-square h-12 w-12 rounded-2xl border-white/10 hover:bg-white/5 p-0"
           >

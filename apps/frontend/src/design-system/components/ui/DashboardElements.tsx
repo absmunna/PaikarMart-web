@@ -19,7 +19,7 @@ export const LiveBalanceCard = ({ balance }: { balance: number }) => (
 
 export const GraphToggle = ({ active, onChange }: { active: 'sales' | 'views', onChange: (v: 'sales' | 'views') => void }) => (
   <div className="flex bg-white/[0.02] p-1.5 rounded-full border border-white/5 w-fit backdrop-blur-md">
-    <button 
+    <button
       onClick={() => onChange('sales')}
       className={cn(
         "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
@@ -28,7 +28,7 @@ export const GraphToggle = ({ active, onChange }: { active: 'sales' | 'views', o
     >
       <BarChart className="w-3.5 h-3.5 inline mr-1.5" /> বিক্রি
     </button>
-    <button 
+    <button
       onClick={() => onChange('views')}
       className={cn(
         "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
@@ -49,7 +49,7 @@ export const RatingStarsDropdown = ({ rating, distribution }: { rating: number, 
       </button>
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -59,10 +59,10 @@ export const RatingStarsDropdown = ({ rating, distribution }: { rating: number, 
               <div key={r} className="flex items-center gap-2.5 text-[10px] text-zinc-400 mb-2.5 last:mb-0">
                 <span className="font-black w-3 text-zinc-500">{r}</span>
                 <div className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${distribution[r]}%` }}
-                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500" 
+                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
                   />
                 </div>
                 <span className="w-8 text-right font-bold text-zinc-500 tabular-nums">{distribution[r]}%</span>

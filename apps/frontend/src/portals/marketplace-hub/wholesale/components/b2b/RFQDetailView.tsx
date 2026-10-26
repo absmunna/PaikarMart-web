@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Award, 
+import {
+  ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Award,
   ChevronRight, Users, MessageSquare, Plus, CheckCircle2, DollarSign, Clock
 } from 'lucide-react';
 import { RFQ, RFQuote } from '@/modules/b2b';
@@ -14,9 +14,9 @@ interface RFQDetailViewProps {
   onNotify: (msg: string, type: 'success' | 'warning' | 'error') => void;
 }
 
-export const RFQDetailView: React.FC<RFQDetailViewProps> = ({ 
-  rfqId, 
-  onNavigate, 
+export const RFQDetailView: React.FC<RFQDetailViewProps> = ({
+  rfqId,
+  onNavigate,
   onBack,
   onNotify
 }) => {
@@ -183,7 +183,7 @@ export const RFQDetailView: React.FC<RFQDetailViewProps> = ({
       {/* D. Previously Placed active quotes feed */}
       <div className="space-y-3">
         <h3 className="text-xs font-black tracking-widest text-[var(--pm-text)] uppercase">Currently Placed Bids ({rfq.quotes ? rfq.quotes.length : 0})</h3>
-        
+
         {(!rfq.quotes || rfq.quotes.length === 0) ? (
           <div className="p-4 text-center rounded-2xl bg-[var(--pm-surface)] col border border-white/5 text-xs text-white/55">
             বর্তমানে এই ডিমান্ডে কোনো কারখানা বিড করে নি। আপনার বিড প্রথম হবে!
@@ -201,7 +201,7 @@ export const RFQDetailView: React.FC<RFQDetailViewProps> = ({
                     ৳ {qt.quotePrice} / unit
                   </span>
                 </div>
-                
+
                 <p className="text-[11px] text-[var(--pm-text-secondary)] whitespace-pre-line leading-relaxed">
                   {qt.message}
                 </p>

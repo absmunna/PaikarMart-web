@@ -4,10 +4,12 @@ let prismaClient: PrismaClient | null = null;
 let isConnected = false;
 let connectionError: any = null;
 
-// Safe mock delegate to prevent unhandled rejections if code queries Prisma while offline
 const safeMockDelegate = new Proxy({}, {
   get: (_target, prop) => {
     return async (..._args: any[]) => {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Database is unavailable; refusing to return mock data in production.');
+      }
       if (prop === 'count') return 0;
       if (prop === 'findMany') return [];
       if (prop === 'findUnique' || prop === 'findFirst') return null;
@@ -32,9 +34,11 @@ export const prisma: PrismaClient & Record<string, any> = new Proxy({} as any, {
 
 export const db = {
   isConnected: () => isConnected,
-  getConnectionError: () => connectionError,
   connect: async () => {
     if (!process.env.DATABASE_URL) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('DATABASE_URL is required in production.');
+      }
       console.log('Database: Running in Development Mock Mode (no DATABASE_URL provided).');
       isConnected = false;
       return;
@@ -45,31 +49,24 @@ export const db = {
         prismaClient = new PrismaClient();
       }
 
-      // Explicitly test connection with a 6-second timeout for Supabase pooler
+      // Explicitly test connection with a 2.5-second timeout to avoid blocking server boot
       await Promise.race([
         prismaClient.$connect(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout to external database (6s limit)')), 6000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout to external database')), 2500))
       ]);
 
       isConnected = true;
-      connectionError = null;
       console.log('✅ Connected to database successfully (PostgreSQL/Supabase enabled).');
     } catch (error: any) {
       isConnected = false;
       connectionError = error;
-      console.log(`ℹ️ External database unreachable (${error?.message || error}). Paikar Mart is operating in resilient Mock Mode.`);
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Unable to connect to the production database.', { cause: error });
+      }
+      console.warn('Database unavailable; development mock mode is enabled.', error);
     }
   },
-  query: async (text: string, ..._params: any[]) => {
-    if (!isConnected || !prismaClient) {
-      return [];
-    }
-    try {
-      return await (prismaClient as any).$queryRawUnsafe(text);
-    } catch (err) {
-      console.error('db.query error:', err);
-      throw err;
-    }
+  query: async (_text: string, _params?: any[]) => {
+    return [];
   }
 };
-

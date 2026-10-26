@@ -13,7 +13,7 @@ export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
       {isOpen && (
         <>
           {/* Backdrop overlay */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
@@ -22,7 +22,7 @@ export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           />
 
           {/* Drawer container */}
-          <motion.div 
+          <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -62,7 +62,7 @@ export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                       </div>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-xs font-black text-[var(--pm-text)]">৳ {item.price * item.quantity}</span>
-                        
+
                         {/* Quantity Controls */}
                         <div className="flex items-center bg-white/5 border border-[var(--pm-border)]/30 rounded-lg p-0.5">
                           <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]">
@@ -76,7 +76,7 @@ export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => removeItem(item.id)}
                       className="absolute top-3 right-3 text-[var(--pm-text-muted)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                     >
@@ -101,7 +101,7 @@ export const CartDrawer = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                   <span className="text-sm font-bold text-[var(--pm-text)]">Subtotal</span>
                   <span className="text-base font-black text-[var(--pm-accent)]">৳ {getTotalPrice().toLocaleString()}</span>
                 </div>
-                <button 
+                <button
                   onClick={() => {
                     onClose();
                     navigate('/checkout');

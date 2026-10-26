@@ -149,7 +149,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axios.get(`${API_BASE_URL}/products`, { params });
-      
+
       const mappedProducts = (response.data && response.data.length > 0)
         ? response.data.map((p: any) => {
             // Determine portal type based on product specs
@@ -158,7 +158,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
             else if (p.id?.startsWith('pk-polo') || p.id?.startsWith('pk-oud')) portal = 'pk-store';
             else if (p.id?.startsWith('pk-')) portal = 'pk-shop';
             else if (p.type === 'wholesale' || p.category === 'wholesale') portal = 'b2b';
-            
+
             return {
               ...p,
               portal,
@@ -183,7 +183,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
 
   addProduct: async (productData) => {
     set({ isLoading: true });
-    
+
     // Construct local product representation so it's guaranteed to show up instantly!
     const newProduct: Product = {
       id: productData.id || `custom-prod-${Date.now()}`,
@@ -202,10 +202,10 @@ export const useProductStore = create<ProductState>((set, get) => ({
     };
 
     // Prepend to products and customProducts arrays instantly in state
-    set((state) => ({ 
+    set((state) => ({
       customProducts: [newProduct, ...state.customProducts],
       products: [newProduct, ...state.products],
-      isLoading: false 
+      isLoading: false
     }));
 
     try {

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Search, MapPin, Navigation, ShoppingBag, Store, Star, Clock, 
+import {
+  Search, MapPin, Navigation, ShoppingBag, Store, Star, Clock,
   ChevronRight, Filter, Phone, ArrowLeft, ArrowUpRight, CheckCircle2,
   Bike, Sparkles, ShieldCheck
 } from 'lucide-react';
@@ -10,7 +10,6 @@ import { useCartStore, useCartDrawerStore } from '@/modules/cart';
 import { toast } from 'sonner';
 import { HomeHeader } from '@/design-system/components/home/HomeHeader';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
-import { safeBack } from '@/lib/navigation';
 
 interface NearbyShop {
   id: string;
@@ -207,14 +206,13 @@ export default function NearbyHome() {
       <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      
+
       {/* Location Bar & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => safeBack(navigate, '/')}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 shadow-xs cursor-pointer"
-            title="ফিরে যান"
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 shadow-xs"
           >
             <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
           </button>
@@ -415,9 +413,10 @@ export default function NearbyHome() {
               <div className="p-5 pt-0">
                 <button
                   onClick={() => {
-                    navigate(`/nearby/shop/${shop.id}`);
+                    toast.success(`${shop.name}-এর সম্পূর্ণ ক্যাটালগে প্রবেশ করা হচ্ছে`);
+                    navigate('/b2c');
                   }}
-                  className="w-full py-3 rounded-2xl bg-[var(--pm-surface-hover)] hover:bg-emerald-600 hover:text-white border border-[var(--pm-border)] text-xs font-bold text-[var(--pm-text)] transition-all flex items-center justify-center gap-2 active:scale-95 group-hover:border-emerald-500/30 cursor-pointer"
+                  className="w-full py-3 rounded-2xl bg-[var(--pm-surface-hover)] hover:bg-emerald-600 hover:text-white border border-[var(--pm-border)] text-xs font-bold text-[var(--pm-text)] transition-all flex items-center justify-center gap-2 active:scale-95 group-hover:border-emerald-500/30"
                 >
                   দোকানে প্রবেশ করুন <ArrowUpRight className="w-4 h-4" />
                 </button>

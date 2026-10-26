@@ -47,8 +47,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer min-h-[44px] ${
-                isActive 
-                  ? "bg-white/5 border border-white/10 text-cyan-400 shadow-lg" 
+                isActive
+                  ? "bg-white/5 border border-white/10 text-cyan-400 shadow-lg"
                   : "text-zinc-500 hover:text-zinc-300"
               }`}
             >

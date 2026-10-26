@@ -59,7 +59,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   private handleCopyError = (): void => {
     const { error, errorInfo } = this.state;
     const textToCopy = `Error: ${error?.message || 'Unknown error'}\n\nStack:\n${error?.stack || ''}\n\nComponent Stack:\n${errorInfo?.componentStack || ''}`;
-    
+
     if (navigator?.clipboard?.writeText) {
       navigator.clipboard.writeText(textToCopy).then(() => {
         this.setState({ copied: true });
@@ -91,7 +91,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <div className="min-h-screen w-full bg-[var(--pm-bg)] text-[var(--pm-text)] flex items-center justify-center p-4 sm:p-6 select-none">
           <div className="w-full max-w-lg bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-            
+
             {/* Warning Icon Banner */}
             <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center mx-auto shadow-inner">
               <AlertTriangle className="w-8 h-8 stroke-[2.2]" />

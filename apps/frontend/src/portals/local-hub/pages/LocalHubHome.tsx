@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ShoppingBag, Pill, Utensils, Zap, Briefcase, Users, MapPin, 
-  Search, SlidersHorizontal, ChevronDown, Clock, ShieldCheck, 
-  AlertCircle, ArrowRight, ArrowUpRight, Heart, Star, Grid, Layout, Navigation,
+import {
+  ShoppingBag, Pill, Utensils, Zap, Briefcase, Users, MapPin,
+  Search, SlidersHorizontal, ChevronDown, Clock, ShieldCheck,
+  AlertCircle, ArrowRight, Heart, Star, Grid, Layout, Navigation,
   MessageSquare, Loader2, Store
 } from 'lucide-react';
 import { HomeHeader } from '@/components/home/HomeHeader';
@@ -14,7 +13,6 @@ import { NeighborhoodFeed } from '../components/NeighborhoodFeed';
 import { LocalServices } from '../components/LocalServices';
 import { LocalEvents } from '../components/LocalEvents';
 import { useLanguage } from '@/modules/language';
-import { useLocationStore, useGeolocation } from '@/modules/location';
 import { ChatModal } from '@/modules/chat';
 import { toast } from 'sonner';
 
@@ -109,28 +107,17 @@ const FALLBACK_SHOPS: NearbyStore[] = [
 type HubTab = 'explore' | 'feed' | 'services' | 'events';
 
 export const LocalHubHome: React.FC = () => {
-  const navigate = useNavigate();
   const { t, isBn } = useLanguage();
   const [radius, setRadius] = useState<number>(5);
   const [isRadiusOpen, setIsRadiusOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<HubTab>('explore');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Global Location state
-  const { 
-    lat, 
-    lng, 
-    formattedAddress, 
-    city, 
-    isAutoDetected, 
-    openLocationModal 
-  } = useLocationStore();
-  const { detectLocation, isLoading: isDetectingGps } = useGeolocation();
 
-  // GPS Coordinates state derived from global location store
-  const userCoords = { lat: lat || 23.8103, lng: lng || 90.4125 };
-  const locationName = formattedAddress || city || 'ঢাকা কেন্দ্রীয় এলাকা (Dhaka Central)';
+  // GPS Coordinates state
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number }>({ lat: 23.8103, lng: 90.4125 });
+  const [locationName, setLocationName] = useState('ঢাকা কেন্দ্রীয় এলাকা (Dhaka Central)');
+  const [isDetectingGps, setIsDetectingGps] = useState(false);
 
   // Live shops state
   const [shops, setShops] = useState<NearbyStore[]>(FALLBACK_SHOPS);
@@ -140,11 +127,27 @@ export const LocalHubHome: React.FC = () => {
   const [chatTargetShop, setChatTargetShop] = useState<{ id: string; name: string } | null>(null);
 
   // Detect GPS Location
-  const handleDetectGps = async () => {
-    const success = await detectLocation();
-    if (success) {
-      toast.success('আপনার লাইভ জিপিএস লোকেশন সনাক্ত হয়েছে!');
+  const handleDetectGps = () => {
+    if (!navigator.geolocation) {
+      toast.error('আপনার ব্রাউজারে GPS সাপোর্ট নেই');
+      return;
     }
+    setIsDetectingGps(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserCoords({ lat: latitude, lng: longitude });
+        setLocationName(`${latitude.toFixed(4)}° N, ${longitude.toFixed(4)}° E (লাইভ GPS)`);
+        setIsDetectingGps(false);
+        toast.success('আপনার লাইভ জিপিএস লোকেশন সনাক্ত হয়েছে!');
+      },
+      (err) => {
+        console.warn('Geolocation error:', err);
+        setIsDetectingGps(false);
+        toast.info('GPS পারমিশন পাওয়া যায়নি। স্ট্যান্ডার্ড ঢাকা জোন ব্যবহৃত হচ্ছে।');
+      },
+      { timeout: 6000 }
+    );
   };
 
   // Fetch shops from backend /api/v1/nearby
@@ -164,10 +167,9 @@ export const LocalHubHome: React.FC = () => {
 
         const response = await fetch(`/api/v1/nearby?${queryParams.toString()}`);
         if (response.ok) {
-          const json = await response.json();
-          const list = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : []);
-          if (isMounted && list.length > 0) {
-            setShops(list);
+          const data = await response.json();
+          if (isMounted && Array.isArray(data)) {
+            setShops(data);
           }
         }
       } catch (err) {
@@ -194,7 +196,7 @@ export const LocalHubHome: React.FC = () => {
   const filteredShops = shops.filter((s) => {
     const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           s.address.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCat = selectedCategory === 'all' || 
+    const matchesCat = selectedCategory === 'all' ||
                        s.category.toLowerCase() === selectedCategory.toLowerCase() ||
                        s.storeType.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCat;
@@ -206,20 +208,20 @@ export const LocalHubHome: React.FC = () => {
       <PortalIconBar />
 
       <main className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Top Header & Hyperlocal GPS Geofence Terminal */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-                <MapPin className="w-6 h-6 text-cyan-400" /> 
+                <MapPin className="w-6 h-6 text-cyan-400" />
                 {isBn ? "পার্শ্ববর্তী লোকাল হাব" : "Nearby Local Hub"}
               </h1>
               <p className="text-xs text-cyan-400 font-bold uppercase tracking-wider mt-0.5">
                 {isBn ? "হাইপারলোকাল পাড়া-মহল্লা ইকোসিস্টেম" : "Hyperlocal Neighbourhood Ecosystem"}
               </p>
             </div>
-            
+
             {/* Geofence Radius Selector */}
             <div className="flex items-center gap-2">
               <button
@@ -234,7 +236,7 @@ export const LocalHubHome: React.FC = () => {
               </button>
 
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setIsRadiusOpen(!isRadiusOpen)}
                   className="flex items-center gap-2 px-3.5 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl hover:bg-cyan-500/20 transition-colors cursor-pointer"
                 >
@@ -242,10 +244,10 @@ export const LocalHubHome: React.FC = () => {
                   <span className="text-xs font-black text-white">{radius} KM রেডিয়াস</span>
                   <ChevronDown className={`w-3.5 h-3.5 text-cyan-400 transition-transform ${isRadiusOpen ? 'rotate-180' : ''}`} />
                 </button>
-                
+
                 <AnimatePresence>
                   {isRadiusOpen && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -270,20 +272,14 @@ export const LocalHubHome: React.FC = () => {
           </div>
 
           {/* Location indicator bar */}
-          <div className="p-2.5 bg-black/40 border border-white/10 rounded-2xl flex items-center justify-between text-xs gap-2">
-            <div className="flex items-center gap-2 truncate min-w-0">
-              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isAutoDetected ? 'bg-emerald-400 animate-pulse' : 'bg-cyan-400'}`} />
-              <span className="text-zinc-300 font-medium truncate text-xs">
-                অবস্থান: <strong className="text-white font-black">{locationName}</strong>
-              </span>
-            </div>
-            <button
-              onClick={openLocationModal}
-              className="text-[10px] font-black text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 px-2.5 py-1 rounded-xl border border-cyan-500/20 transition-all shrink-0 cursor-pointer flex items-center gap-1 active:scale-95"
-            >
-              <MapPin className="w-3 h-3" />
-              <span>লোকেশন পরিবর্তন</span>
-            </button>
+          <div className="p-2.5 bg-black/30 border border-white/5 rounded-2xl flex items-center justify-between text-xs">
+            <span className="text-zinc-400 font-medium flex items-center gap-1.5 truncate">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+              বর্তমান অবস্থান: <strong className="text-white truncate">{locationName}</strong>
+            </span>
+            <span className="text-[10px] text-cyan-400 font-mono font-bold uppercase shrink-0">
+              Haversine GPS Engine Active
+            </span>
           </div>
 
           {/* Hub Navigation Tabs */}
@@ -294,8 +290,8 @@ export const LocalHubHome: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as HubTab)}
                 className={cn(
                   "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer",
-                  activeTab === tab.id 
-                    ? "bg-cyan-400 text-black shadow-lg shadow-cyan-400/20" 
+                  activeTab === tab.id
+                    ? "bg-cyan-400 text-black shadow-lg shadow-cyan-400/20"
                     : "text-zinc-400 hover:text-white hover:bg-white/5"
                 )}
               >
@@ -320,8 +316,8 @@ export const LocalHubHome: React.FC = () => {
                 {/* Search Bar */}
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={isBn ? "নিকটস্থ দোকান, ফার্মেসি, মুদিখানা বা মিস্ত্রি খুঁজুন..." : "Search nearby shops, groceries, medicines..."}
@@ -344,8 +340,8 @@ export const LocalHubHome: React.FC = () => {
                         onClick={() => setSelectedCategory(cat.id)}
                         className={cn(
                           "group cursor-pointer flex flex-col items-center gap-1.5 p-3 rounded-2xl border transition-all text-center",
-                          selectedCategory === cat.id 
-                            ? "bg-cyan-500/10 border-cyan-400 text-white shadow-md shadow-cyan-400/10" 
+                          selectedCategory === cat.id
+                            ? "bg-cyan-500/10 border-cyan-400 text-white shadow-md shadow-cyan-400/10"
                             : "bg-black/30 border-white/5 hover:border-white/15 text-zinc-400"
                         )}
                       >
@@ -371,7 +367,7 @@ export const LocalHubHome: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   {isLoadingShops ? (
                     <div className="py-12 flex items-center justify-center gap-2 text-zinc-400">
                       <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
@@ -385,10 +381,9 @@ export const LocalHubHome: React.FC = () => {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                       {filteredShops.map((shop) => (
-                        <div 
-                          key={shop.id} 
-                          onClick={() => navigate(`/nearby/shop/${shop.id}`)}
-                          className="bg-black/40 border border-white/5 rounded-3xl p-4 flex gap-4 hover:border-cyan-400/40 hover:bg-black/60 transition-all text-left group cursor-pointer"
+                        <div
+                          key={shop.id}
+                          className="bg-black/40 border border-white/5 rounded-3xl p-4 flex gap-4 hover:border-cyan-400/30 transition-all text-left group"
                         >
                           <div className="w-20 h-20 rounded-2xl overflow-hidden relative shrink-0 border border-white/5 bg-zinc-900">
                             <img src={shop.avatar} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
@@ -396,15 +391,15 @@ export const LocalHubHome: React.FC = () => {
                               <MapPin className="w-2.5 h-2.5" /> {shop.distance} কিমি
                             </div>
                           </div>
-                          
+
                           <div className="flex-1 min-w-0 flex flex-col justify-between">
                             <div>
                               <div className="flex items-start justify-between gap-1">
-                                <h3 className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors truncate leading-tight">{shop.name}</h3>
+                                <h3 className="font-bold text-sm text-white truncate leading-tight">{shop.name}</h3>
                                 {shop.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
                               </div>
                               <p className="text-[10px] text-zinc-400 truncate mt-0.5">{shop.address}</p>
-                              
+
                               <div className="flex items-center gap-2 text-[10px] mt-1.5 flex-wrap">
                                 <span className={cn(
                                   "px-2 py-0.5 rounded font-black uppercase text-[9px]",
@@ -416,37 +411,21 @@ export const LocalHubHome: React.FC = () => {
                                 <span className="text-zinc-300 font-bold">{shop.category}</span>
                               </div>
                             </div>
-                            
-                            <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-2 gap-2 flex-wrap">
+
+                            <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-2">
                               <div className="flex items-center gap-1 text-[10px] font-medium text-cyan-300">
                                 <Clock className="w-3 h-3 text-cyan-400" />
                                 <span>{shop.deliveryTime}</span>
                               </div>
 
-                              <div className="flex items-center gap-1.5">
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setChatTargetShop({ id: shop.id, name: shop.name });
-                                  }}
-                                  className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 rounded-xl text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer"
-                                >
-                                  <MessageSquare className="w-3 h-3 text-cyan-400" />
-                                  চ্যাট
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/nearby/shop/${shop.id}`);
-                                  }}
-                                  className="px-3 py-1.5 bg-cyan-400 text-black hover:bg-cyan-300 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
-                                >
-                                  <span>দোকানে প্রবেশ</span>
-                                  <ArrowUpRight className="w-3 h-3" />
-                                </button>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setChatTargetShop({ id: shop.id, name: shop.name })}
+                                className="px-3 py-1.5 bg-cyan-400/10 hover:bg-cyan-400/20 text-cyan-300 border border-cyan-400/25 rounded-xl text-[10px] font-black uppercase flex items-center gap-1 transition-all cursor-pointer"
+                              >
+                                <MessageSquare className="w-3 h-3" />
+                                চ্যাট করুন
+                              </button>
                             </div>
                           </div>
                         </div>

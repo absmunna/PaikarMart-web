@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  ShoppingBag, Search, Sparkles, Plus, 
-  Check, ArrowRight, ShieldCheck, Truck, Scale, Filter 
+import {
+  ShoppingBag, Search, Sparkles, Plus,
+  Check, ArrowRight, ShieldCheck, Truck, Scale, Filter
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '@/modules/cart';
@@ -200,7 +200,7 @@ export const GroceryHome: React.FC = () => {
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {filtered.map((item) => (
-          <ProductCard 
+          <ProductCard
             key={item.id}
             product={{
               ...item,

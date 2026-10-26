@@ -27,7 +27,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
 
   const handlePurchase = async () => {
     setIsProcessing(true);
-    
+
     try {
       if (paymentMethod === 'wallet') {
         if (balance < product.price) {
@@ -75,7 +75,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ y: '100%' }}
       animate={{ y: 0 }}
       exit={{ y: '100%' }}
@@ -105,8 +105,8 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
             </div>
           </div>
         </div>
-        <button 
-          onClick={onClose} 
+        <button
+          onClick={onClose}
           className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center border border-white/10 transition-colors"
         >
           <X className="w-5 h-5 text-white/70" />
@@ -115,7 +115,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
 
       {step === 'options' && (
         <div className="space-y-3">
-          <button 
+          <button
             onClick={() => setPaymentMethod('wallet')}
             className={cn(
               "w-full p-4 rounded-2xl flex items-center justify-between border transition-all",
@@ -134,7 +134,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
             {paymentMethod === 'wallet' && <div className="w-5 h-5 rounded-full bg-[var(--pm-accent)] flex items-center justify-center"><ChevronRight size={12} className="text-white" /></div>}
           </button>
 
-          <button 
+          <button
             onClick={() => setPaymentMethod('bkash')}
             className={cn(
               "w-full p-4 rounded-2xl flex items-center justify-between border transition-all",
@@ -156,7 +156,7 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
             <p className="text-[10px] text-zinc-500 font-medium tracking-tight">Funds held in secure Escrow until delivery.</p>
           </div>
 
-          <Button 
+          <Button
             onClick={() => setStep('confirm')}
             className="w-full h-14 bg-white text-black font-black text-sm rounded-2xl mt-4 hover:bg-zinc-200 transition-all border-none"
           >
@@ -183,14 +183,14 @@ export const QuickBuyOverlay: React.FC<QuickBuyOverlayProps> = ({ product, onClo
           </div>
 
           <div className="flex gap-2">
-            <Button 
+            <Button
               variant="outline"
               onClick={() => setStep('options')}
               className="flex-1 h-14 bg-transparent border-white/10 text-white font-black hover:bg-white/5 rounded-2xl"
             >
               Back
             </Button>
-            <Button 
+            <Button
               onClick={handlePurchase}
               disabled={isProcessing}
               className="flex-[2] h-14 bg-[var(--pm-accent)] hover:opacity-90 text-white font-black rounded-2xl border-none"

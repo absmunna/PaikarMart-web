@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Search, ArrowLeft, ShieldCheck, Heart, MessageSquare, Share2, 
+import {
+  Search, ArrowLeft, ShieldCheck, Heart, MessageSquare, Share2,
   MapPin, Star, Phone, MessageCircle, ExternalLink, Filter, ShoppingBag, Check
 } from 'lucide-react';
 import { useCartStore } from '@/modules/cart';
@@ -280,7 +280,7 @@ export default function BrandShopsHome() {
   const [activeTab, setActiveTab] = useState<'all' | 'b2b' | 'b2c'>('all');
   const [selectedShop, setSelectedShop] = useState<BrandShop | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<BrandProduct | null>(null);
-  
+
   // Follower increment system
   const [followedState, setFollowedState] = useState<Record<string, { count: number; following: boolean }>>(() => {
     const init: Record<string, { count: number; following: boolean }> = {};
@@ -355,8 +355,8 @@ export default function BrandShopsHome() {
       const matchSearch = shop.name.toLowerCase().includes(search.toLowerCase()) ||
                           shop.banglaName.toLowerCase().includes(search.toLowerCase()) ||
                           shop.category.toLowerCase().includes(search.toLowerCase());
-      const matchTab = activeTab === 'all' || 
-                        shop.type === activeTab || 
+      const matchTab = activeTab === 'all' ||
+                        shop.type === activeTab ||
                         shop.type === 'both';
       return matchSearch && matchTab;
     });
@@ -379,7 +379,7 @@ export default function BrandShopsHome() {
           >
             {/* Header Area */}
             <div className="flex items-center gap-3 px-3 mb-4">
-              <button 
+              <button
                 onClick={() => navigate('/')}
                 className="w-8 h-8 rounded-full flex items-center justify-center border active:scale-95 transition-all cursor-pointer"
                 style={{ background: 'var(--pm-surface)', borderColor: 'var(--pm-border)' }}
@@ -407,17 +407,17 @@ export default function BrandShopsHome() {
 
             {/* Search Input Box */}
             <div className="px-3 mb-4">
-              <div 
+              <div
                 className="flex items-center gap-2 rounded-2xl px-3.5 py-2.5 border shadow-xs transition-all focus-within:ring-2 focus-within:ring-indigo-500"
                 style={{ background: 'var(--pm-surface)', borderColor: 'var(--pm-border)' }}
               >
                 <Search className="w-4 h-4 text-[var(--pm-text-secondary)]" />
-                <input 
-                  type="text" 
-                  placeholder="ব্র্যান্ডের নাম বা বিউটি, গ্রোসারি দিয়ে খুঁজুন..." 
+                <input
+                  type="text"
+                  placeholder="ব্র্যান্ডের নাম বা বিউটি, গ্রোসারি দিয়ে খুঁজুন..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="flex-1 text-xs bg-transparent outline-none text-[var(--pm-text)]" 
+                  className="flex-1 text-xs bg-transparent outline-none text-[var(--pm-text)]"
                 />
               </div>
             </div>
@@ -429,8 +429,8 @@ export default function BrandShopsHome() {
                 { id: 'b2b', label: 'পাইকারি (B2B)' },
                 { id: 'b2c', label: 'খুচরা (B2C)' }
               ].map(tab => (
-                <button 
-                  key={tab.id} 
+                <button
+                  key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className="px-4 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer"
                   style={activeTab === tab.id
@@ -452,7 +452,7 @@ export default function BrandShopsHome() {
                 </div>
               ) : (
                 filteredShops.map(shop => (
-                  <motion.div 
+                  <motion.div
                     key={shop.id}
                     layoutId={`shop-card-${shop.id}`}
                     onClick={() => setSelectedShop(shop)}
@@ -461,10 +461,10 @@ export default function BrandShopsHome() {
                   >
                     {/* Header Image of Shop Card */}
                     <div className="relative h-28 w-full bg-slate-900 overflow-hidden">
-                      <img 
+                      <img
                         referrerPolicy="no-referrer"
-                        src={shop.banner} 
-                        alt={shop.name} 
+                        src={shop.banner}
+                        alt={shop.name}
                         className="w-full h-full object-cover opacity-85"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -472,15 +472,15 @@ export default function BrandShopsHome() {
                         {shop.type === 'both' ? 'B2B + B2C' : shop.type === 'b2b' ? 'B2B' : 'B2C'}
                       </span>
                       <div className="absolute bottom-2.5 left-3.5 flex items-center gap-2">
-                        <img 
+                        <img
                           referrerPolicy="no-referrer"
-                          src={shop.logo} 
-                          alt={shop.name} 
+                          src={shop.logo}
+                          alt={shop.name}
                           className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-md bg-white"
                         />
                         <div>
                           <h4 className="text-xs font-extrabold text-white flex items-center gap-1.5">
-                            {shop.banglaName} 
+                            {shop.banglaName}
                             <ShieldCheck className="w-3.5 h-3.5 text-sky-400 fill-sky-400/20" />
                           </h4>
                           <p className="text-[9px] text-white/80">{shop.badge}</p>
@@ -526,7 +526,7 @@ export default function BrandShopsHome() {
           >
             {/* Storefront Navigation Header */}
             <div className="flex items-center justify-between px-3 py-2.5 border-b border-[var(--pm-border)]/40 mb-3">
-              <button 
+              <button
                 onClick={() => setSelectedShop(null)}
                 className="flex items-center gap-1.5 text-xs font-bold text-[var(--pm-text-secondary)] hover:text-[var(--pm-text)] active:scale-95 transition-all cursor-pointer"
               >
@@ -539,26 +539,26 @@ export default function BrandShopsHome() {
 
             {/* Immersive Shop Banner Header */}
             <div className="relative h-44 w-full bg-slate-900 overflow-hidden">
-              <img 
+              <img
                 referrerPolicy="no-referrer"
-                src={selectedShop.banner} 
-                alt={selectedShop.name} 
+                src={selectedShop.banner}
+                alt={selectedShop.name}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-              
+
               {/* Bottom shop info overlapping the banner */}
               <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                 <div className="flex items-center gap-3">
-                  <img 
+                  <img
                     referrerPolicy="no-referrer"
-                    src={selectedShop.logo} 
-                    alt={selectedShop.name} 
+                    src={selectedShop.logo}
+                    alt={selectedShop.name}
                     className="w-14 h-14 rounded-2xl object-cover border-2 border-white shadow-lg bg-white"
                   />
                   <div>
                     <h2 className="text-sm font-extrabold text-white flex items-center gap-1.5">
-                      {selectedShop.banglaName} 
+                      {selectedShop.banglaName}
                       <ShieldCheck className="w-4.5 h-4.5 text-sky-400 fill-sky-400/20" />
                     </h2>
                     <p className="text-[10px] text-white/80">স্থাপিত: {selectedShop.onboardingYear} • {selectedShop.category}</p>
@@ -571,11 +571,11 @@ export default function BrandShopsHome() {
                 </div>
 
                 {/* Follow Button */}
-                <button 
+                <button
                   onClick={() => toggleFollow(selectedShop.id)}
                   className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
-                    followedState[selectedShop.id]?.following 
-                    ? 'bg-transparent text-white border border-white/50' 
+                    followedState[selectedShop.id]?.following
+                    ? 'bg-transparent text-white border border-white/50'
                     : 'bg-indigo-500 text-white hover:bg-indigo-600'
                   }`}
                 >
@@ -625,13 +625,13 @@ export default function BrandShopsHome() {
 
             {/* Floating Action CTA to Messenger Chat */}
             <div className="px-3 py-3 flex gap-2">
-              <button 
+              <button
                 onClick={() => setIsOpenChat(true)}
                 className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all active:scale-95"
               >
                 <MessageCircle className="w-4 h-4" /> সরাসরি লাইভ চ্যাট
               </button>
-              <a 
+              <a
                 href={`tel:+8801700000000`}
                 className="w-12 h-10 rounded-xl border border-[var(--pm-border)] flex items-center justify-center cursor-pointer hover:bg-[var(--pm-surface)]"
               >
@@ -647,7 +647,7 @@ export default function BrandShopsHome() {
 
               <div className="grid grid-cols-2 gap-3">
                 {selectedShop.products.map(prod => (
-                  <div 
+                  <div
                     key={prod.id}
                     onClick={() => setSelectedProduct(prod)}
                     className="rounded-xl border overflow-hidden p-2 flex flex-col cursor-pointer transition-transform duration-200 hover:scale-98 relative"
@@ -657,13 +657,13 @@ export default function BrandShopsHome() {
                     <span className="absolute top-2 left-2 bg-indigo-500 text-white text-[7px] font-black uppercase px-2 py-0.5 rounded-full z-10 border border-white/10">
                       {prod.type === 'b2b' ? 'Wholesale B2B' : 'Retail B2C'}
                     </span>
-                    
+
                     {/* Product Image */}
                     <div className="h-28 w-full bg-slate-900 rounded-lg overflow-hidden mb-2 relative">
-                      <img 
+                      <img
                         referrerPolicy="no-referrer"
-                        src={prod.image} 
-                        alt={prod.name} 
+                        src={prod.image}
+                        alt={prod.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -690,7 +690,7 @@ export default function BrandShopsHome() {
                         )}
                         <p className="text-xs font-black text-[var(--pm-accent)]">৳{prod.price.toLocaleString()}</p>
                       </div>
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleAddToCart(prod);
@@ -713,8 +713,8 @@ export default function BrandShopsHome() {
         {isOpenChat && selectedShop && (
           <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs">
             <div className="absolute inset-0" onClick={() => setIsOpenChat(false)} />
-            
-            <motion.div 
+
+            <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -724,10 +724,10 @@ export default function BrandShopsHome() {
               {/* Header */}
               <div className="p-4 border-b border-[var(--pm-border)] flex items-center justify-between bg-indigo-500/5 rounded-t-[28px]">
                 <div className="flex items-center gap-2">
-                  <img 
+                  <img
                     referrerPolicy="no-referrer"
-                    src={selectedShop.logo} 
-                    alt={selectedShop.name} 
+                    src={selectedShop.logo}
+                    alt={selectedShop.name}
                     className="w-8 h-8 rounded-lg object-cover"
                   />
                   <div>
@@ -737,7 +737,7 @@ export default function BrandShopsHome() {
                     <p className="text-[8px] text-[var(--pm-text-secondary)]">সাধারণত ১ মিনিটে উত্তর দেয়</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsOpenChat(false)}
                   className="text-xs font-bold text-[var(--pm-text-secondary)] hover:text-[var(--pm-text)] cursor-pointer"
                 >
@@ -748,14 +748,14 @@ export default function BrandShopsHome() {
               {/* Message scroll list */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3.5 hide-scrollbar">
                 {chatMessages.map((msg, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div 
+                    <div
                       className={`max-w-[75%] p-3 rounded-2xl text-xs relative ${
-                        msg.sender === 'user' 
-                        ? 'bg-[var(--pm-accent)] text-[#fff] rounded-tr-none' 
+                        msg.sender === 'user'
+                        ? 'bg-[var(--pm-accent)] text-[#fff] rounded-tr-none'
                         : 'bg-[var(--pm-bg)] text-[var(--pm-text)] rounded-tl-none border border-[var(--pm-border)]'
                       }`}
                     >
@@ -768,15 +768,15 @@ export default function BrandShopsHome() {
 
               {/* Message Composition Input Form */}
               <form onSubmit={handleSendMessage} className="p-3 border-t border-[var(--pm-border)] flex gap-2" style={{ background: 'var(--pm-bg)' }}>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={chatInput}
                   onChange={e => setChatInput(e.target.value)}
                   placeholder="আপনার বার্তাটি লিখুন..."
                   className="flex-1 text-xs p-3 rounded-xl border bg-[var(--pm-surface)] outline-none text-[var(--pm-text)] focus:border-indigo-500"
                   style={{ borderColor: 'var(--pm-border)' }}
                 />
-                <button 
+                <button
                   type="submit"
                   className="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 text-white text-xs font-bold rounded-xl cursor-pointer flex items-center justify-center active:scale-95 transition-all"
                 >
@@ -794,7 +794,7 @@ export default function BrandShopsHome() {
           <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs">
             <div className="absolute inset-0" onClick={() => setSelectedProduct(null)} />
 
-            <motion.div 
+            <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -805,10 +805,10 @@ export default function BrandShopsHome() {
 
               <div className="flex-1 overflow-y-auto pb-4 hide-scrollbar">
                 <div className="h-48 rounded-2xl overflow-hidden mb-3.5 border relative" style={{ borderColor: 'var(--pm-border)' }}>
-                  <img 
+                  <img
                     referrerPolicy="no-referrer"
-                    src={selectedProduct.image} 
-                    alt={selectedProduct.name} 
+                    src={selectedProduct.image}
+                    alt={selectedProduct.name}
                     className="w-full h-full object-cover"
                   />
                   <span className="absolute top-3 left-3 bg-indigo-500 text-white text-[9px] font-black uppercase px-3 py-1 rounded-full border border-white/10 shadow-md">
@@ -865,7 +865,7 @@ export default function BrandShopsHome() {
 
                 {/* Operations bar */}
                 <div className="flex gap-2.5">
-                  <button 
+                  <button
                     onClick={() => {
                       handleAddToCart(selectedProduct);
                       setSelectedProduct(null);
@@ -874,7 +874,7 @@ export default function BrandShopsHome() {
                   >
                     শপিং ব্যাগ-এ যোগ করুন
                   </button>
-                  <button 
+                  <button
                     onClick={() => setSelectedProduct(null)}
                     className="px-4 py-2.5 rounded-xl border border-[var(--pm-border)] text-xs text-[var(--pm-text-secondary)] hover:text-[var(--pm-text)] active:scale-95 transition-all cursor-pointer"
                   >

@@ -114,7 +114,7 @@ export default function SellerDashboard() {
           <h1 className="text-2xl font-black text-white uppercase tracking-tighter">Dashboard Overview</h1>
           <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest">Welcome back, {profile?.shopName || 'Merchant'}.</p>
         </div>
-        <button 
+        <button
           onClick={() => setIsUploadModalOpen(true)}
           className="flex items-center justify-center gap-2 bg-[#FF7A00] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs transition-colors shadow-lg shadow-[#FF7A00]/20"
         >
@@ -138,7 +138,7 @@ export default function SellerDashboard() {
           <TabsTrigger value="inventory" className="data-[state=active]:bg-[#FF7A00] data-[state=active]:text-white text-[10px] font-black uppercase tracking-widest px-6 py-2.5 rounded-xl">Inventory</TabsTrigger>
           <TabsTrigger value="settings" className="data-[state=active]:bg-[#FF7A00] data-[state=active]:text-white text-[10px] font-black uppercase tracking-widest px-6 py-2.5 rounded-xl">Store Settings</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="orders">
           <SellerOrderPanel orders={orders} />
         </TabsContent>
@@ -165,8 +165,8 @@ export default function SellerDashboard() {
             <form onSubmit={handleSaveSettings} className="space-y-4 max-w-2xl">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">Shop Name / Business Title</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={shopName}
                   onChange={e => setShopName(e.target.value)}
                   className="w-full bg-[#1e2136] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FF7A00]"
@@ -177,8 +177,8 @@ export default function SellerDashboard() {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">Store Tagline / Slogan</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={tagline}
                   onChange={e => setTagline(e.target.value)}
                   className="w-full bg-[#1e2136] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FF7A00]"
@@ -189,8 +189,8 @@ export default function SellerDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">Business Location / City</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={location}
                     onChange={e => setLocation(e.target.value)}
                     className="w-full bg-[#1e2136] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FF7A00]"
@@ -199,8 +199,8 @@ export default function SellerDashboard() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">Contact Phone Number</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={contactPhone}
                     onChange={e => setContactPhone(e.target.value)}
                     className="w-full bg-[#1e2136] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FF7A00]"
@@ -223,11 +223,11 @@ export default function SellerDashboard() {
           </div>
         </TabsContent>
       </Tabs>
-      
-      <RoleUploadModal 
-        isOpen={isUploadModalOpen} 
-        onClose={() => setIsUploadModalOpen(false)} 
-        defaultRole="product" 
+
+      <RoleUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        defaultRole="product"
         onSuccess={() => setIsUploadModalOpen(false)}
       />
     </div>

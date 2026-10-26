@@ -21,7 +21,7 @@ export default function VaultLayout() {
           <FolderLock className="h-6 w-6 text-blue-400" />
           <h1 className="text-xl font-bold tracking-tight">ClientVault</h1>
         </div>
-        
+
         <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
           <a href="#" className="flex items-center gap-3 px-4 py-3 bg-blue-600 rounded-lg text-white font-medium">
             <File className="h-5 w-5" />
@@ -43,7 +43,7 @@ export default function VaultLayout() {
               {user?.email || user?.phone || 'User'}
             </p>
           </div>
-          <button 
+          <button
             onClick={logout}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors"
           >

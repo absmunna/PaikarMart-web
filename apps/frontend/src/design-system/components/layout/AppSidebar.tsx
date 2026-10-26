@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  Home, 
-  Store, 
-  ShoppingBag, 
-  Package, 
-  Heart, 
-  Layers, 
-  Settings, 
+import {
+  Home,
+  Store,
+  ShoppingBag,
+  Package,
+  Heart,
+  Layers,
+  Settings,
   Info,
   LogOut,
   User,
@@ -39,30 +39,30 @@ export const AppSidebar: React.FC = () => {
   const lowerRole = rawRole.toLowerCase();
   const pkShopRole = String((user as any)?.pk_shop_role || '').trim().toUpperCase();
 
-  const isSuperAdmin = 
+  const isSuperAdmin =
     rawRole === 'SUPER_ADMIN' ||
-    lowerRole === 'super_admin' || 
-    lowerRole === 'admin' || 
+    lowerRole === 'super_admin' ||
+    lowerRole === 'admin' ||
     (user?.roles || []).some(r => String(r).toLowerCase().includes('admin'));
 
-  const isSeller = 
+  const isSeller =
     rawRole === 'SELLER' ||
-    lowerRole === 'seller' || 
-    lowerRole.includes('seller') || 
-    lowerRole === 'business' || 
+    lowerRole === 'seller' ||
+    lowerRole.includes('seller') ||
+    lowerRole === 'business' ||
     lowerRole === 'factory';
 
-  const isPKShopStaff = 
-    pkShopRole === 'STORE_MANAGER' || 
-    pkShopRole === 'MODERATOR' || 
-    lowerRole === 'moderator' || 
+  const isPKShopStaff =
+    pkShopRole === 'STORE_MANAGER' ||
+    pkShopRole === 'MODERATOR' ||
+    lowerRole === 'moderator' ||
     Boolean((user as any)?.pk_shop_role);
 
-  const isBuyer = 
+  const isBuyer =
     rawRole === 'BUYER' ||
-    lowerRole === 'buyer' || 
-    lowerRole === 'user' || 
-    lowerRole === 'guest' || 
+    lowerRole === 'buyer' ||
+    lowerRole === 'user' ||
+    lowerRole === 'guest' ||
     (!isSuperAdmin && !isSeller && !isPKShopStaff);
 
   const menuItems = [
@@ -109,12 +109,12 @@ export const AppSidebar: React.FC = () => {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <Badge className={cn(
                     "text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border-none",
-                    isSuperAdmin 
-                      ? "bg-cyan-500 text-black font-extrabold" 
-                      : isSeller 
-                        ? "bg-amber-500 text-black font-extrabold" 
-                        : isPKShopStaff 
-                          ? "bg-purple-500 text-white font-extrabold" 
+                    isSuperAdmin
+                      ? "bg-cyan-500 text-black font-extrabold"
+                      : isSeller
+                        ? "bg-amber-500 text-black font-extrabold"
+                        : isPKShopStaff
+                          ? "bg-purple-500 text-white font-extrabold"
                           : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                   )}>
                     {isSuperAdmin ? 'Super Admin' : isSeller ? 'Seller' : isPKShopStaff ? 'Staff' : 'Buyer'}
@@ -140,8 +140,8 @@ export const AppSidebar: React.FC = () => {
               <p className="text-xs text-[var(--pm-muted)]">
                 Log in to sync your profile, manage orders, and unlock partner portals.
               </p>
-              <Link 
-                to="/auth/login" 
+              <Link
+                to="/auth/login"
                 onClick={handleLinkClick}
                 className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--pm-accent)] px-4 text-sm font-bold text-white transition-opacity hover:opacity-90"
               >
@@ -277,8 +277,8 @@ export const AppSidebar: React.FC = () => {
                   onClick={handleLinkClick}
                   className={cn(
                     "flex items-center gap-3 px-3 py-3 rounded-xl transition-all group",
-                    isActive 
-                      ? "bg-[var(--pm-accent)]/10 text-[var(--pm-accent)]" 
+                    isActive
+                      ? "bg-[var(--pm-accent)]/10 text-[var(--pm-accent)]"
                       : "text-[var(--pm-muted)] hover:bg-[var(--pm-surface)] hover:text-white"
                   )}
                 >
@@ -307,7 +307,7 @@ export const AppSidebar: React.FC = () => {
                 <span className="text-sm font-bold tracking-tight">{item.label}</span>
               </Link>
             ))}
-            
+
             {isAuthenticated && (
               <button
                 onClick={() => {
@@ -354,4 +354,3 @@ export const AppSidebar: React.FC = () => {
     </Sheet>
   );
 };
-

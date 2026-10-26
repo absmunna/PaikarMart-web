@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Star, MapPin, ShieldCheck, Clock, 
+import {
+  Star, MapPin, ShieldCheck, Clock,
   ArrowRight, Phone, MessageSquare,
-  Wrench, Zap, Droplets, Briefcase, 
+  Wrench, Zap, Droplets, Briefcase,
   Search, SlidersHorizontal, Loader2,
   AlertTriangle
 } from 'lucide-react';
@@ -46,13 +46,13 @@ export const LocalServices: React.FC = () => {
       <div className="space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-          <input 
-            type="text" 
-            placeholder="Search for doctors, electricians, tutors..." 
+          <input
+            type="text"
+            placeholder="Search for doctors, electricians, tutors..."
             className="w-full h-12 pl-10 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-cyan-500 transition-colors"
           />
         </div>
-        
+
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
           {SERVICE_CATEGORIES.map((cat) => (
             <button
@@ -83,7 +83,7 @@ export const LocalServices: React.FC = () => {
             </div>
           ) : services.length > 0 ? (
             services.map((service) => (
-              <motion.div 
+              <motion.div
                 key={service.id}
                 whileHover={{ scale: 1.01 }}
                 className="bg-zinc-900 border border-white/5 rounded-3xl p-4 flex gap-4 hover:border-cyan-500/30 transition-all group"

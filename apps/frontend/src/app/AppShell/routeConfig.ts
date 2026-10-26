@@ -12,16 +12,13 @@ export interface RouteItem {
 }
 
 // Social Profile
-const PortalHub = lazy(() => import('@/pages/portals/PortalHubPage').then(m => ({ default: m.PortalHubPage })));
 const ProfilePage = lazy(() => import('@/modules/profile').then(m => ({ default: m.ProfilePage })));
+
 const PortalComingSoon = lazy(() => import('@/pages/PortalComingSoon').then(m => ({ default: m.default })));
 
 // Public Pages
 const Home = lazy(() => import('@/pages/Home').then(m => ({ default: m.default })));
 const Feed = lazy(() => import('@/pages/Feed').then(m => ({ default: m.default })));
-
-
-
 const MarketplaceHome = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/MarketplaceHome').then(m => ({ default: m.default })));
 const MarketplaceSearch = PortalComingSoon;
 const MarketplaceCategory = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/MarketplaceCategory').then(m => ({ default: m.MarketplaceCategoryPage })));
@@ -32,9 +29,9 @@ const VendorDetail = lazy(() => import('@/portals/marketplace-hub/marketplace/pa
 const Categories = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/categories').then(m => ({ default: m.default })));
 const Local = lazy(() => import('@/portals/local-hub/subportals/nearby/pages/NearbyHome').then(m => ({ default: m.default })));
 const Tracking = lazy(() => import('@/portals/orders/pages/OrderDetailPage').then(m => ({ default: m.default })));
-const Reels = lazy(() => import('@/pages/Reels').then(m => ({ default: m.default })));
+const Reels = PortalComingSoon;
 const Demand = lazy(() => import('@/portals/community-hub/demand/pages/DemandHome').then(m => ({ default: m.default })));
-const SearchPage = lazy(() => import('@/pages/SearchPage').then(m => ({ default: m.SearchPage })));
+const SearchPage = PortalComingSoon;
 const CreatePost = lazy(() => import('@/modules/posts').then(m => ({ default: m.CreatePost })));
 const Wishlist = lazy(() => import('@/modules/wishlist/pages/wishlist').then(m => ({ default: m.default })));
 
@@ -117,7 +114,7 @@ const SellerDashboard = lazy(() => import('@/portals/seller-central/pages/Dashbo
 
 // Admin
 const AdminGovernance = lazy(() => import('@/portals/admin/pages/dashboards/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
-const AdminWithGuard: React.FC = () => 
+const AdminWithGuard: React.FC = () =>
   React.createElement(RequireRole, { role: 'SUPER_ADMIN' }, React.createElement(AdminGovernance as any));
 
 // Brand Shops & PK Shop
@@ -148,7 +145,6 @@ const OrderDetail = lazy(() => import('@/portals/orders/pages/OrderDetailPage').
 
 export const ROUTES: RouteItem[] = [
   { path: '/', component: Home, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  { path: '/portal-hub', component: PortalHub, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/feed', component: Feed, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/product/:id', component: ProductDetail, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/marketplace', component: MarketplaceHome, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
@@ -225,7 +221,7 @@ export const ROUTES: RouteItem[] = [
   { path: '/travel', component: Travel, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/portals', component: Portals, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/workspace', component: WorkspacePortal, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  
+
   { path: '/auth/login', component: Login, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/auth/register', component: Register, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/auth/wizard', component: RegistrationWizard, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
@@ -236,7 +232,7 @@ export const ROUTES: RouteItem[] = [
   { path: '/auth/forgot-password', component: ForgotPassword, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/unauthorized', component: Unauthorized, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/seller/onboarding', component: VendorOnboarding, roles: ['seller', 'business', 'admin'], isPublic: false },
-  
+
   { path: '/profile', component: ProfilePage, roles: ['buyer', 'user', 'seller', 'business', 'admin', 'service_provider'] },
   { path: '/u/:userId', component: ProfilePage, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/u', component: ProfilePage, roles: ['buyer', 'user', 'seller', 'business', 'admin', 'service_provider'] },
@@ -249,13 +245,13 @@ export const ROUTES: RouteItem[] = [
   { path: '/wishlist', component: Wishlist, roles: ['buyer', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/notifications', component: Notifications, roles: ['buyer', 'user', 'seller', 'business', 'admin', 'service_provider'] },
   { path: '/orders/:id', component: OrderDetail, roles: ['buyer', 'user', 'seller', 'business', 'admin', 'service_provider'] },
-  
+
   // Logistics
   { path: '/logistics', component: Logistics, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  
+
   // Demands
   { path: '/demand/:id', component: DemandDetail, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  
+
   // Static utility pages
   { path: '/faq', component: FAQPage, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/terms', component: TermsPage, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
@@ -264,7 +260,7 @@ export const ROUTES: RouteItem[] = [
   { path: '/seller-rules', component: SellerRulesPage, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/qna', component: QNAPage, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
   { path: '/settings', component: Settings, roles: ['buyer', 'guest', 'user', 'seller', 'business', 'admin', 'service_provider'], isPublic: true },
-  
+
   { path: '/wholesale/manage', component: WholesaleManage, roles: ['seller', 'business', 'admin'] },
   { path: '/factory', component: FactoryHome, roles: ['seller', 'business', 'admin'] },
   { path: '/factory/register', component: FactoryRegister, roles: ['seller', 'business', 'admin'] },

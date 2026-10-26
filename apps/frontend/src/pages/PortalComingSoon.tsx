@@ -4,7 +4,6 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Compass, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '@/modules/language';
 import { Button } from '@/components/ui/button';
-import { safeBack } from '@/lib/navigation';
 
 export default function PortalComingSoon() {
   const navigate = useNavigate();
@@ -36,7 +35,7 @@ export default function PortalComingSoon() {
 
   return (
     <div className="w-full pb-28 pt-20 px-6 flex flex-col items-center justify-center text-center select-none text-[var(--pm-text)] max-w-[480px] mx-auto">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: "spring", damping: 25 }}
@@ -56,23 +55,23 @@ export default function PortalComingSoon() {
             {getPortalName()}
           </h1>
           <p className="text-[11px] text-[var(--pm-muted)] font-bold uppercase tracking-widest max-w-[300px] mx-auto leading-relaxed">
-            {isBn 
-              ? "এই পোর্টালটি বর্তমানে ডেভেলপমেন্ট পর্যায়ে রয়েছে। খুব শীঘ্রই এটি লাইভ হবে!" 
+            {isBn
+              ? "এই পোর্টালটি বর্তমানে ডেভেলপমেন্ট পর্যায়ে রয়েছে। খুব শীঘ্রই এটি লাইভ হবে!"
               : "This specialized portal is currently being integrated into our Bangladesh Super App ecosystem. Coming soon!"}
           </p>
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button 
-            onClick={() => safeBack(navigate, '/')} 
-            className="h-12 w-full max-w-[200px] mx-auto rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white border border-white/5 font-black text-xs uppercase tracking-widest gap-2.5 cursor-pointer"
+          <Button
+            onClick={() => navigate(-1)}
+            className="h-12 w-full max-w-[200px] mx-auto rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white border border-white/5 font-black text-xs uppercase tracking-widest gap-2.5"
           >
             <ArrowLeft size={14} />
             {isBn ? "ফিরে যান" : "Go Back"}
           </Button>
 
-          <Button 
-            onClick={() => navigate('/')} 
+          <Button
+            onClick={() => navigate('/')}
             className="h-12 w-full max-w-[200px] mx-auto rounded-2xl bg-cyan-400 hover:bg-cyan-300 text-black font-black text-xs uppercase tracking-widest gap-2.5"
           >
             {isBn ? "হোম পেজ" : "Main Feed"}

@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Bell, X, CheckCheck, Trash2, Package, Coins, 
-  Tag, AlertCircle, ChevronRight, ExternalLink 
+import {
+  Bell, X, CheckCheck, Trash2, Package, Coins,
+  Tag, AlertCircle, ChevronRight, ExternalLink
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useNotificationsStore, AppNotification } from '@/modules/notification';
 
 export const NotificationDrawer: React.FC = () => {
-  const { 
-    isOpen, 
-    closeDrawer, 
-    notifications, 
-    markAsRead, 
-    markAllAsRead, 
-    removeNotification 
+  const {
+    isOpen,
+    closeDrawer,
+    notifications,
+    markAsRead,
+    markAllAsRead,
+    removeNotification
   } = useNotificationsStore();
   const [activeTab, setActiveTab] = useState<'all' | 'orders' | 'demands' | 'offers'>('all');
   const navigate = useNavigate();

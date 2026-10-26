@@ -43,14 +43,14 @@ export function VerificationForm({
 
   const [step, setStep] = useState(1);
   const [busy, setBusy] = useState(false);
-  
+
   // Selection states
   const [docType, setDocType] = useState<"NID" | "TRADE_LICENSE" | "DRIVING_LICENSE" | "VEHICLE_REGISTRATION">(() => {
     if (category === "rider") return "DRIVING_LICENSE";
     if (category === "service_provider") return "NID";
     return "TRADE_LICENSE";
   });
-  
+
   const [docNumber, setDocNumber] = useState("");
   const [docNumberErr, setDocNumberErr] = useState<string | null>(null);
 
@@ -154,7 +154,7 @@ export function VerificationForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step === 1 && !validate()) return;
-    
+
     setBusy(true);
     try {
       await submitVerification({
@@ -166,8 +166,8 @@ export function VerificationForm({
       });
 
       toast.success(
-        isBn 
-          ? "অভিনন্দন! আপনার ভেরিফিকেশন আবেদন জমা হয়েছে এবং স্বয়ংক্রিয়ভাবে অনুমোদিত হয়েছে।" 
+        isBn
+          ? "অভিনন্দন! আপনার ভেরিফিকেশন আবেদন জমা হয়েছে এবং স্বয়ংক্রিয়ভাবে অনুমোদিত হয়েছে।"
           : "Congratulations! Your verification documents have been submitted and auto-approved."
       );
       if (onSuccess) onSuccess();
@@ -190,13 +190,13 @@ export function VerificationForm({
             {isBn ? "প্রগ্রেসিভ ভেরিফিকেশন" : "Progressive Verification"}
           </h3>
           <p className="text-xs text-zinc-400 mt-1 font-medium">
-            {isBn 
-              ? "বিশ্বাসযোগ্যতা বাড়াতে এবং পোর্টালের সম্পূর্ণ এক্সেস পেতে তথ্য দিন" 
+            {isBn
+              ? "বিশ্বাসযোগ্যতা বাড়াতে এবং পোর্টালের সম্পূর্ণ এক্সেস পেতে তথ্য দিন"
               : "Provide credentials to establish trust and unlock complete portal accesses"}
           </p>
         </div>
         {onCancel && (
-          <button 
+          <button
             onClick={onCancel}
             className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
@@ -500,8 +500,8 @@ export function VerificationForm({
               </div>
 
               <div className="rounded-xl bg-[#00a859]/5 border border-[#00a859]/10 p-3.5 text-xs text-zinc-300 leading-relaxed font-medium">
-                {isBn 
-                  ? "ডকুমেন্টগুলি সাবমিট করার সাথে সাথেই সিস্টেম স্বয়ংক্রিয়ভাবে একটি এআই ইন্টিগ্রেশনের মাধ্যমে আপনার তথ্য যাচাই করে অনুমোদিত করবে। আপনি নামের পাশে তাৎক্ষণিক ট্রাস্ট ব্যাজ পাবেন।" 
+                {isBn
+                  ? "ডকুমেন্টগুলি সাবমিট করার সাথে সাথেই সিস্টেম স্বয়ংক্রিয়ভাবে একটি এআই ইন্টিগ্রেশনের মাধ্যমে আপনার তথ্য যাচাই করে অনুমোদিত করবে। আপনি নামের পাশে তাৎক্ষণিক ট্রাস্ট ব্যাজ পাবেন।"
                   : "Upon submission, our progressive validation script will auto-verify your documents instantly. Trust badges will be displayed instantly beside your profile details."}
               </div>
             </div>

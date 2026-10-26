@@ -163,7 +163,7 @@ export class HyperlocalEngineService {
     const totalMinutes = prepMinutes + transitMinutes;
     const minRange = Math.max(10, totalMinutes - 3);
     const maxRange = totalMinutes + 5;
-    
+
     // Dynamic delivery fee calculation (Base ৳40 + ৳12 per km after first 2km)
     const baseFee = 40;
     const additionalKm = Math.max(0, distanceKm - 2);

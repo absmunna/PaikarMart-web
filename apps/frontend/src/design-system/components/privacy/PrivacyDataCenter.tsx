@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { 
-  ShieldCheck, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Trash2, 
-  Edit3, 
-  Download, 
-  FileText, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Loader2, 
-  Database, 
-  Building2, 
-  Package, 
-  Video, 
+import {
+  ShieldCheck,
+  Lock,
+  Eye,
+  EyeOff,
+  Trash2,
+  Edit3,
+  Download,
+  FileText,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2,
+  Database,
+  Building2,
+  Package,
+  Video,
   Briefcase,
   X,
   Upload,
@@ -148,7 +148,7 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
     try {
       const { type, item } = editingItem;
       const coll = type === "product" ? "products" : type === "post" ? "posts" : type === "service" ? "services" : "client_vault_files";
-      
+
       const updatePayload: any = {};
       if (type === "product") {
         updatePayload.title = editTitle;
@@ -245,7 +245,7 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
               </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
           >

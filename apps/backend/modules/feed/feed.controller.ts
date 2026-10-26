@@ -525,14 +525,14 @@ const userSavedLocation = { district: 'Dhaka', division: 'Dhaka', area: 'Mirpur'
 // ─── 1. GET /api/feed/social ───
 export const getSocialFeed = async (req: Request, res: Response) => {
   try {
-    const { 
-      page = '1', 
-      limit = '10', 
-      location, 
-      district, 
-      filter = 'all', 
+    const {
+      page = '1',
+      limit = '10',
+      location,
+      district,
+      filter = 'all',
       tag,
-      search 
+      search
     } = req.query;
 
     const pageNum = parseInt(String(page), 10) || 1;
@@ -643,8 +643,8 @@ export const getSocialFeed = async (req: Request, res: Response) => {
 
     // Filter by location / proximity
     if (locFilter && locFilter !== 'all' && locFilter !== 'সকল বাংলাদেশ' && locFilter !== 'সব বাংলাদেশ') {
-      posts = posts.filter(p => 
-        p.location.toLowerCase().includes(locFilter) || 
+      posts = posts.filter(p =>
+        p.location.toLowerCase().includes(locFilter) ||
         p.district.toLowerCase().includes(locFilter) ||
         p.division.toLowerCase().includes(locFilter)
       );
@@ -657,7 +657,7 @@ export const getSocialFeed = async (req: Request, res: Response) => {
 
     // Filter by tag
     if (tagFilter) {
-      posts = posts.filter(p => 
+      posts = posts.filter(p =>
         p.tags.some(t => t.toLowerCase().includes(tagFilter)) ||
         p.content.toLowerCase().includes(tagFilter)
       );
@@ -796,7 +796,7 @@ export const getCommerceFeed = async (req: Request, res: Response) => {
     }
 
     if (locFilter && locFilter !== 'all' && locFilter !== 'সকল বাংলাদেশ' && locFilter !== 'সব বাংলাদেশ') {
-      products = products.filter(p => 
+      products = products.filter(p =>
         p.seller.location.toLowerCase().includes(locFilter) ||
         p.seller.district.toLowerCase().includes(locFilter) ||
         p.seller.division.toLowerCase().includes(locFilter)
@@ -812,7 +812,7 @@ export const getCommerceFeed = async (req: Request, res: Response) => {
     }
 
     if (searchFilter) {
-      products = products.filter(p => 
+      products = products.filter(p =>
         p.name.toLowerCase().includes(searchFilter) ||
         p.seller.name.toLowerCase().includes(searchFilter) ||
         p.seller.location.toLowerCase().includes(searchFilter)
@@ -990,10 +990,10 @@ export const likePost = async (req: Request, res: Response) => {
     if (target) {
       target.userInteractions.isLiked = !target.userInteractions.isLiked;
       target.stats.likes += target.userInteractions.isLiked ? 1 : -1;
-      return res.json({ 
-        success: true, 
-        likes: target.stats.likes, 
-        isLiked: target.userInteractions.isLiked 
+      return res.json({
+        success: true,
+        likes: target.stats.likes,
+        isLiked: target.userInteractions.isLiked
       });
     }
     return res.json({ success: true, isLiked: true });
@@ -1046,130 +1046,4 @@ export const getStories = async (_req: Request, res: Response) => {
     { id: 'st-4', name: 'সিলেট টি কর্নার', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', hasUnseen: true },
     { id: 'st-5', name: 'চিটাগং ক্রকারি', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150', hasUnseen: false }
   ]);
-};
-
-// ─── REVERSE AUCTION & LOGISTICS BIDDING HANDLERS ───
-interface InMemBid {
-  id: string;
-  postId: string;
-  bidderId: string;
-  bidderName: string;
-  bidderAvatar?: string;
-  amount: number;
-  currency: string;
-  proposalNote: string;
-  deliveryDays?: number;
-  status: 'pending' | 'accepted' | 'rejected' | 'withdrawn';
-  createdAt: string;
-}
-
-const inMemoryBids: InMemBid[] = [
-  {
-    id: 'bid-1',
-    postId: 'post-soc-1',
-    bidderId: 'seller-keraniganj-1',
-    bidderName: 'ইসলামপুর হোলসেল ডিরেক্ট',
-    bidderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-    amount: 125,
-    currency: 'BDT',
-    proposalNote: '১০০% কম্বড কটন টি-শার্ট। ২০০ জিএসএম ফেব্রিক। ৩ দিনের মধ্যে ঢাকা আড়তে রেডি ডেলিভারি।',
-    deliveryDays: 3,
-    status: 'pending',
-    createdAt: new Date(Date.now() - 3600000).toISOString()
-  },
-  {
-    id: 'bid-2',
-    postId: 'post-soc-1',
-    bidderId: 'seller-gazipur-fab',
-    bidderName: 'গাজীপুর টেক্সটাইল ও ফেব্রিক্স',
-    bidderAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-    amount: 120,
-    currency: 'BDT',
-    proposalNote: 'অর্ডার কনফার্মেশনের ৪৮ ঘণ্টার মধ্যে সরাসরি ফ্যাক্টরি কার্টনে কুরিয়ার হ্যান্ডওভার করব।',
-    deliveryDays: 2,
-    status: 'pending',
-    createdAt: new Date(Date.now() - 1800000).toISOString()
-  }
-];
-
-export const getPostBids = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    try {
-      const bids = await prisma.bid.findMany({
-        where: { postId: id },
-        include: { bidder: true },
-        orderBy: { amount: 'asc' }
-      });
-      return res.json({ bids });
-    } catch {
-      const filtered = inMemoryBids.filter(b => b.postId === id);
-      return res.json({ bids: filtered });
-    }
-  } catch (error: any) {
-    return res.status(500).json({ error: 'Failed to retrieve bids' });
-  }
-};
-
-export const createPostBid = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { bidderId, bidderName, bidderAvatar, amount, proposalNote, deliveryDays } = req.body;
-
-    if (!bidderId || !amount || !proposalNote) {
-      return res.status(400).json({ error: 'bidderId, amount, and proposalNote are required' });
-    }
-
-    try {
-      const created = await prisma.bid.create({
-        data: {
-          postId: id,
-          bidderId,
-          amount,
-          proposalNote,
-          deliveryDays: deliveryDays ? parseInt(deliveryDays, 10) : undefined,
-          status: 'pending'
-        }
-      });
-      return res.status(201).json({ success: true, bid: created });
-    } catch {
-      const newBid: InMemBid = {
-        id: `bid-${Date.now()}`,
-        postId: id,
-        bidderId,
-        bidderName: bidderName || 'ভেরিফায়েড সেলার',
-        bidderAvatar: bidderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-        amount: Number(amount),
-        currency: 'BDT',
-        proposalNote,
-        deliveryDays: deliveryDays ? parseInt(deliveryDays, 10) : 3,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      };
-      inMemoryBids.unshift(newBid);
-      return res.status(201).json({ success: true, bid: newBid });
-    }
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message || 'Failed to submit bid' });
-  }
-};
-
-export const acceptPostBid = async (req: Request, res: Response) => {
-  try {
-    const { bidId } = req.params;
-    try {
-      const updated = await prisma.bid.update({
-        where: { id: bidId },
-        data: { status: 'accepted' }
-      });
-      return res.json({ success: true, bid: updated });
-    } catch {
-      const target = inMemoryBids.find(b => b.id === bidId);
-      if (!target) return res.status(404).json({ error: 'Bid not found' });
-      target.status = 'accepted';
-      return res.json({ success: true, bid: target });
-    }
-  } catch (error: any) {
-    return res.status(500).json({ error: 'Failed to accept bid' });
-  }
 };

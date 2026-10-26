@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  MessageSquare, Heart, Share2, MapPin, 
-  MoreHorizontal, Plus, Image as ImageIcon, 
+import {
+  MessageSquare, Heart, Share2, MapPin,
+  MoreHorizontal, Plus, Image as ImageIcon,
   Video, Calendar, AlertCircle, Tag,
   ThumbsUp, Send, UserCircle, Search,
   Loader2
@@ -36,13 +36,13 @@ export const NeighborhoodFeed: React.FC = () => {
     fetchFeed();
   }, []);
 
-  const filteredPosts = posts.filter(post => 
+  const filteredPosts = posts.filter(post =>
     activeFilter === 'all' ? true : post.type === activeFilter
   );
 
   const handlePostSubmit = () => {
     if (!newPostContent.trim()) return;
-    
+
     const newPost: LocalPost = {
       id: `p${Date.now()}`,
       author: {
@@ -72,8 +72,8 @@ export const NeighborhoodFeed: React.FC = () => {
             onClick={() => setActiveFilter(filter)}
             className={cn(
               "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border",
-              activeFilter === filter 
-                ? "bg-cyan-500 text-black border-cyan-500 shadow-lg shadow-cyan-500/20" 
+              activeFilter === filter
+                ? "bg-cyan-500 text-black border-cyan-500 shadow-lg shadow-cyan-500/20"
                 : "bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10"
             )}
           >
@@ -85,7 +85,7 @@ export const NeighborhoodFeed: React.FC = () => {
       {/* Post Composer */}
       <div className="bg-zinc-900 border border-white/5 rounded-3xl p-4 shadow-xl">
         {!isPosting ? (
-          <div 
+          <div
             onClick={() => setIsPosting(true)}
             className="flex items-center gap-3 cursor-pointer"
           >
@@ -97,7 +97,7 @@ export const NeighborhoodFeed: React.FC = () => {
             </div>
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -122,13 +122,13 @@ export const NeighborhoodFeed: React.FC = () => {
                 </button>
               </div>
               <div className="flex gap-2">
-                <button 
+                <button
                   onClick={() => setIsPosting(false)}
                   className="px-4 py-2 text-zinc-500 font-bold text-sm"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handlePostSubmit}
                   disabled={!newPostContent.trim()}
                   className="px-6 py-2 bg-cyan-500 text-black font-black uppercase text-xs tracking-wider rounded-xl hover:bg-cyan-400 disabled:opacity-50 transition-all"

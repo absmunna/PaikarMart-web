@@ -3,7 +3,6 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { ShieldAlert, ArrowLeft, RefreshCcw, Lock } from "lucide-react";
 import { motion } from "motion/react";
-import { safeBack } from "@/lib/navigation";
 
 interface UserGuardProps {
   children: React.ReactNode;
@@ -105,7 +104,7 @@ export const UserGuard: React.FC<UserGuardProps> = ({
 
     // Otherwise render a high-contrast elegant feedback panel
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
@@ -124,9 +123,9 @@ export const UserGuard: React.FC<UserGuardProps> = ({
           <h2 className="text-lg font-black tracking-tight text-white mb-2">
             Restricted Section
           </h2>
-          
+
           <p className="text-xs text-zinc-400 leading-relaxed mb-6">
-            Your profile does not satisfy the role or capability privileges required to access this portal. 
+            Your profile does not satisfy the role or capability privileges required to access this portal.
             {allowedRoles && allowedRoles.length > 0 && (
               <span className="block mt-2 font-bold text-zinc-500">
                 Requires: {allowedRoles.join(", ")}
@@ -136,13 +135,12 @@ export const UserGuard: React.FC<UserGuardProps> = ({
 
           <div className="space-y-2.5">
             <button
-              onClick={() => safeBack(navigate, '/')}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all border border-white/5 active:scale-95 cursor-pointer"
-              title="ফিরে যান"
+              onClick={() => navigate(-1)}
+              className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all border border-white/5 active:scale-95"
             >
               <ArrowLeft className="h-4 w-4 text-[#FF7A00]" /> Go Back
             </button>
-            
+
             {user?.roles?.includes("user") && !user?.roles?.includes("seller") && (
               <button
                 onClick={() => navigate("/register/seller")}

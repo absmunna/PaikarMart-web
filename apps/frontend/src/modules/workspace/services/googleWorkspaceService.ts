@@ -11,7 +11,7 @@ export class GoogleWorkspaceService {
   // ==========================================
   // 1. GOOGLE DRIVE API
   // ==========================================
-  
+
   static async listFiles(accessToken: string): Promise<DriveFile[]> {
     const url = 'https://www.googleapis.com/drive/v3/files?fields=files(id,name,mimeType,webViewLink,iconLink,modifiedTime,size)&orderBy=modifiedTime desc';
     const response = await fetch(url, {

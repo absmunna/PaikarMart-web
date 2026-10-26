@@ -2,26 +2,36 @@ import React, { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { 
-  Sparkles, Package, Store, Shirt, Smartphone, Apple, 
-  Pill, Zap, Search, ArrowDownUp, 
+import {
+  Sparkles, Package, Store, Shirt, Smartphone, Apple,
+  Pill, Zap, Search, ArrowDownUp,
   X, Flame, RefreshCw, ChevronDown, Check
 } from "lucide-react";
 
-
-import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
-import { ProductCardSkeleton } from "@/design-system/components/ui/ProductCard";
+import HeroSection from "@/design-system/components/home/HeroSection";
+import { PortalIconBar } from "@/shared/PortalIconBar";
+import { ProductCard } from "@/design-system/components/ui";
 import { useCartStore } from "@/modules/cart";
 import { ECOMMERCE_PRODUCTS, EcommerceProduct } from "@/modules/product";
 import { PageSkeleton } from "@/app/AppShell/GlobalSkeletonSystem";
 import { useLocationStore } from "@/modules/location";
-import { useCategoryStore } from "@/store/categoryStore";
+
+// ─── CATEGORY CHIPS DEFINITIONS ───
+const CATEGORY_CHIPS = [
+  { id: "all", label: "সব পণ্য", icon: Sparkles },
+  { id: "wholesale", label: "হোলসেল/B2B", icon: Package },
+  { id: "retail", label: "রিটেল", icon: Store },
+  { id: "fashion", label: "ফ্যাশন", icon: Shirt },
+  { id: "electronics", label: "ইলেকট্রনিক্স", icon: Smartphone },
+  { id: "grocery", label: "খাদ্য ও গ্রোসারি", icon: Apple },
+  { id: "pharmacy", label: "ফার্মেসি", icon: Pill },
+  { id: "dropship", label: "ড্রপশিপিং", icon: Zap },
+];
 
 export default function Home() {
   const navigate = useNavigate();
   const { addItem } = useCartStore();
   const { city: userLocation } = useLocationStore();
-  const { activeMainCategory, activeSubCategory, setMainCategory, setSubCategory } = useCategoryStore();
 
   // State Management
   const [isLoading, setIsLoading] = React.useState(true);
@@ -30,48 +40,11 @@ export default function Home() {
   const [onlyDiscounted, setOnlyDiscounted] = useState<boolean>(false);
   const [onlyWholesale, setOnlyWholesale] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>("popular");
-  const [productsList, setProductsList] = useState<EcommerceProduct[]>(ECOMMERCE_PRODUCTS);
 
-  const effectiveCategory = activeMainCategory !== "all" ? activeMainCategory : selectedCategory;
-
-  // Fetch products from backend API with fallback to static ECOMMERCE_PRODUCTS
+  // Simulate initial load
   useEffect(() => {
-    let isMounted = true;
-    async function fetchProducts() {
-      try {
-        const res = await fetch('/api/v1/products');
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && Array.isArray(data) && data.length > 0) {
-            const mapped: EcommerceProduct[] = data.map((p: any) => ({
-              id: p.id,
-              name: p.name,
-              title: p.name,
-              category: p.category === 'wholesale' ? 'wholesale' : 'retail',
-              price: Number(p.price),
-              originalPrice: p.originalPrice ? Number(p.originalPrice) : undefined,
-              discount: p.originalPrice ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : 0,
-              image: p.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80',
-              description: p.description,
-              sellerName: p.sellerName || 'PaikarMart Verified Merchant',
-              sellerLocation: p.sellerLocation || 'Dhaka, Bangladesh',
-              isVerified: true,
-              rating: 4.8,
-              reviewCount: 120,
-              stock: p.stock || 50,
-              moq: p.category === 'wholesale' ? 20 : 1
-            }));
-            setProductsList(mapped);
-          }
-        }
-      } catch (err) {
-        console.warn('Backend products unreachable, using resilient offline catalog.');
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    }
-    fetchProducts();
-    return () => { isMounted = false; };
+    const timer = setTimeout(() => setIsLoading(false), 400);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleAddToCart = (product: EcommerceProduct, e?: React.MouseEvent) => {
@@ -94,21 +67,11 @@ export default function Home() {
   // Filtered and Sorted Products
   const filteredProducts = useMemo(() => {
     const activeLoc = userLocation || 'Dhaka';
-    return productsList.filter((product) => {
+    return ECOMMERCE_PRODUCTS.filter((product) => {
       // Category Filter
-      if (effectiveCategory !== "all") {
-        if (effectiveCategory === "wholesale" && product.category !== "wholesale") return false;
-        if (effectiveCategory !== "wholesale") {
-          const matchCat = product.category === effectiveCategory || product.name.toLowerCase().includes(effectiveCategory.toLowerCase());
-          if (!matchCat) return false;
-        }
-      }
-
-      // Subcategory Filter
-      if (activeSubCategory && activeSubCategory !== "all") {
-        const matchSub = product.name.toLowerCase().includes(activeSubCategory.toLowerCase()) || 
-                         (product.description && product.description.toLowerCase().includes(activeSubCategory.toLowerCase()));
-        if (!matchSub) return false;
+      if (selectedCategory !== "all") {
+        if (selectedCategory === "wholesale" && product.category !== "wholesale") return false;
+        if (selectedCategory !== "wholesale" && product.category !== selectedCategory) return false;
       }
 
       // Search Filter
@@ -143,14 +106,12 @@ export default function Home() {
       if (sortBy === "discount") return (b.discount || 0) - (a.discount || 0);
       return b.reviewCount - a.reviewCount; // 'popular'
     });
-  }, [effectiveCategory, activeSubCategory, searchQuery, onlyDiscounted, onlyWholesale, sortBy, userLocation, productsList]);
+  }, [selectedCategory, searchQuery, onlyDiscounted, onlyWholesale, sortBy, userLocation]);
 
-  const hasActiveFilters = effectiveCategory !== "all" || Boolean(activeSubCategory) || searchQuery !== "" || onlyDiscounted || onlyWholesale || sortBy !== "popular" || (userLocation && userLocation !== "Dhaka");
+  const hasActiveFilters = selectedCategory !== "all" || searchQuery !== "" || onlyDiscounted || onlyWholesale || sortBy !== "popular" || (userLocation && userLocation !== "Dhaka");
 
   const resetFilters = () => {
     setSelectedCategory("all");
-    setMainCategory("all");
-    setSubCategory(null);
     setSearchQuery("");
     setOnlyDiscounted(false);
     setOnlyWholesale(false);
@@ -162,9 +123,15 @@ export default function Home() {
   return (
     <div className="w-full pb-24 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 space-y-6">
+        {/* ─── 1. TOP HERO BANNER & WALLET COCKPIT ─── */}
+        <HeroSection />
 
+        {/* ─── 2. 4-HUB FAST LAUNCHER BAR ─── */}
+        <div>
+          <PortalIconBar />
+        </div>
 
-        {/* ─── 2. COMMERCE PRODUCTS SECTION ─── */}
+        {/* ─── 3. COMMERCE PRODUCTS SECTION ─── */}
         <section className="space-y-4 pt-1">
           <div className="space-y-4">
               {/* Section Header */}
@@ -197,33 +164,27 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Active Category Filter Context Bar */}
-              {effectiveCategory !== "all" && (
-                <div className="flex items-center justify-between bg-[var(--pm-surface)]/80 border border-[var(--pm-accent)]/30 px-3.5 py-2 rounded-xl text-xs select-none">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[var(--pm-muted)] font-bold">ফিল্টারিং ক্যাটাগরি:</span>
-                    <span className="px-2.5 py-0.5 rounded-lg bg-[var(--pm-accent)] text-white font-black text-[11px] uppercase tracking-wide">
-                      {effectiveCategory}
-                    </span>
-                    {activeSubCategory && (
-                      <span className="px-2.5 py-0.5 rounded-lg bg-white/10 text-white font-bold text-[11px]">
-                        {activeSubCategory}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => {
-                      setMainCategory("all");
-                      setSubCategory(null);
-                      setSelectedCategory("all");
-                    }}
-                    className="text-[11px] font-bold text-[var(--pm-accent)] hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>সব পণ্য দেখুন</span>
-                  </button>
-                </div>
-              )}
+              {/* Category Chips Scroller */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-3.5 px-3.5 sm:mx-0 sm:px-0 py-2 select-none">
+                {CATEGORY_CHIPS.map((chip) => {
+                  const Icon = chip.icon;
+                  const isActive = selectedCategory === chip.id;
+                  return (
+                    <button
+                      key={chip.id}
+                      onClick={() => setSelectedCategory(chip.id)}
+                      className={`flex items-center gap-2.5 px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-[0.1em] whitespace-nowrap transition-all border shrink-0 active:scale-95 cursor-pointer ${
+                        isActive
+                          ? "bg-white text-zinc-950 border-white shadow-xl shadow-white/10"
+                          : "bg-white/[0.03] text-zinc-500 border-white/[0.05] hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon className={`w-3.5 h-3.5 ${isActive ? "text-zinc-950" : "text-orange-500"}`} />
+                      <span>{chip.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
               {/* Search & Filter Controls Toolbar */}
               <div className="bg-[var(--pm-surface)] p-3 sm:p-4 rounded-3xl border border-[var(--pm-border)] shadow-sm space-y-3">
@@ -302,13 +263,7 @@ export default function Home() {
               </div>
 
               {/* 2-column on mobile, 4-column on desktop Product Cards Grid */}
-              {isLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                    <ProductCardSkeleton key={n} />
-                  ))}
-                </div>
-              ) : filteredProducts.length === 0 ? (
+              {filteredProducts.length === 0 ? (
                 <div className="text-center py-16 px-4 bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] border-dashed space-y-3">
                   <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 flex items-center justify-center text-zinc-400">
                     <Search className="w-6 h-6" />
@@ -326,7 +281,7 @@ export default function Home() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
                   <AnimatePresence mode="popLayout">
                     {filteredProducts.map((product) => (
                       <motion.div
@@ -337,36 +292,9 @@ export default function Home() {
                         exit={{ opacity: 0, scale: 0.96 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <UnifiedPostCard
-                          post={{
-                            id: product.id.toString(),
-                            type: 'product',
-                            domain: product.category === 'wholesale' ? 'WHOLESALE' : 'RETAIL',
-                            authorName: product.sellerName || 'Verified Seller',
-                            authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.sellerName || 'seller'}`,
-                            isVerified: product.isVerified || true,
-                            authorRole: product.category === 'wholesale' ? 'পাইকারি আড়ত' : 'খুচরা বিক্রেতা',
-                            timestamp: 'Just now',
-                            content: product.description || `নতুন ${product.name} এখন সহজলভ্য। সরাসরি পেইকার মার্ট থেকে অর্ডার করুন।`,
-                            imageUrl: product.image,
-                            location: product.sellerLocation,
-                            likes: product.reviewCount || 0,
-                            comments: Math.floor((product.reviewCount || 0) / 4),
-                            product: {
-                              id: product.id.toString(),
-                              title: product.name,
-                              price: product.price,
-                              imageUrl: product.image,
-                              moq: product.moq
-                            },
-                            metadata: {
-                              isFlashSale: product.discount && product.discount > 20,
-                              isPkExclusive: ['1', '5', '10'].includes(product.id.toString()),
-                              discountTag: product.discount ? `${product.discount}% ছাড়` : undefined,
-                              distance: '৪৫০ মি',
-                              deliveryTime: '১৫ মিনিট'
-                            }
-                          }}
+                        <ProductCard
+                          product={product}
+                          onQuickAdd={(p) => handleAddToCart(p as EcommerceProduct)}
                         />
                       </motion.div>
                     ))}

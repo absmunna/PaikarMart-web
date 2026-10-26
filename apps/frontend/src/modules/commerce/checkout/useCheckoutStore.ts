@@ -9,7 +9,7 @@ interface CheckoutState {
   paymentMethod: string | null;
   couponCode: string | null;
   isProcessing: boolean;
-  
+
   setStep: (step: CheckoutStep) => void;
   setAddress: (id: string) => void;
   setDeliveryMethod: (method: string) => void;

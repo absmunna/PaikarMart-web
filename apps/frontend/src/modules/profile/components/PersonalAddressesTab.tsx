@@ -95,7 +95,7 @@ export const PersonalAddressesTab: React.FC = () => {
   const [addresses, setAddresses] = useState<AddressBookItem[]>(INITIAL_ADDRESSES);
   const [isAdding, setIsAdding] = useState(false);
   const [selectedTag, setSelectedTag] = useState<AddressBookItem['tag']>('home');
-  
+
   // Track address inputs from BDAddressSelector
   const [tempAddress, setTempAddress] = useState<AddressDetails | null>(null);
   const [isAddressValid, setIsAddressValid] = useState(false);
@@ -178,7 +178,7 @@ export const PersonalAddressesTab: React.FC = () => {
             Manage your preset locations for Home, Office, Bulk Warehouse and Wholesale Shops.
           </p>
         </div>
-        
+
         {!isAdding && (
           <Button
             onClick={() => {
@@ -216,8 +216,8 @@ export const PersonalAddressesTab: React.FC = () => {
                       type="button"
                       onClick={() => setSelectedTag(option.key)}
                       className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 transition-all cursor-pointer ${
-                        isSelected 
-                          ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400 font-bold" 
+                        isSelected
+                          ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400 font-bold"
                           : "bg-zinc-900/60 border-white/5 text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -271,8 +271,8 @@ export const PersonalAddressesTab: React.FC = () => {
               <div
                 key={addr.id}
                 className={`p-5 rounded-3xl border text-left flex flex-col justify-between transition-all relative group ${
-                  addr.isDefault 
-                    ? "bg-[#040f09]/80 border-cyan-500/30" 
+                  addr.isDefault
+                    ? "bg-[#040f09]/80 border-cyan-500/30"
                     : "bg-zinc-900/40 border-white/5 hover:border-white/10"
                 }`}
               >
@@ -302,7 +302,7 @@ export const PersonalAddressesTab: React.FC = () => {
                   <div className="space-y-1.5 text-xs">
                     <p className="font-extrabold text-zinc-100">{addr.name}</p>
                     <p className="font-mono text-zinc-400 font-semibold text-[11px]">{addr.phone}</p>
-                    
+
                     <div className="text-zinc-300 leading-relaxed text-[11.5px] font-medium pt-1">
                       <p>{addr.roadHouseLandmark}</p>
                       <p className="text-zinc-400 text-[11px] font-semibold mt-0.5">

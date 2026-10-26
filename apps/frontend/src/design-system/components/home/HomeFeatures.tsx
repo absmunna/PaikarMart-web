@@ -11,7 +11,7 @@ export const HeroBanner = () => (
           <span className="text-[10px] font-bold text-indigo-100 uppercase tracking-widest">ফিচার্ড অফার</span>
         </div>
         <h2 className="text-2xl font-black text-white leading-tight">
-          স্মার্টফোন <br /> 
+          স্মার্টফোন <br />
           <span className="text-indigo-400">মিড-রেঞ্জ সেল</span>
         </h2>
         <p className="text-[10px] text-indigo-200/70 mt-2 max-w-[180px]">২২% পর্যন্ত ছাড় • প্রথম অর্ডারে ফ্রি পিকে কয়েন ক্যাশব্যাক</p>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, Search, ArrowRight, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { HelpCircle, ChevronDown, Search, ArrowRight } from 'lucide-react';
 import { useAppStore } from '@/modules/app';
 
 interface FAQItem {
@@ -58,20 +57,13 @@ export default function FAQPage() {
   const filteredFaqs = FAQS.filter(faq => {
     const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
     const term = searchQuery.toLowerCase();
-    const queryMatches = (lang === 'EN' ? faq.q : faq.qBn).toLowerCase().includes(term) || 
+    const queryMatches = (lang === 'EN' ? faq.q : faq.qBn).toLowerCase().includes(term) ||
                          (lang === 'EN' ? faq.a : faq.aBn).toLowerCase().includes(term);
     return matchesCategory && queryMatches;
   });
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link 
-        to="/" 
-        className="inline-flex items-center gap-2 text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] transition-colors mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {lang === 'EN' ? 'Back to Home' : 'হোম পেজে ফিরে যান'}
-      </Link>
       {/* Hero Banner with 3D vibe */}
       <div className="relative overflow-hidden bg-gradient-to-r from-orange-500/20 via-orange-600/5 to-transparent border border-white/10 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl">
         <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 blur-3xl rounded-full" />
@@ -112,15 +104,15 @@ export default function FAQPage() {
               key={cat}
               onClick={() => setActiveCategory(cat as any)}
               className={`px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer border uppercase tracking-wider shrink-0 ${
-                isActive 
+                isActive
                   ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white border-transparent shadow-lg shadow-orange-500/10'
                   : 'bg-zinc-900 text-zinc-400 border-white/5 hover:bg-zinc-800'
               }`}
             >
               {lang === 'EN' ? cat : (
-                cat === 'all' ? 'সব প্রশ্ন' : 
-                cat === 'general' ? 'সাধারণ' : 
-                cat === 'seller' ? 'বিক্রেতা' : 
+                cat === 'all' ? 'সব প্রশ্ন' :
+                cat === 'general' ? 'সাধারণ' :
+                cat === 'seller' ? 'বিক্রেতা' :
                 cat === 'shipping' ? 'ডেলিভারি' : 'পেমেন্ট'
               )}
             </button>
@@ -134,11 +126,11 @@ export default function FAQPage() {
           filteredFaqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div 
+              <div
                 key={idx}
                 className={`border rounded-2xl transition-all duration-300 ${
-                  isOpen 
-                    ? 'bg-zinc-900 border-orange-500/35 shadow-[0_4px_20px_rgba(249,115,22,0.06)] scale-[1.005]' 
+                  isOpen
+                    ? 'bg-zinc-900 border-orange-500/35 shadow-[0_4px_20px_rgba(249,115,22,0.06)] scale-[1.005]'
                     : 'bg-zinc-900/80 border-white/5 shadow-sm hover:border-white/10'
                 }`}
               >
@@ -181,7 +173,7 @@ export default function FAQPage() {
             {lang === 'EN' ? 'Speak directly to our dedicated escrow and logistics support centers.' : 'আমাদের এসক্রো ও লজিস্টিকস সহায়তা সেন্টারে সরাসরি বিস্তারিত মেসেজ পাঠান।'}
           </p>
         </div>
-        <button 
+        <button
           onClick={() => window.location.href = '#/contact'}
           className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl text-xs font-black shadow-lg hover:brightness-110 cursor-pointer"
         >

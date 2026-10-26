@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowRight, Sparkles, Building2, Store, ShieldCheck, 
-  ChevronLeft, ChevronRight, Zap, TrendingUp, CheckCircle2 
+import {
+  ArrowRight, Sparkles, Building2, Store, ShieldCheck,
+  ChevronLeft, ChevronRight, Zap, TrendingUp, CheckCircle2
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/modules/auth';
@@ -67,7 +67,7 @@ export default function HeroSection() {
 
   return (
     <div className="w-full relative select-none rounded-3xl overflow-hidden border border-[var(--pm-border)] shadow-xl bg-[var(--pm-surface)]">
-      
+
       {/* Background Image Container with Cross-Fade */}
       <div className="relative w-full h-[220px] sm:h-[260px] md:h-[300px] lg:h-[340px] overflow-hidden">
         <AnimatePresence mode="wait">
@@ -88,7 +88,7 @@ export default function HeroSection() {
 
         {/* Content Container */}
         <div className="relative z-20 h-full flex flex-col justify-between p-4 sm:p-6 md:p-8 lg:p-10">
-          
+
           {/* Top Bar inside Hero: Location & User Greeting */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -154,8 +154,8 @@ export default function HeroSection() {
                   key={i}
                   onClick={() => setSlideIndex(i)}
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    slideIndex === i 
-                      ? 'w-8 bg-[var(--pm-accent)] shadow-sm shadow-[var(--pm-accent)]/50' 
+                    slideIndex === i
+                      ? 'w-8 bg-[var(--pm-accent)] shadow-sm shadow-[var(--pm-accent)]/50'
                       : 'w-2 bg-white/30 hover:bg-white/60'
                   }`}
                   title={`Slide ${i + 1}`}

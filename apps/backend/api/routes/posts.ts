@@ -12,65 +12,6 @@ router.get("/posts", (req, res) => {
   res.json(items.map(expandPost));
 });
 
-// Location-based Feed Retrieval API (`GET /api/v1/posts/feed` or `/api/posts/feed`)
-router.get(["/posts/feed", "/v1/posts/feed"], (req, res) => {
-  const { 
-    lat, 
-    lng, 
-    radius_km = "50", 
-    district, 
-    portal_type = "all" 
-  } = req.query as {
-    lat?: string;
-    lng?: string;
-    radius_km?: string;
-    district?: string;
-    portal_type?: string;
-  };
-
-  let items = [...db.posts];
-
-  // 1. Filter by Portal Type if specified
-  if (portal_type && portal_type !== "all") {
-    items = items.filter((p: any) => 
-      p.type === portal_type || 
-      p.postType === portal_type || 
-      (portal_type === "wholesale" && p.productId) ||
-      (portal_type === "retail" && !p.productId)
-    );
-  }
-
-  // 2. Filter by District or Coordinates if provided
-  if (district && district !== "all") {
-    const distTarget = district.toLowerCase();
-    const matched = items.filter((p: any) => {
-      const loc = (p.location || "").toLowerCase();
-      const dist = (p.district || "").toLowerCase();
-      return loc.includes(distTarget) || dist.includes(distTarget);
-    });
-    // Fallback to all if strict district match is empty
-    if (matched.length > 0) {
-      items = matched;
-    }
-  }
-
-  // Sort by recency
-  items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-  // Annotate items with distance and live update status
-  const formatted = items.map((p: any, index) => {
-    const expanded = expandPost(p);
-    return {
-      ...expanded,
-      distanceKm: (index + 1) * 2.5,
-      isNearUser: Boolean(district) || (lat && lng),
-      isLiveStreamActive: true
-    };
-  });
-
-  res.json(formatted);
-});
-
 router.post("/posts", (req, res) => {
   const { content, type, images, productId } = req.body ?? {};
   if (!content || !type) return res.status(400).json({ error: "invalid" });

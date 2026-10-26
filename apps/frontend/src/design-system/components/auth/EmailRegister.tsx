@@ -60,16 +60,16 @@ export default function EmailRegister({ onToggleMode }: EmailRegisterProps) {
           {error}
         </div>
       )}
-      
+
       <div className="space-y-4">
         <div className="relative group">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <User className="h-5 w-5 text-gray-500 group-focus-within:text-[#FF7A00] transition-colors" />
           </div>
-          <input 
-            type="text" 
-            placeholder="Full Name" 
-            required 
+          <input
+            type="text"
+            placeholder="Full Name"
+            required
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-[#141624] border border-white/5 rounded-2xl outline-none focus:border-[#FF7A00] focus:ring-4 focus:ring-[#FF7A00]/5 transition-all font-medium text-white placeholder:text-gray-600"
@@ -80,24 +80,24 @@ export default function EmailRegister({ onToggleMode }: EmailRegisterProps) {
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-[#FF7A00] transition-colors" />
           </div>
-          <input 
-            type="email" 
-            placeholder="Email Address" 
-            required 
+          <input
+            type="email"
+            placeholder="Email Address"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-[#141624] border border-white/5 rounded-2xl outline-none focus:border-[#FF7A00] focus:ring-4 focus:ring-[#FF7A00]/5 transition-all font-medium text-white placeholder:text-gray-600"
           />
         </div>
-        
+
         <div className="relative group">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Lock className="h-5 w-5 text-gray-500 group-focus-within:text-[#FF7A00] transition-colors" />
           </div>
-          <input 
-            type="password" 
-            placeholder="Create Password" 
-            required 
+          <input
+            type="password"
+            placeholder="Create Password"
+            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-[#141624] border border-white/5 rounded-2xl outline-none focus:border-[#FF7A00] focus:ring-4 focus:ring-[#FF7A00]/5 transition-all font-medium text-white placeholder:text-gray-600"
@@ -105,8 +105,8 @@ export default function EmailRegister({ onToggleMode }: EmailRegisterProps) {
         </div>
       </div>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         disabled={loading || !email || !password || !name}
         className="w-full bg-[#FF7A00] text-white rounded-2xl py-4 font-bold text-base hover:bg-[#e06b00] transition-all mt-2 shadow-xl shadow-[#FF7A00]/10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
       >
@@ -123,7 +123,7 @@ export default function EmailRegister({ onToggleMode }: EmailRegisterProps) {
       <div className="text-center mt-4">
         <p className="text-sm font-medium text-gray-500">
           Already have an account?{" "}
-          <button 
+          <button
             type="button"
             onClick={onToggleMode}
             className="font-bold text-[#FF7A00] hover:text-[#e06b00] transition-colors"

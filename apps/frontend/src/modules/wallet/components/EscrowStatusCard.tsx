@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  ShieldCheck, 
-  Clock, 
-  Calendar, 
-  TrendingUp, 
-  ArrowUpRight, 
+import {
+  ShieldCheck,
+  Clock,
+  Calendar,
+  TrendingUp,
+  ArrowUpRight,
   Info,
   ChevronRight,
   Wallet
@@ -23,10 +23,10 @@ export interface EscrowStatusCardProps {
   onViewDetails?: () => void;
 }
 
-export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({ 
-  summary, 
+export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
+  summary,
   recentTransactions,
-  onViewDetails 
+  onViewDetails
 }) => {
   return (
     <GlassCard className="overflow-hidden border-[var(--pm-accent)]/10">
@@ -42,9 +42,9 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
               <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Merchant Trust System</p>
             </div>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onViewDetails}
             className="text-[var(--pm-accent)] hover:text-[var(--pm-accent)]/80 hover:bg-[var(--pm-accent)]/5 gap-2"
           >
@@ -114,8 +114,8 @@ export const EscrowStatusCard: React.FC<EscrowStatusCardProps> = ({
                 <div className="flex items-center gap-4">
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center border",
-                    tx.status === 'released' 
-                      ? "bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]/20 text-[var(--pm-accent)]" 
+                    tx.status === 'released'
+                      ? "bg-[var(--pm-accent)]/10 border-[var(--pm-accent)]/20 text-[var(--pm-accent)]"
                       : "bg-white/5 border-white/10 text-zinc-400"
                   )}>
                     {tx.status === 'released' ? <ShieldCheck className="w-5 h-5" /> : <Clock className="w-5 h-5 text-amber-500" />}

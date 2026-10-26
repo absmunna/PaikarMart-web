@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { 
-  X, Camera, Plus, ShoppingBag, 
+import {
+  X, Camera, Plus, ShoppingBag,
   Tag, Package, MapPin, SlidersHorizontal,
   Globe, Info, ChevronDown, Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
 import { Card } from '@/components/ui/Card';
 import { toast } from 'sonner';
@@ -84,7 +84,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
 
           {/* Content Inputs */}
           <div className="space-y-4">
-            <Textarea 
+            <Textarea
               placeholder="Write a catchy description for your product..."
               className="bg-transparent border-none p-0 focus-visible:ring-0 text-sm font-bold placeholder:text-zinc-600 min-h-[60px] resize-none"
               value={formData.content}
@@ -94,8 +94,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
             <div className="grid grid-cols-2 gap-3">
                <div className="space-y-1.5">
                  <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Product Title</label>
-                 <Input 
-                   placeholder="e.g. Premium Polo" 
+                 <Input
+                   placeholder="e.g. Premium Polo"
                    className="bg-white/5 border-white/10 h-10 text-xs font-bold rounded-xl"
                    value={formData.title}
                    onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -104,9 +104,9 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
                </div>
                <div className="space-y-1.5">
                  <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Price (৳)</label>
-                 <Input 
-                   type="number" 
-                   placeholder="450" 
+                 <Input
+                   type="number"
+                   placeholder="450"
                    className="bg-white/5 border-white/10 h-10 text-xs font-bold rounded-xl"
                    value={formData.price}
                    onChange={(e) => setFormData({...formData, price: e.target.value})}
@@ -118,9 +118,9 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
             <div className="grid grid-cols-2 gap-3">
                <div className="space-y-1.5">
                  <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Stock Quantity</label>
-                 <Input 
-                   type="number" 
-                   placeholder="100" 
+                 <Input
+                   type="number"
+                   placeholder="100"
                    className="bg-white/5 border-white/10 h-10 text-xs font-bold rounded-xl"
                    value={formData.stock}
                    onChange={(e) => setFormData({...formData, stock: e.target.value})}
@@ -147,8 +147,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
             <div className="grid grid-cols-2 gap-3">
                <div className="space-y-1.5">
                  <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Min. Order (MOQ)</label>
-                 <Input 
-                   type="number" 
+                 <Input
+                   type="number"
                    value={formData.moq}
                    onChange={(e) => setFormData({...formData, moq: e.target.value})}
                    className="bg-white/5 border-white/10 h-10 text-xs font-bold rounded-xl"
@@ -156,8 +156,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
                </div>
                <div className="space-y-1.5">
                  <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest ml-1">Delivery Radius (KM)</label>
-                 <Input 
-                   type="number" 
+                 <Input
+                   type="number"
                    value={formData.radius}
                    onChange={(e) => setFormData({...formData, radius: e.target.value})}
                    className="bg-white/5 border-white/10 h-10 text-xs font-bold rounded-xl"

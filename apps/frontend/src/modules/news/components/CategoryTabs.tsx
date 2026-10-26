@@ -1,14 +1,14 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { 
-  Flame, 
-  Layers, 
-  Store, 
-  Sparkles, 
-  TrendingUp, 
-  Cpu, 
-  Rss 
+import {
+  Flame,
+  Layers,
+  Store,
+  Sparkles,
+  TrendingUp,
+  Cpu,
+  Rss
 } from 'lucide-react';
 
 export interface NewsCategory {
@@ -64,7 +64,7 @@ export const CategoryTabs: React.FC<CategoryTabsProps> = ({
                 {/* Background Layer with animation */}
                 <div className="absolute inset-0 z-0">
                   {isActive ? (
-                    <motion.div 
+                    <motion.div
                       layoutId="active-news-category-bg"
                       className={cn("w-full h-full bg-gradient-to-r", cat.color)}
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}

@@ -180,11 +180,11 @@ export const productService = {
           storeName: "Style Bangladesh Garments"
         }
       ];
-      
-      const filtered = query.trim() 
+
+      const filtered = query.trim()
         ? mockSearchProducts.filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
         : [];
-      
+
       callback(filtered);
     }, 200);
 

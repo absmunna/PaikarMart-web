@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  X, Truck, MapPin, Phone, MessageSquare, 
+import {
+  X, Truck, MapPin, Phone, MessageSquare,
   ChevronRight, CheckCircle2, Clock, ShieldCheck,
   Navigation, User, Bike
 } from 'lucide-react';
@@ -29,15 +29,15 @@ export const LiveTrackingSheet: React.FC<LiveTrackingSheetProps> = ({ orderId, i
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[1000] flex items-end justify-center pointer-events-none">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="absolute inset-0 bg-black/80 backdrop-blur-sm pointer-events-auto"
           onClick={onClose}
         />
-        
-        <motion.div 
+
+        <motion.div
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
@@ -64,7 +64,7 @@ export const LiveTrackingSheet: React.FC<LiveTrackingSheetProps> = ({ orderId, i
             {/* Map Placeholder */}
             <div className="relative w-full h-48 bg-zinc-900 rounded-[2rem] border border-white/5 overflow-hidden group">
               <div className="absolute inset-0 opacity-40 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/90.4125,23.8103,13/480x480?access_token=mock')] bg-center bg-cover" />
-              
+
               {/* Pulsing Rider Dot */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="relative">
@@ -112,7 +112,7 @@ export const LiveTrackingSheet: React.FC<LiveTrackingSheetProps> = ({ orderId, i
               <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Journey History</h4>
               <div className="relative space-y-8">
                 <div className="absolute left-[13px] top-2 bottom-2 w-[1px] bg-white/10" />
-                
+
                 {isLoading ? (
                   Array(3).fill(0).map((_, i) => (
                     <div key={i} className="flex gap-6 animate-pulse">

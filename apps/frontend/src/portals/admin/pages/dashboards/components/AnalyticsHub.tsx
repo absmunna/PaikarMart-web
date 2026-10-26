@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, AreaChart, Area, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, AreaChart, Area,
   ReferenceLine, Cell
 } from "recharts";
-import { 
-  TrendingUp, Users, DollarSign, Package, 
-  ShieldCheck, ShieldAlert, Award, Star, 
+import {
+  TrendingUp, Users, DollarSign, Package,
+  ShieldCheck, ShieldAlert, Award, Star,
   ChevronRight, ArrowUpRight, Zap, CheckCircle2, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -83,7 +83,7 @@ export const AnalyticsHub = () => {
               <span className="text-amber-400">{Math.round(progress)}% to Platinum</span>
            </div>
            <div className="h-3 w-full bg-black/40 rounded-full border border-white/5 overflow-hidden">
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
@@ -108,21 +108,21 @@ export const AnalyticsHub = () => {
       {/* 📈 Vector Analytics Terminal */}
       <Card className="p-8 bg-[#0a0a14] border-white/5 rounded-[3rem] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-96 h-96 bg-[var(--pm-accent)]/[0.03] blur-3xl rounded-full -ml-48 -mt-48" />
-        
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
           <div>
             <h3 className="text-lg font-black text-white tracking-tight uppercase">Operational Matrix</h3>
             <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mt-1">Real-time Performance Telemetry</p>
           </div>
-          
+
           <div className="flex items-center gap-1.5 p-1.5 bg-black/40 border border-white/5 rounded-2xl">
-             <button 
+             <button
                onClick={() => setMetricMode("sales")}
                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${metricMode === "sales" ? "bg-[var(--pm-accent)] text-white shadow-xl shadow-[var(--pm-accent)]/20" : "text-white/40 hover:text-white"}`}
              >
                 Volume (৳)
              </button>
-             <button 
+             <button
                onClick={() => setMetricMode("traffic")}
                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${metricMode === "traffic" ? "bg-[var(--pm-accent)] text-white shadow-xl shadow-[var(--pm-accent)]/20" : "text-white/40 hover:text-white"}`}
              >
@@ -142,46 +142,46 @@ export const AnalyticsHub = () => {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                <XAxis 
-                  dataKey="day" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <XAxis
+                  dataKey="day"
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10, fontWeight: 900 }}
                   dy={10}
                 />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip mode="sales" />} cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 1 }} />
-                <Area 
-                  type="monotone" 
-                  dataKey="sales" 
-                  stroke="var(--pm-accent)" 
+                <Area
+                  type="monotone"
+                  dataKey="sales"
+                  stroke="var(--pm-accent)"
                   strokeWidth={4}
-                  fillOpacity={1} 
-                  fill="url(#colorSales)" 
+                  fillOpacity={1}
+                  fill="url(#colorSales)"
                   animationDuration={2000}
                 />
               </AreaChart>
             ) : (
               <BarChart data={SALES_DATA}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                <XAxis 
-                  dataKey="day" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <XAxis
+                  dataKey="day"
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 10, fontWeight: 900 }}
                   dy={10}
                 />
                 <YAxis hide />
                 <Tooltip content={<CustomTooltip mode="traffic" />} cursor={{ fill: "rgba(255,255,255,0.05)" }} />
-                <Bar 
-                  dataKey="visitors" 
-                  radius={[10, 10, 0, 0]} 
+                <Bar
+                  dataKey="visitors"
+                  radius={[10, 10, 0, 0]}
                   animationDuration={1500}
                 >
                    {SALES_DATA.map((entry, index) => (
-                     <Cell 
-                        key={`cell-${index}`} 
-                        fill={index === 5 ? "var(--pm-accent)" : "rgba(255,255,255,0.1)"} 
+                     <Cell
+                        key={`cell-${index}`}
+                        fill={index === 5 ? "var(--pm-accent)" : "rgba(255,255,255,0.1)"}
                      />
                    ))}
                 </Bar>
@@ -218,9 +218,9 @@ export const AnalyticsHub = () => {
            </div>
         </div>
       </Card>
-      
+
       {/* 🚀 AI Insight Capsule */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}

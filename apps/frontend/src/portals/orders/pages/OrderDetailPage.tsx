@@ -3,15 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/button";
 import { formatBDT } from "@/lib/format";
-import { 
-  ArrowLeft, Truck, Clock, ShieldCheck, CheckCircle2, 
-  MapPin, Phone, MessageSquare, AlertCircle, Package, 
+import {
+  ArrowLeft, Truck, Clock, ShieldCheck, CheckCircle2,
+  MapPin, Phone, MessageSquare, AlertCircle, Package,
   Settings, ShoppingBag, Landmark, Info
 } from "lucide-react";
 import { useLanguage } from "@/modules/language";
 import { useOrderTrackingStore } from "@/modules/orders";
 import { LiveTrackingSheet } from "@/portals/orders/components/LiveTrackingSheet";
-import { safeBack } from "@/lib/navigation";
 
 const formatPrice = formatBDT;
 
@@ -30,7 +29,7 @@ function buildTimeline(status: string, placedAt: string) {
     "DELIVERED",
     "COMPLETED"
   ];
-  
+
   let currentIdx = stages.indexOf(status.toUpperCase());
   if (currentIdx === -1) {
     if (status.toUpperCase() === 'PENDING') currentIdx = 0;
@@ -70,7 +69,7 @@ export default function OrderDetailPage() {
 
   useEffect(() => {
     if (!activeId) return;
-    
+
     // Check local store first
     const found = orders.find(o => o.id === activeId || o.orderNo === activeId);
     if (found) {
@@ -124,11 +123,7 @@ export default function OrderDetailPage() {
       {/* Header bar */}
       <div className="flex items-center justify-between sticky top-0 z-40 bg-[#020604]/90 backdrop-blur-md py-2 -mx-2 px-2 border-b border-white/[0.04]">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => safeBack(navigate, '/orders')} 
-            className="h-11 w-11 flex items-center justify-center rounded-2xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 active:scale-90 transition-all cursor-pointer"
-            title="ফিরে যান"
-          >
+          <button onClick={() => navigate(-1)} className="h-11 w-11 flex items-center justify-center rounded-2xl bg-zinc-950 border border-white/5 hover:bg-zinc-900 active:scale-90 transition-all cursor-pointer">
             <ArrowLeft className="h-5 w-5 text-white" />
           </button>
           <div>
@@ -279,13 +274,13 @@ export default function OrderDetailPage() {
       {/* Persistent Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 p-4 pt-3 pb-10 sm:pb-6 bg-[#020604]/90 backdrop-blur-md border-t border-white/5 z-50">
         <div className="max-w-[480px] mx-auto flex gap-3">
-           <a 
+           <a
              href="tel:01712000000"
              className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-white transition-all active:scale-90 cursor-pointer"
            >
               <Phone className="w-5 h-5" />
            </a>
-           <button 
+           <button
              onClick={() => setTrackOpen(true)}
              className="flex-1 h-14 bg-gradient-to-r from-cyan-400 to-teal-400 hover:from-cyan-500 hover:to-teal-500 text-black rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/10 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer"
            >
@@ -294,10 +289,10 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      <LiveTrackingSheet 
-        orderId={activeId || ''} 
-        isOpen={trackOpen} 
-        onClose={() => setTrackOpen(false)} 
+      <LiveTrackingSheet
+        orderId={activeId || ''}
+        isOpen={trackOpen}
+        onClose={() => setTrackOpen(false)}
       />
     </div>
   );

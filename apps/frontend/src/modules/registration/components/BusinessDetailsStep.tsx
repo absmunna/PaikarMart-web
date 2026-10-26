@@ -29,15 +29,15 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
     const formatted = [details.area, details.upazila, details.district, details.division]
       .filter(Boolean)
       .join(', ');
-    
+
     onInput("address", formatted);
     onInput("addressDetails", details);
   };
 
   const toggleArrayItem = (key: 'exportCountries' | 'certifications', item: string) => {
     const arr = form[key];
-    const nextArr = arr.includes(item) 
-      ? arr.filter(x => x !== item) 
+    const nextArr = arr.includes(item)
+      ? arr.filter(x => x !== item)
       : [...arr, item];
     onInput(key, nextArr);
   };
@@ -45,9 +45,9 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-200">
       <div>
-        <button 
+        <button
           type="button"
-          onClick={onBack} 
+          onClick={onBack}
           className="flex items-center text-xs font-bold text-zinc-400 hover:text-white mb-2 cursor-pointer transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> পেছনে যান (Back)
@@ -76,14 +76,14 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
         {selectedTypeConfig.group === 'seller' && (
           <div className="space-y-1.5">
             <Label className="text-xs font-bold text-zinc-300">
-              {accountType === 'factory_seller' ? 'কারখানা বা প্রস্তুতকারী কোম্পানির নাম *' : 
-               accountType === 'rural_seller' ? 'খামার বা গ্রামীণ দোকানের নাম *' : 
+              {accountType === 'factory_seller' ? 'কারখানা বা প্রস্তুতকারী কোম্পানির নাম *' :
+               accountType === 'rural_seller' ? 'খামার বা গ্রামীণ দোকানের নাম *' :
                'দোকান বা ব্যবসা প্রতিষ্ঠানের নাম *'}
             </Label>
-            <Input 
-              value={form.shopName} 
-              onChange={(e) => onInput("shopName", e.target.value)} 
-              placeholder={accountType === 'factory_seller' ? "Ananta Garments & Textiles Ltd" : "রহমান এন্টারপ্রাইজ / স্টোর"} 
+            <Input
+              value={form.shopName}
+              onChange={(e) => onInput("shopName", e.target.value)}
+              placeholder={accountType === 'factory_seller' ? "Ananta Garments & Textiles Ltd" : "রহমান এন্টারপ্রাইজ / স্টোর"}
               className="bg-zinc-950 border-white/10 rounded-xl min-h-[44px]"
             />
           </div>
@@ -94,8 +94,8 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
           <Label className="text-xs font-bold text-zinc-300">
             {accountType === 'rider' ? 'ডেলিভারি এরিয়া / সার্ভিস জোন *' : 'ব্যবসায়িক ঠিকানা / লোকেশন *'}
           </Label>
-          <BDAddressSelector 
-            onAddressChange={handleAddressChange} 
+          <BDAddressSelector
+            onAddressChange={handleAddressChange}
           />
         </div>
 
@@ -104,7 +104,7 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-zinc-300">পণ্যের ক্যাটাগরি / Category</Label>
-              <select 
+              <select
                 value={form.category}
                 onChange={(e) => onInput("category", e.target.value)}
                 className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-orange-500"
@@ -118,10 +118,10 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-zinc-300">ট্রেড লাইসেন্স নং (ঐচ্ছিক)</Label>
-              <Input 
-                value={form.tradeLicenseNo} 
-                onChange={(e) => onInput("tradeLicenseNo", e.target.value)} 
-                placeholder="TR-XXXXXXXX" 
+              <Input
+                value={form.tradeLicenseNo}
+                onChange={(e) => onInput("tradeLicenseNo", e.target.value)}
+                placeholder="TR-XXXXXXXX"
                 className="bg-zinc-950 border-white/10 rounded-xl min-h-[44px]"
               />
             </div>
@@ -137,7 +137,7 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-zinc-300">পাইকারি মোকাম / পাইকারি বাজার</Label>
-                <select 
+                <select
                   value={form.wholesaleMarket}
                   onChange={(e) => onInput("wholesaleMarket", e.target.value)}
                   className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-indigo-500"
@@ -147,10 +147,10 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-zinc-300">MOQ (ন্যূনতম অর্ডার কোয়ান্টিটি)</Label>
-                <Input 
-                  value={form.moq} 
-                  onChange={(e) => onInput("moq", e.target.value)} 
-                  placeholder="যেমন: ৫০ পিস / ১০ ডজন" 
+                <Input
+                  value={form.moq}
+                  onChange={(e) => onInput("moq", e.target.value)}
+                  placeholder="যেমন: ৫০ পিস / ১০ ডজন"
                   className="bg-zinc-950 border-white/10 rounded-xl"
                 />
               </div>
@@ -167,7 +167,7 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-zinc-300">ইন্ডাস্ট্রি খাত / Sector</Label>
-                <select 
+                <select
                   value={form.factoryCategory}
                   onChange={(e) => onInput("factoryCategory", e.target.value)}
                   className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-rose-500"
@@ -177,10 +177,10 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-zinc-300">মাসিক উৎপাদন ক্ষমতা</Label>
-                <Input 
-                  value={form.productionCapacity} 
-                  onChange={(e) => onInput("productionCapacity", e.target.value)} 
-                  placeholder="যেমন: ১,০০,০০০ পিস / ৫০ টন" 
+                <Input
+                  value={form.productionCapacity}
+                  onChange={(e) => onInput("productionCapacity", e.target.value)}
+                  placeholder="যেমন: ১,০০,০০০ পিস / ৫০ টন"
                   className="bg-zinc-950 border-white/10 rounded-xl"
                 />
               </div>
@@ -233,10 +233,10 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-zinc-300">গাড়ির প্লেট নম্বর / Plate Number *</Label>
-              <Input 
-                value={form.vehiclePlate} 
-                onChange={(e) => onInput("vehiclePlate", e.target.value)} 
-                placeholder="DHAKA-METRO-HA-XX-XXXX" 
+              <Input
+                value={form.vehiclePlate}
+                onChange={(e) => onInput("vehiclePlate", e.target.value)}
+                placeholder="DHAKA-METRO-HA-XX-XXXX"
                 className="bg-zinc-950 border-white/10 rounded-xl"
               />
             </div>
@@ -244,8 +244,8 @@ export const BusinessDetailsStep: React.FC<BusinessDetailsStepProps> = ({
         )}
       </div>
 
-      <Button 
-        onClick={onNext} 
+      <Button
+        onClick={onNext}
         className="w-full bg-orange-500 hover:bg-orange-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl cursor-pointer shadow-lg shadow-orange-500/20"
       >
         পরবর্তী ধাপ (Continue) <ArrowRight className="w-4 h-4 ml-2" />

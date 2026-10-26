@@ -1,9 +1,9 @@
 import { UserRole } from './roles';
 
-export type Permission = 
-  | 'view_dashboard' 
-  | 'manage_products' 
-  | 'manage_orders' 
+export type Permission =
+  | 'view_dashboard'
+  | 'manage_products'
+  | 'manage_orders'
   | 'manage_users'
   | 'view_analytics'
   | 'post_content'

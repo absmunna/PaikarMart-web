@@ -167,7 +167,7 @@ function Reel({ post }: { post: ReelPost }) {
         onClick={togglePlay}
         className="absolute inset-0 w-full h-full object-cover cursor-pointer"
       />
-      
+
       {/* Dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/85 pointer-events-none" />
 
@@ -221,10 +221,10 @@ function Reel({ post }: { post: ReelPost }) {
         <p className="text-white/90 text-xs font-semibold leading-relaxed line-clamp-3 drop-shadow-sm">
           {post.content}
         </p>
-        
+
         {post.product && (
-          <Link 
-            to={`/product/${post.product.id}`} 
+          <Link
+            to={`/product/${post.product.id}`}
             className="mt-2.5 flex items-center gap-2.5 p-2 pr-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 w-fit hover:bg-white/15 active:scale-95 transition-all"
           >
             <img src={post.product.images[0]} alt={post.product.title} className="h-10 w-10 rounded-xl object-cover" />

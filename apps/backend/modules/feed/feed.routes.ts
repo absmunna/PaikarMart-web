@@ -1,20 +1,17 @@
 import { Router } from 'express';
-import { 
-  getSocialFeed, 
-  getCommerceFeed, 
-  getPosts, 
-  createPost, 
-  likePost, 
+import {
+  getSocialFeed,
+  getCommerceFeed,
+  getPosts,
+  createPost,
+  likePost,
   toggleFollowStore,
   toggleSavePost,
-  getComments, 
-  createComment, 
+  getComments,
+  createComment,
   getStories,
   getUserLocation,
-  updateUserLocation,
-  getPostBids,
-  createPostBid,
-  acceptPostBid
+  updateUserLocation
 } from './feed.controller';
 
 const router = Router();
@@ -27,15 +24,12 @@ router.get('/commerce', getCommerceFeed);
 router.get('/location', getUserLocation);
 router.post('/location', updateUserLocation);
 
-// Feed Interactions & Reverse-Auction Bids
+// Feed Interactions
 router.post('/posts/:id/like', likePost);
 router.post('/posts/:sellerId/follow', toggleFollowStore);
 router.post('/posts/:id/save', toggleSavePost);
 router.get('/posts/:id/comments', getComments);
 router.post('/posts/:id/comments', createComment);
-router.get('/posts/:id/bids', getPostBids);
-router.post('/posts/:id/bids', createPostBid);
-router.patch('/bids/:bidId/accept', acceptPostBid);
 router.get('/stories', getStories);
 
 // Legacy / Direct access compatibility

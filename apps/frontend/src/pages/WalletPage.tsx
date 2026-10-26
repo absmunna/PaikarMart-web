@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw, Send, Plus, CreditCard, 
-  Search, Filter, ChevronRight, CheckCircle2, AlertCircle, Copy, HelpCircle, Phone, ShieldCheck, ArrowLeft
+import {
+  Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw, Send, Plus, CreditCard,
+  Search, Filter, ChevronRight, CheckCircle2, AlertCircle, Copy, HelpCircle, Phone
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { apiClient } from '@/api/client';
 import { useWalletStore } from '@/modules/wallet';
 import { toast } from 'sonner';
-import { safeBack } from '@/lib/navigation';
 
 interface Transaction {
   id: string;
@@ -43,7 +41,6 @@ const FALLBACK_TRANSACTIONS: Transaction[] = [
 ];
 
 export const WalletPage = () => {
-  const navigate = useNavigate();
   const storeWallet = useWalletStore();
   const [balance, setBalance] = useState(storeWallet.balance || 45280);
   const [coins, setCoins] = useState(storeWallet.coins || 2500);
@@ -51,12 +48,12 @@ export const WalletPage = () => {
   const [pendingEscrow, setPendingEscrow] = useState(12450);
   const [transactions, setTransactions] = useState<Transaction[]>(FALLBACK_TRANSACTIONS);
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     if (storeWallet.balance !== undefined) setBalance(storeWallet.balance);
     if (storeWallet.coins !== undefined) setCoins(storeWallet.coins);
   }, [storeWallet.balance, storeWallet.coins]);
-  
+
   const [activeModal, setActiveModal] = useState<'add' | 'send' | 'recharge' | 'withdraw' | null>(null);
   const [amountInput, setAmountInput] = useState('');
   const [phoneInput, setPhoneInput] = useState('');
@@ -85,186 +82,8 @@ export const WalletPage = () => {
     fetchWalletData();
   }, []);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<'bkash' | 'nagad' | 'bank'>('bkash');
-
   const handleAction = (type: 'add' | 'send' | 'recharge' | 'withdraw') => {
     setActiveModal(type);
-    setAmountInput('');
-    setPhoneInput('');
-  };
-
-  const executeAddMoney = async () => {
-    const val = parseFloat(amountInput);
-    if (isNaN(val) || val <= 0) {
-      toast.error('অনুগ্রহ করে সঠিক টাকার পরিমাণ দিন');
-      return;
-    }
-    try {
-      setIsSubmitting(true);
-      const res = await apiClient.post('/wallet/add-money', { amount: val });
-      if (res.data?.success) {
-        toast.success(`৳${val.toLocaleString()} সফলভাবে ওয়ালেটে যুক্ত হয়েছে!`);
-        setBalance(prev => prev + val);
-        storeWallet.updateWallet(balance + val, coins);
-        if (res.data.transaction) {
-          setTransactions(prev => [res.data.transaction, ...prev]);
-        }
-        setActiveModal(null);
-        setAmountInput('');
-      } else {
-        throw new Error(res.data?.error || 'অ্যাড মানি সম্পন্ন হয়নি');
-      }
-    } catch (err: any) {
-      toast.success(`৳${val.toLocaleString()} ওয়ালেটে সফলভাবে যুক্ত হয়েছে!`);
-      const newTx: Transaction = {
-        id: `TXN${Math.floor(10000 + Math.random() * 90000)}`,
-        type: 'inflow',
-        title: `অ্যাড মানি (${selectedMethod === 'bkash' ? 'bKash' : selectedMethod === 'nagad' ? 'Nagad' : 'Bank'})`,
-        subtitle: `${selectedMethod.toUpperCase()} Direct Deposit`,
-        amount: val,
-        date: 'এখনই সম্পন্ন হয়েছে',
-        status: 'completed'
-      };
-      setBalance(prev => prev + val);
-      storeWallet.updateWallet(balance + val, coins);
-      setTransactions(prev => [newTx, ...prev]);
-      setActiveModal(null);
-      setAmountInput('');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const executeSendMoney = async () => {
-    const val = parseFloat(amountInput);
-    if (!phoneInput.trim() || phoneInput.length < 11) {
-      toast.error('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন');
-      return;
-    }
-    if (isNaN(val) || val <= 0) {
-      toast.error('সঠিক টাকার পরিমাণ দিন');
-      return;
-    }
-    if (val > balance) {
-      toast.error('আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই');
-      return;
-    }
-    try {
-      setIsSubmitting(true);
-      const res = await apiClient.post('/wallet/send-money', { amount: val, phone: phoneInput });
-      if (res.data?.success) {
-        toast.success(`${phoneInput} নম্বরে ৳${val.toLocaleString()} সফলভাবে পাঠানো হয়েছে!`);
-        setBalance(prev => prev - val);
-        storeWallet.updateWallet(balance - val, coins);
-        if (res.data.transaction) {
-          setTransactions(prev => [res.data.transaction, ...prev]);
-        }
-        setActiveModal(null);
-        setAmountInput('');
-        setPhoneInput('');
-      } else {
-        throw new Error(res.data?.error || 'সেন্ড মানি সম্পন্ন হয়নি');
-      }
-    } catch (err: any) {
-      toast.success(`${phoneInput} নম্বরে ৳${val.toLocaleString()} সফলভাবে পাঠানো হয়েছে!`);
-      const newTx: Transaction = {
-        id: `TXN${Math.floor(10000 + Math.random() * 90000)}`,
-        type: 'outflow',
-        title: `সেন্ড মানি (${phoneInput})`,
-        subtitle: 'P2P ওয়ালেট ট্রান্সফার',
-        amount: val,
-        date: 'এখনই সম্পন্ন হয়েছে',
-        status: 'completed'
-      };
-      setBalance(prev => prev - val);
-      storeWallet.updateWallet(balance - val, coins);
-      setTransactions(prev => [newTx, ...prev]);
-      setActiveModal(null);
-      setAmountInput('');
-      setPhoneInput('');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const executeRecharge = async () => {
-    const val = parseFloat(amountInput);
-    if (!phoneInput.trim() || phoneInput.length < 11) {
-      toast.error('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন');
-      return;
-    }
-    if (isNaN(val) || val <= 0) {
-      toast.error('সঠিক রিচার্জের পরিমাণ দিন');
-      return;
-    }
-    if (val > balance) {
-      toast.error('আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই');
-      return;
-    }
-    try {
-      setIsSubmitting(true);
-      const res = await apiClient.post('/wallet/recharge', { amount: val, phone: phoneInput, provider: selectedProvider });
-      if (res.data?.success) {
-        toast.success(`${selectedProvider} (${phoneInput}) নম্বরে ৳${val.toLocaleString()} রিচার্জ সম্পন্ন হয়েছে!`);
-        setBalance(prev => prev - val);
-        storeWallet.updateWallet(balance - val, coins);
-        if (res.data.transaction) {
-          setTransactions(prev => [res.data.transaction, ...prev]);
-        }
-        setActiveModal(null);
-        setAmountInput('');
-        setPhoneInput('');
-      } else {
-        throw new Error(res.data?.error || 'রিচার্জ সম্পন্ন হয়নি');
-      }
-    } catch (err: any) {
-      toast.success(`${selectedProvider} (${phoneInput}) নম্বরে ৳${val.toLocaleString()} রিচার্জ সম্পন্ন হয়েছে!`);
-      const newTx: Transaction = {
-        id: `TXN${Math.floor(10000 + Math.random() * 90000)}`,
-        type: 'outflow',
-        title: `মোবাইল রিচার্জ (${selectedProvider})`,
-        subtitle: `${phoneInput} প্রিপেইড রিচার্জ`,
-        amount: val,
-        date: 'এখনই সম্পন্ন হয়েছে',
-        status: 'completed'
-      };
-      setBalance(prev => prev - val);
-      storeWallet.updateWallet(balance - val, coins);
-      setTransactions(prev => [newTx, ...prev]);
-      setActiveModal(null);
-      setAmountInput('');
-      setPhoneInput('');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const executeWithdraw = async () => {
-    const val = parseFloat(amountInput);
-    if (isNaN(val) || val <= 0) {
-      toast.error('সঠিক উইথড্র পরিমাণ দিন');
-      return;
-    }
-    if (val > balance) {
-      toast.error('আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই');
-      return;
-    }
-    toast.success(`৳${val.toLocaleString()} উইথড্র রিকোয়েস্ট সফলভাবে প্রক্রিয়াধীন রয়েছে!`);
-    const newTx: Transaction = {
-      id: `TXN${Math.floor(10000 + Math.random() * 90000)}`,
-      type: 'outflow',
-      title: `ক্যাশ আউট / উইথড্র (${selectedMethod.toUpperCase()})`,
-      subtitle: 'ব্যাংক / এজেন্ট ট্রান্সফার',
-      amount: val,
-      date: 'প্রসেসিংয়ে আছে',
-      status: 'pending'
-    };
-    setBalance(prev => prev - val);
-    storeWallet.updateWallet(balance - val, coins);
-    setTransactions(prev => [newTx, ...prev]);
-    setActiveModal(null);
-    setAmountInput('');
   };
 
   const filteredTransactions = transactions.filter(t => {
@@ -273,33 +92,18 @@ export const WalletPage = () => {
   });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 pb-28 text-[var(--pm-text)] pt-4 space-y-6">
-      
-      {/* ─── WALLET HEADER & BACK NAVIGATION ─── */}
-      <div className="flex items-center gap-3 pb-2 border-b border-[var(--pm-border)]">
-        <button 
-          onClick={() => safeBack(navigate, '/')}
-          className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 text-[var(--pm-text)] shadow-xs cursor-pointer"
-          title="ফিরে যান"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">ডিজিটাল ওয়ালেট ও এসক্রো</h1>
-          <p className="text-[10px] text-[var(--pm-muted)] font-bold uppercase tracking-wider">PaikarMart Central Vault · নিরাপদ এসক্রো ট্রাস্ট</p>
-        </div>
-      </div>
+    <div className="w-full max-w-4xl mx-auto px-4 pb-28 text-[var(--pm-text)] pt-4 space-y-8">
 
       {/* ─── WALLET COCKPIT HEADER ─── */}
       <div className="flex flex-col md:flex-row gap-6">
         {/* Main Balance Card */}
-        <motion.div 
+        <motion.div
           className="flex-1 bg-gradient-to-tr from-purple-700 via-indigo-800 to-indigo-900 rounded-[2.5rem] p-8 shadow-2xl border border-indigo-500/30 relative overflow-hidden group"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
           <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:bg-white/10 transition-all duration-700" />
-          
+
           <div className="relative z-10 space-y-6">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
@@ -331,7 +135,7 @@ export const WalletPage = () => {
         </motion.div>
 
         {/* Escrow & Security Info */}
-        <motion.div 
+        <motion.div
           className="md:w-80 bg-[#0c101c] border border-white/5 rounded-[2.5rem] p-8 flex flex-col justify-between"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -389,7 +193,7 @@ export const WalletPage = () => {
             <h3 className="font-black text-lg text-white uppercase tracking-tighter">Transaction History</h3>
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Real-time settlement logs</p>
           </div>
-          
+
           <div className="flex items-center gap-2 bg-black/20 p-1 rounded-2xl">
             {['all', 'inflow', 'outflow'].map(t => (
               <button
@@ -445,136 +249,44 @@ export const WalletPage = () => {
       <AnimatePresence>
         {activeModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
-             <motion.div 
+             <motion.div
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ opacity: 1, scale: 1 }}
                exit={{ opacity: 0, scale: 0.95 }}
-               className="bg-[var(--pm-surface)] border border-[var(--pm-border)] w-full max-w-sm rounded-[2.5rem] p-7 space-y-5 shadow-2xl relative"
+               className="bg-[#0c101c] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 space-y-6 shadow-2xl relative"
              >
-                <button 
+                <button
                   onClick={() => setActiveModal(null)}
-                  className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-[var(--pm-muted)] hover:text-white"
+                  className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-zinc-500 hover:text-white"
                 >
                   <XIcon className="w-5 h-5" />
                 </button>
 
                 <div className="space-y-1">
-                   <h3 className="text-xl font-black text-white">
-                      {activeModal === 'add' ? 'টাকা যোগ করুন (Add Money)' : activeModal === 'withdraw' ? 'টাকা তুলুন (Withdraw)' : activeModal === 'send' ? 'সেন্ড মানি (Send Money)' : 'মোবাইল রিচার্জ (Recharge)'}
+                   <h3 className="text-xl font-black text-white uppercase">
+                      {activeModal === 'add' ? 'Add Money' : activeModal === 'withdraw' ? 'Withdraw' : activeModal === 'send' ? 'Send Money' : 'Recharge'}
                    </h3>
-                   <p className="text-[10px] text-[var(--pm-muted)] font-bold uppercase tracking-widest">
-                     {activeModal === 'add' ? 'bKash, Nagad বা Bank কার্ডের মাধ্যমে' : activeModal === 'send' ? 'যেকোনো মোবাইল নম্বরে সেন্ড করুন' : activeModal === 'recharge' ? 'ইনস্ট্যান্ট মোবাইল টপ-আপ' : 'ব্যাংক বা মোবাইল অ্যাকাউন্টে ক্যাশআউট'}
-                   </p>
+                   <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Select payment gateway method</p>
                 </div>
 
                 <div className="space-y-4">
-                  {/* Phone input for Send / Recharge */}
-                  {(activeModal === 'send' || activeModal === 'recharge') && (
-                    <div>
-                      <label className="text-[11px] font-bold text-[var(--pm-muted)] block mb-1">
-                        {activeModal === 'send' ? 'প্রাপকের মোবাইল নম্বর' : 'রিচার্জের মোবাইল নম্বর'}
-                      </label>
-                      <input 
-                        type="tel"
-                        value={phoneInput}
-                        onChange={e => setPhoneInput(e.target.value)}
-                        placeholder="017xxxxxxxx"
-                        className="w-full px-4 py-2.5 rounded-2xl bg-white/5 border border-[var(--pm-border)] text-white text-sm font-bold focus:border-[var(--pm-accent)] outline-none"
-                      />
-                    </div>
-                  )}
-
-                  {/* Operator selector for Recharge */}
-                  {activeModal === 'recharge' && (
-                    <div>
-                      <label className="text-[11px] font-bold text-[var(--pm-muted)] block mb-1">অপারেটর নির্বাচন করুন</label>
-                      <div className="grid grid-cols-3 gap-1.5">
-                        {['Grameenphone', 'Banglalink', 'Robi', 'Airtel', 'Teletalk'].map(op => (
-                          <button
-                            key={op}
-                            type="button"
-                            onClick={() => setSelectedProvider(op)}
-                            className={`p-2 rounded-xl text-[10px] font-bold transition-all ${
-                              selectedProvider === op
-                                ? 'bg-[var(--pm-accent)] text-white'
-                                : 'bg-white/5 text-[var(--pm-muted)] border border-[var(--pm-border)]'
-                            }`}
-                          >
-                            {op}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Amount input */}
-                  <div>
-                    <label className="text-[11px] font-bold text-[var(--pm-muted)] block mb-1">টাকার পরিমাণ (৳)</label>
-                    <input 
-                      type="number"
-                      value={amountInput}
-                      onChange={e => setAmountInput(e.target.value)}
-                      placeholder="৫০০"
-                      className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-[var(--pm-border)] text-white text-base font-black focus:border-[var(--pm-accent)] outline-none"
-                    />
-                    <div className="flex gap-1.5 mt-2">
-                      {[100, 500, 1000, 2000, 5000].map(chip => (
-                        <button
-                          key={chip}
-                          type="button"
-                          onClick={() => setAmountInput(String(chip))}
-                          className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white/5 hover:bg-white/10 text-zinc-300"
-                        >
-                          ৳{chip}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Method selector for Add / Withdraw */}
-                  {(activeModal === 'add' || activeModal === 'withdraw') && (
-                    <div>
-                      <label className="text-[11px] font-bold text-[var(--pm-muted)] block mb-1">পেমেন্ট গেটওয়ে</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { id: 'bkash', label: 'bKash', color: 'text-pink-400' },
-                          { id: 'nagad', label: 'Nagad', color: 'text-orange-400' },
-                          { id: 'bank', label: 'Bank Card', color: 'text-blue-400' }
-                        ].map(m => (
-                          <button
-                            key={m.id}
-                            type="button"
-                            onClick={() => setSelectedMethod(m.id as any)}
-                            className={`p-2.5 rounded-xl text-[11px] font-black border transition-all ${
-                              selectedMethod === m.id
-                                ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10 text-white'
-                                : 'border-[var(--pm-border)] bg-white/5 text-zinc-400'
-                            }`}
-                          >
-                            <span className={m.color}>{m.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <button 
-                    disabled={isSubmitting}
-                    onClick={() => {
-                      if (activeModal === 'add') executeAddMoney();
-                      else if (activeModal === 'send') executeSendMoney();
-                      else if (activeModal === 'recharge') executeRecharge();
-                      else if (activeModal === 'withdraw') executeWithdraw();
-                    }}
-                    className="w-full py-3.5 rounded-2xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[var(--pm-accent)]/20 transition-all disabled:opacity-50"
-                  >
-                    {isSubmitting ? 'প্রসেসিং হচ্ছে...' : 'নিশ্চিত করুন'}
-                  </button>
+                   <button className="w-full p-4 rounded-2xl bg-[#e2136e] flex items-center justify-between text-white font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all">
+                      <span>Direct via bKash</span>
+                      <ChevronRight className="w-4 h-4" />
+                   </button>
+                   <button className="w-full p-4 rounded-2xl bg-orange-600 flex items-center justify-between text-white font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all">
+                      <span>Nagad Gateway</span>
+                      <ChevronRight className="w-4 h-4" />
+                   </button>
+                   <button className="w-full p-4 rounded-2xl bg-zinc-800 border border-white/5 flex items-center justify-between text-white font-black text-xs uppercase tracking-widest hover:bg-zinc-700 transition-all">
+                      <span>Rocket / Others</span>
+                      <ChevronRight className="w-4 h-4" />
+                   </button>
                 </div>
 
-                <div className="pt-1 text-center">
-                   <p className="text-[8px] text-[var(--pm-muted)] font-medium leading-relaxed">
-                      Powered by PaikarMart Secure Payment Bridge • PCI-DSS ও বাংলাদেশ ব্যাংক কমপ্লায়েন্ট
+                <div className="pt-2 text-center">
+                   <p className="text-[9px] text-zinc-500 font-bold uppercase leading-relaxed">
+                      Powered by PaikarMart Secure Payment Bridge.<br/>PCI-DSS Compliant Infrastructure.
                    </p>
                 </div>
              </motion.div>

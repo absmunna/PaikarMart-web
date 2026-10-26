@@ -8,5 +8,3 @@ export * from './sellerService';
 export * from './uploadService';
 export * from './userService';
 export * from './walletService';
-export * from './postService';
-

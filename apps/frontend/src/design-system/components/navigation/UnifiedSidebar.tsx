@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, Search, SlidersHorizontal, User, Shield, Bell, Lock, Globe, Database,
-  Store, LayoutDashboard, PenTool, BarChart, DollarSign, FileCheck2,
-  ShoppingBag, Users, Gamepad2, Video, Settings, LogOut, LogIn, UserPlus,
-  ChevronDown, ChevronRight, Palette, Check, HelpCircle, Info, Download, Sparkles
+import {
+  X, Home, ShoppingBag, Grid, Settings, LogOut, Check, LogIn, User,
+  Store, Package, Heart, LayoutDashboard, PlusCircle, Search,
+  Wallet, Building2, ShoppingBasket, Pill, Zap, Sparkles, MapPin,
+  Wrench, Truck, Flame, Shield, Users, ShieldCheck, HelpCircle,
+  MessageSquare, Bell, ChevronRight, Award, Palette, Globe
 } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useAuth } from '@/modules/auth';
+import { useWalletStore } from '@/modules/wallet';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/core/lib/i18n';
-import { usePWAInstall } from '@/shared/hooks/usePWAInstall';
 import { cn } from '@/lib/utils';
 
 export interface UnifiedSidebarProps {
@@ -30,44 +31,17 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation();
   const { user, isAuthenticated, logout, isSeller } = useAuth();
+  const { balance, coins } = useWalletStore();
   const { lang, setLang } = useAppStore();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const { isInstallable, promptInstall } = usePWAInstall();
 
-  // Lock body scroll and listen for Escape key when mobile drawer is open
-  useEffect(() => {
-    if (!isMobileDrawer || !isOpen) return;
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose?.();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isMobileDrawer, isOpen, onClose]);
-
-  // Accordion Expand/Collapse state (defaulting sections to closed by default)
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    account: false,
-    business: false,
-    hubs: false,
-    appSettings: false,
-  });
-
-  const toggleSection = (key: string) => {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const isBn = lang === 'BN' || lang === 'bn';
+  const themes = [
+    { id: 'deepDark', name: 'ডিপ ডার্ক', color: 'bg-slate-900 border-slate-700' },
+    { id: 'colourful', name: 'কালারফুল', color: 'bg-gradient-to-r from-pink-500 to-indigo-500 border-white/20' },
+    { id: 'nakshiLight', name: 'নকশী লাইট', color: 'bg-amber-50/80 border-amber-200' },
+    { id: 'greenField', name: 'সবুজ মাঠ', color: 'bg-emerald-950 border-emerald-800' }
+  ];
 
   const handleLogout = () => {
     logout();
@@ -81,543 +55,318 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
     }
   };
 
-  const themes = [
-    { id: 'deepDark', name: 'ডিপ ডার্ক', color: 'bg-slate-900 border-slate-700' },
-    { id: 'colourful', name: 'কালারফুল', color: 'bg-gradient-to-r from-pink-500 to-indigo-500 border-white/20' },
-    { id: 'nakshiLight', name: 'নকশী লাইট', color: 'bg-amber-50/80 border-amber-200' },
-    { id: 'greenField', name: 'সবুজ মাঠ', color: 'bg-emerald-950 border-emerald-800' }
+  const role = (user?.role || (user as any)?.roles?.[0] || 'buyer').toLowerCase();
+  const isAdmin = role === 'admin' || role === 'super_admin';
+
+  // Navigation Hub Items
+  const hubItems = [
+    { label: 'হোম ফিড (Home Feed)', icon: Home, color: 'text-orange-400 bg-orange-500/10', path: '/' },
+    { label: 'শপিং মার্কেট (Shop)', icon: ShoppingBag, color: 'text-pink-400 bg-pink-500/10', path: '/shop', badge: 'হট' },
+    { label: 'পাইকারি আড়ত (Wholesale B2B)', icon: Building2, color: 'text-blue-400 bg-blue-500/10', path: '/wholesale', badge: 'MOQ' },
+    { label: 'মুদি আড়ত (Grocery Mart)', icon: ShoppingBasket, color: 'text-emerald-400 bg-emerald-500/10', path: '/portal/grocery' },
+    { label: 'ফার্মেসি (Pharmacy)', icon: Pill, color: 'text-rose-400 bg-rose-500/10', path: '/portal/pharmacy' },
+    { label: 'ইলেকট্রনিক্স (Tech Store)', icon: Zap, color: 'text-amber-400 bg-amber-500/10', path: '/portal/electronics' },
+    { label: 'পিকে শপ (PK Exclusive)', icon: Sparkles, color: 'text-purple-400 bg-purple-500/10', path: '/pk-shop', badge: 'কয়েন' },
+    { label: 'লোকাল শপ (Nearby)', icon: MapPin, color: 'text-cyan-400 bg-cyan-500/10', path: '/portal/nearby' },
+    { label: 'সার্ভিস হাব (Services)', icon: Wrench, color: 'text-teal-400 bg-teal-500/10', path: '/services' },
+    { label: 'লজিস্টিকস (Logistics)', icon: Truck, color: 'text-indigo-400 bg-indigo-500/10', path: '/logistic' },
+    { label: 'ডিমান্ড বোর্ড (Buyer Demands)', icon: Flame, color: 'text-red-400 bg-red-500/10', path: '/demand' },
   ];
 
-  // Search filter query
-  const q = searchQuery.toLowerCase().trim();
+  // Personal Commerce Items
+  const personalItems = [
+    { label: 'আমার অর্ডার (My Orders)', icon: Package, color: 'text-sky-400 bg-sky-500/10', path: '/orders' },
+    { label: 'পছন্দের তালিকা (Wishlist)', icon: Heart, color: 'text-rose-400 bg-rose-500/10', path: '/wishlist' },
+    { label: 'সুপার ওয়ালেট (Wallet Hub)', icon: Wallet, color: 'text-emerald-400 bg-emerald-500/10', path: '/wallet' },
+    { label: 'মেসেজ ও ইনবক্স (Messages)', icon: MessageSquare, color: 'text-blue-400 bg-blue-500/10', path: '/messages' },
+    { label: 'নোটিফিকেশনস (Notifications)', icon: Bell, color: 'text-amber-400 bg-amber-500/10', path: '/notifications' },
+    { label: 'সব পোর্টাল হাব (All Hubs)', icon: Grid, color: 'text-purple-400 bg-purple-500/10', path: '/portals' },
+    { label: 'ডিভাইস সেটিংস (Settings)', icon: Settings, color: 'text-zinc-400 bg-zinc-500/10', path: '/settings' },
+  ];
 
-  // Check if item matches search query
-  const matchesSearch = (text: string) => {
-    if (!q) return true;
-    return text.toLowerCase().includes(q);
+  // Seller Items
+  const sellerItems = [
+    { label: 'মার্চেন্ট ড্যাশবোর্ড (Overview)', icon: LayoutDashboard, path: '/seller' },
+    { label: 'প্রোডাক্ট ম্যানেজমেন্ট (Products)', icon: ShoppingBag, path: '/seller/products' },
+    { label: 'অর্ডার ফুলফিলমেন্ট (Orders)', icon: Package, path: '/seller/orders' },
+    { label: 'আমার শপসমূহ (My Stores)', icon: Store, path: '/profile?tab=my-stores' },
+  ];
+
+  // Admin Items
+  const adminItems = [
+    { label: 'অ্যাডমিন ড্যাশবোর্ড (Dashboard)', icon: Shield, path: '/admin' },
+    { label: 'ইউজার ম্যানেজমেন্ট (Users)', icon: Users, path: '/admin/users' },
+    { label: 'পোর্টাল কনফিগ (Portals)', icon: Grid, path: '/admin/portals' },
+  ];
+
+  // Filter items by search query if any
+  const q = searchQuery.toLowerCase().trim();
+  const filterList = (items: any[]) => {
+    if (!q) return items;
+    return items.filter(it => it.label.toLowerCase().includes(q));
   };
 
+  const filteredHubs = filterList(hubItems);
+  const filteredPersonal = filterList(personalItems);
+  const filteredSeller = filterList(sellerItems);
+  const filteredAdmin = filterList(adminItems);
+
+  // Inner Content of the Sidebar
   const sidebarContent = (
-    <div className="flex flex-col h-full w-full select-none text-[var(--pm-text)] bg-[var(--pm-surface)] overflow-hidden font-sans border-r border-[var(--pm-border)]">
-      
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          1. BRAND HEADER & CLOSE CONTROL
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+    <div className="flex flex-col h-full w-full select-none">
+
+      {/* 1. Header & Brand / Close Button */}
       <div className="p-4 border-b border-[var(--pm-border)] flex items-center justify-between shrink-0 bg-[var(--pm-surface)]">
-        <Link to="/" onClick={handleNavClick} className="group flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+        <Link to="/" onClick={handleNavClick} className="group flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[var(--pm-accent)] to-emerald-400 flex items-center justify-center text-white font-black text-sm shadow-md shadow-[var(--pm-accent)]/20 group-hover:scale-105 transition-transform">
             P
           </div>
           <div>
-            <h1 className="text-xl font-black text-[var(--pm-text)] tracking-tight leading-none">
+            <h1 className="text-lg font-black text-[var(--pm-text)] tracking-tight leading-none">
               Paikar<span className="text-[var(--pm-accent)]">Mart</span>
             </h1>
-            <span className="text-[9px] text-[var(--pm-accent)] font-extrabold uppercase tracking-widest block mt-1">
+            <span className="text-[8px] text-[var(--pm-accent)] font-extrabold uppercase tracking-widest block mt-0.5">
               🇧🇩 সুপার কমার্স আড়ত
             </span>
           </div>
         </Link>
 
         {isMobileDrawer && (
-          <button 
-            onClick={onClose} 
-            className="w-9 h-9 rounded-2xl bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] hover:text-white transition-colors active:scale-95 cursor-pointer flex items-center justify-center border border-[var(--pm-border)]"
-            title={isBn ? 'বন্ধ করুন' : 'Close'}
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-xl bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] transition-colors active:scale-95 cursor-pointer"
+            title="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          2. SEARCH INPUT BAR
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="p-3.5 border-b border-[var(--pm-border)]/60 bg-[var(--pm-bg)]/40 shrink-0">
-        <div className="relative flex items-center">
-          <Search className="absolute left-3.5 w-4 h-4 text-[var(--pm-text-muted)]" />
-          <input 
+      {/* User Header Profile Card (Header with User Avatar, Name, Role Badge) */}
+      {isAuthenticated && user && (
+        <div className="px-4 py-3 bg-[var(--pm-surface-hover)]/40 border-b border-[var(--pm-border)]">
+          <Link
+            to="/profile"
+            onClick={handleNavClick}
+            className="flex items-center gap-3 group cursor-pointer"
+          >
+            <div className="relative shrink-0">
+              <div className="w-10 h-10 rounded-full border-2 border-[var(--pm-accent)] overflow-hidden bg-[var(--pm-bg)] flex items-center justify-center">
+                {user.avatar || (user as any).avatarUrl ? (
+                  <img
+                    src={user.avatar || (user as any).avatarUrl}
+                    alt={user.name || "User"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-[var(--pm-accent)]" />
+                )}
+              </div>
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[var(--pm-surface)] rounded-full" />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <p className="text-xs font-bold text-[var(--pm-text)] truncate group-hover:text-[var(--pm-accent)] transition-colors">
+                {user.fullName || user.name || 'ইউজার'}
+              </p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className={cn(
+                  "text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider",
+                  isSeller
+                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                    : "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30"
+                )}>
+                  {isSeller ? `SELLER${(user as any).shopName ? `: ${(user as any).shopName}` : ''}` : 'BUYER'}
+                </span>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {/* 2. Interactive Search Box */}
+      <div className="p-3 border-b border-[var(--pm-border)]/60 bg-[var(--pm-surface-hover)]/30 shrink-0">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
+          <input
             type="text"
-            placeholder={isBn ? 'পোস্ট, পণ্য, দোকান বা কিছু খুঁজুন...' : 'Search posts, products, shops...'}
+            placeholder="পোর্টাল বা মেনু খুঁজুন... / Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl pl-10 pr-9 py-2.5 text-xs text-[var(--pm-text)] placeholder-[var(--pm-text-muted)] focus:outline-none focus:border-[var(--pm-accent)] transition-all shadow-inner"
+            className="w-full bg-[var(--pm-bg)]/80 border border-[var(--pm-border)] rounded-xl pl-8 pr-7 py-1.5 text-xs text-[var(--pm-text)] placeholder-[var(--pm-text-muted)] focus:outline-none focus:border-[var(--pm-accent)] transition-all"
           />
-          {searchQuery ? (
-            <button 
+          {searchQuery && (
+            <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 text-zinc-400 hover:text-white cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3" />
             </button>
-          ) : (
-            <SlidersHorizontal className="absolute right-3 w-4 h-4 text-[var(--pm-text-muted)] pointer-events-none" />
           )}
         </div>
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          3. MAIN SCROLLABLE DRAWER CONTENT
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-3.5 space-y-3.5">
-        
-        {/* ━ SECTION 1: MY ACCOUNT (ACCORDION CARD) ━ */}
-        <div className="rounded-2xl border border-emerald-500/30 border-l-4 border-l-emerald-500 bg-[var(--pm-bg)]/60 overflow-hidden shadow-xs">
-          {/* Card Header */}
-          <button
-            onClick={() => toggleSection('account')}
-            className="w-full p-3.5 flex items-center justify-between bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] transition-colors cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                <User className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-black text-[var(--pm-text)]">My Account</h2>
-                  <span className={cn(
-                    "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider",
-                    isAuthenticated 
-                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                      : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                  )}>
-                    {isAuthenticated ? 'Logged In' : 'Guest'}
-                  </span>
-                </div>
-                <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                  {isBn ? 'প্রোফাইল • নিরাপত্তা • প্রাইভেসি • নোটিফিকেশন' : 'Profile • Security • Privacy • Notifications'}
-                </p>
-              </div>
+      {/* 3. Scrollable Navigation List */}
+      <div className="flex-1 overflow-y-auto no-scrollbar p-3 space-y-5">
+
+        {/* Admin Section (if admin) */}
+        {isAdmin && filteredAdmin.length > 0 && (
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5 px-2 text-[10px] font-black uppercase text-red-400 tracking-wider">
+              <Shield className="w-3.5 h-3.5" /> অ্যাডমিন কমান্ড সেন্টার
             </div>
-            <ChevronDown className={cn(
-              "w-4 h-4 text-[var(--pm-text-muted)] transition-transform duration-200",
-              expandedSections.account ? "rotate-180" : "rotate-0"
-            )} />
-          </button>
-
-          {/* Card Body - Account Items */}
-          <AnimatePresence>
-            {(expandedSections.account || Boolean(q)) && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="p-2 space-y-1 border-t border-[var(--pm-border)]/40 bg-[var(--pm-surface)]/40"
-              >
-                {!isAuthenticated ? (
-                  /* Guest Options */
-                  <div className="space-y-1.5 p-1">
-                    {matchesSearch('Log In') && (
-                      <NavLink
-                        to="/login"
-                        onClick={handleNavClick}
-                        className="flex items-center justify-between p-2.5 rounded-xl bg-[var(--pm-accent)]/15 border border-[var(--pm-accent)]/30 text-[var(--pm-accent)] font-black text-xs hover:bg-[var(--pm-accent)] hover:text-white transition-all cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <LogIn className="w-4 h-4" />
-                          <span>{isBn ? 'লগইন করুন (Log In)' : 'Log In'}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4" />
-                      </NavLink>
-                    )}
-                    {matchesSearch('Register') && (
-                      <NavLink
-                        to="/register"
-                        onClick={handleNavClick}
-                        className="flex items-center justify-between p-2.5 rounded-xl border border-[var(--pm-border)] text-[var(--pm-text)] font-bold text-xs hover:bg-[var(--pm-surface-hover)] transition-all cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <UserPlus className="w-4 h-4 text-[var(--pm-text-muted)]" />
-                          <span>{isBn ? 'অ্যাকাউন্ট তৈরি করুন (Register)' : 'Create Account'}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-                  </div>
-                ) : (
-                  /* Registered User Options */
-                  <>
-                    {matchesSearch('প্রোফাইল সেটিংস Profile') && (
-                      <NavLink
-                        to="/settings/account/profile"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <User className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'প্রোফাইল সেটিংস' : 'Profile Settings'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('নিরাপত্তা সেটিংস Security') && (
-                      <NavLink
-                        to="/settings/account/security"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Shield className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'নিরাপত্তা সেটিংস' : 'Security Settings'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('নোটিফিকেশন সেটিংস Notifications') && (
-                      <NavLink
-                        to="/settings/app/notifications"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Bell className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'নোটিফিকেশন সেটিংস' : 'Notification Settings'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('প্রাইভেসি সেটিংস Privacy') && (
-                      <NavLink
-                        to="/settings/app/privacy"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Lock className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'প্রাইভেসি সেটিংস' : 'Privacy Settings'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('ভাষা ও লোকেশন Language Location') && (
-                      <NavLink
-                        to="/settings/app/language"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Globe className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'ভাষা ও লোকেশন' : 'Language & Location'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('অ্যাকাউন্ট ডাটা ও এক্সপোর্ট Data') && (
-                      <NavLink
-                        to="/settings/app/data"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Database className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'অ্যাকাউন্ট ডাটা ও এক্সপোর্ট' : 'Account Data & Export'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-                  </>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* ━ SECTION 2: MY BUSINESS (ACCORDION CARD) ━ */}
-        <div className="rounded-2xl border border-amber-500/30 border-l-4 border-l-amber-500 bg-[var(--pm-bg)]/60 overflow-hidden shadow-xs">
-          {/* Card Header */}
-          <button
-            onClick={() => toggleSection('business')}
-            className="w-full p-3.5 flex items-center justify-between bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] transition-colors cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
-                <Store className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-black text-[var(--pm-text)]">My Business</h2>
-                  <span className={cn(
-                    "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider",
-                    isSeller 
-                      ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                      : "bg-zinc-700/50 text-zinc-300 border border-zinc-600"
-                  )}>
-                    {isSeller ? 'Seller' : 'Store'}
-                  </span>
-                </div>
-                <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                  {isBn ? 'সেলার সেন্টার • স্টোর • কন্টেন্ট' : 'Seller Central • Store • Content'}
-                </p>
-              </div>
-            </div>
-            <ChevronDown className={cn(
-              "w-4 h-4 text-[var(--pm-text-muted)] transition-transform duration-200",
-              expandedSections.business ? "rotate-180" : "rotate-0"
-            )} />
-          </button>
-
-          {/* Card Body - Business Items */}
-          <AnimatePresence>
-            {(expandedSections.business || Boolean(q)) && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="p-2 space-y-1.5 border-t border-[var(--pm-border)]/40 bg-[var(--pm-surface)]/40"
-              >
-                {/* Prominent "Create Seller Account" CTA Item */}
-                {(!isSeller || matchesSearch('সেলার অ্যাকাউন্ট তৈরি করুন Seller')) && (
+            <nav className="space-y-0.5">
+              {filteredAdmin.map(item => {
+                const Icon = item.icon;
+                return (
                   <NavLink
-                    to="/become-seller"
+                    key={item.path}
+                    to={item.path}
                     onClick={handleNavClick}
-                    className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-600/15 border border-amber-500/50 hover:border-amber-400 transition-all cursor-pointer flex items-center justify-between group shadow-sm my-1 block"
+                    className={({ isActive }) =>
+                      `w-full text-left px-3 py-2 rounded-xl transition-all font-semibold text-xs flex items-center gap-2.5 ${isActive
+                        ? 'bg-red-500/15 text-red-400 font-bold border border-red-500/30'
+                        : 'hover:bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]'
+                      }`
+                    }
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-amber-500 text-black flex items-center justify-center font-black shrink-0 shadow-md">
-                        <Store className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-black text-amber-300 group-hover:text-amber-200 transition-colors">
-                          {isBn ? 'সেলার অ্যাকাউন্ট তৈরি করুন' : 'Create Seller Account'}
-                        </p>
-                        <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                          {isBn ? 'সহজেই সেলার হন এবং আপনার ব্যবসা শুরু করুন' : 'Become a merchant & start selling today'}
-                        </p>
-                      </div>
+                    <div className="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-red-400" />
                     </div>
-                    <ChevronRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                    <span className="truncate">{item.label}</span>
                   </NavLink>
-                )}
+                );
+              })}
+            </nav>
+          </div>
+        )}
 
-                {/* Seller Tools (Active Sellers Only) */}
-                {isSeller && (
-                  <>
-                    {matchesSearch('সেলার সেন্টার Seller Central Dashboard') && (
-                      <NavLink
-                        to="/seller/dashboard"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-amber-500/15 text-amber-400 border border-amber-500/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <LayoutDashboard className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'সেলার সেন্টার' : 'Seller Central'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('স্টোর ম্যানেজমেন্ট Store Management') && (
-                      <NavLink
-                        to="/seller/store"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-amber-500/15 text-amber-400 border border-amber-500/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Store className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'স্টোর ম্যানেজমেন্ট' : 'Store Management'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('কন্টেন্ট ক্রিয়েশন Content Creation') && (
-                      <NavLink
-                        to="/seller/content"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-amber-500/15 text-amber-400 border border-amber-500/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <PenTool className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'কন্টেন্ট ক্রিয়েশন' : 'Content Creation'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-
-                    {matchesSearch('সেলস অ্যানালিটিক্স Sales Analytics') && (
-                      <NavLink
-                        to="/seller/analytics"
-                        onClick={handleNavClick}
-                        className={({ isActive }) => cn(
-                          "flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer group",
-                          isActive ? "bg-amber-500/15 text-amber-400 border border-amber-500/30" : "text-[var(--pm-text-muted)] hover:bg-[var(--pm-surface-hover)] hover:text-[var(--pm-text)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <BarChart className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:text-[var(--pm-text)] shrink-0" />
-                          <span>{isBn ? 'সেলস অ্যানালিটিক্স' : 'Sales Analytics'}</span>
-                        </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />
-                      </NavLink>
-                    )}
-                  </>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* ━ SECTION 3: MAIN MARKETPLACE HUBS CARDS ━ */}
-        <div className="space-y-2">
-          {matchesSearch('Marketplace মার্কেটপ্লেস') && (
-            <NavLink
-              to="/marketplace"
-              onClick={handleNavClick}
-              className={({ isActive }) => cn(
-                "p-3.5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] flex items-center justify-between transition-all cursor-pointer group shadow-xs border-l-4 border-l-cyan-500",
-                isActive && "bg-cyan-500/10 border-cyan-500/40 text-cyan-400"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <ShoppingBag className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-xs font-black text-[var(--pm-text)]">Marketplace</h3>
-                  <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                    {isBn ? 'পণ্য কিনুন ও বিক্রি করুন' : 'Buy & Sell Products'}
-                  </p>
-                </div>
+        {/* Seller Section */}
+        {isSeller ? (
+          filteredSeller.length > 0 && (
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5 px-2 text-[10px] font-black uppercase text-emerald-400 tracking-wider">
+                <Store className="w-3.5 h-3.5" /> মার্চেন্ট সেন্ট্রাল (Seller)
               </div>
-              <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:translate-x-0.5 transition-transform" />
-            </NavLink>
-          )}
-
-          {matchesSearch('Groups গ্রুপ ডিমান্ড') && (
-            <NavLink
-              to="/demand"
-              onClick={handleNavClick}
-              className={({ isActive }) => cn(
-                "p-3.5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] flex items-center justify-between transition-all cursor-pointer group shadow-xs border-l-4 border-l-sky-500",
-                isActive && "bg-sky-500/10 border-sky-500/40 text-sky-400"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center shrink-0">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-xs font-black text-[var(--pm-text)]">Groups</h3>
-                  <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                    {isBn ? 'কম্যুনিটি ও আলোচনা' : 'B2B Community & Demands'}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:translate-x-0.5 transition-transform" />
-            </NavLink>
-          )}
-
-          {matchesSearch('Games গেমস') && (
-            <NavLink
-              to="/apps"
-              onClick={handleNavClick}
-              className={({ isActive }) => cn(
-                "p-3.5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] flex items-center justify-between transition-all cursor-pointer group shadow-xs border-l-4 border-l-purple-500",
-                isActive && "bg-purple-500/10 border-purple-500/40 text-purple-400"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center shrink-0">
-                  <Gamepad2 className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-xs font-black text-[var(--pm-text)]">Games</h3>
-                  <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                    {isBn ? 'খেলুন ও পুরস্কার জিতুন' : 'Play & Win Rewards'}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:translate-x-0.5 transition-transform" />
-            </NavLink>
-          )}
-
-          {matchesSearch('Video ভিডিও') && (
-            <NavLink
-              to="/video"
-              onClick={handleNavClick}
-              className={({ isActive }) => cn(
-                "p-3.5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] flex items-center justify-between transition-all cursor-pointer group shadow-xs border-l-4 border-l-pink-500",
-                isActive && "bg-pink-500/10 border-pink-500/40 text-pink-400"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 flex items-center justify-center shrink-0">
-                  <Video className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-xs font-black text-[var(--pm-text)]">Video</h3>
-                  <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                    {isBn ? 'ভিডিও দেখুন ও শেয়ার করুন' : 'Watch & Share Videos'}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:translate-x-0.5 transition-transform" />
-            </NavLink>
-          )}
-        </div>
-
-        {/* ━ SECTION 4: APP SETTINGS (PUBLIC & ACCESSIBLE TO ALL) ━ */}
-        {matchesSearch('App Settings অ্যাপ সেটিংস') && (
-          <NavLink
-            to="/settings/app"
-            onClick={handleNavClick}
-            className={({ isActive }) => cn(
-              "p-3.5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] flex items-center justify-between transition-all cursor-pointer group shadow-xs border-l-4 border-l-indigo-500 block",
-              isActive && "bg-indigo-500/10 border-indigo-500/40 text-indigo-400"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                <Settings className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-xs font-black text-[var(--pm-text)]">App Settings</h3>
-                <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">
-                  {isBn ? 'থিম • ভাষা • নোটিফিকেশন • আরও' : 'Theme • Language • Notifications • More'}
-                </p>
-              </div>
+              <nav className="space-y-0.5">
+                {filteredSeller.map(item => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={handleNavClick}
+                      className={({ isActive }) =>
+                        `w-full text-left px-3 py-2 rounded-xl transition-all font-semibold text-xs flex items-center gap-2.5 ${isActive
+                          ? 'bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30'
+                          : 'hover:bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]'
+                        }`
+                      }
+                    >
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5 text-emerald-400" />
+                      </div>
+                      <span className="truncate">{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+              </nav>
             </div>
-            <ChevronRight className="w-4 h-4 text-[var(--pm-text-muted)] group-hover:translate-x-0.5 transition-transform" />
-          </NavLink>
+          )
+        ) : (
+          /* Become a seller banner */
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[var(--pm-accent)]/15 via-[var(--pm-accent)]/5 to-transparent border border-[var(--pm-accent)]/25">
+            <div className="flex items-center gap-1.5 text-[var(--pm-accent)] font-black text-xs uppercase tracking-wider mb-1">
+              <Store className="w-3.5 h-3.5" /> অনলাইন আড়ত খুলুন
+            </div>
+            <p className="text-[10px] text-[var(--pm-text-muted)] leading-relaxed font-medium mb-2.5">
+              ০% ফি-তে দেশজুড়ে পাইকারি ও খুচরা বিক্রয় শুরু করুন।
+            </p>
+            <Link
+              to="/become-seller"
+              onClick={handleNavClick}
+              className="w-full py-1.5 px-3 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white text-[10px] font-bold text-center block transition-all shadow-md shadow-[var(--pm-accent)]/20 active:scale-95"
+            >
+              সেলার আবেদন করুন →
+            </Link>
+          </div>
+        )}
+
+        {/* Hubs & Marketplace List */}
+        {filteredHubs.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-black text-[var(--pm-text-muted)] uppercase tracking-wider px-2">
+              মার্কেটপ্লেস ও আড়ত (Hubs)
+            </p>
+            <nav className="space-y-0.5">
+              {filteredHubs.map(item => {
+                const IconComp = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={handleNavClick}
+                    className={({ isActive }) =>
+                      `w-full text-left px-3 py-2 rounded-xl transition-all font-semibold text-xs flex items-center justify-between group ${isActive
+                        ? 'bg-[var(--pm-accent-soft)] text-[var(--pm-accent)] font-bold border border-[var(--pm-accent)]/30'
+                        : 'hover:bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]'
+                      }`
+                    }
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${item.color} group-hover:scale-105 transition-transform`}>
+                        <IconComp className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="truncate">{item.label}</span>
+                    </div>
+                    {item.badge && (
+                      <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] uppercase">
+                        {item.badge}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+        )}
+
+        {/* Personal Commerce List */}
+        {filteredPersonal.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-black text-[var(--pm-text-muted)] uppercase tracking-wider px-2">
+              লেনদেন ও ট্র্যাকিং (Commerce)
+            </p>
+            <nav className="space-y-0.5">
+              {filteredPersonal.map(item => {
+                const IconComp = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={handleNavClick}
+                    className={({ isActive }) =>
+                      `w-full text-left px-3 py-2 rounded-xl transition-all font-semibold text-xs flex items-center gap-2.5 group ${isActive
+                        ? 'bg-[var(--pm-accent-soft)] text-[var(--pm-accent)] font-bold border border-[var(--pm-accent)]/30'
+                        : 'hover:bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)]'
+                      }`
+                    }
+                  >
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${item.color} group-hover:scale-105 transition-transform`}>
+                      <IconComp className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="truncate">{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
         )}
 
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          4. GLOBAL CONTROLS (Theme & Language Switcher)
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="p-3 border-t border-[var(--pm-border)] bg-[var(--pm-surface-hover)]/30 shrink-0 space-y-2">
+      {/* 4. Settings Section (Themes & Language) */}
+      <div className="p-3 border-t border-[var(--pm-border)] bg-[var(--pm-surface-hover)]/40 shrink-0 space-y-2.5">
+
         {/* Theme Palette */}
         <div className="flex items-center justify-between px-1">
           <span className="text-[10px] font-bold text-[var(--pm-text-muted)] uppercase tracking-wider flex items-center gap-1">
@@ -645,49 +394,68 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
           <div className="flex bg-[var(--pm-bg)]/80 p-0.5 rounded-lg border border-[var(--pm-border)]">
             <button
               onClick={() => setLang('EN')}
-              className={`px-2.5 py-0.5 rounded-md text-[9px] font-black transition-all cursor-pointer ${lang === 'EN' || lang === 'en' ? 'bg-[var(--pm-accent)] text-white shadow-xs' : 'text-[var(--pm-text-muted)]'}`}
+              className={`px-2.5 py-0.5 rounded-md text-[9px] font-black transition-all ${lang === 'EN' ? 'bg-[var(--pm-accent)] text-white shadow-xs' : 'text-[var(--pm-text-muted)]'}`}
             >
               EN
             </button>
             <button
               onClick={() => setLang('BN')}
-              className={`px-2.5 py-0.5 rounded-md text-[9px] font-black transition-all cursor-pointer ${lang === 'BN' || lang === 'bn' ? 'bg-[var(--pm-accent)] text-white shadow-xs' : 'text-[var(--pm-text-muted)]'}`}
+              className={`px-2.5 py-0.5 rounded-md text-[9px] font-black transition-all ${lang === 'BN' ? 'bg-[var(--pm-accent)] text-white shadow-xs' : 'text-[var(--pm-text-muted)]'}`}
             >
               বাংলা
             </button>
           </div>
         </div>
+
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          5. FOOTER & SEPARATE LOG OUT BUTTON
-         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div className="p-3 border-t border-[var(--pm-border)] bg-[var(--pm-surface)] shrink-0 space-y-2">
-        {isInstallable && (
-          <button
-            onClick={() => promptInstall()}
-            className="flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-black shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5" /> {isBn ? 'অ্যাপ ইনস্টল করুন (PWA)' : 'Install App (PWA)'}
-          </button>
-        )}
+      {/* 5. User Profile Card / Login Footing */}
+      <div className="p-3 border-t border-[var(--pm-border)] bg-[var(--pm-surface)] shrink-0">
+        {isAuthenticated && user ? (
+          <div className="flex items-center justify-between gap-2">
+            <Link
+              to="/profile"
+              onClick={handleNavClick}
+              className="flex items-center gap-2.5 min-w-0 flex-1 group"
+            >
+              <div className="relative shrink-0">
+                <div className="w-9 h-9 rounded-full border-2 border-[var(--pm-accent)] overflow-hidden bg-[var(--pm-bg)]">
+                  <img
+                    src={user.avatar || (user as any).avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[var(--pm-surface)] rounded-full" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <p className="text-xs font-bold text-[var(--pm-text)] truncate group-hover:text-[var(--pm-accent)] transition-colors">
+                  {user.fullName || user.name || 'ইউজার'}
+                </p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[8px] bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] border border-[var(--pm-accent)]/20 px-1.5 py-0.2 rounded font-black uppercase tracking-wider">
+                    {user.role}
+                  </span>
+                  <span className="text-[8px] text-zinc-500 font-bold">• Lvl 3</span>
+                </div>
+              </div>
+            </Link>
 
-        {/* Separate Log Out Button */}
-        {isAuthenticated ? (
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl bg-[var(--pm-bg)] hover:bg-red-500/15 text-zinc-300 hover:text-red-400 border border-[var(--pm-border)] hover:border-red-500/30 text-xs font-black transition-all cursor-pointer shadow-xs active:scale-95"
-          >
-            <LogOut className="w-4 h-4 text-red-400" />
-            <span>Log Out</span>
-          </button>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         ) : (
           <Link
             to="/login"
             onClick={handleNavClick}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white text-xs font-black shadow-md shadow-[var(--pm-accent)]/20 active:scale-95 transition-all"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white text-xs font-bold shadow-md shadow-[var(--pm-accent)]/20 active:scale-95 transition-all"
           >
-            <LogIn className="w-4 h-4" /> {isBn ? 'লগইন / রেজিস্ট্রেশন' : 'Log In / Register'}
+            <LogIn className="w-4 h-4" /> লগইন / রেজিস্ট্রেশন
           </Link>
         )}
       </div>

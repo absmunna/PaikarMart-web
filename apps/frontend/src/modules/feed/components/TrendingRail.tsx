@@ -11,8 +11,8 @@ const fallbackTrending = [
 ];
 
 export const TrendingRail = () => {
-  const { data: realProducts, isLoading } = useGetTrendingProducts({ 
-    query: { queryKey: getGetTrendingProductsQueryKey() } 
+  const { data: realProducts, isLoading } = useGetTrendingProducts({
+    query: { queryKey: getGetTrendingProductsQueryKey() }
   });
 
   const products = realProducts && realProducts.length > 0 ? realProducts.slice(0, 4) : fallbackTrending;

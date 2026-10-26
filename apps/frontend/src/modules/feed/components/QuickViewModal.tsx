@@ -66,9 +66,9 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ isOpen, onClose,
 
           {/* Left: Image */}
           <div className="w-full md:w-1/2 aspect-square md:aspect-auto md:h-full bg-zinc-100 dark:bg-zinc-900 relative">
-            <img 
-              src={displayImage} 
-              alt={item.content.title} 
+            <img
+              src={displayImage}
+              alt={item.content.title}
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
@@ -104,7 +104,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ isOpen, onClose,
               <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white leading-tight mb-3">
                 {item.content.title}
               </h2>
-              
+
               <div className="flex items-center gap-3 mb-6">
                 <div className="flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg">
                   <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
@@ -154,7 +154,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ isOpen, onClose,
                 <ShoppingBag className="w-5 h-5" />
                 <span>{isBn ? 'এখনই কিনুন' : 'Buy Now'}</span>
               </button>
-              
+
               <button
                 onClick={() => {
                   onClose();

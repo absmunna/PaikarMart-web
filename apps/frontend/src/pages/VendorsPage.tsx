@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   Search, Star, MapPin, Phone, MessageSquare, CheckCircle2, ShieldAlert,
   ArrowLeft, Store, Users, ExternalLink, Calendar, Briefcase, Filter
 } from 'lucide-react';
@@ -130,11 +130,11 @@ export const VendorsPage = () => {
 
   // Filters logic
   const filteredVendors = INITIAL_VENDORS.filter(v => {
-    const matchesSearch = 
+    const matchesSearch =
       v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       v.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
       v.category.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesTab = activeTab === 'all' || v.type === activeTab;
 
     return matchesSearch && matchesTab;
@@ -144,8 +144,8 @@ export const VendorsPage = () => {
     <div className="w-full max-w-md mx-auto px-4 pb-28 text-[var(--pm-text)] pt-4">
       {/* Directory Header */}
       <div className="flex items-center gap-3 mb-6">
-        <button 
-          onClick={() => navigate('/')} 
+        <button
+          onClick={() => navigate('/')}
           className="p-2.5 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-text)] active:scale-95 transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -161,9 +161,9 @@ export const VendorsPage = () => {
       {/* Modern Search Bar */}
       <div className="relative mb-5">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-        <input 
-          type="text" 
-          placeholder="নাম, লোকেশন বা পণ্যের ধরণ দিয়ে খুঁজুন..." 
+        <input
+          type="text"
+          placeholder="নাম, লোকেশন বা পণ্যের ধরণ দিয়ে খুঁজুন..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           className="w-full bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-2xl py-3.5 pl-11 pr-4 text-xs font-semibold placeholder:text-[var(--pm-text-muted)] outline-none focus:border-[var(--pm-accent)]/50 transition-all text-[var(--pm-text)]"
@@ -182,8 +182,8 @@ export const VendorsPage = () => {
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-[10px] font-black border transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-              activeTab === tab.id 
-                ? 'bg-[var(--pm-accent-soft)] border-[var(--pm-accent)]/30 text-[var(--pm-accent)]' 
+              activeTab === tab.id
+                ? 'bg-[var(--pm-accent-soft)] border-[var(--pm-accent)]/30 text-[var(--pm-accent)]'
                 : 'bg-[var(--pm-surface)] border-[var(--pm-border)] text-[var(--pm-text-muted)]'
             }`}
           >
@@ -222,7 +222,7 @@ export const VendorsPage = () => {
                 <div className="h-12 w-12 rounded-2xl bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] flex items-center justify-center text-2xl shrink-0 group-hover:scale-105 transition-transform">
                   {vendor.avatar}
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <h3 className="text-xs font-black text-[var(--pm-text)] leading-tight truncate group-hover:text-[var(--pm-accent)] transition-colors">
@@ -232,7 +232,7 @@ export const VendorsPage = () => {
                       <CheckCircle2 className="w-4 h-4 text-[var(--pm-accent)] shrink-0 fill-[var(--pm-accent-soft)]" />
                     )}
                   </div>
-                  
+
                   <span className="inline-block mt-1 text-[8px] font-black uppercase px-2 py-0.5 rounded-md bg-[var(--pm-bg)] border border-[var(--pm-border)] text-[var(--pm-text-muted)]">
                     {vendor.typeName}
                   </span>
@@ -298,7 +298,7 @@ export const VendorsPage = () => {
                   <div className="h-16 w-16 rounded-3xl bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] flex items-center justify-center text-3xl shrink-0 shadow-inner">
                     {selectedVendor.avatar}
                   </div>
-                  <button 
+                  <button
                     onClick={() => setSelectedVendor(null)}
                     className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] text-[var(--pm-text-secondary)] px-3 py-1.5 rounded-full text-[9px] font-black"
                   >
@@ -339,15 +339,15 @@ export const VendorsPage = () => {
 
                 {/* Secure call action buttons */}
                 <div className="flex gap-2.5 mt-2">
-                  <a 
+                  <a
                     href={`tel:${selectedVendor.phone}`}
                     className="flex-1 bg-[var(--pm-accent)] text-white py-3.5 rounded-2xl text-xs font-black shadow-lg shadow-[var(--pm-accent)]/20 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Phone className="w-4 h-4" />
                     সরাসরি কল দিন (Call)
                   </a>
-                  
-                  <a 
+
+                  <a
                     href={`https://wa.me/${selectedVendor.phone}`}
                     target="_blank"
                     rel="noreferrer"

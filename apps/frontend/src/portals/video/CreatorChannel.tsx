@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { CheckCircle2, Film, ShoppingBag, Wrench, Radio, Users, Star, ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { safeBack } from "@/lib/navigation";
 
 export default function CreatorChannel() {
   const [activeTab, setActiveTab] = useState<"videos" | "shorts" | "products" | "services">("videos");
@@ -11,12 +10,11 @@ export default function CreatorChannel() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 text-white">
       {/* Back Button */}
-      <button 
-        onClick={() => safeBack(navigate, '/')}
-        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors cursor-pointer"
-        title="ফিরে যান"
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white mb-6 transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" /> ফিরে যান
+        <ArrowLeft className="h-4 w-4" /> Back
       </button>
 
       {/* Channel Header Banner */}
@@ -27,9 +25,9 @@ export default function CreatorChannel() {
       {/* Creator Profile Info */}
       <div className="relative px-4 -mt-16 md:-mt-20 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-end gap-5">
-          <img 
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=250" 
-            alt="Creator Avatar" 
+          <img
+            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=250"
+            alt="Creator Avatar"
             className="h-28 w-28 md:h-36 md:w-36 rounded-3xl object-cover border-4 border-[#0f111a] shadow-2xl"
             referrerPolicy="no-referrer"
           />
@@ -71,8 +69,8 @@ export default function CreatorChannel() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all shrink-0 ${
-                isActive 
-                  ? "bg-white text-zinc-900 shadow-md shadow-white/10" 
+                isActive
+                  ? "bg-white text-zinc-900 shadow-md shadow-white/10"
                   : "bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800 hover:text-white"
               }`}
             >
@@ -88,9 +86,9 @@ export default function CreatorChannel() {
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div key={i} className="bg-[#141624] border border-white/5 rounded-3xl overflow-hidden p-4">
             <div className="aspect-video w-full rounded-2xl bg-zinc-900 mb-3 overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=600" 
-                alt="Item" 
+              <img
+                src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=600"
+                alt="Item"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />

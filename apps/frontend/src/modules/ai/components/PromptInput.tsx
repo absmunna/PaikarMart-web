@@ -37,7 +37,7 @@ export const PromptInput: React.FC<PromptInputProps> = ({ onSend, disabled }) =>
   }, [input]);
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
       className="relative flex items-end gap-2 bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-2 pl-4"
     >
@@ -51,7 +51,7 @@ export const PromptInput: React.FC<PromptInputProps> = ({ onSend, disabled }) =>
         disabled={disabled}
         className="flex-1 bg-transparent border-none focus:ring-0 text-[13px] text-white placeholder:text-zinc-500 resize-none py-2 max-h-[120px] scrollbar-hide"
       />
-      
+
       <div className="flex items-center gap-1">
         <Button
           type="button"

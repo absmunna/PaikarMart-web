@@ -23,7 +23,7 @@ export function CategoryRail() {
 
       <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
         {CATEGORIES.map((cat) => (
-          <Link 
+          <Link
             key={cat.id}
             to={`/marketplace?category=${cat.id}`}
             className="flex flex-col items-center gap-3 flex-shrink-0 group"

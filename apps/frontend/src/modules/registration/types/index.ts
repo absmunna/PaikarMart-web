@@ -39,7 +39,7 @@ export interface RegistrationFormState {
   tradeLicenseNo: string;
   tinNumber: string;
   binNumber: string;
-  
+
   // Factory details
   factoryCategory: string;
   employees: string;
@@ -49,7 +49,7 @@ export interface RegistrationFormState {
   exportCountries: string[];
   certifications: string[];
   membershipBody: string;
-  
+
   // Wholesale details
   wholesaleMarket: string;
   moq: string;

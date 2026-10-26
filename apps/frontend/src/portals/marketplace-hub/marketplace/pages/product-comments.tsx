@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ChevronLeft, MessageSquare, Star, HelpCircle, 
+import {
+  ChevronLeft, MessageSquare, Star, HelpCircle,
   ShoppingCart, ShieldCheck, AlertCircle, TrendingUp,
   Image as ImageIcon, Share2, MoreHorizontal, User, Heart
 } from 'lucide-react';
@@ -30,10 +30,10 @@ export default function ProductCommentsPage() {
   const navigate = useNavigate();
   const { user, role } = useAuth();
   const [activeTab, setActiveTab] = useState<'reviews' | 'qna' | 'comments'>('qna');
-  
+
   const product = getMockProduct(id || "p1");
   const isBuyer = role === 'buyer' || role === 'user';
-  
+
   // Real security logic: Only jara order koreche tara review dite parbe
   // Mocking order verification for now
   const hasOrdered = true; // This would typically come from an API check
@@ -68,9 +68,9 @@ export default function ProductCommentsPage() {
                 "w-5 h-5 transition-transform duration-300",
                 activeTab === tab.id ? "scale-110 " + tab.color : "scale-100 grayscale opacity-50"
               )} />
-              
+
               {activeTab === tab.id && (
-                <motion.div 
+                <motion.div
                   layoutId="active-tab-line"
                   className="absolute bottom-0 w-12 h-[2px] bg-cyan-400 rounded-full shadow-[0_0_10px_cyan-400]"
                 />
@@ -92,7 +92,7 @@ export default function ProductCommentsPage() {
               <span className="text-[9px] font-black text-cyan-400">{formatBDT(product.price)}</span>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => navigate(`/marketplace/product/${product.id}`)}
             className="px-3 py-1.5 bg-cyan-400 text-black text-[9px] font-black rounded-lg uppercase whitespace-nowrap shadow-[0_2px_0_#005a30] active:translate-y-[1px] active:shadow-none"
           >
@@ -123,11 +123,11 @@ export default function ProductCommentsPage() {
 
           {activeTab === 'qna' && (
             <motion.div key="qna" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-               <ProductQASection 
-                  productId={product.id} 
+               <ProductQASection
+                  productId={product.id}
                   questionsAnswers={[
                     { id: "q1", userName: "Rakib Ahmed", question: "এই প্রোডাক্টটি কি ওয়াটারপ্রুফ নাকি সাধারণ বৃষ্টি সহ্য করতে পারে?", answer: "জি, এটি ১০০% ওয়াটারপ্রুফ এবং প্রলেপযুক্ত। মোটরসাইকেল রাইডারদের জন্য বৃষ্টিতে রাইড করার জন্য এটি সর্বোত্তম পছন্দ।", createdAt: "২ দিন আগে" }
-                  ]} 
+                  ]}
                 />
             </motion.div>
           )}
@@ -201,12 +201,12 @@ export default function ProductCommentsPage() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex-1 relative group">
-                  <input 
+                  <input
                     placeholder={
-                      activeTab === 'qna' ? "পণ্য সম্পর্কে প্রশ্ন করুন..." : 
-                      activeTab === 'reviews' ? "আপনার মূল্যবান মতামত লিখুন..." : 
+                      activeTab === 'qna' ? "পণ্য সম্পর্কে প্রশ্ন করুন..." :
+                      activeTab === 'reviews' ? "আপনার মূল্যবান মতামত লিখুন..." :
                       "আলোচনায় যোগ দিন..."
                     }
                     className="w-full h-12 bg-black/60 border border-[#1e3425] rounded-[24px] px-5 text-[13px] text-white font-bold placeholder:text-zinc-600 outline-none focus:border-cyan-400/50 focus:bg-black/90 transition-all shadow-inner"
@@ -218,9 +218,9 @@ export default function ProductCommentsPage() {
                   )}
                 </div>
 
-                <button 
+                <button
                   onClick={() => {
-                    toast.success("Message Processed", { 
+                    toast.success("Message Processed", {
                       description: "Security check passed. Posting your comment.",
                       icon: <ShieldCheck className="w-4 h-4 text-cyan-400" />
                     });

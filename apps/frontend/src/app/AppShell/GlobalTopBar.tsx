@@ -15,13 +15,7 @@ import {
   Flame,
   BadgeCheck,
   FileText,
-  Settings,
-  User,
-  Moon,
-  Shield,
-  Database
 } from "lucide-react";
-import { SettingsDrawer } from "@/design-system/components/common/navigation/SettingsDrawer";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCartStore } from "@/modules/cart";
 import { motion, AnimatePresence } from "motion/react";
@@ -45,7 +39,6 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
   const location = useLocation();
 
   const [isMegaSearchOpen, setIsMegaSearchOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const getPageTitle = (path: string) => {
     if (path === "/") return "Discover";
@@ -59,7 +52,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
     if (path.includes("/comments")) return "Feedback";
     if (path.startsWith("/marketplace")) return "Marketplace";
     if (path.startsWith("/reels")) return "Shorts";
-    
+
     const segments = path.split('/').filter(Boolean);
     if (segments.length > 0) {
       const last = segments[segments.length - 1];
@@ -71,7 +64,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
   const pageTitle = getPageTitle(location.pathname);
   const isHome = location.pathname === "/";
 
-  const isPortalPage = location.pathname === "/" || 
+  const isPortalPage = location.pathname === "/" ||
     location.pathname.startsWith("/portal") ||
     ["/wholesale", "/b2c", "/pk-shop", "/brand-shops", "/dropship", "/services"].some(p => location.pathname === p || location.pathname.startsWith(p + "/"));
 
@@ -129,11 +122,11 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
   return (
     <>
       <MegaSearch isOpen={isMegaSearchOpen} onClose={() => setIsMegaSearchOpen(false)} />
-      
+
       <header className="fixed top-0 left-0 right-0 z-[500] mx-auto w-full max-w-[1440px] bg-[var(--pm-bg)]/94 backdrop-blur-3xl border-b border-white/[0.03] flex flex-col justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-2 lg:px-6 h-[64px]">
         {/* Minimal dynamic header */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[1px] bg-gradient-to-r from-transparent via-[var(--pm-accent)]/30 to-transparent" />
-        
+
         <div className="w-full h-full flex items-center justify-between gap-4 relative z-10">
           {/* Left section: Dynamic Responsive Branding */}
           <div className="flex items-center gap-3">
@@ -167,7 +160,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
               </AnimatePresence>
             </motion.button>
 
-            <div 
+            <div
               className="flex items-center cursor-pointer group"
               onClick={() => navigate("/")}
             >
@@ -180,7 +173,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
                     {isHome ? "PaikarMart" : "PM"}
                   </span>
                   {!isHome && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, x: -5 }}
                       animate={{ opacity: 1, x: 0 }}
                       className="flex items-center gap-1.5"
@@ -198,7 +191,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
 
       {!isPortalPage && (
         <div className="flex-1 max-w-lg px-4 hidden md:block">
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.01 }}
             onClick={() => setIsMegaSearchOpen(true)}
             className="w-full h-10 bg-white/[0.02] border border-white/[0.04] rounded-full flex items-center px-4 gap-3 cursor-pointer group hover:bg-white/[0.05] transition-all duration-300"
@@ -287,27 +280,6 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
                   </span>
                 )}
               </motion.button>
-              
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsSettingsOpen(true)}
-                className="w-10 h-10 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)]"
-              >
-                <Settings className="w-5 h-5" strokeWidth={2} />
-              </motion.button>
-
-              <SettingsDrawer 
-                isOpen={isSettingsOpen} 
-                onClose={() => setIsSettingsOpen(false)}
-                title="App Settings"
-                items={[
-                  { label: 'Profile Management (প্রোফাইল)', icon: User, onClick: () => navigate('/profile') },
-                  { label: 'Notification Settings (নোটিফিকেশন)', icon: Bell, badge: 'Push • Email • In-App', onClick: () => navigate('/settings/notifications') },
-                  { label: 'Theme/Appearance (থিম)', icon: Moon, onClick: () => navigate('/settings') },
-                  { label: 'Privacy & Security (নিরাপত্তা)', icon: Shield, onClick: () => navigate('/settings') },
-                  { label: 'Data & Storage (ডাটা)', icon: Database, onClick: () => navigate('/settings') },
-                ]}
-              />
 
               <div className="ml-1">
                 <ThemeSwitcher />

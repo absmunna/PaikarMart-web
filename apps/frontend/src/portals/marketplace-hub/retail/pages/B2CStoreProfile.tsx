@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  ArrowLeft, Store, Star, Users, CheckCircle2, 
-  MapPin, Gift, Phone, Bookmark, Heart, ThumbsUp, MessageCircle, HelpCircle, BadgePercent 
+import {
+  ArrowLeft, Store, Star, Users, CheckCircle2,
+  MapPin, Gift, Phone, Bookmark, Heart, ThumbsUp, MessageCircle, HelpCircle, BadgePercent
 } from 'lucide-react';
-import { UnifiedPostCard } from "@/design-system/components/feed/UnifiedPostCard";
+import { ProductCard } from "@/modules/product";
 import { Product } from '@/modules/product';
 import { useCartStore } from '@modules/cart';
 import { useNotificationStore } from '@/modules/notification';
@@ -17,9 +17,65 @@ interface B2CStoreProfileProps {
   onSelectProduct: (product: Product) => void;
 }
 
-export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({ 
-  storeName, 
-  products, 
+function StorePost({ post, storeName }: { post: any, storeName: string }) {
+  const [likes, setLikes] = useState(post.likes);
+  const [didLike, setDidLike] = useState(false);
+
+  const handleLikePost = () => {
+    if (didLike) {
+      setLikes(likes - 1);
+      setDidLike(false);
+    } else {
+      setLikes(likes + 1);
+      setDidLike(true);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-white/[0.06] bg-white/5 overflow-hidden">
+      {/* Poster Info */}
+      <div className="p-3.5 flex items-center gap-2.5 border-b border-white/[0.05]">
+        <div className="w-8 h-8 rounded-xl bg-[var(--pm-accent-soft)] flex items-center justify-center text-[var(--pm-accent)] font-bold text-sm">
+          {storeName.charAt(0)}
+        </div>
+        <div>
+          <h4 className="text-xs font-bold text-white mb-0.5">{storeName}</h4>
+          <span className="text-[8px] text-[var(--pm-text-secondary)] font-bold">{post.date}</span>
+        </div>
+      </div>
+
+      {/* Post Image Banner */}
+      <div className="relative aspect-video overflow-hidden bg-black/40 border-b border-white/5">
+        <img src={post.image} alt="Promotion Banner" className="w-full h-full object-cover" />
+      </div>
+
+      {/* Post Context Info block */}
+      <div className="p-4 space-y-2">
+        <h4 className="text-xs font-black text-white leading-snug">{post.title}</h4>
+        <p className="text-[10px] text-[var(--pm-text-secondary)] leading-relaxed font-semibold">{post.content}</p>
+      </div>
+
+      {/* Direct Social Interaction keys */}
+      <div className="p-2 border-t border-white/[0.05] flex items-center justify-around text-[10px] font-bold select-none text-[var(--pm-text-secondary)]">
+        <button
+          onClick={handleLikePost}
+          className={`flex items-center gap-1.5 py-1 px-3 hover:bg-white/5 rounded-lg transition-transform active:scale-95 ${
+            didLike ? 'text-[var(--pm-accent)]' : ''
+          }`}
+        >
+          <ThumbsUp className={`w-3.5 h-3.5 ${didLike ? 'fill-current':''}`} /> {likes} লাইক
+        </button>
+        <button className="flex items-center gap-1.5 py-1 px-3 hover:bg-white/5 rounded-lg">
+          <MessageCircle className="w-3.5 h-3.5" /> {post.comments} কমেন্টস
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
+  storeName,
+  products,
   onBack,
   onSelectProduct
 }) => {
@@ -29,8 +85,8 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
   const addNotification = useNotificationStore((state) => state.addNotification);
 
   // Filter store-specific products
-  const storeProducts = products.filter(p => 
-    (p.sellerId && p.sellerId === storeName) || 
+  const storeProducts = products.filter(p =>
+    (p.sellerId && p.sellerId === storeName) ||
     (p.seller && p.seller === storeName)
   );
 
@@ -83,7 +139,7 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
     <div className="w-full bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] pb-24">
       {/* Absolute top navbar */}
       <div className="sticky top-16 z-50 bg-[var(--pm-bg)]/90 backdrop-blur-md px-4 py-3 flex items-center gap-3 border-b border-white/[0.08]">
-        <button 
+        <button
           onClick={onBack}
           className="p-2 -ml-1 rounded-full hover:bg-white/5 text-[var(--pm-text)] transition-colors active:scale-95 shrink-0"
         >
@@ -106,10 +162,10 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
           <div className="w-18 h-18 rounded-2xl bg-[var(--pm-surface)] border-2 border-[var(--pm-bg)] text-[var(--pm-accent)] flex items-center justify-center shadow-xl font-black text-3xl">
             {storeName.charAt(0)}
           </div>
-          <button 
+          <button
             onClick={handleFollowToggle}
             className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm transition-all active:scale-95 ${
-              isFollowing 
+              isFollowing
                 ? 'bg-white/10 text-white border border-white/15'
                 : 'bg-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/90 text-white'
             }`}
@@ -151,8 +207,8 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex-1 text-center pb-2.5 border-b-2 transition-all ${
-                activeTab === tab.id 
-                  ? 'border-[var(--pm-accent)] text-white text-[11px] font-black' 
+                activeTab === tab.id
+                  ? 'border-[var(--pm-accent)] text-white text-[11px] font-black'
                   : 'border-transparent text-[var(--pm-text-secondary)]'
               }`}
             >
@@ -172,31 +228,11 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
                   <p className="text-[10px] text-[var(--pm-text-secondary)] mt-1">শপের রিস্টক খুব শীঘ্রই আপডেট করা হবে।</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(145px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(175px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(205px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-4 sm:gap-5">
                   {storeProducts.map(prod => (
-                    <UnifiedPostCard
+                    <ProductCard
                       key={prod.id}
-                      post={{
-                        id: prod.id,
-                        type: 'product',
-                        domain: 'RETAIL',
-                        authorName: storeName,
-                        authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${storeName}`,
-                        isVerified: true,
-                        authorRole: 'ভেরিফাইড শপ',
-                        timestamp: 'Active Now',
-                        content: prod.description || `${prod.title} এখন আমাদের শপে স্টক আছে।`,
-                        imageUrl: prod.image,
-                        location: 'Dhaka',
-                        likes: prod.reviewCount || 0,
-                        comments: 10,
-                        product: {
-                          id: prod.id,
-                          title: prod.title,
-                          price: prod.price,
-                          imageUrl: prod.image
-                        }
-                      }}
+                      product={prod}
                     />
                   ))}
                 </div>
@@ -219,7 +255,7 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
                     <p className="text-[10px] text-[var(--pm-text-secondary)] mt-1 font-semibold">{cp.desc}</p>
                     <p className="text-[8px] text-[var(--pm-text-secondary)] mt-0.5 font-bold">মেয়াদ: {cp.expires} পর্যন্ত</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleClaimCoupon(cp.code)}
                     className="bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/20 active:scale-95 px-3 py-1.5 rounded-xl text-[9px] font-black tracking-wide border border-[var(--pm-accent)]/25 shrink-0"
                   >
@@ -234,23 +270,7 @@ export const B2CStoreProfile: React.FC<B2CStoreProfileProps> = ({
           {activeTab === 'feed' && (
             <div className="space-y-5 text-left">
               {storePosts.map(post => (
-                <UnifiedPostCard 
-                  key={post.id} 
-                  post={{
-                    id: String(post.id),
-                    type: 'status',
-                    domain: 'SOCIAL',
-                    authorName: storeName,
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${storeName}`,
-                    isVerified: true,
-                    authorRole: 'Official Store',
-                    timestamp: post.date,
-                    content: post.content,
-                    imageUrl: post.image,
-                    likes: post.likes,
-                    comments: post.comments
-                  }} 
-                />
+                <StorePost key={post.id} post={post} storeName={storeName} />
               ))}
             </div>
           )}

@@ -86,7 +86,7 @@ export default function ShortsViewer() {
   return (
     <div className="relative w-full h-[calc(100vh-4rem)] bg-black overflow-hidden flex items-center justify-center text-white">
       {/* Back button */}
-      <button 
+      <button
         onClick={() => navigate("/video")}
         className="absolute top-4 left-4 z-30 p-2.5 rounded-full bg-black/50 backdrop-blur-md text-white hover:bg-black/80 transition-colors"
       >
@@ -95,8 +95,8 @@ export default function ShortsViewer() {
 
       {/* Video Background / Poster */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={current.videoUrl} 
+        <img
+          src={current.videoUrl}
           alt={current.caption}
           className="w-full h-full object-cover filter brightness-90"
           referrerPolicy="no-referrer"
@@ -116,9 +116,9 @@ export default function ShortsViewer() {
           {/* Caption & Creator info */}
           <div className="space-y-3 flex-1">
             <div className="flex items-center gap-3">
-              <img 
-                src={current.creator.avatar} 
-                alt={current.creator.name} 
+              <img
+                src={current.creator.avatar}
+                alt={current.creator.name}
                 className="h-10 w-10 rounded-full object-cover border-2 border-[#FF7A00]"
                 referrerPolicy="no-referrer"
               />
@@ -143,9 +143,9 @@ export default function ShortsViewer() {
             {current.product && (
               <div className="p-3 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={current.product.image} 
-                    alt={current.product.name} 
+                  <img
+                    src={current.product.image}
+                    alt={current.product.name}
                     className="h-11 w-11 rounded-xl object-cover"
                     referrerPolicy="no-referrer"
                   />
@@ -166,7 +166,7 @@ export default function ShortsViewer() {
 
           {/* Right side interaction buttons */}
           <div className="flex flex-col items-center gap-4 pb-4">
-            <button 
+            <button
               onClick={() => setLiked({ ...liked, [current.id]: !liked[current.id] })}
               className="flex flex-col items-center gap-1 group"
             >
@@ -195,14 +195,14 @@ export default function ShortsViewer() {
 
             {/* Navigation buttons */}
             <div className="flex flex-col gap-2 mt-4">
-              <button 
+              <button
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
                 className="p-2.5 rounded-full bg-black/60 text-white disabled:opacity-30 hover:bg-black/90"
               >
                 <ChevronUp className="h-5 w-5" />
               </button>
-              <button 
+              <button
                 onClick={handleNext}
                 className="p-2.5 rounded-full bg-black/60 text-white hover:bg-black/90"
               >

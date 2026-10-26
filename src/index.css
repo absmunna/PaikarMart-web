@@ -1,0 +1,33 @@
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+@import "./themes/variables.css";
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--pm-bg);
+  color: var(--pm-text);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+}
+
+.glass {
+  background: var(--pm-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--pm-border);
+}
+
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom);
+}

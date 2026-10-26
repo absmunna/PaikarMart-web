@@ -16,13 +16,13 @@ export const adminGovernanceService = {
   init: () => {
     const store = useAdminGovernanceStore.getState();
     store.setLoading(true);
-    
+
     // Simulate initial sequence
     setTimeout(() => {
       store.setModerationQueue(MOCK_MODERATION);
       store.setRiskMetrics(MOCK_RISK);
       store.setLoading(false);
-      
+
       adminGovernanceService.logAction('system', 'GOVERNANCE_BOOT', 'Admin Dashboard Cluster', 'info');
     }, 500);
   },
@@ -33,7 +33,7 @@ export const adminGovernanceService = {
     window.addEventListener('VIOLATION_DETECTED', (e: any) => {
       const { type, reason, target } = e.detail;
       const store = useAdminGovernanceStore.getState();
-      
+
       const newLog: AuditLog = {
         id: Math.random().toString(36).substr(2, 9),
         timestamp: new Date().toISOString(),
@@ -42,9 +42,9 @@ export const adminGovernanceService = {
         target,
         severity: 'warning'
       };
-      
+
       store.addLog(newLog);
-      
+
       const newItem: ModerationItem = {
         id: `mod-${Date.now()}`,
         type,
@@ -54,7 +54,7 @@ export const adminGovernanceService = {
         status: 'pending',
         contentPreview: `Target: ${target}`
       };
-      
+
       store.setModerationQueue([newItem, ...store.moderationQueue]);
     });
 

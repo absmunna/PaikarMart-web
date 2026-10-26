@@ -24,7 +24,7 @@ export class PaymentGatewayBridge {
    */
   static async initiatePayment(request: PaymentRequest): Promise<PaymentResponse> {
     console.log(`[PaymentBridge] Initiating ${request.method} payment for ৳${request.amount}`);
-    
+
     try {
       const response = await apiClient.post(`/payment/initiate`, {
         providerName: request.method,
@@ -34,7 +34,7 @@ export class PaymentGatewayBridge {
 
       if (response.data && response.data.status === 'pending' || response.data.status === 'success') {
         const txId = response.data.transactionId;
-        
+
         if (response.data.redirectUrl) {
           toast.info("Redirecting to secure payment gateway...");
           // In a real app: window.location.href = response.data.redirectUrl;
@@ -51,22 +51,22 @@ export class PaymentGatewayBridge {
       return { success: false, error: response.data.error || 'Failed to initiate payment' };
     } catch (error: any) {
       console.error('[PaymentBridge] Error:', error);
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Payment service unavailable' 
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Payment service unavailable'
       };
     }
   }
 
   static async initiateWithdrawal(request: PaymentRequest): Promise<PaymentResponse> {
     console.log(`[PaymentBridge] Initiating withdrawal to ${request.method} for ৳${request.amount}`);
-    
+
     try {
       // Simulate backend call for withdrawal
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       const mockTxId = `WD-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-      
+
       return {
         success: true,
         transactionId: mockTxId

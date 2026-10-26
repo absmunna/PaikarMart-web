@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { ShieldAlert, AlertCircle, CheckCircle2, XCircle, MoreVertical, Flag, MessageSquare, Box, User, Gavel } from 'lucide-react';
+import { ShieldAlert, AlertCircle, CheckCircle2, XCircle, MoreVertical, Flag, MessageSquare, Box, User } from 'lucide-react';
 import { useAdminGovernanceStore, ModerationItem } from '@/modules/admin';
 import { adminGovernanceService } from '@/modules/admin';
 import { cn } from '@/lib/utils';
-import { 
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter 
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 export const ModerationQueuePanel: React.FC = () => {
-  const { moderationQueue, resolveModerationAction } = useAdminGovernanceStore();
+  const { moderationQueue } = useAdminGovernanceStore();
   const [selectedItem, setSelectedItem] = useState<ModerationItem | null>(null);
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | 'suspend' | null>(null);
 
@@ -18,18 +18,16 @@ export const ModerationQueuePanel: React.FC = () => {
     setConfirmAction(action);
   };
 
-  const executeAction = async () => {
+  const executeAction = () => {
     if (selectedItem && confirmAction) {
-      const act = confirmAction === 'approve' ? 'dismiss' : (confirmAction === 'suspend' ? 'suspend' : 'delete');
-      await resolveModerationAction(selectedItem.id, act);
-      setSelectedItem(null);
-      setConfirmAction(null);
+        adminGovernanceService.resolveModeration(selectedItem.id, confirmAction);
+        setSelectedItem(null);
+        setConfirmAction(null);
     }
   };
 
   const TYPE_ICONS: Record<ModerationItem['type'], any> = {
     post: MessageSquare,
-    bid: Gavel,
     product: Box,
     user: User,
     service: ShieldAlert
@@ -76,19 +74,19 @@ export const ModerationQueuePanel: React.FC = () => {
                        </div>
 
                        <div className="flex items-center gap-2 mt-2">
-                            <button 
+                            <button
                                 onClick={() => handleAction(item, 'approve')}
                                 className="flex-1 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer border border-cyan-500/20"
                             >
                                 Allow
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleAction(item, 'reject')}
                                 className="flex-1 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer border border-rose-500/20"
                             >
                                 Reject
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleAction(item, 'suspend')}
                                 className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-black text-zinc-400 text-[9px] font-black uppercase transition-all cursor-pointer border border-white/5"
                             >

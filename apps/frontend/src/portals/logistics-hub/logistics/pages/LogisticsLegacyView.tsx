@@ -1,7 +1,7 @@
-import { 
-  Truck, Package, Bike, Car, ShieldAlert, 
-  Clock, ArrowRight, Star, Navigation, 
-  Boxes, HardHat, PhoneCall 
+import {
+  Truck, Package, Bike, Car, ShieldAlert,
+  Clock, ArrowRight, Star, Navigation,
+  Boxes, HardHat, PhoneCall
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -50,7 +50,7 @@ export default function LogisticsLegacyView() {
           {/* Booking Form */}
           <div className="bg-white dark:bg-[#121522] rounded-[2.5rem] border border-gray-100 dark:border-white/10 p-8 shadow-xl shadow-black/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 blur-[80px] -mr-32 -mt-32" />
-            
+
             <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-3 italic">
               <Navigation className="h-6 w-6 text-amber-500" /> Book Your Ride or Delivery
             </h2>
@@ -60,10 +60,10 @@ export default function LogisticsLegacyView() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <div className="h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
                 </div>
-                <input 
-                  type="text" 
-                  placeholder="Pickup Location" 
-                  className="w-full pl-10 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl outline-none focus:border-amber-500 transition-all font-bold text-gray-900 dark:text-white placeholder:text-gray-400 placeholder:font-medium" 
+                <input
+                  type="text"
+                  placeholder="Pickup Location"
+                  className="w-full pl-10 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl outline-none focus:border-amber-500 transition-all font-bold text-gray-900 dark:text-white placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
 
@@ -79,10 +79,10 @@ export default function LogisticsLegacyView() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <div className="h-2 w-2 rounded-full bg-rose-500 ring-4 ring-rose-500/20" />
                 </div>
-                <input 
-                  type="text" 
-                  placeholder="Drop-off Location" 
-                  className="w-full pl-10 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl outline-none focus:border-amber-500 transition-all font-bold text-gray-900 dark:text-white placeholder:text-gray-400 placeholder:font-medium" 
+                <input
+                  type="text"
+                  placeholder="Drop-off Location"
+                  className="w-full pl-10 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl outline-none focus:border-amber-500 transition-all font-bold text-gray-900 dark:text-white placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
 
@@ -123,12 +123,12 @@ export default function LogisticsLegacyView() {
               <Package className="h-5 w-5 text-amber-500" /> Track Parcel
             </h3>
             <p className="text-zinc-400 text-xs font-medium mb-6 leading-relaxed">Enter your tracking ID to get real-time updates on your delivery.</p>
-            
+
             <div className="flex gap-2 p-1.5 bg-white/5 border border-white/10 rounded-2xl">
-              <input 
-                type="text" 
-                placeholder="PK-XXXX-XXXX" 
-                className="bg-transparent border-none px-4 py-2 w-full text-white outline-none font-bold placeholder:text-zinc-600 uppercase tracking-widest text-sm" 
+              <input
+                type="text"
+                placeholder="PK-XXXX-XXXX"
+                className="bg-transparent border-none px-4 py-2 w-full text-white outline-none font-bold placeholder:text-zinc-600 uppercase tracking-widest text-sm"
               />
               <button className="bg-amber-500 text-white font-black px-6 py-2 rounded-xl text-xs uppercase tracking-widest hover:bg-amber-600 transition-colors">
                 Track
@@ -173,7 +173,7 @@ export default function LogisticsLegacyView() {
         <h2 className="text-2xl font-black text-gray-900 dark:text-white italic tracking-tight px-2 flex items-center gap-3">
           <Clock className="h-6 w-6 text-indigo-500" /> Recent Activity
         </h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2].map((i) => (
             <div key={i} className="bg-white dark:bg-[#121522] rounded-[2rem] border border-gray-100 dark:border-white/10 p-6 shadow-sm hover:border-amber-500/30 transition-all">

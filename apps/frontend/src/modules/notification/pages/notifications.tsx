@@ -3,22 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { formatDistanceToNow } from "date-fns";
 // Removed useListNotifications from @/modules/app
-import { 
-  Bell, 
-  ShoppingBag, 
-  Cpu, 
-  ArrowLeft, 
-  Check, 
-  Trash2, 
-  ShieldAlert, 
-  Tag, 
+import {
+  Bell,
+  ShoppingBag,
+  Cpu,
+  ArrowLeft,
+  Check,
+  Trash2,
+  ShieldAlert,
+  Tag,
   ChevronRight,
   MessageCircle,
-  BellOff,
-  Settings
+  BellOff
 } from "lucide-react";
 import { toast } from "sonner";
-import { safeBack } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 interface NotificationItem {
@@ -102,7 +100,7 @@ const formatNotificationTime = (timestamp: string) => {
 
 export default function Notifications() {
   const navigate = useNavigate();
-  
+
   // Real Backend Data Fetching (Disabled for now)
   const dbNotifications: any[] = [];
   const isDbLoading = false;
@@ -117,7 +115,7 @@ export default function Notifications() {
   const parsedDbNotifications: NotificationItem[] = (dbNotifications || []).map((n: any) => ({
     id: n.id || String(Math.random()),
     type: (n.type === "review" || n.type === "message" || n.type === "delivery" || n.type === "system")
-      ? (n.type === "message" ? "chat" : "order") 
+      ? (n.type === "message" ? "chat" : "order")
       : (n.type || "order"),
     title: n.title || "নতুন নোটিফিকেশন",
     description: n.body || n.message || "",
@@ -213,18 +211,17 @@ export default function Notifications() {
     <div id="notifications-page-container" className="bg-[var(--pm-bg)] min-h-screen pb-32 pt-4">
       {/* 1. Header Card */}
       <div className="max-w-[480px] mx-auto px-4 mb-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 12 }} 
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative overflow-hidden pb-4 pt-5 px-4 rounded-none border-b border-[var(--pm-border)] bg-[var(--pm-bg)] border-b border-[var(--pm-border)] shadow-sm"
         >
           <div className="relative z-10 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button 
+              <button
                 id="btn-back-to-home"
-                onClick={() => safeBack(navigate, '/')} 
+                onClick={() => navigate(-1)}
                 className="p-2 -ml-2 rounded-full hover:bg-white/[0.06] active:scale-95 transition-all text-white/80 cursor-pointer"
-                title="ফিরে যান"
               >
                 <ArrowLeft className="w-5 h-5" strokeWidth={2} />
               </button>
@@ -241,45 +238,35 @@ export default function Notifications() {
               </div>
             </div>
 
+            {combinedNotifications.length > 0 && (
               <div className="flex items-center gap-1">
-                {combinedNotifications.length > 0 && (
-                  <>
-                    <button
-                      id="btn-mark-all-read"
-                      onClick={handleMarkAllRead}
-                      title="সব পড়ুন"
-                      className="px-2.5 py-1.5 rounded-lg text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 hover:bg-[var(--pm-accent)]/20 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      সব পড়ুন
-                    </button>
-                    <button
-                      id="btn-clear-all"
-                      onClick={handleClearAll}
-                      title="সব মুছুন"
-                      className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/[0.06] transition-all cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
                 <button
-                  id="btn-notification-settings"
-                  onClick={() => navigate('/settings/notifications')}
-                  title="নোটিফিকেশন সেটিংস (Push, Email, In-App)"
-                  className="p-1.5 rounded-lg text-white/60 hover:text-[var(--pm-accent)] hover:bg-white/[0.06] transition-all cursor-pointer flex items-center justify-center"
+                  id="btn-mark-all-read"
+                  onClick={handleMarkAllRead}
+                  title="সব পড়ুন"
+                  className="px-2.5 py-1.5 rounded-lg text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 hover:bg-[var(--pm-accent)]/20 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black"
                 >
-                  <Settings className="w-4 h-4" />
+                  <Check className="w-3.5 h-3.5" />
+                  সব পড়ুন
+                </button>
+                <button
+                  id="btn-clear-all"
+                  onClick={handleClearAll}
+                  title="সব মুছুন"
+                  className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/[0.06] transition-all cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
+            )}
           </div>
         </motion.div>
       </div>
 
       <div className="max-w-[480px] mx-auto px-4">
         {/* 2. Categorization Tabs Bar */}
-        <div 
-          id="notifications-category-tabs" 
+        <div
+          id="notifications-category-tabs"
           className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none"
         >
           {[
@@ -296,8 +283,8 @@ export default function Notifications() {
                 id={`tab-btn-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`py-1.5 px-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer border ${
-                  isActive 
-                    ? "bg-[var(--pm-accent)]/15 border-[var(--pm-accent)]/40 text-[var(--pm-accent)]" 
+                  isActive
+                    ? "bg-[var(--pm-accent)]/15 border-[var(--pm-accent)]/40 text-[var(--pm-accent)]"
                     : "bg-white/[0.02] text-white/60 border-white/[0.05] hover:bg-white/[0.04]"
                 }`}
               >
@@ -333,9 +320,9 @@ export default function Notifications() {
                   >
                     {/* Unread Indicator Glow Dot */}
                     {!item.isRead && (
-                      <span 
+                      <span
                         id={`unread-dot-${item.id}`}
-                        className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-[var(--pm-accent)]" 
+                        className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-[var(--pm-accent)]"
                       />
                     )}
 

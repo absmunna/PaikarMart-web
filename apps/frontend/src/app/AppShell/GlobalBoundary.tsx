@@ -41,26 +41,26 @@ export class GlobalBoundary extends Component<Props, State> {
             <div className="w-20 h-20 bg-rose-500/10 rounded-3xl flex items-center justify-center text-rose-500 mx-auto mb-8 animate-pulse">
               <AlertTriangle className="w-10 h-10" />
             </div>
-            
+
             <h1 className="text-2xl font-black text-white uppercase tracking-tighter italic mb-4">
               System Anomaly Detected
             </h1>
-            
+
             <p className="text-sm text-zinc-500 font-bold uppercase tracking-tight leading-relaxed mb-10">
-              The application encountered a critical integration failure. 
+              The application encountered a critical integration failure.
               Real-time synchronization has been suspended to prevent data corruption.
             </p>
 
             <div className="flex flex-col gap-4">
-              <button 
+              <button
                 onClick={this.handleRetry}
                 className="w-full h-14 bg-[var(--pm-accent)] rounded-2xl flex items-center justify-center gap-3 text-black font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[var(--pm-accent)]/20"
               >
                 <RefreshCw className="w-5 h-5" />
                 Initialize Recovery
               </button>
-              
-              <button 
+
+              <button
                 onClick={this.handleGoHome}
                 className="w-full h-14 bg-white/5 rounded-2xl flex items-center justify-center gap-3 text-zinc-500 font-black uppercase tracking-widest hover:text-white hover:bg-white/10 transition-all border border-white/5"
               >

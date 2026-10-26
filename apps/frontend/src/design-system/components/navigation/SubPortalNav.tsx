@@ -1,6 +1,6 @@
 import React from 'react';
-import { 
-  ShoppingBag, Sparkles, Factory, Award, MapPin, 
+import {
+  ShoppingBag, Sparkles, Factory, Award, MapPin,
   Activity, Store, Wrench, Laptop, Layers
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -33,9 +33,9 @@ export const SubPortalNav: React.FC = () => {
       <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar py-3 px-4">
         {SUB_PORTALS.map((portal) => {
           // Check if path matches exactly or is a subroute
-          const isSelected = location.pathname === portal.path || 
+          const isSelected = location.pathname === portal.path ||
                              (portal.path !== '/marketplace' && location.pathname.startsWith(portal.path));
-          
+
           const Icon = portal.icon;
           return (
             <button
@@ -44,8 +44,8 @@ export const SubPortalNav: React.FC = () => {
               className={`flex flex-col items-center gap-1.5 p-1 rounded-2xl shrink-0 transition-all active:scale-95 outline-none cursor-pointer group`}
             >
               <div className={`w-12 h-12 rounded-[18px] flex items-center justify-center transition-all duration-300 relative overflow-hidden ${
-                isSelected 
-                  ? 'bg-gradient-to-br ' + portal.gradient + ' shadow-lg shadow-orange-500/20' 
+                isSelected
+                  ? 'bg-gradient-to-br ' + portal.gradient + ' shadow-lg shadow-orange-500/20'
                   : 'bg-[var(--pm-surface)] border border-[var(--pm-border)] group-hover:border-white/20'
               }`}>
                 {/* Glow effect for selected */}

@@ -26,9 +26,9 @@ export const AccountInfoStep: React.FC<AccountInfoStepProps> = ({
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-200">
       <div className="flex items-center justify-between">
         <div>
-          <button 
+          <button
             type="button"
-            onClick={onBack} 
+            onClick={onBack}
             className="flex items-center text-xs font-bold text-zinc-400 hover:text-white mb-2 cursor-pointer transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-1" /> ভূমিকা পরিবর্তন করুন (Change Role)
@@ -45,10 +45,10 @@ export const AccountInfoStep: React.FC<AccountInfoStepProps> = ({
       <div className="space-y-4">
         <div className="space-y-1.5">
           <Label className="text-xs font-bold text-zinc-300">পূর্ণ নাম / Full Name *</Label>
-          <Input 
-            value={form.fullName} 
-            onChange={(e) => onInput("fullName", e.target.value)} 
-            placeholder="আপনার নাম লিখুন (e.g. মোহাম্মাদ রহিম)" 
+          <Input
+            value={form.fullName}
+            onChange={(e) => onInput("fullName", e.target.value)}
+            placeholder="আপনার নাম লিখুন (e.g. মোহাম্মাদ রহিম)"
             className="bg-zinc-950 border-white/10 rounded-xl min-h-[44px]"
           />
         </div>
@@ -56,10 +56,10 @@ export const AccountInfoStep: React.FC<AccountInfoStepProps> = ({
         <div className="space-y-1.5">
           <Label className="text-xs font-bold text-zinc-300">মোবাইল নম্বর / Mobile Number *</Label>
           <div className="relative">
-            <Input 
-              value={form.phone} 
-              onChange={(e) => onInput("phone", e.target.value)} 
-              placeholder="017XXXXXXXX" 
+            <Input
+              value={form.phone}
+              onChange={(e) => onInput("phone", e.target.value)}
+              placeholder="017XXXXXXXX"
               maxLength={11}
               className="bg-zinc-950 border-white/10 rounded-xl min-h-[44px] pl-3 text-sm font-mono tracking-wide"
             />
@@ -72,10 +72,10 @@ export const AccountInfoStep: React.FC<AccountInfoStepProps> = ({
 
         <div className="space-y-1.5">
           <Label className="text-xs font-bold text-zinc-300">ইমেইল ঠিকানা (ঐচ্ছিক) / Email Address</Label>
-          <Input 
-            value={form.email} 
-            onChange={(e) => onInput("email", e.target.value)} 
-            placeholder="name@business.com" 
+          <Input
+            value={form.email}
+            onChange={(e) => onInput("email", e.target.value)}
+            placeholder="name@business.com"
             className="bg-zinc-950 border-white/10 rounded-xl min-h-[44px]"
           />
         </div>
@@ -83,14 +83,14 @@ export const AccountInfoStep: React.FC<AccountInfoStepProps> = ({
         <div className="space-y-1.5">
           <Label className="text-xs font-bold text-zinc-300">পাসওয়ার্ড / Password *</Label>
           <div className="relative">
-            <Input 
+            <Input
               type={showPassword ? "text" : "password"}
-              value={form.password} 
-              onChange={(e) => onInput("password", e.target.value)} 
-              placeholder="কমপক্ষে ৮ অক্ষরের পাসওয়ার্ড" 
+              value={form.password}
+              onChange={(e) => onInput("password", e.target.value)}
+              placeholder="কমপক্ষে ৮ অক্ষরের পাসওয়ার্ড"
               className="bg-zinc-950 border-white/10 rounded-xl min-h-[44px] pr-10"
             />
-            <button 
+            <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white cursor-pointer p-1"
@@ -101,8 +101,8 @@ export const AccountInfoStep: React.FC<AccountInfoStepProps> = ({
         </div>
       </div>
 
-      <Button 
-        onClick={onNext} 
+      <Button
+        onClick={onNext}
         className="w-full bg-orange-500 hover:bg-orange-400 text-black font-black text-xs uppercase tracking-widest min-h-[48px] rounded-2xl cursor-pointer shadow-lg shadow-orange-500/20"
       >
         পরবর্তী ধাপ (Continue) <ArrowRight className="w-4 h-4 ml-2" />

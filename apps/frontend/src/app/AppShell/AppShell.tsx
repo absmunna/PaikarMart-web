@@ -13,7 +13,6 @@ import { GlobalRouter } from "./GlobalRouter";
 import { EventSyncProvider } from "./EventSyncProvider";
 import { RoleBasedShell } from "./RoleBasedShell";
 import { Footer } from "./Footer";
-import { DynamicCategoryBar } from "@/design-system/components/navigation/DynamicCategoryBar";
 
 export const AppShell: React.FC = () => {
   const { pathname } = useLocation();
@@ -43,9 +42,6 @@ export const AppShell: React.FC = () => {
       {/* Global Header */}
       {!isReels && <AppHeader />}
 
-      {/* Dynamic Sticky Category Bar (Main + Sub Categories) */}
-      {!isReels && <DynamicCategoryBar />}
-
       {/* Main Container */}
       <div className="flex flex-1 w-full max-w-[1600px] mx-auto relative group/main">
         <main className={cn(
@@ -55,7 +51,7 @@ export const AppShell: React.FC = () => {
           <div className="flex-1 w-full h-full relative p-4 md:p-6 lg:p-8">
             <GlobalRouter />
           </div>
-          
+
           {!isReels && <Footer />}
         </main>
       </div>

@@ -8,11 +8,11 @@ interface GlassCardProps extends HTMLMotionProps<"div"> {
   hoverEffect?: boolean;
 }
 
-export const GlassCard: React.FC<GlassCardProps> = ({ 
-  children, 
-  className, 
+export const GlassCard: React.FC<GlassCardProps> = ({
+  children,
+  className,
   hoverEffect = false,
-  ...props 
+  ...props
 }) => {
   return (
     <motion.div

@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  ShoppingBag, Search, Sparkles, Filter, ChevronRight, 
-  Building2, ShieldCheck, Truck, Factory, Globe, 
-  Boxes, Package, ArrowUpRight, CheckCircle2, 
-  MapPin, Star, Tag, Layers, SlidersHorizontal, 
-  ChevronDown, Send, PlusCircle, Check, Store, Activity, 
+import {
+  ShoppingBag, Search, Sparkles, Filter, ChevronRight,
+  Building2, ShieldCheck, Truck, Factory, Globe,
+  Boxes, Package, ArrowUpRight, CheckCircle2,
+  MapPin, Star, Tag, Layers, SlidersHorizontal,
+  ChevronDown, Send, PlusCircle, Check, Store, Activity,
   Wrench, Laptop, Cpu, Coins, Award, Heart, HelpCircle, FileText, RefreshCw, Eye
 } from 'lucide-react';
+import { StoryBar } from '@/shared/StoryBar';
+import { PortalIconBar } from '@/shared/PortalIconBar';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { MARKETPLACE_CATEGORIES } from './config/marketplaceCategories.config';
 import { MARKETPLACE_PORTALS } from './config/marketplacePortals.config';
@@ -17,7 +19,7 @@ import { mockProducts } from '@/core/lib/workspace-stub';
 import { useCartStore } from '@/modules/cart';
 import { toast } from 'sonner';
 import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
-import { UnifiedPostCard } from '@/design-system/components/feed/UnifiedPostCard';
+import { ProductCard } from '@/design-system/components/ui/ProductCard';
 import { ProductGridSkeleton } from '@/app/AppShell/GlobalSkeletonSystem';
 
 export default function MarketplaceHubPortal() {
@@ -26,13 +28,13 @@ export default function MarketplaceHubPortal() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRfqOpen, setIsRfqOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  
+
   // Custom RFQ / Prescriptions state
   const [rfqTitle, setRfqTitle] = useState('');
   const [rfqQty, setRfqQty] = useState('');
   const [rfqPhone, setRfqPhone] = useState('');
   const [uploadedPrescription, setUploadedPrescription] = useState<string | null>(null);
-  
+
   // Cart connection
   const addItem = useCartStore((state) => state.addItem);
 
@@ -78,7 +80,7 @@ export default function MarketplaceHubPortal() {
   // Filter Products Dynamically based on activePortal and query
   const filteredProducts = useMemo(() => {
     let sourceList = activePortal === 'all' ? allProductsShuffled : mockProducts;
-    
+
     // 1. Portal filtering
     if (activePortal === 'wholesale') {
       sourceList = sourceList.filter(p => p.type === 'wholesale' || p.portal === 'wholesale' || (p.moq && p.moq > 1));
@@ -106,7 +108,7 @@ export default function MarketplaceHubPortal() {
 
     // 2. Search filtering
     if (searchQuery) {
-      sourceList = sourceList.filter(p => 
+      sourceList = sourceList.filter(p =>
         (p.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (p.seller || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (p.category || '').toLowerCase().includes(searchQuery.toLowerCase())
@@ -117,8 +119,8 @@ export default function MarketplaceHubPortal() {
     if (selectedCategory !== 'all') {
       const matchCat = MARKETPLACE_CATEGORIES.find(c => c.id === selectedCategory);
       if (matchCat) {
-        sourceList = sourceList.filter(p => 
-          p.category?.toLowerCase() === matchCat.nameBn.toLowerCase() || 
+        sourceList = sourceList.filter(p =>
+          p.category?.toLowerCase() === matchCat.nameBn.toLowerCase() ||
           p.category?.toLowerCase() === matchCat.id.toLowerCase() ||
           p.portal?.toLowerCase() === matchCat.id.toLowerCase()
         );
@@ -131,29 +133,35 @@ export default function MarketplaceHubPortal() {
   return (
     <div className="w-full pb-20 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
 
+      {/* Home Header branding & Profile */}
+      <HomeHeader />
+
+      {/* Horizontal Sub-Portal / Portal Category Selector Bar */}
+      <SubPortalNav />
+
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8 pt-4">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
 
         {/* Dynamic Interactive Banner based on Active Sub-Portal */}
         <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#0c0e1a] via-[#121626] to-[#0a0c14] p-6 sm:p-8 shadow-2xl">
           <div className="absolute right-0 bottom-0 w-80 h-80 bg-gradient-to-tr from-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-          
+
           <div className="max-w-2xl relative z-10 space-y-4">
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-cyan-400/80">
               <Sparkles className="w-3 h-3 animate-pulse" />
               <span>PaikarMart Universal Hub Discovery</span>
             </div>
-            
+
             {activePortal === 'all' && (
               <>
                 <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
                   সব পোর্টালের পণ্য এক ছাদের নিচে, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">র‍্যান্ডম মিক্সড লাইভ ফিড</span>
                 </h2>
                 <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
-                  পাইকারি লট, খুচরা প্রডাক্ট, প্রিমিয়াম ব্রান্ড, অর্গানিক গ্রোসারি এবং ভেরিফাইড ফার্মেসী মেডিসিনসহ সব ক্যাটাগরির লাইভ ফিড একসাথে স্ক্রোল করুন। 
+                  পাইকারি লট, খুচরা প্রডাক্ট, প্রিমিয়াম ব্রান্ড, অর্গানিক গ্রোসারি এবং ভেরিফাইড ফার্মেসী মেডিসিনসহ সব ক্যাটাগরির লাইভ ফিড একসাথে স্ক্রোল করুন।
                 </p>
                 <div className="flex gap-2">
-                  <button 
+                  <button
                     onClick={shuffleAndSetProducts}
                     className="px-4 py-2 bg-white/10 border border-white/15 hover:bg-white/15 text-white text-xs font-black rounded-xl flex items-center gap-1.5 cursor-pointer"
                   >
@@ -172,7 +180,7 @@ export default function MarketplaceHubPortal() {
                   গার্মেন্টস এক্সপোর্ট কোয়ালিটি লট, গ্যাজেট ইমপোর্ট ব্যাচ এবং এগ্রো বড় আড়তের পণ্য সরাসরি প্রস্তুতকারকদের কাছ থেকে সংগ্রহ করুন। নিরাপদ এসক্রো সিকিউরড পেমেন্ট গ্যারান্টি।
                 </p>
                 <div className="flex gap-2">
-                  <button 
+                  <button
                     onClick={() => setIsRfqOpen(true)}
                     className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-xs font-black rounded-xl flex items-center gap-1.5 cursor-pointer shadow-lg shadow-indigo-600/35"
                   >
@@ -191,8 +199,8 @@ export default function MarketplaceHubPortal() {
                   কোনো ন্যূনতম লিমিট ছাড়াই একক পিস কেনাকাটায় দ্রুততম ক্যাশ অন ডেলিভারি। বিকাশ, নগদ ও কার্ড পেমেন্টে ১০% পর্যন্ত ইনস্ট্যান্ট ক্যাশব্যাক অফার চলমান।
                 </p>
                 <div className="flex gap-2">
-                  <Link 
-                    to="/b2c/*" 
+                  <Link
+                    to="/b2c/*"
                     className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-xl flex items-center gap-1 cursor-pointer"
                   >
                     সবচেয়ে বেশি বিক্রিত পণ্যসমূহ <ChevronRight className="w-4 h-4" />
@@ -255,10 +263,10 @@ export default function MarketplaceHubPortal() {
                   <label className="px-4 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-xs font-black rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-teal-600/35">
                     <PlusCircle className="w-4 h-4" />
                     <span>প্রেসক্রিপশন আপলোড করুন (Upload Prescription)</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
                       onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
                           setUploadedPrescription(e.target.files[0].name);
@@ -374,7 +382,7 @@ export default function MarketplaceHubPortal() {
               </p>
             </div>
             {activePortal === 'all' && (
-              <button 
+              <button
                 onClick={shuffleAndSetProducts}
                 className="text-[10px] font-black text-zinc-400 hover:text-white flex items-center gap-1 border border-white/5 px-3 py-1.5 rounded-xl bg-white/5 transition-colors"
               >
@@ -394,37 +402,11 @@ export default function MarketplaceHubPortal() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {filteredProducts.map((product) => (
-                <UnifiedPostCard 
+                <ProductCard
                   key={product.id}
-                  post={{
-                    id: product.id,
-                    type: product.type === 'service' ? 'service' : 'product',
-                    domain: (product.portal === 'wholesale' || (product.moq && product.moq > 1)) ? 'WHOLESALE' : 'RETAIL',
-                    authorName: product.seller || 'Verified Seller',
-                    authorAvatar: `https://api.dicebear.com/7.x/initials/svg?seed=${product.seller || 'seller'}`,
-                    isVerified: true,
-                    authorRole: product.type === 'service' ? 'সার্ভিস প্রোভাইডার' : 'ভেরিফাইড সেলার',
-                    timestamp: 'Active',
-                    content: product.description || `নতুন ${product.name || product.title} এখন আমাদের স্টোরে। সেরা মূল্যে সংগ্রহ করুন।`,
-                    imageUrl: product.image,
-                    location: product.location || 'Dhaka',
-                    likes: product.rating ? Math.floor(product.rating * 20) : 0,
-                    comments: 12,
-                    product: {
-                      id: product.id,
-                      title: product.name || product.title,
-                      price: product.price,
-                      imageUrl: product.image,
-                      moq: product.moq
-                    },
-                    metadata: {
-                      isPkExclusive: ['1', '5', '10'].includes(product.id),
-                      isOfficialBrand: ['Aarong', 'Bata', 'Apple', 'Samsung', 'Walton', 'Vision'].includes(product.seller || ''),
-                      distance: '৪৫০ মি',
-                      deliveryTime: '১৫ মিনিট',
-                      discountTag: product.discount ? `${product.discount}% ছাড়` : undefined
-                    }
-                  }}
+                  product={product}
+                  onQuickAdd={handleQuickAdd}
+                  activePortal={activePortal}
                 />
               ))}
             </div>
@@ -436,7 +418,7 @@ export default function MarketplaceHubPortal() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="space-y-2 text-left">
               <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">
-                <Building2 className="w-3.5 h-3.5" /> 
+                <Building2 className="w-3.5 h-3.5" />
                 <span>Seller Network</span>
               </div>
               <h3 className="text-xl md:text-2xl font-black text-white leading-tight">

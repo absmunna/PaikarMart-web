@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { 
+import {
   Search, ChevronRight, Sparkles, Wallet, ShoppingBag, Heart,
   HelpCircle, Star, X, User
 } from 'lucide-react';
 import { useAuth } from '@/modules/auth';
 import { useWalletStore } from '@/modules/wallet';
+import { StoryBar } from '@shared/StoryBar';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
 import { HUB_REGISTRY, PORTAL_REGISTRY, ICON_COMPONENTS_MAP } from '@/config/portals.config';
 import { useLanguage } from '@/modules/language';
@@ -24,9 +25,9 @@ export default function PortalsPage() {
   const filteredHubs = useMemo(() => {
     if (!searchQuery.trim()) return HUB_REGISTRY;
     return HUB_REGISTRY.map(hub => {
-      const filteredPortals = PORTAL_REGISTRY.filter(p => 
-        p.hubId === hub.id && 
-        (p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const filteredPortals = PORTAL_REGISTRY.filter(p =>
+        p.hubId === hub.id &&
+        (p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
          p.nameBn.includes(searchQuery))
       );
       if (filteredPortals.length > 0) return { ...hub, filteredPortals };
@@ -41,7 +42,7 @@ export default function PortalsPage() {
         <div className="max-w-[1280px] mx-auto px-4 h-20 flex items-center gap-4">
           <div className="flex-1 relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 group-focus-within:text-[var(--pm-accent)] transition-colors" />
-            <input 
+            <input
               type="text"
               placeholder={isBn ? "সুপার অ্যাপস খুঁজুন..." : "Search Super Apps..."}
               value={searchQuery}
@@ -49,7 +50,7 @@ export default function PortalsPage() {
               className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 text-sm font-black uppercase tracking-wider focus:outline-none focus:border-[var(--pm-accent)]/50 transition-all placeholder:text-zinc-600"
             />
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery("")}
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10"
               >
@@ -66,14 +67,17 @@ export default function PortalsPage() {
       </div>
 
       <div className="sticky top-20 z-40 bg-[var(--pm-surface)]/80 backdrop-blur-md">
-        <section className="px-2 pb-2 pt-2">
+        <section className="px-2 pt-2">
+          <StoryBar context="social-feed" />
+        </section>
+        <section className="px-2 pb-2">
           <CategoryNavBar context="social-feed" />
         </section>
       </div>
 
       <main className="mx-auto w-full max-w-[1280px] px-4 md:px-6 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          
+
           <div className="lg:col-span-8 space-y-12">
             <AnimatePresence mode="popLayout">
               {filteredHubs.length > 0 ? (
@@ -82,8 +86,8 @@ export default function PortalsPage() {
                   const HubIcon = ICON_COMPONENTS_MAP[hub.iconName] || Star;
 
                   return (
-                    <motion.section 
-                      key={hub.id} 
+                    <motion.section
+                      key={hub.id}
                       className="space-y-6"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -104,7 +108,7 @@ export default function PortalsPage() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-y-8 gap-x-4">
                         {hubPortals.map((tile: any) => {
                           const IconComponent = ICON_COMPONENTS_MAP[tile.iconName] || Star;
@@ -124,7 +128,7 @@ export default function PortalsPage() {
                                   strokeWidth={2}
                                 />
                                 <div className={`absolute inset-0 bg-gradient-to-br ${tile.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                                
+
                                 {tile.status === 'upcoming' && (
                                   <span className="absolute top-1 right-1 bg-amber-500 text-black text-[7px] font-black px-1.5 rounded-full uppercase py-0.5">
                                     New
@@ -163,7 +167,7 @@ export default function PortalsPage() {
           {/* ── RIGHT COLUMN / SIDEBAR ── */}
           <div className="lg:col-span-4 space-y-6">
             {/* SUPER WALLET */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="relative p-7 rounded-[32px] bg-white/[0.015] border border-white/10 shadow-2xl overflow-hidden group"
@@ -199,7 +203,7 @@ export default function PortalsPage() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => navigate('/wallet')}
                   className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-400 text-black text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-500/20"
                 >

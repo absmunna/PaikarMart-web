@@ -25,7 +25,7 @@ export class IntelligenceService {
       by: ['name'],
       _sum: { value: true }
     });
-    
+
     return {
       totalEvents,
       eventDistribution

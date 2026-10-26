@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Package, Truck, Clock, CheckCircle2, MapPin, 
-  Phone, ChevronRight, Download, ShieldCheck, ArrowLeft, AlertCircle 
+import {
+  Package, Truck, Clock, CheckCircle2, MapPin,
+  Phone, ChevronRight, Download, ShieldCheck, ArrowLeft, AlertCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useOrderTrackingStore, TrackingOrder as Order } from '@/modules/orders';
 import { useLiveChatStore } from '@/components/chat/LiveChatDrawer';
-import { safeBack } from '@/lib/navigation';
 
 const MOCK_DEFAULT_ORDERS: Order[] = [
   {
@@ -99,19 +98,10 @@ export const OrdersPage: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 pb-24 w-full mx-auto px-4 max-w-4xl">
       {/* Header */}
-      <div className="flex items-center justify-between mt-4 pb-2 border-b border-[var(--pm-border)]">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => safeBack(navigate, '/')}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 text-[var(--pm-text)] shadow-xs cursor-pointer"
-            title="ফিরে যান"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-black text-[var(--pm-text)] tracking-tight">আমার অর্ডারসমূহ</h1>
-            <p className="text-xs text-[var(--pm-text-muted)]">লাইভ ট্র্যাকিং, ডেলিভারি স্ট্যাটাস ও ইনভয়েস</p>
-          </div>
+      <div className="flex items-center justify-between mt-4">
+        <div>
+          <h1 className="text-2xl font-black text-[var(--pm-text)] tracking-tight">আমার অর্ডারসমূহ</h1>
+          <p className="text-xs text-[var(--pm-text-muted)]">লাইভ ট্র্যাকিং, ডেলিভারি স্ট্যাটাস ও ইনভয়েস</p>
         </div>
         <button
           onClick={() => openChat('Paikar Mart লজিস্টিক সাপোর্ট')}
@@ -196,7 +186,7 @@ export const OrdersPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button 
+                  <button
                     onClick={() => alert(`ইনভয়েস #${selectedOrder.orderNo} ডাউনলোডের জন্য প্রস্তুত করা হচ্ছে...`)}
                     className="px-3.5 py-2 bg-[var(--pm-bg)] border border-[var(--pm-border)] text-[var(--pm-text)] hover:text-[var(--pm-accent)] rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                   >

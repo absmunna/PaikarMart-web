@@ -1,19 +1,19 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { 
-  LayoutGrid, AlertCircle, Image, Store, Package, Wrench, 
-  FileText, Gavel, PlaySquare, Info 
+import {
+  LayoutGrid, AlertCircle, Image, Store, Package, Wrench,
+  FileText, Gavel, PlaySquare, Info
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type ProfileTabKey = 
-  | 'posts' 
+export type ProfileTabKey =
+  | 'posts'
   | 'products'
   | 'services'
   | 'demands'
   | 'bids'
   | 'content'
-  | 'about' 
+  | 'about'
   | 'photos';
 
 interface TabDef {

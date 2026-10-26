@@ -70,8 +70,8 @@ export function LogisticsVehicleSelection({ category, onSelect, selectedId, isBi
               whileTap={{ scale: 0.98 }}
               onClick={() => onSelect(vehicle)}
               className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
-                isActive 
-                  ? 'bg-white/10 border-white/20' 
+                isActive
+                  ? 'bg-white/10 border-white/20'
                   : 'bg-white/[0.02] border-white/5 hover:bg-white/5'
               }`}
             >

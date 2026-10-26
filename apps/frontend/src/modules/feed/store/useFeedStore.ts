@@ -25,9 +25,9 @@ const mapNewsToFeedItem = (news: any): UnifiedFeedItem => {
       description: news.summaryBn,
       media: news.imageUrl ? [news.imageUrl] : [],
       location: news.source,
-      timestamp: news.publishedAt.includes('Today') 
-        ? new Date().toISOString() 
-        : news.publishedAt.includes('Yesterday') 
+      timestamp: news.publishedAt.includes('Today')
+        ? new Date().toISOString()
+        : news.publishedAt.includes('Yesterday')
           ? new Date(Date.now() - 86400000).toISOString()
           : news.publishedAt.includes('3 days ago')
             ? new Date(Date.now() - 3 * 86400000).toISOString()
@@ -87,9 +87,9 @@ export const useSocialStore = create<SocialState & SocialActions>((set, get) => 
     try {
       // In a real app, this would fetch from /api/v1/feed?filter=...
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       const { activeFilter, selectedSector, customItems } = get();
-      
+
       const mockItems: UnifiedFeedItem[] = [
         {
           id: 'p1',
@@ -195,20 +195,20 @@ export const useSocialStore = create<SocialState & SocialActions>((set, get) => 
 
   toggleLike: (postId) => {
     set((state) => ({
-      items: state.items.map(item => 
-        item.id === postId 
-          ? { 
-              ...item, 
+      items: state.items.map(item =>
+        item.id === postId
+          ? {
+              ...item,
               interactions: { ...item.interactions, hasLiked: !item.interactions.hasLiked },
               stats: { ...item.stats, likes: item.interactions.hasLiked ? item.stats.likes - 1 : item.stats.likes + 1 }
-            } 
+            }
           : item
       )
     }));
   },
 
-  addItem: (item) => set((state) => ({ 
+  addItem: (item) => set((state) => ({
     customItems: [item, ...state.customItems],
-    items: [item, ...state.items] 
+    items: [item, ...state.items]
   }))
 }));

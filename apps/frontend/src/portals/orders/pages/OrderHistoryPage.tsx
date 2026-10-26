@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
-import { 
-  ChevronLeft, 
-  Package, 
-  Clock, 
+import {
+  ChevronLeft,
+  Package,
+  Clock,
   CheckCircle2,
   Truck,
   AlertCircle,
@@ -13,7 +13,6 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/modules/language";
 import { useOrderTrackingStore } from "@/modules/orders";
-import { safeBack } from "@/lib/navigation";
 
 const formatSafeTime = (dateStr: string) => {
   if (!dateStr) return "";
@@ -86,9 +85,9 @@ export default function OrderHistoryPage() {
   const navigate = useNavigate();
 
   const filters = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-  
+
   // Combine store orders and API orders
-  const allOrders = [...storeOrders, ...orders.filter(o => !storeOrders.find(so => so.id === o.id))].sort((a, b) => 
+  const allOrders = [...storeOrders, ...orders.filter(o => !storeOrders.find(so => so.id === o.id))].sort((a, b) =>
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
@@ -115,11 +114,7 @@ export default function OrderHistoryPage() {
   return (
     <div className="min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] pb-28 max-w-[480px] mx-auto">
       <header className="sticky top-0 z-50 bg-[var(--pm-bg)]/80 backdrop-blur-md border-b border-white/5 p-4 flex items-center gap-4">
-        <button 
-          onClick={() => safeBack(navigate, '/orders')} 
-          className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white cursor-pointer active:scale-95 transition-all"
-          title="ফিরে যান"
-        >
+        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white">
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div>
@@ -131,9 +126,9 @@ export default function OrderHistoryPage() {
       <main className="p-4 space-y-4">
         <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
           {filters.map(f => (
-            <button 
-              key={f} 
-              onClick={() => setFilter(f)} 
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${filter === f ? 'bg-[var(--pm-accent)] text-white border-transparent' : 'bg-white/5 text-zinc-500 border-white/5 hover:border-white/10'}`}
             >
               {f}
@@ -165,8 +160,8 @@ export default function OrderHistoryPage() {
               const statusConfig = getStatusConfig(order.status);
               const StatusIcon = statusConfig.icon;
               return (
-                <div 
-                  key={order.id} 
+                <div
+                  key={order.id}
                   onClick={() => navigate(`/orders/track/${order.id}`)}
                   className="bg-white/[0.02] p-4 rounded-[24px] border border-white/5 space-y-4 hover:border-white/15 transition-all duration-300 cursor-pointer shadow-xl"
                 >
@@ -187,7 +182,7 @@ export default function OrderHistoryPage() {
                       <span>{isBn ? statusConfig.labelBn : statusConfig.labelEn}</span>
                     </span>
                   </div>
-                
+
                   <div className="flex items-center justify-between pt-4 border-t border-white/5">
                     <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{order.items?.length || 0} ITEMS</p>
                     <p className="text-[14px] font-black text-[var(--pm-accent)]">৳{order.total?.toLocaleString()}</p>

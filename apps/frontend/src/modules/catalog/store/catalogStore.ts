@@ -5,12 +5,12 @@ import { calculateBuyBox, generateASIN } from '../services/asinGenerator';
 interface CatalogState {
   masterProducts: Record<string, MasterProduct>; // Keyed by ASIN
   offersByAsin: Record<string, SellerOffer[]>; // Keyed by ASIN
-  
+
   // Actions
   getMasterProduct: (idOrAsin: string) => MasterProduct | null;
   getBuyBox: (asin: string) => BuyBoxResult | null;
   getOffers: (asin: string) => SellerOffer[];
-  
+
   // Real-time seller inventory & pricing action
   linkSellerOffer: (offer: Omit<SellerOffer, 'id' | 'updatedAt'>) => void;
   updateSellerOffer: (offerId: string, updates: Partial<SellerOffer>) => void;

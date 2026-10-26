@@ -64,25 +64,6 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "Posting timestamp" }
       },
       "required": ["id", "authorUserId", "title"]
-    },
-    "posts": {
-      "title": "Post",
-      "description": "Social commerce post with text, photo, video, file attachments, and tagged products",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string", "description": "Unique post ID" },
-        "authorId": { "type": "string", "description": "User UID of author" },
-        "authorName": { "type": "string", "description": "Author full or shop name" },
-        "authorAvatar": { "type": "string", "description": "Author profile avatar" },
-        "authorRole": { "type": "string", "description": "Author role on platform" },
-        "content": { "type": "string", "description": "Text body of the post" },
-        "postType": { "type": "string", "enum": ["text", "photo", "video", "file", "product"], "description": "Type of feed post" },
-        "mediaUrls": { "type": "string", "description": "JSON string or primary media URL" },
-        "videoUrl": { "type": "string", "description": "Optional video URL or stream" },
-        "category": { "type": "string", "description": "Post category" },
-        "createdAt": { "type": "string", "format": "date-time", "description": "Post creation timestamp" }
-      },
-      "required": ["id", "authorId", "content"]
     }
   },
   "firestore": {
@@ -101,10 +82,6 @@
     "/demands/{demandId}": {
       "schema": { "$ref": "#/entities/demands" },
       "description": "Wholesale sourcing demand board"
-    },
-    "/posts/{postId}": {
-      "schema": { "$ref": "#/entities/posts" },
-      "description": "Social feed posts containing text, photo, video, files, and products"
     }
   }
 }

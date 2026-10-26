@@ -1,21 +1,21 @@
 import React from 'react';
-import { 
-  Bike, Car, Truck, Package, ShoppingBag, 
-  Clock, MapPin, Building, Globe, Zap, 
+import {
+  Bike, Car, Truck, Package, ShoppingBag,
+  Clock, MapPin, Building, Globe, Zap,
   Ambulance, ShoppingCart, UserCheck, ShieldCheck
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export type LogisticsCategory = 
-  | 'bike_ride' 
-  | 'car_ride' 
-  | 'food' 
-  | 'local_delivery' 
-  | 'same_day' 
-  | 'courier' 
-  | 'business_transport' 
-  | 'truck' 
-  | 'rent_car' 
+export type LogisticsCategory =
+  | 'bike_ride'
+  | 'car_ride'
+  | 'food'
+  | 'local_delivery'
+  | 'same_day'
+  | 'courier'
+  | 'business_transport'
+  | 'truck'
+  | 'rent_car'
   | 'emergency';
 
 interface ServiceItem {
@@ -51,7 +51,7 @@ export function LogisticsServiceGrid({ onSelect, activeCategory, isBilingual = f
       {SERVICES.map((service, idx) => {
         const Icon = service.icon;
         const isActive = activeCategory === service.id;
-        
+
         return (
           <motion.button
             key={service.id}
@@ -60,8 +60,8 @@ export function LogisticsServiceGrid({ onSelect, activeCategory, isBilingual = f
             transition={{ delay: idx * 0.05 }}
             onClick={() => onSelect(service.id)}
             className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all ${
-              isActive 
-                ? 'bg-white/10 border-white/20 shadow-xl shadow-white/5' 
+              isActive
+                ? 'bg-white/10 border-white/20 shadow-xl shadow-white/5'
                 : 'bg-white/[0.02] border-white/5 hover:bg-white/5 hover:border-white/10'
             }`}
           >

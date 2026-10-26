@@ -40,7 +40,7 @@ class EscrowService {
 
     this.mockEscrows[index].status = 'released';
     this.mockEscrows[index].releaseDate = new Date().toISOString();
-    
+
     // Simulating call to Wallet API to release funds to seller
     console.log(`[Wallet Integration] Escrow funds released to provider for ${escrowId}`);
 

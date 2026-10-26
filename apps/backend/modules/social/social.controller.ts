@@ -171,7 +171,7 @@ async function routeFollowNotification(followerId: string, targetId: string, tar
       where: { id: followerId },
       select: { fullName: true }
     });
-    
+
     const senderName = follower?.fullName || 'A merchant partner';
 
     if (targetType === 'USER') {
@@ -186,7 +186,7 @@ async function routeFollowNotification(followerId: string, targetId: string, tar
         where: { id: targetId },
         select: { userId: true, storeName: true }
       });
-      
+
       const notifyUserId = business?.userId || targetId;
       const storeLabel = business?.storeName || 'your storefront';
 

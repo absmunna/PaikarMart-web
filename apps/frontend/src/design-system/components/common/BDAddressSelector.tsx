@@ -27,10 +27,10 @@ const BD_DATA: Record<string, string[]> = {
   "Mymensingh (ময়মনসিংহ)": ["Mymensingh", "Jamalpur", "Netrokona", "Sherpur"]
 };
 
-export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({ 
-  initialValue, 
-  onChange, 
-  onAddressChange 
+export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
+  initialValue,
+  onChange,
+  onAddressChange
 }) => {
   const [division, setDivision] = useState(initialValue?.division || '');
   const [district, setDistrict] = useState(initialValue?.district || '');
@@ -50,10 +50,10 @@ export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
       area,
       zipCode
     };
-    
+
     // Valid if division, district, and area are filled out
     const isValid = !!(division && district && area.trim());
-    
+
     if (onChange) {
       onChange(details, isValid);
     }
@@ -75,7 +75,7 @@ export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase text-[var(--pm-muted)] tracking-wider">বিভাগ (Division)</label>
-          <select 
+          <select
             value={division}
             onChange={handleDivisionChange}
             className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] focus:ring-1 focus:ring-[var(--pm-accent)]/30 outline-none cursor-pointer transition-all"
@@ -89,7 +89,7 @@ export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
 
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase text-[var(--pm-muted)] tracking-wider">জেলা (District)</label>
-          <select 
+          <select
             value={district}
             disabled={!division}
             onChange={(e) => setDistrict(e.target.value)}
@@ -107,7 +107,7 @@ export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase text-[var(--pm-muted)] tracking-wider">থানা / উপজেলা (Upazila)</label>
-          <input 
+          <input
             type="text"
             placeholder="e.g. Banani / Mirpur"
             value={upazila}
@@ -118,7 +118,7 @@ export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
 
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase text-[var(--pm-muted)] tracking-wider">পোস্ট কোড (ZIP Code)</label>
-          <input 
+          <input
             type="text"
             placeholder="e.g. 1213"
             value={zipCode}
@@ -131,8 +131,8 @@ export const BDAddressSelector: React.FC<BDAddressSelectorProps> = ({
       {/* Street Area Details */}
       <div className="space-y-1.5">
         <label className="text-[10px] font-bold uppercase text-[var(--pm-muted)] tracking-wider">হোল্ডিং নং, রোড, এলাকা (Street Address)</label>
-        <input 
-          type="text" 
+        <input
+          type="text"
           placeholder="e.g. House 45, Road 11, Block G"
           value={area}
           onChange={(e) => setArea(e.target.value)}

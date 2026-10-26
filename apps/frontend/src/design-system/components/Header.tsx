@@ -21,10 +21,10 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#141624]/80 backdrop-blur-md">
         <div className="flex h-16 items-center justify-between px-4 md:px-6 w-full max-w-7xl mx-auto gap-4">
-          
+
           {/* Left Section: Menu & Logo */}
           <div className="flex items-center gap-4 shrink-0">
-            <button 
+            <button
               onClick={() => setIsSideNavOpen(true)}
               className="text-gray-300 hover:text-white transition-colors p-1.5 rounded-xl hover:bg-white/10"
               title="Open Navigation Menu"
@@ -44,7 +44,7 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-3 md:gap-4 shrink-0">
-            <button 
+            <button
               onClick={() => navigate('/search')}
               className="text-gray-400 hover:text-[var(--pm-accent)] transition-colors md:hidden"
               title="Search"
@@ -60,15 +60,15 @@ export default function Header() {
               <MessageSquare className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full border border-[#141624]" />
             </Link>
-            
-            <button 
+
+            <button
               onClick={() => setIsSideNavOpen(true)}
-              className="hidden sm:block text-gray-400 hover:text-[var(--pm-accent)] transition-colors" 
+              className="hidden sm:block text-gray-400 hover:text-[var(--pm-accent)] transition-colors"
               title="Website Settings & Themes"
             >
               <Palette className="h-5 w-5" />
             </button>
-            
+
             <Link to="/cart" className="relative text-gray-400 hover:text-[var(--pm-accent)] transition-colors block" title="Cart">
               <ShoppingBag className="h-5 w-5" />
               {cartItemCount > 0 && (
@@ -77,7 +77,7 @@ export default function Header() {
                 </span>
               )}
             </Link>
-            
+
             {isAuthenticated ? (
               <>
                 <Link to="/notifications" className="relative text-gray-400 hover:text-[var(--pm-accent)] transition-colors block" title="Notifications">

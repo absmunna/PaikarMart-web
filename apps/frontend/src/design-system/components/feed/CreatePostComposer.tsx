@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, FileText, PlaySquare, Wrench, Send, Sparkles, PlusCircle } from 'lucide-react';
 import { useAuth } from '@/modules/auth';
-import { postService } from '@/core/services/postService';
 import { toast } from 'sonner';
 
 export type Kind = 'status' | 'product' | 'video' | 'deal';
 
 interface CreatePostComposerProps {
-  onPostCreated?: (post: any) => void;
+  onPostCreated?: (post: { content: string; kind: Kind }) => void;
   onOpenModal?: () => void;
   onClose?: () => void;
   className?: string;
 }
 
-export const CreatePostComposer: React.FC<CreatePostComposerProps> = ({ 
-  onPostCreated, 
+export const CreatePostComposer: React.FC<CreatePostComposerProps> = ({
+  onPostCreated,
   onOpenModal,
   onClose,
-  className = "" 
+  className = ""
 }) => {
   const { user, isSeller } = useAuth();
   const [content, setContent] = useState('');
@@ -32,105 +31,65 @@ export const CreatePostComposer: React.FC<CreatePostComposerProps> = ({
   const [mediaUrl, setMediaUrl] = useState('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500');
 
   const QUICK = [
-    { 
-      kind: 'product' as Kind, 
-      label: isSeller ? 'পণ্য আপলোড' : 'Product', 
-      Icon: Package, 
-      href: isSeller ? '/seller/products' : '/shop', 
+    {
+      kind: 'product' as Kind,
+      label: isSeller ? 'পণ্য আপলোড' : 'Product',
+      Icon: Package,
+      href: isSeller ? '/seller/products' : '/shop',
       color: 'text-emerald-400',
       action: onOpenModal
     },
-    { 
-      kind: 'deal' as Kind, 
-      label: 'ডিমান্ড পোস্ট', 
-      Icon: FileText, 
-      href: '/demand', 
+    {
+      kind: 'deal' as Kind,
+      label: 'ডিমান্ড পোস্ট',
+      Icon: FileText,
+      href: '/demand',
       color: 'text-amber-400',
       action: onOpenModal
     },
-    { 
-      kind: 'status' as Kind, 
-      label: 'সার্ভিস', 
-      Icon: Wrench, 
-      href: '/services', 
-      color: 'text-purple-400',
-      action: onOpenModal
+    {
+      kind: 'status' as Kind,
+      label: 'সার্ভিস',
+      Icon: Wrench,
+      href: '/services',
+      color: 'text-purple-400'
     },
-    { 
-      kind: 'video' as Kind, 
-      label: 'রিলস ভিডিও', 
-      Icon: PlaySquare, 
-      color: 'text-rose-400',
-      action: onOpenModal
+    {
+      kind: 'video' as Kind,
+      label: 'রিলস ভিডিও',
+      Icon: PlaySquare,
+      color: 'text-rose-400'
     },
   ];
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
-    
-    const authorName = user?.fullName || user?.name || "PaikarMart ইউজার";
-    const authorId = user?.id || `u-${Date.now()}`;
-    const authorAvatar = user?.avatarUrl || user?.avatar;
-    const authorRole = user?.role || (isSeller ? 'seller' : 'buyer');
-    const storeName = user?.seller?.shopName || authorName;
 
-    try {
-      const created = await postService.createPost({
-        authorId,
-        authorName,
-        authorAvatar,
-        authorRole,
-        storeName,
-        isVerified: Boolean(user?.verification?.status === 'verified' || isSeller),
-        sellerPhone: user?.phone,
-        sellerEmail: user?.email,
-        content,
-        postType: kind === 'product' ? 'product' : (kind === 'video' ? 'video' : 'text'),
-        category,
-        mediaUrls: (kind === 'product' || kind === 'video') && mediaUrl ? [mediaUrl] : [],
-        videoUrl: kind === 'video' ? mediaUrl : null,
-        product: kind === 'product' ? {
-          title: content.slice(0, 36),
-          price: Number(price) || 450,
-          moq: 1,
-          stock: Number(stock) || 100,
-          category,
-          image: mediaUrl
-        } : null
-      });
-
-      if (onPostCreated) {
-        onPostCreated(created);
-      }
-
-      if (kind === 'product') {
-        toast.success(`সফলভাবে পণ্য আপলোড হয়েছে! (দাম: ৳${price}, স্টক: ${stock})`);
-      } else {
-        toast.success("পোস্ট সফলভাবে পাবলিশ হয়েছে! 🚀");
-      }
-    } catch (err) {
-      console.warn("Post creation fallback:", err);
-      if (onPostCreated) {
-        onPostCreated({ content, kind });
-      }
+    if (onPostCreated) {
+      onPostCreated({ content, kind });
     }
-    
+
+    if (kind === 'product') {
+      toast.success(`সফলভাবে পণ্য আপলোড হয়েছে! ক্যাটালগ কোড: PRD-${Math.floor(Math.random() * 90000 + 10000)} (দাম: ৳${price}, স্টক: ${stock})`);
+    } else {
+      toast.success("পোস্ট সফলভাবে পাবলিশ হয়েছে!");
+    }
+
     setContent('');
     setKind(isSeller ? 'product' : 'status');
     if (onClose) onClose();
   };
-
 
   return (
     <div className={`bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] shadow-sm p-4 sm:p-5 flex flex-col gap-3.5 ${className}`}>
       {/* Header / Avatar + Input */}
       <form onSubmit={submit} className="flex items-start gap-3">
         <div className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-full border border-[var(--pm-border)] bg-[var(--pm-surface-hover)] overflow-hidden shadow-xs">
-          <img 
-            src={user?.avatar || user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'User'}`} 
-            alt="Avatar" 
-            className="w-full h-full object-cover" 
+          <img
+            src={user?.avatar || user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'User'}`}
+            alt="Avatar"
+            className="w-full h-full object-cover"
           />
         </div>
 
@@ -139,8 +98,8 @@ export const CreatePostComposer: React.FC<CreatePostComposerProps> = ({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={
-              isSeller 
-                ? "নতুন পাইকারি পণ্য বা স্টোরের অফার লিখুন..." 
+              isSeller
+                ? "নতুন পাইকারি পণ্য বা স্টোরের অফার লিখুন..."
                 : "আপনার কী পণ্য বা সার্ভিস প্রয়োজন? বিস্তারিত লিখুন..."
             }
             rows={2}
@@ -234,8 +193,8 @@ export const CreatePostComposer: React.FC<CreatePostComposerProps> = ({
               )}
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={!content.trim()}
               className="bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md shadow-[var(--pm-accent)]/20 active:scale-95 transition-all flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
             >

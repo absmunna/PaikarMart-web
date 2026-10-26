@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Store, ShoppingBag, Search, Filter, ArrowUpDown, 
-  Plus, Share2, Star, Clock, ShieldCheck, 
+import {
+  Store, ShoppingBag, Search, Filter, ArrowUpDown,
+  Plus, Share2, Star, Clock, ShieldCheck,
   ChevronRight, LayoutGrid, List, SlidersHorizontal,
   Smartphone, Zap, Shirt, UtensilsCrossed, Settings,
   Eye, ShoppingCart, Heart, RefreshCw
@@ -48,7 +48,7 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isFollowing, setIsFollowing] = useState(false);
 
-  const filteredProducts = MOCK_PRODUCTS.filter(p => 
+  const filteredProducts = MOCK_PRODUCTS.filter(p =>
     (activeCategory === 'all' || p.category === activeCategory) &&
     (p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.nameBn.includes(searchQuery))
   );
@@ -57,12 +57,12 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
 
   return (
     <div className={`space-y-8 animate-in fade-in duration-700 ${hideHeader ? '' : 'pb-12'}`}>
-      
+
       {/* ── STORE HEADER ── */}
       {!hideHeader && (
         <div className="relative rounded-[2.5rem] overflow-hidden bg-[#0a0f1d] border border-white/5 shadow-2xl">
           <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-          
+
           {/* Cover Image Placeholder */}
           <div className="h-32 md:h-52 bg-gradient-to-r from-cyan-600/30 via-[#030704] to-blue-600/30 relative">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
@@ -107,9 +107,9 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
                   <Share2 className="w-4 h-4" />
                   {t('Share Store', 'শেয়ার')}
                 </Button>
-                <Button 
+                <Button
                   onClick={() => setIsFollowing(!isFollowing)}
-                  size="sm" 
+                  size="sm"
                   className={`flex-1 md:flex-none rounded-2xl font-black text-[10px] uppercase tracking-widest h-12 px-8 transition-all active:scale-95 ${
                     isFollowing ? 'bg-white/5 text-cyan-400 border border-cyan-500/20' : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/20'
                   }`}
@@ -134,8 +134,8 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${
-                  isActive 
-                    ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-inner' 
+                  isActive
+                    ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-inner'
                     : 'bg-white/5 border-transparent text-zinc-500 hover:bg-white/10'
                 }`}
               >
@@ -149,7 +149,7 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
         <div className="flex items-center gap-3 w-full lg:w-auto">
           <div className="relative flex-1 lg:w-72">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-            <Input 
+            <Input
               placeholder={t('Search in store...', 'দোকানে খুঁজুন...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -160,13 +160,13 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
             <ArrowUpDown className="w-4 h-4 text-zinc-500" />
           </Button>
           <div className="hidden md:flex p-1.5 bg-white/5 rounded-2xl border border-white/10 shrink-0">
-            <button 
+            <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-cyan-500/20 text-cyan-400' : 'text-zinc-600 hover:text-zinc-400'}`}
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
-            <button 
+            <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-cyan-500/20 text-cyan-400' : 'text-zinc-600 hover:text-zinc-400'}`}
             >
@@ -192,15 +192,15 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
               >
                 {/* Image Section */}
                 <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 md:w-56 h-full shrink-0' : 'aspect-square'}`}>
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
+                  <img
+                    src={product.image}
+                    alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#030704] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-5">
-                    <Button 
+                    <Button
                       onClick={() => toast.info(`Viewing ${product.name}`)}
-                      size="sm" 
+                      size="sm"
                       className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl h-10"
                     >
                       {product.isService ? t('Book Service', 'বুক করুন') : t('Quick View', 'দ্রুত দেখুন')}
@@ -244,7 +244,7 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
                       <button className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-rose-500/10 text-zinc-500 hover:text-rose-400 rounded-xl transition-all border border-white/5">
                         <Heart className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={(e) => { e.stopPropagation(); toast.success(`${product.name} added to cart`); }}
                         className="w-10 h-10 flex items-center justify-center bg-cyan-500/10 hover:bg-cyan-600 text-cyan-400 hover:text-white rounded-xl transition-all border border-cyan-500/20"
                       >
@@ -266,8 +266,8 @@ export function PublicSellerStoreFront({ sellerName = "PaikarMart Official Store
             <h4 className="text-xl font-black text-white uppercase tracking-tight">{t('No matches found', 'কোনো পণ্য পাওয়া যায়নি')}</h4>
             <p className="text-xs text-zinc-500 font-medium tracking-wide uppercase">Try adjusting your filters or search query.</p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
             className="rounded-2xl border-white/10 text-[10px] font-black uppercase tracking-widest h-12 px-8 hover:bg-white/5"
           >

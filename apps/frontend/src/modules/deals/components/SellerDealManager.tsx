@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Zap, 
-  Plus, 
-  Trash2, 
-  Clock, 
-  Flame, 
-  TrendingUp, 
-  Package, 
+import {
+  Zap,
+  Plus,
+  Trash2,
+  Clock,
+  Flame,
+  TrendingUp,
+  Package,
   Tag,
   AlertCircle,
   ChevronRight,
@@ -41,7 +41,7 @@ export const SellerDealManager: React.FC = () => {
             Subsidize your inventory to drive rapid sales volume.
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => setIsCreating(true)}
           className="bg-[var(--pm-accent)] hover:opacity-90 text-white font-black uppercase tracking-tight gap-2 h-12 px-6 rounded-2xl transition-all active:scale-95"
         >
@@ -80,10 +80,10 @@ export const SellerDealManager: React.FC = () => {
 
               <div className="space-y-4">
                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(deal.currentStock / deal.initialStock) * 100}%` }}
-                      className="h-full bg-[var(--pm-accent)] rounded-full" 
+                      className="h-full bg-[var(--pm-accent)] rounded-full"
                     />
                  </div>
                  <div className="flex items-center justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest">
@@ -95,7 +95,7 @@ export const SellerDealManager: React.FC = () => {
                  </div>
               </div>
             </div>
-            
+
             <div className="p-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[var(--pm-accent)]" />
@@ -123,12 +123,12 @@ export const SellerDealManager: React.FC = () => {
       <AnimatePresence>
         {isCreating && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-4">
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsCreating(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm" 
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}

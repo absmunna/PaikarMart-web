@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const PortalAccess = () => {
   const navigate = useNavigate();
-  
+
   const portals = [
     { name: 'পাইকারি', icon: Box, path: '/b2b', color: 'text-amber-500', bg: 'bg-amber-500/10' },
     { name: 'মার্কেট', icon: ShoppingBag, path: '/marketplace', color: 'text-rose-500', bg: 'bg-rose-500/10' },
@@ -15,8 +15,8 @@ export const PortalAccess = () => {
   return (
     <div className="grid grid-cols-4 gap-4 px-2">
       {portals.map((p) => (
-        <div 
-          key={p.name} 
+        <div
+          key={p.name}
           onClick={() => navigate(p.path)}
           className="flex flex-col items-center gap-2 cursor-pointer"
         >

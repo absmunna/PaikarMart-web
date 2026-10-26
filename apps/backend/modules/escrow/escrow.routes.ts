@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { 
-  createEscrow, 
-  releaseEscrow, 
-  disputeEscrow, 
-  getEscrowStatus 
+import {
+  createEscrow,
+  releaseEscrow,
+  disputeEscrow,
+  getEscrowStatus
 } from './escrow.controller';
 
 const router = Router();

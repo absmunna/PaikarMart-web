@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Laptop, Search, Sparkles, Plus, 
-  Check, ShieldAlert, Cpu, Zap, Headphones, Watch 
+import {
+  Laptop, Search, Sparkles, Plus,
+  Check, ShieldAlert, Cpu, Zap, Headphones, Watch
 } from 'lucide-react';
 import { useCartStore } from '@/modules/cart';
 import { HomeHeader } from '@/design-system/components/home/HomeHeader';
@@ -165,7 +165,7 @@ export const ElectronicsHome: React.FC = () => {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {filtered.map((item) => (
-          <ProductCard 
+          <ProductCard
             key={item.id}
             product={{
               ...item,

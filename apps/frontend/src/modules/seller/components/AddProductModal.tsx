@@ -74,11 +74,11 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
       setIsUploading(true);
       const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
       const { storage } = await import("@/core/lib/firebase");
-      
+
       const fileRef = ref(storage, `products/PROD-${Date.now()}_${file.name}`);
       const snapshot = await uploadBytes(fileRef, file);
       const url = await getDownloadURL(snapshot.ref);
-      
+
       form.setValue('image', url);
       toast.success('ছবিটি সফলভাবে আপলোড হয়েছে!');
     } catch (error) {
@@ -218,10 +218,10 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold text-zinc-500">Description</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Product details, materials, and features..." 
-                      className="bg-black/20 border-white/5 min-h-[100px]" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Product details, materials, and features..."
+                      className="bg-black/20 border-white/5 min-h-[100px]"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -312,11 +312,11 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                             ) : (
                               <ImageIcon className="w-4 h-4 text-orange-500" />
                             )}
-                            <input 
-                              type="file" 
-                              accept="image/*,video/*" 
-                              onChange={handleFileUpload} 
-                              className="hidden" 
+                            <input
+                              type="file"
+                              accept="image/*,video/*"
+                              onChange={handleFileUpload}
+                              className="hidden"
                               disabled={isUploading}
                             />
                           </label>
@@ -324,8 +324,8 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                         {field.value && (
                           <div className="w-24 h-24 rounded-lg overflow-hidden border border-white/10 bg-black/20 relative group">
                             <img src={field.value} alt="Preview" className="w-full h-full object-cover" />
-                            <button 
-                              type="button" 
+                            <button
+                              type="button"
                               onClick={() => form.setValue('image', '')}
                               className="absolute top-1 right-1 p-1 bg-black/60 rounded text-rose-500 hover:bg-black/80 text-[10px]"
                             >
@@ -345,8 +345,8 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
               <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading} className="text-white">
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className={isEditing ? "bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 shadow-[0_0_20px_rgba(251,191,36,0.3)]" : "bg-[var(--pm-accent)] hover:bg-[#FF8A00] text-black font-bold px-8 shadow-[0_0_20px_var(--pm-accent)]/30"}
                 disabled={isLoading}
               >

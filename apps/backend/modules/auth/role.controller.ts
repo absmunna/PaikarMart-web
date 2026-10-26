@@ -4,7 +4,7 @@ import { prisma, db } from '../../config/database';
 export const createRole = async (req: Request, res: Response) => {
   try {
     const { name, permissions } = req.body;
-    
+
     if (!db.isConnected()) {
       return res.status(201).json({ message: 'Dev mode: Role created (no DB)', role: { name, permissions } });
     }
@@ -21,7 +21,7 @@ export const createRole = async (req: Request, res: Response) => {
       },
       include: { permissions: true },
     });
-    
+
     res.status(201).json(role);
   } catch (error) {
     console.warn('Create Role Fallback:', error);
@@ -40,4 +40,3 @@ export const getRoles = async (req: Request, res: Response) => {
     res.json([{ name: 'buyer', permissions: ['CAN_BUY'] }]);
   }
 };
-

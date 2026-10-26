@@ -12,7 +12,7 @@ const locales: Record<Language, any> = {
 
 export const useTranslation = () => {
   const { lang, setLang } = useAppStore();
-  
+
   const t = (key: keyof typeof en) => {
     const translations = locales[lang] || locales.EN;
     return translations[key] || en[key] || key;

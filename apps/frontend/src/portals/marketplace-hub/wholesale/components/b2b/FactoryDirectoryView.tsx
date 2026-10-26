@@ -55,8 +55,8 @@ export const FactoryDirectoryView: React.FC<FactoryDirectoryViewProps> = ({ onNa
     }
   ];
 
-  const filtered = factories.filter(f => 
-    f.name.toLowerCase().includes(search.toLowerCase()) || 
+  const filtered = factories.filter(f =>
+    f.name.toLowerCase().includes(search.toLowerCase()) ||
     f.nameBn.includes(search) ||
     f.category.toLowerCase().includes(search.toLowerCase())
   );
@@ -65,8 +65,8 @@ export const FactoryDirectoryView: React.FC<FactoryDirectoryViewProps> = ({ onNa
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={onBack}
           className="h-10 w-10 p-0 rounded-xl bg-white/5 border-white/10 hover:bg-white/10"
         >
@@ -97,7 +97,7 @@ export const FactoryDirectoryView: React.FC<FactoryDirectoryViewProps> = ({ onNa
       {/* Directory list */}
       <div className="space-y-4">
         {filtered.map((f) => (
-          <div 
+          <div
             key={f.id}
             onClick={() => onNavigate('factory-profile', f.id)}
             className="bg-zinc-900/40 hover:bg-zinc-900 border border-white/5 hover:border-cyan-500/20 rounded-3xl overflow-hidden flex flex-col sm:flex-row gap-5 p-5 transition-all duration-300 cursor-pointer group"

@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  Send, Image as ImageIcon, 
-  MoreVertical, ShieldCheck, Phone, Video, 
+import {
+  Send, Image as ImageIcon,
+  MoreVertical, ShieldCheck, Phone, Video,
   Plus, CheckCheck, ArrowLeft, Loader2, Store, Sparkles
 } from 'lucide-react';
 import { useAuthStore } from '@/modules/auth';
-import { 
-  subscribeChatMessages, 
-  sendChatMessage, 
-  getConversation, 
-  ChatMessageItem, 
-  ChatConversation 
+import {
+  subscribeChatMessages,
+  sendChatMessage,
+  getConversation,
+  ChatMessageItem,
+  ChatConversation
 } from '@/modules/chat/services/chatFirestoreService';
 
 const DEMO_FALLBACK_MESSAGES: Record<string, ChatMessageItem[]> = {
@@ -91,13 +91,13 @@ export default function ChatDetail() {
     } else {
       // Demo / fallback conversation
       const fallback = DEMO_FALLBACK_MESSAGES[chatId] || [
-        { 
-          id: '1', 
-          chatId, 
-          text: 'আসসালামু আলাইকুম! কোনো পণ্য বা বাল্ক অর্ডারের ব্যাপারে কথা বলতে মেসেজ পাঠাতে পারেন।', 
-          senderId: 'seller', 
-          timestamp: new Date(), 
-          status: 'read' 
+        {
+          id: '1',
+          chatId,
+          text: 'আসসালামু আলাইকুম! কোনো পণ্য বা বাল্ক অর্ডারের ব্যাপারে কথা বলতে মেসেজ পাঠাতে পারেন।',
+          senderId: 'seller',
+          timestamp: new Date(),
+          status: 'read'
         }
       ];
       setMessages(fallback);
@@ -148,8 +148,8 @@ export default function ChatDetail() {
   // Determine other participant details
   const otherParticipantId = conversation?.participants?.find((p) => p !== currentUserId) || 'partner';
   const partnerDetails = conversation?.participantDetails?.[otherParticipantId] || {
-    name: chatId === 'kb-store' 
-      ? 'Keraniganj Bulk Store (কেরানীগঞ্জ)' 
+    name: chatId === 'kb-store'
+      ? 'Keraniganj Bulk Store (কেরানীগঞ্জ)'
       : chatId === 'chawkbazar-hub'
       ? 'Chawkbazar Cosmetics Hub'
       : chatId === 'rahim-retailer'
@@ -173,7 +173,7 @@ export default function ChatDetail() {
       {/* Header */}
       <div className="p-3.5 border-b border-white/5 bg-black/50 backdrop-blur-2xl flex items-center justify-between z-20 sticky top-0">
         <div className="flex items-center gap-2.5">
-          <button 
+          <button
             onClick={() => navigate('/messages')}
             className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
           >
@@ -220,7 +220,7 @@ export default function ChatDetail() {
       </div>
 
       {/* Chat Messages Area */}
-      <div 
+      <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 relative z-10"
       >
@@ -259,8 +259,8 @@ export default function ChatDetail() {
               >
                 <div className="max-w-[82%] sm:max-w-[70%] space-y-1">
                   <div className={`p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-lg border ${
-                    isMe 
-                      ? 'bg-gradient-to-br from-cyan-600 to-teal-700 text-white border-white/10 rounded-tr-none' 
+                    isMe
+                      ? 'bg-gradient-to-br from-cyan-600 to-teal-700 text-white border-white/10 rounded-tr-none'
                       : 'bg-white/[0.06] text-white/95 border-white/5 backdrop-blur-md rounded-tl-none'
                   }`}>
                     {msg.text}
@@ -279,15 +279,15 @@ export default function ChatDetail() {
       {/* Input Terminal */}
       <div className="p-3 pb-6 sm:pb-8 bg-black/60 backdrop-blur-3xl border-t border-white/5 z-20">
         <div className="flex items-center gap-2 max-w-4xl mx-auto">
-          <button 
+          <button
             type="button"
             className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all shrink-0"
           >
             <Plus className="w-4 h-4" />
           </button>
-          
+
           <div className="relative flex-1">
-            <input 
+            <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -301,7 +301,7 @@ export default function ChatDetail() {
               className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-4 pr-11 text-xs sm:text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/20 transition-all font-medium text-white placeholder-white/30"
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
-              <button 
+              <button
                 type="button"
                 className="p-1.5 text-white/30 hover:text-white transition-colors"
               >
@@ -310,7 +310,7 @@ export default function ChatDetail() {
             </div>
           </div>
 
-          <button 
+          <button
             onClick={handleSend}
             disabled={!inputText.trim() || sending}
             className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-400 to-teal-500 flex items-center justify-center text-black font-black shadow-lg shadow-cyan-400/20 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all shrink-0 cursor-pointer"

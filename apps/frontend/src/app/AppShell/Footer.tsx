@@ -13,7 +13,7 @@ export const Footer = () => {
     <footer className="w-full bg-[#030906] border-t border-orange-500/10 mt-auto pt-6 pb-28 md:pb-6 px-4 md:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.04] text-left">
-          
+
           {/* Compact Brand and Regulatory Info */}
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2">
@@ -24,7 +24,7 @@ export const Footer = () => {
                 সুপার অ্যাপ / Super App
               </span>
             </div>
-            
+
             <p className="hidden md:block text-[10px] text-zinc-400 leading-relaxed font-semibold">
               বাংলাদেশের প্রথম ও বৃহত্তম সোশ্যাল কমার্স সুপার অ্যাপ। হকার্স মার্কেট ও চকবাজারের পাইকারি রেট এখন সরাসরি হোম ডেলিভারি। ডিজিটাল কমার্স পরিচালনা নির্দেশিকা ২০২১ মেনে নিবন্ধিত।
             </p>
@@ -37,15 +37,15 @@ export const Footer = () => {
 
           {/* Minimal Essential Links (All Redundant items like Settings/Contact are already in Side navigation) */}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] md:text-[11px] font-black text-zinc-400">
-            <NavLink 
-              to="/terms" 
+            <NavLink
+              to="/terms"
               className="hover:text-orange-400 transition-colors flex items-center gap-1.5"
             >
               <FileText className="w-3.5 h-3.5 text-orange-500/65" />
               <span>শর্তাবলী ও নীতি / Terms & Policy</span>
             </NavLink>
-            <NavLink 
-              to="/qna" 
+            <NavLink
+              to="/qna"
               className="hover:text-orange-400 transition-colors flex items-center gap-1.5"
             >
               <HelpCircle className="w-3.5 h-3.5 text-orange-500/65" />

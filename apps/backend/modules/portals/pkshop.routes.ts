@@ -1,10 +1,10 @@
 import { Router, Response } from "express";
 import { requireAuth, AuthenticatedRequest } from "../../middleware/auth";
-import { 
-  verifyPKShopAdmin, 
-  verifyPKShopSuperAdmin, 
-  pkShopTeamRegistry, 
-  PKShopTeamMember 
+import {
+  verifyPKShopAdmin,
+  verifyPKShopSuperAdmin,
+  pkShopTeamRegistry,
+  PKShopTeamMember
 } from "../../middleware/verifyPKShopAdmin";
 import { prisma, db } from "../../config/database";
 
@@ -214,7 +214,7 @@ router.get("/products", async (req, res) => {
 
     if (search) {
       const q = search.toLowerCase().trim();
-      results = results.filter(p => 
+      results = results.filter(p =>
         p.title.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
         p.sku.toLowerCase().includes(q) ||
@@ -348,8 +348,8 @@ router.post("/admin/products", requireAuth, verifyPKShopAdmin, (req: Authenticat
       originalPrice: originalPrice ? Number(originalPrice) : undefined,
       stock: Number(stock),
       category: category || "Exclusive Catalog",
-      images: Array.isArray(images) && images.length 
-        ? images 
+      images: Array.isArray(images) && images.length
+        ? images
         : ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600"],
       isVerified: true,
       portal: "pk-shop",
@@ -414,8 +414,8 @@ router.patch("/admin/orders/:orderId/status", requireAuth, verifyPKShopAdmin, (r
   const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 
   if (!status || !validStatuses.includes(status)) {
-    return res.status(400).json({ 
-      error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+    return res.status(400).json({
+      error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
     });
   }
 
@@ -493,8 +493,8 @@ router.post("/admin/team/add", requireAuth, verifyPKShopSuperAdmin, (req: Authen
     };
 
     // Remove if already existing and update
-    const existingIndex = pkShopTeamRegistry.findIndex(m => 
-      (email && m.email.toLowerCase() === email.toLowerCase()) || 
+    const existingIndex = pkShopTeamRegistry.findIndex(m =>
+      (email && m.email.toLowerCase() === email.toLowerCase()) ||
       (phone && m.phone === phone)
     );
 

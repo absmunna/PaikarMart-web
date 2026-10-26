@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { SmartSellerWizard } from '@/modules/registration';
+import { StoryBar } from '@shared/StoryBar';
 import { PortalIconBar } from '@shared/PortalIconBar';
-import { 
+import {
   ShieldCheck, HelpCircle, ChevronDown, ChevronUp,
   Percent, Users, Wallet, Award, Truck, Landmark
 } from 'lucide-react';
@@ -52,9 +53,10 @@ export default function BecomeSellerPage() {
 
   return (
     <div className="w-full min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] flex flex-col transition-colors duration-300">
-      
+
       {/* 1. HEADER STORY BAR */}
       <section className="pt-2 px-3 sm:px-6">
+        <StoryBar context="seller" />
       </section>
 
       {/* 2. STICKY PORTAL/CATEGORY BAR */}
@@ -88,8 +90,8 @@ export default function BecomeSellerPage() {
           </h1>
 
           <p className="text-[var(--pm-muted)] text-xs md:text-sm max-w-2xl mx-auto leading-relaxed">
-            {lang === 'bn' 
-              ? 'সরাসরি যুক্ত হোন লক্ষাধিক বিশ্বস্ত পাইকারি ও খুচরা ক্রেতাদের সাথে। কোনো অগ্রিম ফি ছাড়া জিরো কমিশন স্টার্ট আপ সুবিধার মাধ্যমে আজই প্রোডাক্ট বিক্রি শুরু করুন।' 
+            {lang === 'bn'
+              ? 'সরাসরি যুক্ত হোন লক্ষাধিক বিশ্বস্ত পাইকারি ও খুচরা ক্রেতাদের সাথে। কোনো অগ্রিম ফি ছাড়া জিরো কমিশন স্টার্ট আপ সুবিধার মাধ্যমে আজই প্রোডাক্ট বিক্রি শুরু করুন।'
               : 'Directly reach lakhs of verified retail & wholesale buyers across Bangladesh. Leverage our zero commission merchant features to double your sales.'}
           </p>
 
@@ -185,8 +187,8 @@ export default function BecomeSellerPage() {
             {SELLER_FAQS.map((faq, idx) => {
               const isOpen = activeFaq === idx;
               return (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className="bg-[var(--pm-card)] border border-[var(--pm-border)] hover:border-[var(--pm-border)]/80 rounded-2xl overflow-hidden transition-all duration-300"
                 >
                   <button
@@ -200,7 +202,7 @@ export default function BecomeSellerPage() {
                       {isOpen ? <ChevronUp className="w-4 h-4 text-[var(--pm-accent)]" /> : <ChevronDown className="w-4 h-4" />}
                     </span>
                   </button>
-                  
+
                   {isOpen && (
                     <div className="px-5 pb-5 pt-1 text-xs text-[var(--pm-muted)] leading-relaxed border-t border-[var(--pm-border)] bg-[var(--pm-bg)]/40">
                       {lang === 'bn' ? faq.answerBn : faq.answer}
@@ -216,7 +218,7 @@ export default function BecomeSellerPage() {
       {/* 7. TRUST & SAFETY HELPLINE BANNER / FOOTER */}
       <footer className="mt-auto bg-[var(--pm-bg)] border-t border-[var(--pm-border)] py-12 px-4 md:px-8 select-none">
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:text-left">
-          
+
           <div className="space-y-3 col-span-1">
             <div className="text-lg font-black tracking-tight text-[var(--pm-text)]">
               <span className="text-[var(--pm-accent)]">Paikar</span>Mart
@@ -253,8 +255,8 @@ export default function BecomeSellerPage() {
               {lang === 'bn' ? 'রেজিস্ট্রেশন বা ভেরিফিকেশনে যেকোনো প্রয়োজনে আমাদের ২৪/৭ হেল্পলাইনে কল করুন:' : 'If you face any issue during business documentation upload:'}
             </p>
             <div className="pt-1">
-              <a 
-                href="tel:09638022222" 
+              <a
+                href="tel:09638022222"
                 className="text-sm font-black text-[var(--pm-accent)] hover:underline flex items-center justify-center sm:justify-start gap-1"
               >
                 ০৯৬-৩৮০২২২২২ (Helpline)

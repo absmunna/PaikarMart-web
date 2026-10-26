@@ -48,9 +48,9 @@ export const ProductGridSkeleton = () => (
     </div>
 );
 
-export const SafeFallbackCard: React.FC<{ message?: string; onRetry?: () => void }> = ({ 
-    message = "Synchronization Failed", 
-    onRetry 
+export const SafeFallbackCard: React.FC<{ message?: string; onRetry?: () => void }> = ({
+    message = "Synchronization Failed",
+    onRetry
 }) => (
     <div className="p-8 rounded-[32px] bg-zinc-900/50 border border-white/5 backdrop-blur-xl flex flex-col items-center justify-center text-center gap-4 border-dashed">
         <div className="w-12 h-12 bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-500">
@@ -63,7 +63,7 @@ export const SafeFallbackCard: React.FC<{ message?: string; onRetry?: () => void
             </p>
         </div>
         {onRetry && (
-            <button 
+            <button
                 onClick={onRetry}
                 className="mt-2 h-9 px-6 bg-white/5 hover:bg-white/10 rounded-xl text-[8px] font-black text-white uppercase tracking-widest transition-all"
             >

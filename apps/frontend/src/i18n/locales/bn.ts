@@ -150,7 +150,7 @@ export const bn = {
   timeAgoDays: "দিন আগে",
 
   // Portal Specific
-  
+
   // Product & Category
   featuredCategories: "ফিচার্ড ক্যাটাগরি",
   seeAll: "সব দেখুন",

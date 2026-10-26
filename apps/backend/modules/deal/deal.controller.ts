@@ -15,7 +15,7 @@ export class DealController {
     try {
       const sellerId = (req as any).user?.id;
       if (!sellerId) return res.status(401).json({ error: "Unauthorized" });
-      
+
       const deal = await DealService.createDeal(req.body, sellerId);
       res.json(deal);
     } catch (error: any) {
@@ -27,7 +27,7 @@ export class DealController {
     try {
       const sellerId = (req as any).user?.id;
       if (!sellerId) return res.status(401).json({ error: "Unauthorized" });
-      
+
       const deals = await DealService.getSellerDeals(sellerId);
       res.json(deals);
     } catch (error: any) {

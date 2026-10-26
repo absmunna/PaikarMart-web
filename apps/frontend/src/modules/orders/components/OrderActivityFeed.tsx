@@ -27,7 +27,7 @@ function ShieldCheck(props: any) {
 
 export const OrderActivityFeed: React.FC<OrderActivityFeedProps> = ({ activities }) => {
   // Sort by latest first
-  const sortedActivities = [...activities].sort((a, b) => 
+  const sortedActivities = [...activities].sort((a, b) =>
     new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
 
@@ -47,11 +47,11 @@ export const OrderActivityFeed: React.FC<OrderActivityFeedProps> = ({ activities
 
           return (
             <div key={activity.timestamp + idx} className="flex gap-6 items-start relative z-10">
-              <div 
+              <div
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 transition-all duration-300",
-                  isLatest 
-                    ? "bg-[#0b101d] border-cyan-400 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.2)]" 
+                  isLatest
+                    ? "bg-[#0b101d] border-cyan-400 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.2)]"
                     : "bg-[#0b101d] border-[var(--pm-border)] text-zinc-500"
                 )}
               >
@@ -67,13 +67,13 @@ export const OrderActivityFeed: React.FC<OrderActivityFeedProps> = ({ activities
                     {format(new Date(activity.timestamp), 'MMM dd, HH:mm')}
                   </span>
                 </div>
-                
+
                 <div className="bg-black/10 border border-white/5 rounded-xl p-3.5 hover:bg-black/20 transition-all">
                   <p className="text-[11px] text-zinc-400 leading-relaxed italic">
                     "{activity.description}"
                   </p>
                   <div className="mt-2.5 flex items-center gap-2">
-                    <span 
+                    <span
                       className={cn(
                         "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-md border",
                         activity.source === 'system' ? "border-cyan-400/20 text-cyan-400 bg-cyan-400/5" :

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Mic, 
-  MicOff, 
-  X, 
-  Sparkles, 
-  Volume2, 
-  VolumeX, 
+import {
+  Mic,
+  MicOff,
+  X,
+  Sparkles,
+  Volume2,
+  VolumeX,
   Loader2,
   ChevronRight,
   BrainCircuit
@@ -46,7 +46,7 @@ export const VoiceAssistantWidget: React.FC = () => {
           .map((result: any) => result.transcript)
           .join('');
         setTranscript(currentTranscript);
-        
+
         if (event.results[0].isFinal) {
           handleVoiceCommand(currentTranscript);
         }
@@ -115,7 +115,7 @@ export const VoiceAssistantWidget: React.FC = () => {
                   </div>
                   <span className="text-sm font-black text-white tracking-tight uppercase">Paikar Assistant</span>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsOpen(false)}
                   className="p-1.5 rounded-full hover:bg-white/5 text-zinc-500 hover:text-white transition-colors"
                 >
@@ -156,7 +156,7 @@ export const VoiceAssistantWidget: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex justify-end">
-                      <button 
+                      <button
                         onClick={toggleListening}
                         className="flex items-center gap-2 text-[10px] font-black text-[var(--pm-accent)] uppercase tracking-widest hover:opacity-80 transition-colors"
                       >
@@ -189,8 +189,8 @@ export const VoiceAssistantWidget: React.FC = () => {
         onClick={toggleListening}
         className={cn(
           "w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 border-2",
-          isListening 
-            ? "bg-red-500 border-red-400/50 shadow-red-500/40" 
+          isListening
+            ? "bg-red-500 border-red-400/50 shadow-red-500/40"
             : "bg-[var(--pm-accent)] border-orange-400/30 shadow-[var(--pm-accent)]/40"
         )}
       >

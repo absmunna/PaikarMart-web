@@ -69,9 +69,7 @@ export interface ReviewItem {
 export interface FeedPost {
   id: string;
   type?: string;
-  postType?: 'text' | 'photo' | 'video' | 'file' | 'product';
   sellerId: string;
-  authorId?: string;
   sellerName: string;
   storeName: string;
   slug?: string;
@@ -80,23 +78,14 @@ export interface FeedPost {
   district?: string;
   division?: string;
   isVerified: boolean;
-  authorRole?: string;
-  sellerPhone?: string;
-  sellerEmail?: string;
   isFollowing?: boolean;
   followersCount?: number;
   createdAt: string;
   content: string;
   tags?: string[];
-  mediaType: 'image' | 'video' | 'carousel' | 'file' | 'text';
+  mediaType: 'image' | 'video' | 'carousel';
   mediaUrls: string[];
   videoUrl?: string | null;
-  fileAttachment?: {
-    name: string;
-    url: string;
-    size?: string;
-    type?: string;
-  } | null;
   product?: ProductCardItem | null;
   stats: {
     likes: number;
@@ -111,4 +100,3 @@ export interface FeedPost {
   };
   reviews?: ReviewItem[];
 }
-

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-  ShieldCheck, Truck, Store, ShoppingCart, 
-  Copy, Check, Plus, AlertCircle, ArrowRight, Zap 
+import {
+  ShieldCheck, Truck, Store, ShoppingCart,
+  Copy, Check, Plus, AlertCircle, ArrowRight, Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { SellerOffer, BuyBoxResult } from '../types/catalog.types';

@@ -14,12 +14,12 @@ interface CloseButtonProps extends HTMLMotionProps<"button"> {
  * Premium CloseButton for PaikarMart.
  * Animated, responsive, and glassmorphic.
  */
-export const CloseButton: React.FC<CloseButtonProps> = ({ 
-  onClose, 
-  className, 
-  variant = "glass", 
-  size = "md", 
-  ...props 
+export const CloseButton: React.FC<CloseButtonProps> = ({
+  onClose,
+  className,
+  variant = "glass",
+  size = "md",
+  ...props
 }) => {
   const sizeCls = {
     sm: "h-8 w-8 rounded-lg",
@@ -58,11 +58,11 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
       {...props}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      <X 
+      <X
         className={cn(
           "stroke-[2.5] relative z-10",
           iconSize
-        )} 
+        )}
       />
     </motion.button>
   );

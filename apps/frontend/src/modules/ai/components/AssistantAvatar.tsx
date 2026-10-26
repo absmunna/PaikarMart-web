@@ -2,9 +2,9 @@ import React from 'react';
 import { Bot, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export const AssistantAvatar: React.FC<{ isAnimating?: boolean, size?: 'sm' | 'md' | 'lg' }> = ({ 
+export const AssistantAvatar: React.FC<{ isAnimating?: boolean, size?: 'sm' | 'md' | 'lg' }> = ({
   isAnimating = false,
-  size = 'md' 
+  size = 'md'
 }) => {
   const sizeClasses = {
     sm: 'w-8 h-8',
@@ -15,7 +15,7 @@ export const AssistantAvatar: React.FC<{ isAnimating?: boolean, size?: 'sm' | 'm
   return (
     <div className={`relative flex items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 ${sizeClasses[size]} shadow-lg shadow-orange-500/20`}>
       <Bot className={`${size === 'lg' ? 'w-8 h-8' : 'w-5 h-5'} text-white`} />
-      
+
       {isAnimating && (
         <>
           <motion.div

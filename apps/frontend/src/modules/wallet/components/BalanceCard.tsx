@@ -83,13 +83,13 @@ export const BalanceCard = () => {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3 pt-2">
-        <button 
+        <button
           onClick={() => { setShowSend(false); setShowTopUp(true); setError(''); }}
           className="flex items-center justify-center gap-2 bg-[var(--pm-accent)] text-white py-3.5 rounded-2xl text-xs font-black shadow-lg shadow-[var(--pm-accent)]/20 active:scale-95 transition-all"
         >
           <ArrowDownLeft className="w-4 h-4" /> Top Up Wallet
         </button>
-        <button 
+        <button
           onClick={() => { setShowTopUp(false); setShowSend(true); setError(''); }}
           className="flex items-center justify-center gap-2 bg-white/5 border border-[var(--pm-border)]/40 text-[var(--pm-text)] py-3.5 rounded-2xl text-xs font-black active:scale-95 transition-all hover:bg-white/10"
         >
@@ -110,7 +110,7 @@ export const BalanceCard = () => {
               <h4 className="text-xs font-black text-[var(--pm-text)] uppercase tracking-wider">
                 {showTopUp ? 'Top Up Wallet Balance' : 'Send Money to Vendor/User'}
               </h4>
-              <button 
+              <button
                 onClick={() => { setShowTopUp(false); setShowSend(false); setError(''); }}
                 className="text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] text-xs font-bold"
               >
@@ -131,7 +131,7 @@ export const BalanceCard = () => {
                   />
                 </div>
               )}
-              
+
               <div className="flex flex-col gap-1.5">
                 <span className="text-[9px] font-bold text-[var(--pm-text-muted)] uppercase">Amount (BDT)</span>
                 <input

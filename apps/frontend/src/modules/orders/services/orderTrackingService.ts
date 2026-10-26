@@ -15,7 +15,7 @@ export const orderTrackingService = {
     window.addEventListener('ORDER_CREATED', (e: any) => {
       const { orderId, total, cashbackCoinsCount } = e.detail;
       const store = useOrderTrackingStore.getState();
-      
+
       const newOrder: Order = {
         id: orderId,
         total,
@@ -43,7 +43,7 @@ export const orderTrackingService = {
       };
 
       store.addOrder(newOrder);
-      
+
       // Simulation: Auto-confirm payment after 2 seconds
       setTimeout(() => {
         orderTrackingService.updateStatus(orderId, 'PAYMENT_CONFIRMED', 'Escrow block successfully locked from account credits.');

@@ -20,14 +20,14 @@ export const useChatEngine = () => {
         role: m.role,
         content: m.content
       }));
-      
+
       const payload = {
         messages: [...history, { role: 'user', content: currentContent }],
         stream: true
       };
 
       const token = safeStorage.getItem('accessToken');
-      
+
       const response = await fetch(`${API_BASE_URL}/ai/chat`, {
         method: 'POST',
         headers: {
@@ -61,7 +61,7 @@ export const useChatEngine = () => {
           if (line.startsWith('data: ')) {
             const dataStr = line.slice(6);
             if (dataStr === '[DONE]') continue;
-            
+
             try {
               const data = JSON.parse(dataStr);
               if (data.text) {
@@ -79,9 +79,9 @@ export const useChatEngine = () => {
       }
     } catch (error) {
       console.error('[Chat Engine] Error:', error);
-      addMessage(sessionId, { 
-        role: 'assistant', 
-        content: 'দুঃখিত, বর্তমানে কিছু কারিগরি সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।' 
+      addMessage(sessionId, {
+        role: 'assistant',
+        content: 'দুঃখিত, বর্তমানে কিছু কারিগরি সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।'
       });
     } finally {
       setSessionStatus(sessionId, 'idle');

@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { 
-  getProducts, 
-  getProductById, 
-  getProductSeller, 
-  getProductReviews, 
-  getProductQnA, 
-  addQuestion, 
-  addProduct, 
+import {
+  getProducts,
+  getProductById,
+  getProductSeller,
+  getProductReviews,
+  getProductQnA,
+  addQuestion,
+  addProduct,
   deleteProduct,
   addProductReview,
   getProductPricing
@@ -26,4 +26,3 @@ router.post('/', addProduct);
 router.delete('/:id', deleteProduct);
 
 export const productRoutes = router;
-

@@ -27,11 +27,11 @@ export function ListingPortalLayout({ titleEn, titleBn, context, searchQuery, on
       </section>
 
       <CategoryNavBar context={context} topOffset="72px" />
-      
+
       <div className="px-4 mt-2">
         <h1 className="text-xl font-black text-white">{titleBn}</h1>
         <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-wider">{titleEn}</p>
-        
+
         {/* ━━━ HERO SPOTLIGHT (Injected after title) ━━━ */}
         <div className="mt-6">
           <HeroSpotlight context={context} />
@@ -39,12 +39,12 @@ export function ListingPortalLayout({ titleEn, titleBn, context, searchQuery, on
 
         <div className="mt-6 h-11 bg-[var(--pm-surface)]/50 rounded-2xl border border-white/[0.06] px-4 flex items-center gap-2.5">
           <Search className="w-4 h-4 text-[var(--pm-accent)]" />
-          <input 
-            type="text" 
-            placeholder="Search listings..." 
-            value={searchQuery} 
-            onChange={e => onSearchChange(e.target.value)} 
-            className="flex-1 bg-transparent text-[12px] text-white outline-none" 
+          <input
+            type="text"
+            placeholder="Search listings..."
+            value={searchQuery}
+            onChange={e => onSearchChange(e.target.value)}
+            className="flex-1 bg-transparent text-[12px] text-white outline-none"
           />
         </div>
       </div>

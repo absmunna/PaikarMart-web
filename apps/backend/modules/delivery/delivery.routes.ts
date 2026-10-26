@@ -4,7 +4,7 @@ const router = Router();
 
 router.get('/:orderId', (req, res) => {
     const { orderId } = req.params;
-    
+
     // Mock tracking data
     const trackingInfo = {
         id: 'PKG-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
@@ -26,44 +26,44 @@ router.get('/:orderId', (req, res) => {
           currentLng: 90.3935
         },
         timeline: [
-          { 
-            status: 'ORDER_PLACED', 
-            label: 'Order Placed', 
-            timestamp: new Date(Date.now() - 3600000 * 4).toISOString(), 
+          {
+            status: 'ORDER_PLACED',
+            label: 'Order Placed',
+            timestamp: new Date(Date.now() - 3600000 * 4).toISOString(),
             isCompleted: true,
             message: 'System initialization complete.'
           },
-          { 
-            status: 'ORDER_CONFIRMED', 
-            label: 'Order Confirmed', 
-            timestamp: new Date(Date.now() - 3600000 * 3.5).toISOString(), 
+          {
+            status: 'ORDER_CONFIRMED',
+            label: 'Order Confirmed',
+            timestamp: new Date(Date.now() - 3600000 * 3.5).toISOString(),
             isCompleted: true,
             message: 'Seller confirmed inventory availability.'
           },
-          { 
-            status: 'PACKING', 
-            label: 'Packing', 
-            timestamp: new Date(Date.now() - 3600000 * 3).toISOString(), 
+          {
+            status: 'PACKING',
+            label: 'Packing',
+            timestamp: new Date(Date.now() - 3600000 * 3).toISOString(),
             isCompleted: true,
             message: 'Item verified and secured for transit.'
           },
-          { 
-            status: 'SHIPPED', 
-            label: 'Shipped', 
-            timestamp: new Date(Date.now() - 3600000 * 1).toISOString(), 
+          {
+            status: 'SHIPPED',
+            label: 'Shipped',
+            timestamp: new Date(Date.now() - 3600000 * 1).toISOString(),
             isCompleted: true,
             message: 'Package handed over to PaikarLogistics Dhaka Hub.'
           },
-          { 
-            status: 'OUT_FOR_DELIVERY', 
-            label: 'Out for Delivery', 
-            timestamp: '-', 
+          {
+            status: 'OUT_FOR_DELIVERY',
+            label: 'Out for Delivery',
+            timestamp: '-',
             isCompleted: false,
             message: 'Agent setting route to destination.'
           }
         ]
     };
-    
+
     res.json({
         status: 'success',
         data: trackingInfo

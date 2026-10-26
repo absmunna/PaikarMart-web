@@ -141,8 +141,8 @@ export const GlobalCartDrawer: React.FC<GlobalCartDrawerProps> = ({ isOpen, onCl
             animate="visible"
             exit="exit"
             className={`fixed z-[9991] bg-[var(--pm-surface)]/95 backdrop-blur-2xl border-[var(--pm-border)] shadow-2xl flex flex-col overflow-hidden outline-none
-              ${isMobile 
-                ? 'bottom-0 left-0 right-0 h-[80dvh] rounded-t-[32px] border-t' 
+              ${isMobile
+                ? 'bottom-0 left-0 right-0 h-[80dvh] rounded-t-[32px] border-t'
                 : 'top-0 right-0 bottom-0 w-[420px] rounded-l-[32px] border-l'
               }`}
           >
@@ -197,12 +197,12 @@ export const GlobalCartDrawer: React.FC<GlobalCartDrawerProps> = ({ isOpen, onCl
                           {sellerItems.length} items
                         </span>
                       </div>
-                      
+
                       <div className="space-y-3">
                         {sellerItems.map((item) => {
                           const itemPrice = calculateItemPrice(item);
                           const satisfiesMoq = !item.moq || item.quantity >= item.moq;
-                          
+
                           return (
                             <motion.div
                               layout
@@ -213,10 +213,10 @@ export const GlobalCartDrawer: React.FC<GlobalCartDrawerProps> = ({ isOpen, onCl
                             >
                               {/* Product square thumbnail */}
                               <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-[var(--pm-border)] bg-[var(--pm-bg)] relative">
-                                <img 
-                                  src={item.image} 
-                                  alt={item.name} 
-                                  className="w-full h-full object-cover" 
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover"
                                   onError={(e) => {
                                     e.currentTarget.src = 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=400&q=80';
                                   }}

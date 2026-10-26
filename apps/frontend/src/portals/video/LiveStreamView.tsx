@@ -31,7 +31,7 @@ export default function LiveStreamView() {
   return (
     <div className="relative w-full h-[calc(100vh-4rem)] bg-zinc-950 text-white flex flex-col lg:flex-row overflow-hidden">
       {/* Back button */}
-      <button 
+      <button
         onClick={() => navigate("/video")}
         className="absolute top-4 left-4 z-30 p-2.5 rounded-full bg-black/50 backdrop-blur-md text-white hover:bg-black/80 transition-colors"
       >
@@ -40,9 +40,9 @@ export default function LiveStreamView() {
 
       {/* Main Video Stream Area */}
       <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200" 
-          alt="Live Stream" 
+        <img
+          src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200"
+          alt="Live Stream"
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"
         />
@@ -62,9 +62,9 @@ export default function LiveStreamView() {
         <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <img 
-                src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=150" 
-                alt="Chittagong Agro" 
+              <img
+                src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=150"
+                alt="Chittagong Agro"
                 className="h-12 w-12 rounded-full object-cover border-2 border-[#FF7A00]"
                 referrerPolicy="no-referrer"
               />
@@ -80,9 +80,9 @@ export default function LiveStreamView() {
 
           {/* Pinned Product Card in Stream */}
           <div className="hidden sm:flex items-center gap-3 p-3 rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 max-w-xs shadow-2xl">
-            <img 
-              src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=200" 
-              alt="Mustard Oil" 
+            <img
+              src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=200"
+              alt="Mustard Oil"
               className="h-14 w-14 rounded-xl object-cover"
               referrerPolicy="no-referrer"
             />
@@ -122,14 +122,14 @@ export default function LiveStreamView() {
 
         {/* Chat Input */}
         <form onSubmit={handleSend} className="p-4 border-t border-white/10 flex items-center gap-2 bg-[#0f111a]">
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Send a live message..."
             className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
           />
-          <button 
+          <button
             type="submit"
             className="p-2.5 rounded-xl bg-[#FF7A00] text-white hover:bg-[#e06b00] transition-colors"
           >

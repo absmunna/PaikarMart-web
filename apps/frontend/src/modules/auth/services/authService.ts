@@ -4,20 +4,8 @@ import { LoginCredentials, RegisterData, AuthResponse } from '@/types/auth';
 
 export const authService = {
   getMe: async (): Promise<{ user: any }> => {
-    try {
-      const { data } = await apiClient.get('/auth/me');
-      return data;
-    } catch {
-      // Fallback in dev if token is local
-      const local = localStorage.getItem('pm-auth-storage') || localStorage.getItem('pm.auth.v2');
-      if (local) {
-        try {
-          const parsed = JSON.parse(local);
-          return { user: parsed.state?.user || parsed };
-        } catch {}
-      }
-      return { user: null };
-    }
+    const { data } = await apiClient.get('/auth/me');
+    return data;
   },
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const { data } = await apiClient.post(ENDPOINTS.AUTH.LOGIN, credentials);

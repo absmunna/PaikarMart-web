@@ -22,7 +22,7 @@ const PORTAL_MAP: Record<string, React.ReactNode> = {
 
 export const PortalHubPage: React.FC = () => {
   const { type } = useParams<{ type: string }>();
-  
+
   if (!type || !PORTAL_MAP[type]) {
     return <Navigate to="/apps" replace />;
   }

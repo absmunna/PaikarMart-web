@@ -7,8 +7,8 @@ export default function ECommercePolicyPage() {
     <div className="w-full text-[var(--pm-text)] py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Navigation */}
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center gap-2 text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />

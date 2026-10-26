@@ -63,6 +63,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { StoryBar } from "@shared/StoryBar";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 import { UnifiedPaymentForm } from "@/components/common/UnifiedPaymentForm";
 import { UnifiedDeliveryTracking } from "@/components/common/UnifiedDeliveryTracking";
@@ -81,7 +82,7 @@ export function SellerCentralPortal() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  
+
   const { depositCash } = useWalletStore();
   const { updateLiveLocation } = useLocationStore();
 
@@ -147,28 +148,28 @@ export function SellerCentralPortal() {
   const searchSuggestions = useMemo(() => {
     if (!pricingInput.title.trim() || selectedLinkedProduct) return [];
     const q = pricingInput.title.toLowerCase();
-    return ECOMMERCE_PRODUCTS.filter(p => 
-      (p.title || p.name || "").toLowerCase().includes(q) || 
+    return ECOMMERCE_PRODUCTS.filter(p =>
+      (p.title || p.name || "").toLowerCase().includes(q) ||
       (p as any).asin?.toLowerCase().includes(q)
     ).slice(0, 4);
   }, [pricingInput.title, selectedLinkedProduct]);
 
   // Destructure items from useSeller
-  const { 
-    products, 
-    orders, 
-    serviceBookings, 
+  const {
+    products,
+    orders,
+    serviceBookings,
     setServiceBookings = () => {},
-    deliveryTasks, 
+    deliveryTasks,
     setDeliveryTasks = () => {},
     returnsRequests,
     setReturnsRequests = () => {},
-    createProduct, 
-    updateProduct, 
-    deleteProduct, 
-    setOrderStatus, 
-    profile, 
-    submitVerification 
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    setOrderStatus,
+    profile,
+    submitVerification
   } = useSeller();
 
   // Content Creators stats (kept local as placeholder)
@@ -201,21 +202,21 @@ export function SellerCentralPortal() {
       toast.error(t("Please fill all required fields", "দয়া করে প্রয়োজনীয় ফিল্ডগুলো পূরণ করুন", isEn));
       return;
     }
-    
+
     if (activeRole === "retail_seller") {
       const isLinked = !!selectedLinkedProduct;
       const autoAsin = isLinked ? (selectedLinkedProduct.asin || `PMIN-B${(selectedLinkedProduct.id || '101').toUpperCase()}`) : `PMIN-B${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
 
       createProduct({
         title: isLinked ? (selectedLinkedProduct.title || selectedLinkedProduct.name) : pricingInput.title,
-        description: isLinked 
+        description: isLinked
           ? (selectedLinkedProduct.description || "Linked Catalog Item")
           : t("Beautiful handpicked piece for global standard utility.", "চমৎকার ও উচ্চমান সম্পন্ন একটি প্রডাক্ট যা দৈনিক কাজের উপযোগী।", isEn),
         price: Number(pricingInput.price),
         stock: Number(pricingInput.stock) || 10,
         categoryId: isLinked ? (selectedLinkedProduct.categoryId || "c2") : pricingInput.category,
         categoryName: isLinked ? (selectedLinkedProduct.categoryName || "FASHION") : pricingInput.category.toUpperCase(),
-        images: isLinked 
+        images: isLinked
           ? (selectedLinkedProduct.images || [selectedLinkedProduct.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"])
           : ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"],
         type: "retail",
@@ -234,7 +235,7 @@ export function SellerCentralPortal() {
       } else {
         toast.success(t(`Product published successfully with ASIN: ${autoAsin}!`, `পণ্যটি নতুন ASIN সহ প্রকাশ করা হয়েছে: ${autoAsin}`, isEn));
       }
-      
+
       // Reset Modal States
       setSelectedLinkedProduct(null);
       setSellerSku("");
@@ -305,7 +306,7 @@ export function SellerCentralPortal() {
       toast.error(t("Enter valid amount", "সঠিক পরিমাণ প্রবেশ করান", isEn));
       return;
     }
-    
+
     await depositCash(amount, `DEP-${Date.now().toString(36)}`);
     toast.success(t(`৳${amount} deposited to wallet. Balance updated.`, `৳${amount} ওয়ালেটে জমা হয়েছে। ব্যালেন্স আপডেট হয়েছে।`, isEn));
     setShowDepositModal(false);
@@ -350,13 +351,13 @@ export function SellerCentralPortal() {
   }, [orders]);
 
   const salesPerformanceData = useMemo(() => {
-    const days = isEn 
+    const days = isEn
       ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
       : ["সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি", "রবি"];
-    
+
     // Generate some trend data based on total sales if available, otherwise use defaults
     const baseValue = totalSalesFromOrders > 0 ? totalSalesFromOrders / 10 : 3500;
-    
+
     return days.map((day, i) => ({
       name: day,
       sales: Math.floor(baseValue * (0.8 + Math.random() * 0.4)),
@@ -368,7 +369,7 @@ export function SellerCentralPortal() {
     const months = isEn
       ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
       : ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন"];
-    
+
     return months.map((month, i) => ({
       month,
       revenue: Math.floor(45000 + (Math.random() * 20000) + (i * 5000)),
@@ -378,23 +379,23 @@ export function SellerCentralPortal() {
 
   const handleDownloadReport = () => {
     // Export salesPerformanceData as CSV
-    const headers = isEn 
+    const headers = isEn
       ? ["Day", "Sales (BDT)", "Orders"]
       : ["দিন", "বিক্রয় (টাকা)", "অর্ডার"];
-      
+
     const rows = salesPerformanceData.map(d => [d.name, d.sales, d.orders]);
-    
+
     const csvContent = "\uFEFF" + [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", `sales_report_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     toast.success(t("Report Downloaded", "রিপোর্ট ডাউনলোড করা হয়েছে", isEn));
   };
 
@@ -557,6 +558,7 @@ export function SellerCentralPortal() {
       </div>
 
       <div className="max-w-[1360px] mx-auto w-full px-2 space-y-4">
+        <StoryBar context="seller" />
         <CategoryNavBar context="seller" />
 
         {/* ── Role Identity Highlight Bar ── */}
@@ -625,7 +627,7 @@ export function SellerCentralPortal() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <Button 
+                <Button
                   variant={isStorefrontPreview ? "secondary" : "outline"}
                   onClick={() => setIsStorefrontPreview(!isStorefrontPreview)}
                   className="rounded-xl border-white/10 text-xs font-black gap-2 h-11 px-6 uppercase tracking-widest"
@@ -634,7 +636,7 @@ export function SellerCentralPortal() {
                   {isStorefrontPreview ? t("Edit Mode", "এডিট মোড", isEn) : t("Live Preview", "লাইভ প্রিভিউ", isEn)}
                 </Button>
                 {!isStorefrontPreview && (
-                  <Button 
+                  <Button
                     className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black gap-2 h-11 px-8 uppercase tracking-widest"
                     onClick={() => toast.success('Settings Saved!')}
                   >
@@ -665,11 +667,11 @@ export function SellerCentralPortal() {
                       <LayoutGrid className="w-4 h-4" />
                       {t("Visual Identity", "ভিজুয়াল আইডেন্টিটি", isEn)}
                     </h4>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">Store Name / স্টোরের নাম</label>
-                        <Input 
+                        <Input
                           defaultValue="PaikarMart Official Store"
                           className="bg-white/5 border-white/10 rounded-xl h-12 text-sm font-bold"
                         />
@@ -678,7 +680,7 @@ export function SellerCentralPortal() {
                         <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">Accent Color / ব্র্যান্ড কালার</label>
                         <div className="flex gap-2">
                           {['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'].map(color => (
-                            <button 
+                            <button
                               key={color}
                               className="w-8 h-8 rounded-full border-2 border-white/10 transition-all hover:scale-110"
                               style={{ backgroundColor: color }}
@@ -690,7 +692,7 @@ export function SellerCentralPortal() {
 
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">Store Slogan / স্টোর স্লোগান</label>
-                      <Textarea 
+                      <Textarea
                         placeholder="Leading Wholesale Sourcing Hub in Chawkbazar..."
                         className="bg-white/5 border-white/10 rounded-xl min-h-[80px] text-sm font-medium"
                       />
@@ -702,7 +704,7 @@ export function SellerCentralPortal() {
                       <LayoutGrid className="w-4 h-4" />
                       {t("Store Banner & Layout", "স্টোর ব্যানার ও লেআউট", isEn)}
                     </h4>
-                    
+
                     <div className="aspect-[3/1] rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:bg-white/10 transition-all overflow-hidden relative">
                       <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 via-teal-600/10 to-blue-600/20 opacity-40" />
                       <Upload className="w-6 h-6 text-zinc-400 group-hover:text-white transition-colors relative z-10" />
@@ -806,7 +808,7 @@ export function SellerCentralPortal() {
           )}
         </div>
       )}
-        
+
         {/* ── TAB CONTENT: OVERVIEW ── */}
         {activeTab === "overview" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -826,7 +828,7 @@ export function SellerCentralPortal() {
                   <p className="text-sm font-black text-white">৳১২,৫০০</p>
                 </div>
                 <div className="h-8 w-px bg-white/10 hidden sm:block" />
-                <Button 
+                <Button
                   onClick={handleDownloadReport}
                   variant="outline"
                   className="bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-xl text-[10px] font-black gap-2 h-11 px-6 uppercase tracking-widest"
@@ -834,7 +836,7 @@ export function SellerCentralPortal() {
                   <Download className="w-4 h-4" />
                   {t("Download Report", "রিপোর্ট ডাউনলোড", isEn)}
                 </Button>
-                <Button 
+                <Button
                   onClick={() => setShowAddProduct(true)}
                   className="bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-[10px] font-black gap-2 h-11 px-6 uppercase tracking-widest shadow-lg shadow-emerald-500/20"
                 >
@@ -902,22 +904,22 @@ export function SellerCentralPortal() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                      <XAxis 
-                        dataKey="name" 
-                        axisLine={false} 
-                        tickLine={false} 
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
                         tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
                         dy={10}
                       />
-                      <YAxis 
-                        axisLine={false} 
-                        tickLine={false} 
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
                         tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
                       />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#1e293b', 
-                          border: '1px solid #ffffff10', 
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1e293b',
+                          border: '1px solid #ffffff10',
                           borderRadius: '12px',
                           fontSize: '12px',
                           color: '#fff'
@@ -925,13 +927,13 @@ export function SellerCentralPortal() {
                         itemStyle={{ color: '#10b981' }}
                         cursor={{ stroke: '#ffffff10', strokeWidth: 2 }}
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="sales" 
-                        stroke="#10b981" 
+                      <Area
+                        type="monotone"
+                        dataKey="sales"
+                        stroke="#10b981"
                         strokeWidth={3}
-                        fillOpacity={1} 
-                        fill="url(#colorSales)" 
+                        fillOpacity={1}
+                        fill="url(#colorSales)"
                         animationDuration={1500}
                       />
                     </AreaChart>
@@ -971,23 +973,23 @@ export function SellerCentralPortal() {
                       margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                      <XAxis 
-                        dataKey="month" 
-                        axisLine={false} 
-                        tickLine={false} 
+                      <XAxis
+                        dataKey="month"
+                        axisLine={false}
+                        tickLine={false}
                         tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
                         dy={10}
                       />
-                      <YAxis 
-                        axisLine={false} 
-                        tickLine={false} 
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
                         tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
                         tickFormatter={(value) => `৳${(value / 1000)}k`}
                       />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#1e293b', 
-                          border: '1px solid #ffffff10', 
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1e293b',
+                          border: '1px solid #ffffff10',
                           borderRadius: '12px',
                           fontSize: '12px',
                           color: '#fff'
@@ -995,15 +997,15 @@ export function SellerCentralPortal() {
                         cursor={{ fill: '#ffffff05' }}
                         formatter={(value: any) => [`৳${value.toLocaleString()}`, t("Revenue", "আয়", isEn)]}
                       />
-                      <Bar 
-                        dataKey="revenue" 
+                      <Bar
+                        dataKey="revenue"
                         radius={[6, 6, 0, 0]}
                         animationDuration={1500}
                       >
                         {monthlyGrowthData.map((entry, index) => (
-                          <Cell 
-                            key={`cell-${index}`} 
-                            fill={index === monthlyGrowthData.length - 1 ? '#10b981' : '#334155'} 
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={index === monthlyGrowthData.length - 1 ? '#10b981' : '#334155'}
                             fillOpacity={index === monthlyGrowthData.length - 1 ? 1 : 0.5}
                           />
                         ))}
@@ -1290,8 +1292,8 @@ export function SellerCentralPortal() {
                         Live tracking active
                       </span>
                       {task.status !== "delivered" && (
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           className="bg-emerald-600 h-7 text-[10px] rounded-lg"
                           onClick={() => {
                             setDeliveryTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: "delivered", timeline: [...t.timeline, "Delivered successfully!"] } : t));
@@ -1407,7 +1409,7 @@ export function SellerCentralPortal() {
                           <h4 className="font-bold text-white text-sm mt-2">{task.route}</h4>
                           <p className="text-[10px] text-slate-400 mt-0.5">Pick up: 1.2km away · Deliver: 4.5km</p>
                         </div>
-                        <Button 
+                        <Button
                           className="bg-orange-500 hover:bg-orange-400 text-white font-bold h-9 px-4 rounded-xl text-xs"
                           onClick={() => {
                             setDeliveryTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: "picked_up", timeline: ["Task Accepted", "Moving to pickup point"] } : t));
@@ -1886,7 +1888,7 @@ export function SellerCentralPortal() {
               </h3>
 
               <form onSubmit={handleAddNewItemSubmit} className="space-y-4">
-                
+
                 {/* Product/Service Name Input with search suggestions */}
                 <div>
                   <label className="block text-xs text-slate-400 mb-1.5 font-black uppercase tracking-wider">

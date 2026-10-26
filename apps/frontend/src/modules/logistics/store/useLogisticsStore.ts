@@ -15,7 +15,7 @@ export const useLogisticsStore = create<LogisticsState & LogisticsActions>()(
         try {
           // Simulate API call to fetch tracking info
           await new Promise(resolve => setTimeout(resolve, 800));
-          
+
           if (!get().shipments[orderId]) {
             // Create initial shipment if not exists
             const initialShipment = {
@@ -55,7 +55,7 @@ export const useLogisticsStore = create<LogisticsState & LogisticsActions>()(
               shipments: { ...state.shipments, [orderId]: initialShipment }
             }));
           }
-          
+
           set({ isLoading: false });
         } catch (error) {
           set({ error: 'Failed to fetch shipment', isLoading: false });

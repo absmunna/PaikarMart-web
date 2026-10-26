@@ -1,14 +1,14 @@
-﻿import { 
-  collection, 
-  addDoc, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  query, 
-  where, 
-  orderBy, 
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
   limit,
-  serverTimestamp, 
+  serverTimestamp,
   Timestamp,
   updateDoc
 } from "firebase/firestore";

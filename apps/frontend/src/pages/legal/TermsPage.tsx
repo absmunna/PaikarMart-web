@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { FileText, ChevronDown, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { FileText, ChevronDown } from "lucide-react";
 
 interface TermsSection {
   title: string;
@@ -91,13 +90,6 @@ export default function TermsPage() {
       {/* Hero */}
       <div className="border-b border-white/5 mb-8">
         <div className="container mx-auto px-4 py-8">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            হোম পেজে ফিরে যান
-          </Link>
           <div className="max-w-2xl bg-gradient-to-r from-orange-500/10 to-transparent p-6 rounded-3xl border border-orange-500/15">
             <div className="h-12 w-12 rounded-2xl bg-orange-500/10 border border-orange-500/15 flex items-center justify-center mb-4">
               <FileText className="h-6 w-6 text-orange-500" />
@@ -111,11 +103,11 @@ export default function TermsPage() {
       <div className="container mx-auto px-4 pb-12 max-w-3xl">
         <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-6 shadow-sm">
           {SECTIONS.map((s) => (
-            <Section 
-              key={s.title} 
-              title={s.title} 
-              content={s.content} 
-              bullets={s.bullets} 
+            <Section
+              key={s.title}
+              title={s.title}
+              content={s.content}
+              bullets={s.bullets}
             />
           ))}
         </div>

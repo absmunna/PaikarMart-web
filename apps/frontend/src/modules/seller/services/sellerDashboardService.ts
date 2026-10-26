@@ -8,6 +8,13 @@ import type {
   SellerBid,
 } from "../types";
 
+function requireSupabase() {
+  if (!supabase) {
+    throw new Error("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable seller dashboard data.");
+  }
+  return supabase;
+}
+
 const MOCK_BIDS: SellerBid[] = [
   {
     id: "b1",
@@ -46,8 +53,10 @@ export const sellerDashboardService = {
     store.setLoading(true);
 
     try {
+      const client = requireSupabase();
+
       // Fetch Products
-      const { data: productsData, error: productsError } = await supabase
+      const { data: productsData, error: productsError } = await client
         .from("Product")
         .select("*")
         .eq("sellerId", userId);
@@ -78,7 +87,7 @@ export const sellerDashboardService = {
       }));
 
       // Fetch Orders
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data: ordersData, error: ordersError } = await client
         .from("Order")
         .select(
           `
@@ -212,7 +221,7 @@ export const sellerDashboardService = {
     const store = useSellerDashboardStore.getState();
     store.updateOrder(orderId, "processing");
     try {
-      await supabase.from('Order').update({ status: 'confirmed' }).eq('id', orderId);
+      await requireSupabase().from('Order').update({ status: 'confirmed' }).eq('id', orderId);
     } catch (e) {
       console.error(e);
     }
@@ -222,7 +231,7 @@ export const sellerDashboardService = {
     const store = useSellerDashboardStore.getState();
     store.updateOrder(orderId, "shipped");
     try {
-      await supabase.from('Order').update({ status: 'shipped' }).eq('id', orderId);
+      await requireSupabase().from('Order').update({ status: 'shipped' }).eq('id', orderId);
     } catch (e) {
       console.error(e);
     }
@@ -232,7 +241,7 @@ export const sellerDashboardService = {
     const store = useSellerDashboardStore.getState();
     store.updateProduct(productId, { stock: newStock });
     try {
-      await supabase.from('Product').update({ stock: newStock }).eq('id', productId);
+      await requireSupabase().from('Product').update({ stock: newStock }).eq('id', productId);
     } catch (e) {
       console.error(e);
     }

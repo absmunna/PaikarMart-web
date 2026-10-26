@@ -21,7 +21,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { registerUser, registerSeller, registerFactory } = useAuth();
-  
+
   // Resolve initial role from query string or prop
   const resolvedRole = useMemo<AccountType>(() => {
     const qRole = (defaultRole || searchParams.get("role") || searchParams.get("type") || "").toLowerCase();
@@ -40,7 +40,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
 
   const [step, setStep] = useState(initialStep);
   const [accountType, setAccountType] = useState<AccountType>(resolvedRole);
-  
+
   const [form, setForm] = useState<RegistrationFormState>({
     fullName: "",
     phone: "",
@@ -259,7 +259,7 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.06)_0,transparent_50%)] pointer-events-none" />
 
       <div className="w-full max-w-2xl bg-zinc-900/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative z-10 my-8">
-        
+
         {/* Step Indicator Header */}
         <div className="flex items-center justify-between gap-2 mb-8">
           {[
@@ -288,40 +288,40 @@ export default function RegistrationWizard({ defaultRole }: RegistrationWizardPr
         </div>
 
         {step === 0 && (
-          <RoleSelectionStep 
-            selectedRole={accountType} 
-            onSelectRole={setAccountType} 
-            onNext={handleNext} 
+          <RoleSelectionStep
+            selectedRole={accountType}
+            onSelectRole={setAccountType}
+            onNext={handleNext}
           />
         )}
 
         {step === 1 && (
-          <AccountInfoStep 
-            form={form} 
-            onInput={handleInput} 
-            onNext={handleNext} 
-            onBack={handleBack} 
+          <AccountInfoStep
+            form={form}
+            onInput={handleInput}
+            onNext={handleNext}
+            onBack={handleBack}
             selectedTypeConfig={selectedTypeConfig}
           />
         )}
 
         {step === 2 && (
-          <BusinessDetailsStep 
-            form={form} 
-            onInput={handleInput} 
-            onNext={handleNext} 
-            onBack={handleBack} 
+          <BusinessDetailsStep
+            form={form}
+            onInput={handleInput}
+            onNext={handleNext}
+            onBack={handleBack}
             accountType={accountType}
             selectedTypeConfig={selectedTypeConfig}
           />
         )}
 
         {step === 3 && (
-          <VerificationStep 
-            form={form} 
-            onInput={handleInput} 
-            onSubmit={handleFinalSubmit} 
-            onBack={handleBack} 
+          <VerificationStep
+            form={form}
+            onInput={handleInput}
+            onSubmit={handleFinalSubmit}
+            onBack={handleBack}
             busy={busy}
             selectedTypeConfig={selectedTypeConfig}
           />

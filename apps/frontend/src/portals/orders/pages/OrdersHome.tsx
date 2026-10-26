@@ -15,7 +15,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { useOrderTrackingStore, TrackingOrder, OrderState } from "@/modules/orders";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { safeBack } from "@/lib/navigation";
 
 type TabType = "all" | "pending" | "processing" | "shipping" | "delivered" | "cancelled" | "refund";
 
@@ -67,7 +66,7 @@ export default function OrdersHome() {
   // Combine both sources seamlessly
   const orders = useMemo(() => {
     const combined: TrackingOrder[] = [...storeOrders];
-    
+
     // Merge API orders ensuring no duplication
     apiOrders.forEach(apiOrd => {
       const exists = combined.some(o => o.id === apiOrd.id || o.orderNo === apiOrd.orderNo);
@@ -121,8 +120,8 @@ export default function OrdersHome() {
     // Filter by search query
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(o => 
-        (o.orderNo || "").toLowerCase().includes(q) || 
+      filtered = filtered.filter(o =>
+        (o.orderNo || "").toLowerCase().includes(q) ||
         (o.id || "").toLowerCase().includes(q) ||
         o.items.some(item => (item.productTitle || "").toLowerCase().includes(q))
       );
@@ -133,10 +132,10 @@ export default function OrdersHome() {
   }, [apiOrders, storeOrders, activeTab, searchQuery]);
 
   const toggle = (id: string) => {
-    setExpanded((s) => { 
-      const n = new Set(s); 
-      n.has(id) ? n.delete(id) : n.add(id); 
-      return n; 
+    setExpanded((s) => {
+      const n = new Set(s);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
     });
   };
 
@@ -175,10 +174,9 @@ export default function OrdersHome() {
       <div className="sticky top-0 z-50 bg-[#020604]/90 backdrop-blur-md px-4 py-4 border-b border-white/[0.04]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => safeBack(navigate, '/')} 
+            <button
+              onClick={() => navigate(-1)}
               className="p-2.5 rounded-xl bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer"
-              title="ফিরে যান"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -202,8 +200,8 @@ export default function OrdersHome() {
         {/* Dynamic Search Box */}
         <div className="relative">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder={isBn ? "অর্ডার আইডি বা পণ্যের নাম খুঁজুন..." : "Search Order ID, merchandise or items..."}
             className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-2.5 pl-10 pr-4 text-[10px] font-black uppercase tracking-wider text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 transition-all"
             value={searchQuery}
@@ -222,7 +220,7 @@ export default function OrdersHome() {
                 onClick={() => setActiveTab(tab)}
                 className={cn(
                   "px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap transition-all duration-300 flex items-center gap-1.5 border",
-                  isActive 
+                  isActive
                     ? "bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-emerald-500/30 text-emerald-400 shadow-md"
                     : "bg-transparent border-transparent text-zinc-500 hover:text-zinc-300"
                 )}
@@ -269,10 +267,10 @@ export default function OrdersHome() {
               const tabCat = getOrderTabCategory(order.status, order.escrowStatus);
               const config = TAB_CONFIG[tabCat] || TAB_CONFIG.all;
               const isOpen = expanded.has(order.id);
-              
+
               return (
-                <div 
-                  key={order.id} 
+                <div
+                  key={order.id}
                   className={cn(
                     "bg-zinc-950 rounded-[2rem] border border-white/5 overflow-hidden transition-all duration-300 hover:border-emerald-500/20",
                     isOpen ? "shadow-[0_15px_40px_rgba(2,6,4,0.6)]" : ""
@@ -304,18 +302,18 @@ export default function OrdersHome() {
 
                       <div className="flex items-center justify-between mt-3.5 pt-2 border-t border-white/[0.03]">
                         <span className="text-sm font-black text-emerald-400">{formatBDT(order.total)}</span>
-                        
+
                         <div className="flex items-center gap-2">
                           {/* Live Track Action link */}
-                          <Link 
+                          <Link
                             to={`/orders/track/${order.id}`}
                             className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all"
                           >
                             {isBn ? "ট্র্যাক করুন" : "Live Track"}
                           </Link>
 
-                          <button 
-                            onClick={() => toggle(order.id)} 
+                          <button
+                            onClick={() => toggle(order.id)}
                             className="w-8 h-8 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-white transition-all"
                           >
                             {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -328,9 +326,9 @@ export default function OrdersHome() {
                   {/* Expanded detail drop-down view */}
                   <AnimatePresence>
                     {isOpen && (
-                      <motion.div 
-                        initial={{ height: 0, opacity: 0 }} 
-                        animate={{ height: 'auto', opacity: 1 }} 
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         className="border-t border-white/[0.04] bg-black/40"
                       >
@@ -370,7 +368,7 @@ export default function OrdersHome() {
                                 <span>PAYMENT GATEWAY</span>
                                 <span className="text-zinc-200 font-black uppercase">{order.paymentMethod}</span>
                               </div>
-                              
+
                               {/* Escrow Status block and release actions */}
                               {order.escrowStatus && (
                                 <div className="pt-2 border-t border-white/[0.04] flex justify-between items-center text-[10px]">
@@ -386,7 +384,7 @@ export default function OrdersHome() {
                           {/* Order actions: Escrow Authorization Release or Reorder */}
                           <div className="pt-2 border-t border-white/[0.03] flex gap-3">
                             {order.status !== 'COMPLETED' && order.status !== 'DELIVERED' && (
-                              <button 
+                              <button
                                 onClick={(e) => handleReleaseEscrow(order.id, e)}
                                 className="flex-1 h-11 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-500 hover:to-teal-500 text-black text-[9px] font-black uppercase tracking-widest rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.25)] flex items-center justify-center gap-1.5 cursor-pointer"
                               >
@@ -395,7 +393,7 @@ export default function OrdersHome() {
                               </button>
                             )}
 
-                            <button 
+                            <button
                               onClick={() => {
                                 toast.success(isBn ? "প্রোডাক্ট আপনার কার্টে পুনরায় যুক্ত করা হচ্ছে..." : "Restoring sourcing lot items back to active shopping basket...");
                                 navigate('/marketplace');

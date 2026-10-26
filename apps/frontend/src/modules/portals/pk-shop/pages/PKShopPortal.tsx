@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Sparkles, ShieldCheck, ShoppingBag, Star, Coins, 
-  Search, ArrowUpDown, ChevronRight, SlidersHorizontal, 
+import {
+  Sparkles, ShieldCheck, ShoppingBag, Star, Coins,
+  Search, ArrowUpDown, ChevronRight, SlidersHorizontal,
   Settings, CheckCircle2, Truck, RefreshCw, Eye, PackageCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +13,7 @@ import { useCartDrawerStore } from '@/modules/cart/store/cartDrawerStore';
 import { useAuth } from '@/modules/auth';
 import { pkShopApi } from '../services/pkShopApi';
 import { PKShopProduct } from '../types';
-import { ProductCardSkeleton } from '@/design-system/components/ui/ProductCard';
+import { PortalIconBar } from '@/shared/PortalIconBar';
 
 const CATEGORIES = [
   { id: 'all', label: 'সব পণ্য (All)' },
@@ -101,11 +101,14 @@ export const PKShopPortal: React.FC = () => {
   return (
     <div className="w-full pb-28 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 pt-4">
+      {/* ─── 1. GLOBAL PORTAL BAR ─── */}
+      <PortalIconBar />
+
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6">
 
         {/* ─── 2. STAFF COCKPIT TOP BANNER (Shown to Admins & Managers) ─── */}
         {isStaff && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-purple-500/15 border border-amber-500/30 flex items-center justify-between gap-3 shadow-lg"
@@ -172,7 +175,7 @@ export const PKShopPortal: React.FC = () => {
         {/* ─── 4. SEARCH & FILTER CONTROLS ─── */}
         <div className="bg-[var(--pm-surface)] p-3.5 sm:p-5 rounded-3xl border border-[var(--pm-border)] space-y-4 shadow-sm">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            
+
             {/* Live Search Input */}
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
@@ -249,9 +252,13 @@ export const PKShopPortal: React.FC = () => {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                <ProductCardSkeleton key={n} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <div key={n} className="bg-[var(--pm-surface)] rounded-3xl p-4 border border-[var(--pm-border)] space-y-3 animate-pulse">
+                  <div className="aspect-square w-full bg-zinc-800 rounded-2xl" />
+                  <div className="h-4 w-3/4 bg-zinc-800 rounded-full" />
+                  <div className="h-3 w-1/2 bg-zinc-800 rounded-full" />
+                </div>
               ))}
             </div>
           ) : products.length === 0 ? (

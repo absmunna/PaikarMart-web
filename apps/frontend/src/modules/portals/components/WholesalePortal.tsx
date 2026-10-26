@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Factory, ShoppingBag, Search, Filter, 
+import {
+  Factory, ShoppingBag, Search, Filter,
   ArrowUpDown, Package, FileText, CheckCircle2,
   ChevronRight, Star, Plus, ShieldCheck
 } from 'lucide-react';
@@ -95,8 +95,8 @@ export const WholesalePortal: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-          <Input 
-            placeholder="Search wholesale products..." 
+          <Input
+            placeholder="Search wholesale products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-white/5 border-white/10 pl-12 h-14 rounded-2xl text-sm font-bold"
@@ -129,7 +129,7 @@ export const WholesalePortal: React.FC = () => {
                 )}
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                 <Button 
+                 <Button
                    onClick={() => handleAddToCart(product)}
                    className="w-full bg-white text-black font-black text-xs uppercase tracking-widest h-12 rounded-xl"
                  >
@@ -166,7 +166,7 @@ export const WholesalePortal: React.FC = () => {
                    <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white/5 text-zinc-400">
                       <Plus className="w-5 h-5" />
                    </Button>
-                   <Button 
+                   <Button
                     onClick={() => toast.info("Opening RFQ Form")}
                     className="h-10 px-4 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-indigo-500/20"
                    >

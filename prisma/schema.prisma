@@ -1,0 +1,141 @@
+// backend/database/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("buyer")
+  products       Product[]
+  orders         Order[]
+  demands        Demand[]       @relation("UserDemands")
+  posts          Post[]         @relation("UserPosts")
+  comments       Comment[]      @relation("UserComments")
+  stories        Story[]        @relation("UserStories")
+  notifications  Notification[] @relation("UserNotifications")
+  wallet         Wallet?
+  createdAt      DateTime       @default(now())
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  price         Decimal 
+  originalPrice Decimal?
+  images        String[] @default([])
+  category      String?
+  stock         Int      @default(0)
+  isPKStore     Boolean  @default(false)
+  sellerId      String
+  seller        User     @relation(fields: [sellerId], references: [id])
+  orders        Order[]
+  posts         Post[]   @relation("ProductPosts")
+  createdAt     DateTime @default(now())
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
+
+model Demand {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserDemands", fields: [authorUserId], references: [id])
+  title          String
+  description    String
+  budget         Decimal
+  currency       String   @default("BDT")
+  categoryId     String
+  location       String?
+  urgency        String   @default("normal")
+  status         String   @default("open")
+  matchVendorIds String[] @default([]) 
+  createdAt      DateTime @default(now())
+}
+
+model Post {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserPosts", fields: [authorUserId], references: [id])
+  type           String
+  content        String
+  images         String[] @default([])
+  videoUrl       String?
+  productId      String?
+  product        Product? @relation("ProductPosts", fields: [productId], references: [id])
+  likeCount      Int      @default(0)
+  commentCount   Int      @default(0)
+  shareCount     Int      @default(0)
+  createdAt      DateTime @default(now())
+  comments       Comment[]
+}
+
+model Comment {
+  id             String   @id @default(uuid())
+  postId         String
+  post           Post     @relation(fields: [postId], references: [id])
+  authorUserId   String
+  author         User     @relation("UserComments", fields: [authorUserId], references: [id])
+  content        String
+  createdAt      DateTime @default(now())
+}
+
+model Story {
+  id             String   @id @default(uuid())
+  authorUserId   String
+  author         User     @relation("UserStories", fields: [authorUserId], references: [id])
+  imageUrl       String
+  caption        String?
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation("UserNotifications", fields: [userId], references: [id])
+  type           String
+  title          String
+  body           String
+  actorAvatarUrl String?
+  read           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  balance      Decimal       @default(0.00)
+  coins        Int           @default(0)
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  type      String   // "inflow" | "outflow"
+  title     String
+  subtitle  String
+  amount    Decimal
+  status    String   @default("completed") // "completed" | "pending" | "failed"
+  createdAt DateTime @default(now())
+}

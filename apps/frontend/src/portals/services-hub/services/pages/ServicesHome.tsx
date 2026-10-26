@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Search, ArrowLeft, Wrench, ShieldCheck, CheckCircle2, Star, 
+import {
+  Search, ArrowLeft, Wrench, ShieldCheck, CheckCircle2, Star,
   MapPin, Clock, Calendar, PhoneCall, Sparkles, UserCheck, ArrowRight,
   Zap, Droplets, Paintbrush, Laptop, Home, Check
 } from "lucide-react";
@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { HomeHeader } from "@/design-system/components/home/HomeHeader";
 import { SubPortalNav } from "@/design-system/components/navigation/SubPortalNav";
-import { safeBack } from "@/lib/navigation";
 
 interface ServiceItem {
   id: string;
@@ -199,10 +198,9 @@ export default function ServicesHome() {
         {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => safeBack(navigate, '/')}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 shadow-xs cursor-pointer"
-            title="ফিরে যান"
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] transition-all active:scale-95 shadow-xs"
           >
             <ArrowLeft className="w-5 h-5 text-[var(--pm-text)]" />
           </button>

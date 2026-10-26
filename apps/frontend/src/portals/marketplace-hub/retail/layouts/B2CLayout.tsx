@@ -26,9 +26,9 @@ export const B2CLayout: React.FC<B2CLayoutProps> = ({ children }) => {
         <div className="flex-1 max-w-lg mx-6 hidden md:block">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <input 
-              type="text" 
-              placeholder="পণ্য, ব্র্যান্ড বা দোকান খুঁজুন..." 
+            <input
+              type="text"
+              placeholder="পণ্য, ব্র্যান্ড বা দোকান খুঁজুন..."
               className="w-full h-11 bg-zinc-100 border-0 rounded-2xl pl-10 pr-4 text-sm outline-none focus:ring-2 ring-orange-500/20"
             />
           </div>

@@ -10,7 +10,7 @@ interface EmailOtpLoginFormProps {
 
 export const EmailOtpLoginForm: React.FC<EmailOtpLoginFormProps> = ({ purpose }) => {
   const [email, setEmail] = useState('');
-  
+
   const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success('OTP sent to your email!');
@@ -20,10 +20,10 @@ export const EmailOtpLoginForm: React.FC<EmailOtpLoginFormProps> = ({ purpose })
     <form onSubmit={handleSendOtp} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
-        <Input 
-          id="email" 
-          type="email" 
-          placeholder="name@example.com" 
+        <Input
+          id="email"
+          type="email"
+          placeholder="name@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

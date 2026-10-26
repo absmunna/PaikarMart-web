@@ -1,0 +1,68 @@
+/* Themes System - Modular Registry */
+
+:root {
+  /* Default: deepDark Theme */
+  --pm-bg: #0d0d1a;
+  --pm-surface: #13131f;
+  --pm-surface-hover: #1a1a2e;
+  --pm-border: rgba(255,255,255,0.08);
+  --pm-text: #ffffff;
+  --pm-text-muted: #a1a1aa;
+  --pm-accent: #f97316;
+  --pm-accent-soft: rgba(249, 115, 22, 0.15);
+  --pm-gradient: linear-gradient(135deg, #f97316, #a855f7);
+  --pm-nav-bg: rgba(13, 13, 26, 0.8);
+  --pm-card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --pm-glass: rgba(255,255,255,0.07);
+  --pm-nakshi-opacity: 0;
+  --pm-blob-1: #f97316;
+  --pm-blob-2: #a855f7;
+}
+
+.colourful {
+  --pm-bg: #fff1f2;
+  --pm-surface: #ffffff;
+  --pm-surface-hover: #fecdd3;
+  --pm-border: #fecdd3;
+  --pm-text: #881337;
+  --pm-text-muted: #9f1239;
+  --pm-accent: #e11d48;
+  --pm-accent-soft: rgba(225, 29, 72, 0.1);
+  --pm-gradient: linear-gradient(135deg, #e11d48, #be185d);
+  --pm-nav-bg: rgba(255, 255, 255, 0.8);
+  --pm-nakshi-opacity: 0.05;
+  --pm-blob-1: #e11d48;
+  --pm-blob-2: #be185d;
+}
+
+.nakshiLight {
+  --pm-bg: #fefcf5;
+  --pm-surface: #fffefb;
+  --pm-surface-hover: #f1ebd8;
+  --pm-border: #d4c8a5;
+  --pm-text: #3d3b35;
+  --pm-text-muted: #7c776b;
+  --pm-accent: #b45309;
+  --pm-accent-soft: rgba(180, 83, 9, 0.1);
+  --pm-gradient: linear-gradient(135deg, #b45309, #92400e);
+  --pm-nav-bg: rgba(254, 252, 245, 0.8);
+  --pm-nakshi-opacity: 0.08;
+  --pm-blob-1: #b45309;
+  --pm-blob-2: #d97706;
+}
+
+.greenField {
+  --pm-bg: #064e3b;
+  --pm-surface: #065f46;
+  --pm-surface-hover: #047857;
+  --pm-border: #059669;
+  --pm-text: #ecfdf5;
+  --pm-text-muted: #a7f3d0;
+  --pm-accent: #34d399;
+  --pm-accent-soft: rgba(52, 211, 153, 0.2);
+  --pm-gradient: linear-gradient(135deg, #34d399, #10b981);
+  --pm-nav-bg: rgba(6, 78, 59, 0.9);
+  --pm-nakshi-opacity: 0.04;
+  --pm-blob-1: #34d399;
+  --pm-blob-2: #10b981;
+}

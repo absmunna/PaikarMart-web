@@ -23,7 +23,7 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   return (
     <header className="absolute top-0 left-0 right-0 z-50 glass h-[60px] md:h-[64px] w-full border-b border-[var(--pm-border)]/60 select-none">
       <nav className="w-full mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
-        
+
         {/* Zone 1: Brand / Portal Switcher */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
@@ -33,7 +33,7 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
           >
             <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
-          
+
           <Link to="/" className="font-black text-lg sm:text-xl flex items-center gap-1.5 tracking-tight group">
             <span>
               <span className="text-[var(--pm-accent)]">Paikar</span>
@@ -77,7 +77,7 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
         {/* Zone 3: Interactive Controls & Direct Mobile Entries */}
         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-          
+
           {/* Mobile Search Trigger - Directly navigates to Search Page */}
           <button
             onClick={() => navigate('/search')}
@@ -98,7 +98,7 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
           </div>
 
           {/* Cart Icon with badge */}
-          <button 
+          <button
             onClick={openCart}
             className="relative p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all"
             title="Shopping Cart"
@@ -112,7 +112,7 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
           </button>
 
           {/* Notifications Icon - Directly navigates to Notifications Page */}
-          <button 
+          <button
             onClick={() => navigate('/notifications')}
             className="relative p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer"
             title="Notifications"

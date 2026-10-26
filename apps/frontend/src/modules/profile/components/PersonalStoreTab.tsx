@@ -42,7 +42,7 @@ export function PersonalStoreTab({ onNavigateTab }: { onNavigateTab?: (tab: stri
           </p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={() => {
               if (onNavigateTab) {
                 onNavigateTab('storefront');
@@ -55,14 +55,14 @@ export function PersonalStoreTab({ onNavigateTab }: { onNavigateTab?: (tab: stri
             <Eye className="w-3.5 h-3.5" />
             View Storefront
           </button>
-          <button 
+          <button
             onClick={() => navigate('/seller')}
             className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-400 transition-all flex items-center gap-2"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Seller Central
           </button>
-          <button 
+          <button
             onClick={() => toast.info('Opening product creator...')}
             className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
           >
@@ -93,7 +93,7 @@ export function PersonalStoreTab({ onNavigateTab }: { onNavigateTab?: (tab: stri
           <h3 className="text-xs font-black text-cyan-400 uppercase tracking-[0.2em]">Recent Products / সাম্প্রতিক পণ্য</h3>
           <button className="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest transition-all">View All Products</button>
         </div>
-        
+
         <div className="overflow-hidden border border-white/5 rounded-2xl">
           <table className="w-full text-left border-collapse">
             <thead className="bg-white/5">

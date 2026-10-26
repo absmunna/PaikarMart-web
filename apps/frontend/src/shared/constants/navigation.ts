@@ -1,10 +1,10 @@
-import { 
-  Home, ShoppingBag, Wallet, MessageSquare, Heart, Bell, 
+import {
+  Home, ShoppingBag, Wallet, MessageSquare, Heart, Bell,
   Truck, Wrench, MapPin, Radio, Sparkles, Store, LayoutDashboard, Package, Film, Tag, Monitor
 } from "lucide-react";
 
 export const MAIN_NAV = [
-  { id: "feed", icon: Home, label: "Feed", href: "/", color: "text-[var(--pm-accent)]", bg: "bg-[var(--pm-accent)]/10", desc: "Community & Updates" },
+  { id: "feed", icon: Home, label: "Feed", href: "/", color: "text-[#FF7A00]", bg: "bg-[#FF7A00]/10", desc: "Community & Updates" },
   { id: "video", icon: Film, label: "Video Hub", href: "/video", color: "text-rose-500", bg: "bg-rose-500/10", desc: "Shorts & Streams" },
   { id: "offers", icon: Sparkles, label: "Special Offers", href: "/offers", color: "text-amber-500", bg: "bg-amber-500/10", desc: "Best Deals" },
 ];
@@ -21,7 +21,7 @@ export const COMMERCE_HUBS = [
 ];
 
 export const PERSONAL_NAV = [
-  { id: "orders", icon: Package, label: "My Orders", href: "/orders", color: "text-[var(--pm-accent)]", bg: "bg-[var(--pm-accent)]/10" },
+  { id: "orders", icon: Package, label: "My Orders", href: "/orders", color: "text-[#FF7A00]", bg: "bg-[#FF7A00]/10" },
   { id: "wallet", icon: Wallet, label: "My Wallet", href: "/wallet", color: "text-emerald-500", bg: "bg-emerald-500/10" },
   { id: "wishlist", icon: Heart, label: "Wishlist", href: "/wishlist", color: "text-rose-500", bg: "bg-rose-500/10" },
   { id: "messages", icon: MessageSquare, label: "Messages", href: "/messages", color: "text-blue-500", bg: "bg-blue-500/10" },
@@ -29,5 +29,5 @@ export const PERSONAL_NAV = [
 ];
 
 export const UTILITY_NAV = [
-  { id: "seller", label: "Seller Central", icon: LayoutDashboard, href: "/seller-central", color: "text-[var(--pm-accent)]" },
+  { id: "seller", label: "Seller Central", icon: LayoutDashboard, href: "/seller-central", color: "text-[#FF7A00]" },
 ];

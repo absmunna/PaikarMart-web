@@ -3,7 +3,7 @@ export type CommerceDomain = 'retail' | 'b2b' | 'food' | 'pharmacy' | 'digital' 
 
 export interface CartItem {
   id: string;
-  sourceId?: string; 
+  sourceId?: string;
   domain: CommerceDomain;
   portal?: 'pk-shop' | 'b2c' | 'b2b' | 'service' | 'logistics' | 'nearby' | 'digital';
   name: string;

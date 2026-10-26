@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Sparkles, Clock, Flame, Tag, Percent, ArrowRight, 
+import {
+  Sparkles, Clock, Flame, Tag, Percent, ArrowRight,
   ShoppingBag, Check, Copy, ShieldCheck, ChevronRight,
   Filter, Zap, BadgePercent, Gift
 } from "lucide-react";
@@ -154,8 +154,8 @@ export default function OffersPage() {
     setTimeout(() => setAddedItem(null), 2000);
   };
 
-  const filteredDeals = selectedFilter === "all" 
-    ? MOCK_DEALS 
+  const filteredDeals = selectedFilter === "all"
+    ? MOCK_DEALS
     : MOCK_DEALS.filter(d => d.category === selectedFilter);
 
   return (
@@ -164,7 +164,7 @@ export default function OffersPage() {
       <div className="relative rounded-[2.5rem] p-8 md:p-12 bg-gradient-to-r from-[#141624] via-zinc-900 to-[#FF7A00]/15 border border-white/10 overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#FF7A00]/10 blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 blur-[80px] pointer-events-none" />
-        
+
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="space-y-4 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/20 text-[#FF7A00] text-xs font-black uppercase tracking-widest border border-[#FF7A00]/30">
@@ -228,7 +228,7 @@ export default function OffersPage() {
                 <span className="font-mono text-xs font-black text-[#FF7A00] bg-black/40 px-2.5 py-1 rounded-lg border border-dashed border-[#FF7A00]/40">
                   {v.code}
                 </span>
-                <button 
+                <button
                   onClick={() => handleCopy(v.code)}
                   className="flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-lg bg-white/5 hover:bg-[#FF7A00] text-zinc-300 hover:text-white transition-all"
                 >
@@ -284,13 +284,13 @@ export default function OffersPage() {
           >
             {/* Image & Badges */}
             <div className="relative h-56 bg-zinc-800 overflow-hidden">
-              <img 
-                src={deal.imageUrl} 
-                alt={deal.title} 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+              <img
+                src={deal.imageUrl}
+                alt={deal.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#141624] via-transparent to-black/30" />
-              
+
               <div className="absolute top-4 left-4 flex flex-col gap-1.5">
                 <span className="bg-red-600 text-white font-black text-xs px-2.5 py-1 rounded-full shadow-lg">
                   -{deal.discountPct}% OFF
@@ -330,7 +330,7 @@ export default function OffersPage() {
                     <span className="text-amber-400">Almost Gone</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-amber-500 to-red-500 rounded-full"
                       style={{ width: `${deal.claimedPct}%` }}
                     />
@@ -343,8 +343,8 @@ export default function OffersPage() {
                 <button
                   onClick={() => handleAddToCart(deal)}
                   className={`flex-1 py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                    addedItem === deal.id 
-                      ? "bg-emerald-500 text-white" 
+                    addedItem === deal.id
+                      ? "bg-emerald-500 text-white"
                       : "bg-[#FF7A00] hover:bg-[#e06b00] text-white shadow-md shadow-[#FF7A00]/20"
                   }`}
                 >

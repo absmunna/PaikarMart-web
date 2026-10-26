@@ -45,11 +45,8 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  const errorCode = (error as any)?.code || '';
-
   const errInfo: FirestoreErrorInfo = {
-    error: errorMessage,
+    error: error instanceof Error ? error.message : String(error),
     authInfo: {
       userId: auth.currentUser?.uid,
       email: auth.currentUser?.email,
@@ -64,36 +61,16 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     operationType,
     path,
   };
-
-  // Check if error is due to offline/network/unavailable state
-  const isOfflineOrUnavailable = 
-    errorCode === 'unavailable' ||
-    errorCode === 'failed-precondition' ||
-    errorMessage.includes('unavailable') ||
-    errorMessage.includes('Could not reach Cloud Firestore backend') ||
-    errorMessage.includes('client is offline') ||
-    errorMessage.includes('network');
-
-  if (isOfflineOrUnavailable) {
-    console.warn("Firestore connection unavailable or offline:", JSON.stringify(errInfo));
-    // Gracefully handle offline mode without throwing fatal crashes
-    return;
-  }
-
   console.error("Firestore Error: ", JSON.stringify(errInfo));
   throw new Error(JSON.stringify(errInfo));
 }
 
 // Test connection on boot gracefully
 async function testConnection() {
-  if (typeof window !== "undefined" && !navigator.onLine) {
-    console.info("Firestore client is offline. Operating in offline cache mode.");
-    return;
-  }
   try {
-    const connRef = doc(db, "test", "connection");
-    await getDocFromServer(connRef).catch(() => null);
-  } catch {
+    await getDocFromServer(doc(db, "test", "connection"));
+  } catch (error) {
+    // Gracefully handle offline or unreachable backend without spamming console
     console.info("Firestore operating in offline/mock mode or backend unreachable.");
   }
 }

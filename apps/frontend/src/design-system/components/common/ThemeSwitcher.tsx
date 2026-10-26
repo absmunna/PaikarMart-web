@@ -21,9 +21,9 @@ export const ThemeSwitcher: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            <div 
-              className="fixed inset-0 z-50" 
-              onClick={() => setIsOpen(false)} 
+            <div
+              className="fixed inset-0 z-50"
+              onClick={() => setIsOpen(false)}
             />
             <motion.div
               initial={{ opacity: 0, y: 8, scale: 0.95 }}
@@ -45,18 +45,18 @@ export const ThemeSwitcher: React.FC = () => {
                         setIsOpen(false);
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left transition-all ${
-                        isActive 
-                          ? 'bg-[var(--pm-accent)]/20 text-white font-bold border border-[var(--pm-accent)]/30' 
+                        isActive
+                          ? 'bg-[var(--pm-accent)]/20 text-white font-bold border border-[var(--pm-accent)]/30'
                           : 'text-zinc-300 hover:bg-white/5 font-medium'
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <div className="flex gap-1">
                           {preset.swatch.map((color, i) => (
-                            <span 
-                              key={i} 
-                              className="w-2.5 h-2.5 rounded-full" 
-                              style={{ backgroundColor: color }} 
+                            <span
+                              key={i}
+                              className="w-2.5 h-2.5 rounded-full"
+                              style={{ backgroundColor: color }}
                             />
                           ))}
                         </div>

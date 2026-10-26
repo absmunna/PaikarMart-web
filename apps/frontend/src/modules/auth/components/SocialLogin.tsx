@@ -37,10 +37,10 @@ export const SocialLogin = () => {
           </span>
         </div>
       </div>
-      
-      <Button 
+
+      <Button
         type="button"
-        variant="outline" 
+        variant="outline"
         onClick={handleGoogleSignIn}
         disabled={loading}
         className="w-full h-12 rounded-xl gap-3 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all font-bold text-zinc-700 dark:text-zinc-300"
@@ -74,4 +74,3 @@ export const SocialLogin = () => {
     </div>
   );
 };
-

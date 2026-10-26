@@ -71,7 +71,7 @@ export function ServiceAreaSettings() {
               <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-tight">{isBn ? "অর্ডারের দিনেই ডেলিভারি সুবিধা" : "Instant local fulfilment option"}</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setIsSameDayEnabled(!isSameDayEnabled)}
             className={`w-12 h-6 rounded-full transition-all relative ${isSameDayEnabled ? 'bg-emerald-600' : 'bg-zinc-800'}`}
           >
@@ -100,14 +100,14 @@ export function ServiceAreaSettings() {
 
         <div className="mt-6 pt-6 border-t border-white/5 flex flex-col md:flex-row gap-3">
           <div className="flex-1 grid grid-cols-2 gap-2">
-            <Input 
-              placeholder="Area (English)" 
+            <Input
+              placeholder="Area (English)"
               value={newAreaEn}
               onChange={(e) => setNewAreaEn(e.target.value)}
               className="bg-zinc-900 border-white/5 text-[10px] font-bold h-10 px-4 rounded-xl"
             />
-            <Input 
-              placeholder="এরিয়া (বাংলা)" 
+            <Input
+              placeholder="এরিয়া (বাংলা)"
               value={newAreaBn}
               onChange={(e) => setNewAreaBn(e.target.value)}
               className="bg-zinc-900 border-white/5 text-[10px] font-bold h-10 px-4 rounded-xl"
@@ -122,8 +122,8 @@ export function ServiceAreaSettings() {
 
       <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
         <p className="text-[9px] font-bold text-amber-500/80 uppercase tracking-widest leading-relaxed">
-          {isBn 
-            ? "সতর্কতা: শুধুমাত্র আপনার সিলেক্ট করা এরিয়া থেকেই কাস্টমাররা সেম-ডে ডেলিভারি অর্ডার করতে পারবেন।" 
+          {isBn
+            ? "সতর্কতা: শুধুমাত্র আপনার সিলেক্ট করা এরিয়া থেকেই কাস্টমাররা সেম-ডে ডেলিভারি অর্ডার করতে পারবেন।"
             : "Note: Real-time rider matching is only available within your manually verified service areas."}
         </p>
       </div>

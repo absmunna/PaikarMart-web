@@ -22,7 +22,7 @@ export const profileService = {
   init: () => {
     const store = useProfileStore.getState();
     store.setLoading(true);
-    
+
     // Simulate API fetch
     setTimeout(() => {
       store.setProfile(MOCK_PROFILE);

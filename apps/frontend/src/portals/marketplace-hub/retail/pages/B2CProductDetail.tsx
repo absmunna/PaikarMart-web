@@ -77,14 +77,14 @@ export const B2CProductDetail: React.FC<B2CProductDetailProps> = ({ product, onB
         <div className="h-[1px] w-full bg-white/5" />
 
         <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-          {isBn 
-            ? "প্রিমিয়াম মানের পণ্য, অফিস অথবা যেকোনো ক্যাজুয়াল অনুষ্ঠানে ব্যবহার করার জন্য উপযুক্ত। অত্যন্ত আরামদায়ক এবং দীর্ঘস্থায়ী।" 
+          {isBn
+            ? "প্রিমিয়াম মানের পণ্য, অফিস অথবা যেকোনো ক্যাজুয়াল অনুষ্ঠানে ব্যবহার করার জন্য উপযুক্ত। অত্যন্ত আরামদায়ক এবং দীর্ঘস্থায়ী।"
             : "Premium quality product, perfect for daily use or special occasions. Designed for high durability and performance."}
         </p>
 
         {/* CTAs */}
         <div className="flex gap-3 pt-4">
-          <button 
+          <button
             onClick={handleAddToCart}
             className="flex-1 h-14 bg-zinc-900 border border-white/5 text-zinc-100 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all active:scale-95 flex items-center justify-center gap-2 min-h-[44px]"
           >
@@ -92,7 +92,7 @@ export const B2CProductDetail: React.FC<B2CProductDetailProps> = ({ product, onB
             <span>{isBn ? "কার্টে যোগ করুন" : "Add to Cart"}</span>
           </button>
 
-          <button 
+          <button
             onClick={handleAddToCart}
             className="flex-1 h-14 bg-cyan-400 text-black rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-cyan-300 transition-all active:scale-95 flex items-center justify-center gap-2 min-h-[44px]"
           >

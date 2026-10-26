@@ -38,7 +38,7 @@ async function getOrCreateDemoWallet(userId: string) {
         coins: 2500
       }
     });
-    
+
     // Seed standard initial transactions
     await prisma.transaction.createMany({
       data: [

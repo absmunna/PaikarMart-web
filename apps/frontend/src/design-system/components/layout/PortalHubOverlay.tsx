@@ -1,15 +1,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShoppingBag, 
-  Factory, 
-  Sparkles, 
-  Award, 
-  MapPin, 
-  Activity, 
-  Store, 
-  Wrench, 
-  Laptop, 
+import {
+  ShoppingBag,
+  Factory,
+  Sparkles,
+  Award,
+  MapPin,
+  Activity,
+  Store,
+  Wrench,
+  Laptop,
   Briefcase,
   X
 } from 'lucide-react';
@@ -49,7 +49,7 @@ export const PortalHubOverlay: React.FC = () => {
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: "spring", damping: 30, stiffness: 300, mass: 1 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed inset-x-0 bottom-0 z-[70] max-h-[85vh] bg-[var(--pm-surface)] border-t border-[var(--pm-border)] rounded-t-[32px] p-6 pb-12 overflow-y-auto shadow-2xl"
           >
             <div className="max-w-xl mx-auto">
@@ -58,9 +58,9 @@ export const PortalHubOverlay: React.FC = () => {
                   <h2 className="text-xl font-black text-white tracking-tight">Portal Hub</h2>
                   <p className="text-xs text-[var(--pm-muted)] uppercase tracking-widest font-bold">10-Module Super Hub</p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="rounded-full bg-white/5 text-[var(--pm-muted)] hover:text-white"
                   onClick={closeAppLauncher}
                 >

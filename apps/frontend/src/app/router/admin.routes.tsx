@@ -8,45 +8,29 @@ import { ModeratorDashboard } from '@/portals/admin/pages/dashboards/ModeratorDa
 
 export const adminRoutes = (
   <>
-    <Route 
-      path="/dashboard" 
+    <Route
+      path="/dashboard"
       element={
         <RoleGuard allowedRoles={['seller', 'moderator', 'admin', 'super_admin']}>
           <SellerDashboard />
         </RoleGuard>
-      } 
+      }
     />
-    <Route 
-      path="/dashboard/admin/*" 
+    <Route
+      path="/dashboard/admin/*"
       element={
         <RoleGuard allowedRoles={['admin', 'super_admin']}>
           <AdminDashboard />
         </RoleGuard>
-      } 
+      }
     />
-    <Route 
-      path="/admin" 
-      element={
-        <RoleGuard allowedRoles={['admin', 'super_admin']}>
-          <AdminDashboard />
-        </RoleGuard>
-      } 
-    />
-    <Route 
-      path="/admin/*" 
-      element={
-        <RoleGuard allowedRoles={['admin', 'super_admin']}>
-          <AdminDashboard />
-        </RoleGuard>
-      } 
-    />
-    <Route 
-      path="/dashboard/moderator/*" 
+    <Route
+      path="/dashboard/moderator/*"
       element={
         <RoleGuard allowedRoles={['moderator', 'admin', 'super_admin']}>
           <ModeratorDashboard />
         </RoleGuard>
-      } 
+      }
     />
   </>
 );

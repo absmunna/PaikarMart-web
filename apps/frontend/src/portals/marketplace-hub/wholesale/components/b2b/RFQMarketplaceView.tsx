@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  FileText, Search, Plus, ThumbsUp, MapPin, Calendar, 
+import {
+  FileText, Search, Plus, ThumbsUp, MapPin, Calendar,
   Trash2, User, HelpCircle, CheckCircle, ArrowLeft, Filter, Sparkles
 } from 'lucide-react';
 import { useB2BRFQStore } from '@/modules/b2b';
@@ -12,8 +12,8 @@ interface RFQMarketplaceViewProps {
   onNotify: (msg: string, type: 'success' | 'warning' | 'error') => void;
 }
 
-export const RFQMarketplaceView: React.FC<RFQMarketplaceViewProps> = ({ 
-  onNavigate, 
+export const RFQMarketplaceView: React.FC<RFQMarketplaceViewProps> = ({
+  onNavigate,
   onBack,
   onNotify
 }) => {
@@ -66,7 +66,7 @@ export const RFQMarketplaceView: React.FC<RFQMarketplaceViewProps> = ({
   };
 
   const filteredRfqs = rfqs.filter(r => {
-    const matchesSearch = r.title.toLowerCase().includes(search.toLowerCase()) || 
+    const matchesSearch = r.title.toLowerCase().includes(search.toLowerCase()) ||
                           r.description.toLowerCase().includes(search.toLowerCase());
     const matchesCat = categoryFilter === 'all' || r.category === categoryFilter;
     return matchesSearch && matchesCat;
@@ -206,7 +206,7 @@ export const RFQMarketplaceView: React.FC<RFQMarketplaceViewProps> = ({
             className="flex-1 text-xs bg-transparent outline-none text-[var(--pm-text)]"
           />
         </div>
-        
+
         <div className="flex items-center shrink-0 pr-1 border-l border-white/10 pl-2">
           <select
             value={categoryFilter}

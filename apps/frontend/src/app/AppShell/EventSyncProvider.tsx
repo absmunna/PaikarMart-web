@@ -5,17 +5,17 @@ import { useProfileStore } from '@/modules/profile';
 
 export const EventSyncProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  
+
   useEffect(() => {
     if (!user) return;
 
     const handleGlobalEvent = (event: Event) => {
         const customEvent = event as CustomEvent;
-        
+
         // Debounce handling high-frequency events
         const timeoutId = setTimeout(() => {
             console.log(`[GlobalEventBus] Processing: ${event.type}`, customEvent.detail);
-            
+
             // Dispatch to various stores based on event type
             switch (event.type) {
                 case 'IDENTITY_UPDATED':

@@ -37,7 +37,7 @@ export function meetsRoleRequirement(current: AppRole, minimum: AppRole): boolea
 
 export function canAccessPortal(role: AppRole, portal: string): boolean {
   if (role === 'super_admin' || role === 'admin') return true;
-  
+
   const portalRoles: Record<string, AppRole[]> = {
     'seller': ['seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'b2b_seller', 'brand_seller'],
     'factory': ['factory', 'factory_seller'],

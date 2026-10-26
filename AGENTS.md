@@ -9,10 +9,10 @@ This file serves as a persistent brain and instruction set for AI agents working
 - **Core Goal**: A seamless bridge between physical wholesalers, retailers, standard e-commerce, and premium curated products (PK Store).
 
 ## 🏗️ Architecture Stack (Monorepo)
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS v4, Zustand, Framer Motion, React Router v7. 
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS v4, Zustand, Framer Motion, React Router v7.
   - Location: `apps/frontend/`
   - Deployed on: Vercel (connected to GitHub)
-- **Backend**: Node.js, Express, Prisma ORM. 
+- **Backend**: Node.js, Express, Prisma ORM.
   - Location: `apps/backend/`
   - Deployed on: Render (connected to GitHub)
 - **Database**: PostgreSQL (hosted on Supabase).
@@ -32,7 +32,7 @@ This file serves as a persistent brain and instruction set for AI agents working
 3. **Icons**: Use `lucide-react` exclusively.
 4. **Mobile First**: Design for max-width `480px` on mobile, horizontally centered on desktop with surrounding gradients/sidebars.
 5. **No Blind Full-File Overwrites**: Use targeted edits or `multi_edit_file` to keep safe boundaries. Do not break existing features.
-6. **Feature Portals**: 
+6. **Feature Portals**:
     - Completed: B2B Dashboard basics, Auth, Seller/Admin Dashboards.
     - Unified UI System: Implemented `HomeHeader` and `PortalIconBar` across all hubs for branding consistency.
     - Social Feed: Improved `Feed.tsx` with `CreatePostComposer` and refined layout.
@@ -45,7 +45,7 @@ This file serves as a persistent brain and instruction set for AI agents working
 - **Backend (Render)**: GitHub connection to `apps/backend`. Auto-deploy on push to `main`.
 - **Database (Supabase)**: Managed via Prisma. `npx prisma db push` or migrations via GitHub Actions to sync with Supabase.
 - **Auth (Firebase)**: Configured in `apps/frontend` and synced via Firebase CLI/Console.
-- **Prisma**: Located in `packages/database/`. Requires `npx prisma generate` to build client models (done in postinstall). 
+- **Prisma**: Located in `packages/database/`. Requires `npx prisma generate` to build client models (done in postinstall).
 
 ## 🛠️ Still In Build (Pending Architecture)
 Refer to `IN_BUILD_FEATURES.md` for the roadmap.

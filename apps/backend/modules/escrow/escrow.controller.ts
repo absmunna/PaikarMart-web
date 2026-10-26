@@ -21,7 +21,7 @@ const memoryEscrows = new Map<string, MemoryEscrow>();
 export const createEscrow = async (req: Request, res: Response) => {
   try {
     const { orderId, amount, sellerId, buyerId } = req.body;
-    
+
     if (!orderId || !amount) {
       return res.status(400).json({ error: 'orderId and amount are required' });
     }
@@ -89,9 +89,9 @@ export const releaseEscrow = async (req: Request, res: Response) => {
         // Credit seller wallet
         if (sellerId && escrow.amount) {
           await WalletService.creditWallet(
-            sellerId, 
-            Number(escrow.amount), 
-            'Escrow Payout Disbursed', 
+            sellerId,
+            Number(escrow.amount),
+            'Escrow Payout Disbursed',
             `Order: ${escrow.orderId}`
           ).catch(e => console.warn('Wallet disbursement error:', e));
         }

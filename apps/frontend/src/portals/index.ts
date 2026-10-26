@@ -1,6 +1,6 @@
 /**
  * PaikarMart Central Portal & Hub Registry
- * 
+ *
  * Defines the 4 Primary Business Hubs (Marketplace, Services, Logistics, Local)
  * and their specialized sub-portals as specified in Master Plan & Section 4/28.
  */

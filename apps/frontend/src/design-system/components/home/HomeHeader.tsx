@@ -70,7 +70,7 @@ export const HomeHeader: React.FC = () => {
     <div className="sticky top-0 z-40 bg-[var(--pm-bg)]/85 backdrop-blur-xl border-b border-white/[0.04] px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3 sm:gap-4 select-none">
       {/* Left: User & Location (Unboxed approach) */}
       <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-        <motion.button 
+        <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate(isAuthenticated ? '/profile' : '/login')}
@@ -79,9 +79,9 @@ export const HomeHeader: React.FC = () => {
         >
           <div className="w-full h-full rounded-2xl bg-[var(--pm-surface)] flex items-center justify-center overflow-hidden border border-white/10">
             {user?.avatar || user?.avatarUrl ? (
-              <img 
-                src={user.avatar || user.avatarUrl} 
-                alt="Avatar" 
+              <img
+                src={user.avatar || user.avatarUrl}
+                alt="Avatar"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -90,7 +90,7 @@ export const HomeHeader: React.FC = () => {
             )}
           </div>
         </motion.button>
-        
+
         {/* Location Dropdown Trigger */}
         <div ref={locationMenuRef} className="relative flex flex-col">
           <button
@@ -122,7 +122,7 @@ export const HomeHeader: React.FC = () => {
               >
                 <div className="px-2.5 py-1.5 border-b border-white/[0.06] mb-1 flex items-center justify-between">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">ডেলিভারি এলাকা নির্বাচন</span>
-                  <button 
+                  <button
                     onClick={() => setIsLocationOpen(false)}
                     className="p-1 text-zinc-500 hover:text-white rounded"
                   >
@@ -159,24 +159,24 @@ export const HomeHeader: React.FC = () => {
       </div>
 
       {/* Center: Search Trigger (Desktop unboxed search bar) */}
-      <form 
+      <form
         onSubmit={handleSearchSubmit}
         className="flex-1 max-w-sm hidden lg:flex items-center bg-white/[0.03] border border-white/[0.06] rounded-2xl px-3.5 h-10 focus-within:border-orange-500/50 focus-within:bg-white/[0.05] transition-all"
       >
         <button type="submit" className="text-zinc-500 hover:text-orange-400 mr-2 transition-colors cursor-pointer">
           <Search className="w-3.5 h-3.5" />
         </button>
-        <input 
-          type="text" 
+        <input
+          type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="পণ্য, পাইকারি প্রস্তুতকারক বা শপ খুঁজুন..." 
+          placeholder="পণ্য, পাইকারি প্রস্তুতকারক বা শপ খুঁজুন..."
           className="bg-transparent border-none outline-none text-xs font-semibold text-white w-full placeholder:text-zinc-500"
         />
         {searchQuery && (
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => setSearchQuery('')}
             className="p-1 text-zinc-500 hover:text-white rounded"
           >
@@ -187,7 +187,7 @@ export const HomeHeader: React.FC = () => {
 
       {/* Right: Wallet & Notifications (Zero-pill glass approach) */}
       <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-        <motion.div 
+        <motion.div
           whileHover={{ y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/wallet')}
@@ -210,4 +210,3 @@ export const HomeHeader: React.FC = () => {
     </div>
   );
 };
-

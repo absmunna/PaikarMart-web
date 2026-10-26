@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, RefreshCw, CheckCircle2, ArrowRight } from 'lucide-react';
 import { auth } from '@/lib/firebase';

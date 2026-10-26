@@ -1,13 +1,13 @@
 // (new add) - CascadingSelector.tsx
 import React, { useState, useEffect, useMemo } from "react";
-import { 
-  MapPin, 
-  Map, 
-  Navigation, 
-  Check, 
-  ChevronDown, 
-  Search, 
-  Globe, 
+import {
+  MapPin,
+  Map,
+  Navigation,
+  Check,
+  ChevronDown,
+  Search,
+  Globe,
   Building,
   HelpCircle
 } from "lucide-react";
@@ -251,7 +251,7 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
 
   // Setup dynamic references
   const divisions = useMemo(() => Object.values(BANGLADESH_GEOGRAPHY), []);
-  
+
   const currentDivision = useMemo(() => {
     return BANGLADESH_GEOGRAPHY[selectedDivisionId] || null;
   }, [selectedDivisionId]);
@@ -307,8 +307,8 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
     const list = Object.values(currentDivision.districts);
     if (!districtSearch) return list;
     const cleanSearch = districtSearch.toLowerCase();
-    return list.filter(d => 
-      d.bnName.toLowerCase().includes(cleanSearch) || 
+    return list.filter(d =>
+      d.bnName.toLowerCase().includes(cleanSearch) ||
       d.enName.toLowerCase().includes(cleanSearch)
     );
   }, [currentDivision, districtSearch]);
@@ -318,26 +318,26 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
     const list = currentDistrict.upazilas;
     if (!upazilaSearch) return list;
     const cleanSearch = upazilaSearch.toLowerCase();
-    return list.filter(u => 
-      u.bnName.toLowerCase().includes(cleanSearch) || 
+    return list.filter(u =>
+      u.bnName.toLowerCase().includes(cleanSearch) ||
       u.enName.toLowerCase().includes(cleanSearch)
     );
   }, [currentDistrict, upazilaSearch]);
 
   return (
     <div className={`space-y-4 ${className}`}>
-      
+
       {/* 1. VISUAL PROGRESS PIPELINE TRACKER */}
       <div className="flex items-center justify-between border-b border-white/5 pb-2">
         <label className="text-xs font-black text-white/80 uppercase tracking-widest flex items-center gap-1.5 leading-none">
           <MapPin className="h-4 w-4 text-[var(--pm-accent)] animate-pulse" />
           {lang === "bn" ? "ডেলিভারি ঠিকানা বিন্যাস" : "Delivery Destination Pipeline"}
         </label>
-        
+
         {/* Verification Status Banner */}
         <div className="flex items-center gap-1 text-[9px] font-black uppercase text-[var(--pm-text-secondary)] tracking-widest">
           <span className={`inline-block w-2 h-2 rounded-full ${currentUpazila ? "bg-cyan-500" : "bg-orange-500 animate-ping"}`} />
-          {currentUpazila 
+          {currentUpazila
             ? (lang === "bn" ? "ভেরিফাইড ঠিকানা" : "Verified address")
             : (lang === "bn" ? "অসম্পূর্ণ ঠিকানা" : "Pending Selection")}
         </div>
@@ -345,13 +345,13 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
 
       {/* Grid wrapper supporting both Mobile Stack layout and standard Desktop width */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
+
         {/* ==================== DIVISION SELECTOR ==================== */}
         <div className="relative">
           <label className="block text-[10px] font-black text-[var(--pm-text-secondary)] uppercase tracking-widest mb-1.5">
             {lang === "bn" ? "১. বিভাগ নির্বাচন করুণ" : "1. Select Division"} <span className="text-[var(--pm-accent)]">*</span>
           </label>
-          
+
           <button
             type="button"
             onClick={() => {
@@ -364,7 +364,7 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
             <div className="flex items-center gap-1.5 truncate">
               <Globe className="h-3.5 w-3.5 text-[var(--pm-accent)]" />
               <span className="truncate">
-                {currentDivision 
+                {currentDivision
                   ? (lang === "bn" ? currentDivision.bnName : currentDivision.enName)
                   : (lang === "bn" ? "বিভাগ খুঁজুন..." : "Find Division...")}
               </span>
@@ -382,8 +382,8 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
                     type="button"
                     onClick={() => handleDivisionSelect(div.id)}
                     className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${
-                      isSelected 
-                        ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] font-extrabold" 
+                      isSelected
+                        ? "bg-[var(--pm-accent)]/15 text-[var(--pm-accent)] font-extrabold"
                         : "text-white/70 hover:bg-white/5 hover:text-white"
                     }`}
                   >
@@ -404,7 +404,7 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
           <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${currentDivision ? "text-[var(--pm-text-secondary)]" : "text-white/20"}`}>
             {lang === "bn" ? "২. জেলা নির্বাচন করুন" : "2. Select District"} <span className="text-[var(--pm-accent)]">*</span>
           </label>
-          
+
           <button
             type="button"
             disabled={!currentDivision}
@@ -418,7 +418,7 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
             <div className="flex items-center gap-1.5 truncate">
               <Building className="h-3.5 w-3.5 text-cyan-400" />
               <span className="truncate">
-                {currentDistrict 
+                {currentDistrict
                   ? (lang === "bn" ? currentDistrict.bnName : currentDistrict.enName)
                   : (lang === "bn" ? "জেলা খুঁজুন..." : "Find District...")}
               </span>
@@ -453,8 +453,8 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
                       type="button"
                       onClick={() => handleDistrictSelect(dist.id)}
                       className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${
-                        isSelected 
-                          ? "bg-cyan-500/15 text-cyan-300 font-extrabold" 
+                        isSelected
+                          ? "bg-cyan-500/15 text-cyan-300 font-extrabold"
                           : "text-white/70 hover:bg-white/5 hover:text-white"
                       }`}
                     >
@@ -473,7 +473,7 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
           <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${currentDistrict ? "text-[var(--pm-text-secondary)]" : "text-white/20"}`}>
             {lang === "bn" ? "৩. থানা / উপজেলা" : "3. Select Upazila"} <span className="text-[var(--pm-accent)]">*</span>
           </label>
-          
+
           <button
             type="button"
             disabled={!currentDistrict}
@@ -487,7 +487,7 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
             <div className="flex items-center gap-1.5 truncate">
               <Navigation className="h-3.5 w-3.5 text-cyan-400" />
               <span className="truncate">
-                {currentUpazila 
+                {currentUpazila
                   ? (lang === "bn" ? currentUpazila.bnName : currentUpazila.enName)
                   : (lang === "bn" ? "উপজেলা খুঁজুন..." : "Find Upazila...")}
               </span>
@@ -522,8 +522,8 @@ export const CascadingSelector: React.FC<CascadingSelectorProps> = ({
                       type="button"
                       onClick={() => handleUpazilaSelect(upz.id)}
                       className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${
-                        isSelected 
-                          ? "bg-cyan-500/15 text-cyan-300 font-extrabold" 
+                        isSelected
+                          ? "bg-cyan-500/15 text-cyan-300 font-extrabold"
                           : "text-white/70 hover:bg-white/5 hover:text-white"
                       }`}
                     >

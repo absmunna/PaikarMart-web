@@ -30,7 +30,7 @@ export default function Demand() {
   const [demands, setDemands] = useState<DemandItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -155,7 +155,7 @@ export default function Demand() {
           <h1 className="text-2xl font-black text-[var(--pm-text)] tracking-tight">ডিমান্ড বোর্ড (Demands)</h1>
           <p className="text-xs text-[var(--pm-text-muted)] mt-1">আপনার প্রয়োজনীয় প্রডাক্ট বা সেবার রিকোয়েস্ট পোস্ট করুন, সেলাররা যোগাযোগ করবে।</p>
         </div>
-        
+
         <button
           onClick={() => setOpenModal(true)}
           className="bg-[var(--pm-accent)] text-white px-4 py-2 rounded-2xl text-xs font-black shadow-lg shadow-[var(--pm-accent)]/20 active:scale-95 transition-all flex items-center gap-1.5"
@@ -189,17 +189,17 @@ export default function Demand() {
                       {demand.urgency === 'urgent' ? 'জরুরী' : demand.urgency === 'normal' ? 'সাধারণ' : 'ধীরগতি'}
                     </span>
                   </div>
-                  
+
                   <p className="text-xs text-[var(--pm-text-muted)] line-clamp-2 mb-4 leading-relaxed flex-1">
                     {demand.description}
                   </p>
-                  
+
                   <div className="flex flex-col gap-3 mt-auto pt-4 border-t border-[var(--pm-border)]/50 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[var(--pm-text-muted)] font-medium">বাজেট</span>
                       <span className="font-black text-[var(--pm-accent)] text-sm">{formatBDT(demand.budget)}</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-2 text-[10px] text-[var(--pm-text-muted)] font-bold">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5 text-[var(--pm-text-muted)]" />

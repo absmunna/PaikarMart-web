@@ -14,25 +14,24 @@ interface LogisticsSearchAreaProps {
 export function LogisticsSearchArea({ pickup, drop, setPickup, setDrop, isBilingual = false }: LogisticsSearchAreaProps) {
   const t = (en: string, bn: string) => isBilingual ? bn : en;
   const { detectLocation } = useGeolocation();
-  const { formattedAddress, city, isAutoDetected } = useLocationStore();
+  const { city, isAutoDetected } = useLocationStore();
 
   const handleLocate = () => {
     detectLocation();
   };
 
-  // Sync pickup with detected location if auto-detected or global location changes
+  // Sync pickup with detected city if auto-detected recently
   React.useEffect(() => {
-    const loc = formattedAddress || city;
-    if (loc && !pickup) {
-      setPickup(loc);
+    if (isAutoDetected && city) {
+      setPickup(city);
     }
-  }, [formattedAddress, city]);
+  }, [city, isAutoDetected]);
 
   return (
     <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 space-y-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-black text-white uppercase tracking-wider">{t('Where to?', 'কোথায় যাবেন?')}</h3>
-        <button 
+        <button
           onClick={() => {
             const temp = pickup;
             setPickup(drop);
@@ -47,14 +46,14 @@ export function LogisticsSearchArea({ pickup, drop, setPickup, setDrop, isBiling
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
         <div className="relative group">
           <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-cyan-400" />
-          <input 
+          <input
             type="text"
             value={pickup}
             onChange={(e) => setPickup(e.target.value)}
             placeholder={t('Pickup Location', 'পিকআপ লোকেশন')}
             className="w-full h-14 pl-12 pr-14 rounded-2xl bg-black/40 border border-white/5 text-white placeholder-slate-500 text-sm font-bold focus:border-cyan-400 transition-all outline-none"
           />
-          <button 
+          <button
             onClick={handleLocate}
             className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 transition-all"
             title={t('Use my current location', 'আমার বর্তমান অবস্থান ব্যবহার করুন')}
@@ -65,7 +64,7 @@ export function LogisticsSearchArea({ pickup, drop, setPickup, setDrop, isBiling
 
         <div className="relative group">
           <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-rose-500" />
-          <input 
+          <input
             type="text"
             value={drop}
             onChange={(e) => setDrop(e.target.value)}

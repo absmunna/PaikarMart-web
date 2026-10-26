@@ -33,37 +33,25 @@ import { complianceRoutes } from './modules/compliance/compliance.routes';
 import { aiRoutes } from './modules/ai/ai.routes';
 import { commercialRoutes } from './modules/commercial/commercial.routes';
 import { pkShopRoutes } from './modules/portals/pkshop.routes';
-import { verificationRoutes } from './modules/verification/verification.routes';
-import { adminRoutes } from './modules/admin/admin.routes';
 import vendorsRouter from './api/routes/vendors';
 import miscRouter from './api/routes/misc';
 import meRouter from './api/routes/me';
 
 dotenv.config();
 
-// Multi-path .env fallback for monorepo development & production
-const envPathsToTry = [
-  path.resolve(process.cwd(), '.env'),
-  path.resolve(process.cwd(), '../../.env'),
-  path.resolve(process.cwd(), '../.env'),
-  path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.env'),
-  path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.env')
-];
-for (const envPath of envPathsToTry) {
-  if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath });
-  }
-}
-
 
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const port = Number(process.env.PORT) || 3000;
 
   // Initialize Database
   // Don't await this if it fails or there is no DB, so it doesn't block startup
-  db.connect().catch(e => console.warn('Database not available yet:', e));
+  if (process.env.NODE_ENV === 'production') {
+    await db.connect();
+  } else {
+    db.connect().catch(e => console.warn('Database not available yet:', e));
+  }
 
   // Security & Logging
   app.use(helmetMiddleware);
@@ -90,8 +78,6 @@ async function startServer() {
   app.use('/api/v1/analytics', analyticsRoutes);
   app.use('/api/v1/nearby', nearbyRoutes);
   app.use('/api/v1/shops/nearby', nearbyRoutes);
-  app.use('/api/v1/local', nearbyRoutes);
-  app.use('/api/local', nearbyRoutes);
   app.use('/api/v1/delivery', deliveryRoutes);
   app.use('/api/v1/logistics', logisticsHubRoutes);
   app.use('/api/v1/deals', dealRoutes);
@@ -101,46 +87,17 @@ async function startServer() {
   app.use('/api/v1/ai', aiRoutes);
   app.use('/api/v1/commercial', commercialRoutes);
   app.use('/api/v1/pk-shop', pkShopRoutes);
-  app.use('/api/v1/verifications', verificationRoutes);
-  app.use('/api/v1/admin', adminRoutes);
-  
+
   // Cross-cutting utility routes
   app.use('/api/v1', vendorsRouter);
   app.use('/api/v1', miscRouter);
   app.use('/api/v1', meRouter);
 
   app.get("/api/v1/health", (req, res) => {
-    res.json({
-      status: "ok",
-      message: "Paikar Mart API running",
-      database: {
-        connected: db.isConnected(),
-        status: db.isConnected() ? "connected" : "mock_resilient_mode",
-        lastError: db.getConnectionError() ? String(db.getConnectionError()?.message || db.getConnectionError()) : null
-      }
-    });
-  });
-
-  app.get("/api/v1/db-status", async (req, res) => {
-    const isConn = db.isConnected();
-    let sampleTest = null;
-    let queryError = null;
-
-    if (isConn) {
-      try {
-        sampleTest = await db.query("SELECT current_database(), current_user, now();");
-      } catch (err: any) {
-        queryError = err.message;
-      }
-    }
-
-    res.json({
-      connected: isConn,
-      provider: "Supabase PostgreSQL (Prisma)",
-      mode: isConn ? "live_database" : "resilient_mock_mode",
-      lastConnectionError: db.getConnectionError() ? String(db.getConnectionError()?.message || db.getConnectionError()) : null,
-      sampleQuery: sampleTest,
-      queryError: queryError
+    const connected = db.isConnected();
+    res.status(connected || process.env.NODE_ENV !== 'production' ? 200 : 503).json({
+      status: connected ? "ok" : "unavailable",
+      message: connected ? "Paikar Mart API running" : "Database unavailable",
     });
   });
 
@@ -149,7 +106,7 @@ async function startServer() {
   });
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  
+
   // Dynamically resolve frontend root directory
   const candidateFrontendRoots = [
     path.resolve(__dirname, '../frontend'),
@@ -163,12 +120,6 @@ async function startServer() {
 
   // Strict production detection: only use static dist when explicitly in production mode
   const isProduction = process.env.NODE_ENV === "production";
-
-  // Serve static public assets (PWA manifest, icons, service worker)
-  const publicPath = path.join(frontendRoot, 'public');
-  if (fs.existsSync(publicPath)) {
-    app.use(express.static(publicPath));
-  }
 
   // Vite middleware for development
   if (!isProduction) {
@@ -201,29 +152,24 @@ async function startServer() {
           }
         });
       } else {
-        res.status(200).json({
-          app: "Paikar Mart Backend API",
-          status: "online",
+        console.warn("⚠️ Production mode enabled but dist/index.html not found!");
+        res.status(503).json({
+          app: "Paikar Mart API",
+          status: "building",
           version: "1.0.0",
-          environment: process.env.NODE_ENV || "production",
-          endpoints: {
-            health: "/api/v1/health",
-            dbStatus: "/api/v1/db-status"
-          },
-          message: "Paikar Mart API Service is running smoothly. Frontend is hosted on Vercel (https://paikarmart.com)."
+          message: "Frontend bundle is compiling or dist/index.html not found. Please run 'npm run build'."
         });
       }
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`==============================================`);
-    console.log(`🚀 PAIKAR MART BACKEND API IS ONLINE & LIVE!`);
-    console.log(`📡 Listening on: http://0.0.0.0:${PORT}`);
-    console.log(`🩺 Health check: http://0.0.0.0:${PORT}/api/v1/health`);
-    console.log(`==============================================`);
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Server is listening on port ${port}`);
   });
 }
 
 
-startServer();
+startServer().catch((error) => {
+  console.error('Failed to start Paikar Mart API:', error);
+  process.exitCode = 1;
+});

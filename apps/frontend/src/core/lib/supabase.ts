@@ -1,17 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey && !supabaseUrl.includes('placeholder'));
-
-if (!isSupabaseConfigured) {
-  console.info(
-    'Supabase client: Running in local/offline fallback mode. Configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY for direct client features.'
-  );
+if (Boolean(supabaseUrl) !== Boolean(supabaseAnonKey)) {
+  throw new Error('Configure both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, or leave both unset.');
 }
 
-export const supabase = isSupabaseConfigured
+export const supabase: SupabaseClient | null = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : createClient('https://placeholder.supabase.co', 'placeholder-anon-key');
-
+  : null;

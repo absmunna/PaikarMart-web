@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ShoppingBag, Trash2, ArrowLeft, Plus, Minus, 
-  ShieldCheck, ArrowRight, Info, AlertTriangle, Store 
+import {
+  ShoppingBag, Trash2, ArrowLeft, Plus, Minus,
+  ShieldCheck, ArrowRight, Info, AlertTriangle, Store
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore, CartItem } from '@/modules/cart';
@@ -10,7 +10,6 @@ import { formatBDT } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { safeBack } from '@/lib/navigation';
 
 export const CartPage: React.FC = () => {
   const navigate = useNavigate();
@@ -51,14 +50,14 @@ export const CartPage: React.FC = () => {
   if (items.length === 0) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center gap-6 text-white text-center p-6 bg-[#03060d]">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className="w-24 h-24 bg-cyan-950/20 border border-cyan-500/20 rounded-full flex items-center justify-center text-cyan-400 select-none shadow-lg shadow-cyan-500/5 shadow-inner"
         >
           <ShoppingBag className="w-12 h-12" />
         </motion.div>
-        
+
         <div className="space-y-2">
           <h2 className="text-xl font-black uppercase tracking-tight text-white sm:text-2xl">
             আপনার কার্টটি খালি (Your Cart is Empty)
@@ -80,14 +79,13 @@ export const CartPage: React.FC = () => {
   return (
     <div className="min-h-screen text-white bg-[#03060d] font-sans pb-24">
       <div className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6">
-        
+
         {/* Navigation Breadcrumb headers */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5 select-none md:flex-row flex-col items-start gap-4">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => safeBack(navigate, '/')}
+            <button
+              onClick={() => navigate(-1)}
               className="p-2.5 bg-[#0b101d] hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all border border-white/5 cursor-pointer"
-              title="ফিরে যান"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -96,7 +94,7 @@ export const CartPage: React.FC = () => {
               <span className="text-base sm:text-xl font-black tracking-tight uppercase">Multi-Vendor Cart (সোর্সিং কার্ট)</span>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-xs font-bold text-cyan-400 uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4" /> SECURED ESCROW PORTAL
           </div>
@@ -104,7 +102,7 @@ export const CartPage: React.FC = () => {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* LEFT: Sourced Items grouped by Seller (8 Columns) */}
           <div className="lg:col-span-8 space-y-8">
             {Object.entries(sellerGroups).map(([sellerName, sellerItems]) => (
@@ -128,9 +126,9 @@ export const CartPage: React.FC = () => {
                     {sellerItems.map((item) => {
                       const itemPrice = calculateItemPrice(item);
                       const satisfiesMoq = !item.moq || item.quantity >= item.moq;
-                      
+
                       return (
-                        <motion.div 
+                        <motion.div
                           key={item.id}
                           layout
                           initial={{ opacity: 0, y: 15 }}
@@ -146,7 +144,7 @@ export const CartPage: React.FC = () => {
                                 {item.domain}
                               </span>
                             </div>
-                            
+
                             <div className="min-w-0 flex-1 space-y-1">
                               <span className="text-[9px] uppercase font-bold tracking-wider text-cyan-400 bg-cyan-950/45 px-2 py-0.5 rounded border border-cyan-500/10 inline-block">
                                 {item.sellerTier || 'Product'}
@@ -159,7 +157,7 @@ export const CartPage: React.FC = () => {
                                   Variant: <span className="text-zinc-400">{item.variantInfo}</span>
                                 </p>
                               )}
-                              
+
                               <div className="flex flex-wrap gap-2 mt-1">
                                 {item.moq && (
                                   <div className={cn(
@@ -184,7 +182,7 @@ export const CartPage: React.FC = () => {
                             {/* Counter */}
                             <div className="flex flex-col items-center gap-1.5">
                               <div className="flex items-center bg-black/40 border border-[var(--pm-border)] rounded-xl overflow-hidden p-1 shrink-0">
-                                <button 
+                                <button
                                   onClick={() => handleDecrement(item)}
                                   className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 active:scale-90 transition-all cursor-pointer"
                                 >
@@ -193,7 +191,7 @@ export const CartPage: React.FC = () => {
                                 <span className="w-10 text-center text-xs font-mono font-black text-white">
                                   {item.quantity}
                                 </span>
-                                <button 
+                                <button
                                   onClick={() => handleIncrement(item)}
                                   className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-white/5 active:scale-90 transition-all cursor-pointer"
                                 >
@@ -221,7 +219,7 @@ export const CartPage: React.FC = () => {
                             </div>
 
                             {/* Delete Trigger */}
-                            <button 
+                            <button
                               onClick={() => removeItem(item.id)}
                               className="p-2.5 bg-red-950/10 hover:bg-red-900/20 border border-red-500/10 hover:border-red-500/30 text-red-400 hover:text-red-300 rounded-xl transition-all cursor-pointer"
                               title="Remove item"
@@ -241,7 +239,7 @@ export const CartPage: React.FC = () => {
 
           {/* RIGHT: Bill Summary (4 Columns) */}
           <div className="lg:col-span-4 lg:sticky lg:top-[120px] bg-[var(--pm-surface)]/30 border border-[var(--pm-border)] p-6 rounded-2xl flex flex-col gap-6 select-none">
-            
+
             <div className="border-b border-[var(--pm-border)] pb-3">
               <h3 className="text-xs uppercase tracking-wider text-[var(--pm-text-secondary)] font-bold">
                 Order tally summary

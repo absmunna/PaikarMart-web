@@ -8,4 +8,3 @@ export * from './components/DigitalPortal';
 export * from './components/RFQPortal';
 export * from './pages/PortalHubPage';
 export * from './pk-shop';
-

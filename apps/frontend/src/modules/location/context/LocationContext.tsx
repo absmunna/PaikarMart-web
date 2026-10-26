@@ -30,9 +30,9 @@ function readStored(): UserLocation {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as UserLocation) : NONE;
-  } catch (e) { 
+  } catch (e) {
     console.warn("[LocationContext] localStorage not accessible:", e);
-    return NONE; 
+    return NONE;
   }
 }
 
@@ -85,7 +85,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
   const detect = useCallback(async () => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
-    
+
     // Safety check for geolocation API
     if (!navigator.geolocation) {
       console.warn("[LocationContext] Geolocation not supported by this browser.");
@@ -115,14 +115,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
                 updatedAt: new Date().toISOString(),
               }));
             } catch (e) {
-              console.warn("[LocationContext] Error processing coordinates:", e);
+              console.error("[LocationContext] Error processing coordinates:", e);
             } finally {
               setIsDetecting(false);
               resolve();
             }
           },
           (err) => {
-            console.warn("[LocationContext] Geolocation unavailable or permission denied:", err?.message || 'Access denied');
+            console.warn("[LocationContext] Geolocation failed or denied:", err.message);
             // Permission denied or error — fall back to Dhaka
             setLocation({
               city: "Dhaka",
@@ -134,11 +134,11 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             setIsDetecting(false);
             resolve();
           },
-          { enableHighAccuracy: false, timeout: 8000, maximumAge: 120_000 },
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 120_000 },
         );
       });
     } catch (err) {
-      console.warn("[LocationContext] Geolocation auto-detection skipped:", err);
+      console.error("[LocationContext] Critical geolocation error:", err);
       setIsDetecting(false);
     }
   }, []);

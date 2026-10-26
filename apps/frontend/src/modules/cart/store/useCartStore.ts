@@ -10,12 +10,12 @@ interface CartStore {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   clearDomainCart: (domain: string) => void;
-  
+
   // Selectors
   getTotalPrice: () => number;
   getTotalItems: () => number;
   getTotalCoins: () => number;
-  getTotal: () => number; 
+  getTotal: () => number;
   getDomainItems: (domain: string) => CartItem[];
   getDominantDomain: () => CommerceDomain;
   getSellerGroups: () => Record<string, CartItem[]>;
@@ -32,29 +32,29 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      
+
       addItem: (newItem) => {
         set((state) => {
           const id = newItem.id;
           const moq = newItem.moq || 1;
           const qtyToAdd = newItem.quantity || moq;
           const maxStock = newItem.stock || 9999;
-          
+
           const existingItem = state.items.find(item => item.id === id);
           let updatedItems;
-          
+
           if (existingItem) {
             const currentQty = existingItem.quantity || 0;
             const targetQty = currentQty + qtyToAdd;
-            
+
             if (targetQty > maxStock) {
               toast.error(`Cannot add more than stock limit (${maxStock})`);
               return state;
             }
-            
+
             updatedItems = state.items.map(item =>
-              item.id === id 
-                ? { ...item, quantity: targetQty } 
+              item.id === id
+                ? { ...item, quantity: targetQty }
                 : item
             );
             toast.success('Cart updated');
@@ -84,36 +84,36 @@ export const useCartStore = create<CartStore>()(
             updatedItems = [...state.items, itemToPush];
             toast.success(`Added to cart (MOQ: ${moq})`);
           }
-          
+
           return { items: updatedItems };
         });
-        
+
         emitCartEvent('CART_UPDATED', { items: get().items });
       },
-      
+
       removeItem: (id) => {
         set((state) => ({ items: state.items.filter(item => item.id !== id) }));
         emitCartEvent('CART_UPDATED', { items: get().items });
       },
-      
+
       updateQuantity: (id, quantity) => {
         set((state) => {
           const item = state.items.find(i => i.id === id);
           if (!item) return state;
-          
+
           const moq = item.moq || 1;
           const maxStock = item.stock || 9999;
-          
+
           if (quantity < moq) {
             toast.error(`Minimum order quantity for this item is ${moq}`);
             return state;
           }
-          
+
           if (quantity > maxStock) {
             toast.error(`Limited stock. Max: ${maxStock}`);
             return state;
           }
-          
+
           return {
             items: state.items.map(i =>
               i.id === id ? { ...i, quantity } : i
@@ -123,17 +123,17 @@ export const useCartStore = create<CartStore>()(
 
         emitCartEvent('CART_UPDATED', { items: get().items });
       },
-      
+
       clearCart: () => {
         set({ items: [] });
         emitCartEvent('CART_UPDATED', { items: [] });
       },
-      
+
       clearDomainCart: (domain) => {
         set((state) => ({ items: state.items.filter(i => i.domain !== domain) }));
         emitCartEvent('CART_UPDATED', { items: get().items });
       },
-      
+
       getTotalPrice: () => {
         return get().items.reduce((total, item) => {
           let currentPrice = item.price;
@@ -148,39 +148,39 @@ export const useCartStore = create<CartStore>()(
           return total + (currentPrice * item.quantity);
         }, 0);
       },
-      
+
       getTotalItems: () => {
         return get().items.reduce((total, item) => total + item.quantity, 0);
       },
-      
+
       getTotalCoins: () => {
         return get().items.reduce((total, item) => total + ((item.coinCashback || 0) * item.quantity), 0);
       },
-      
+
       getTotal: () => get().getTotalPrice(),
-      
+
       getDomainItems: (domain) => get().items.filter(i => i.domain === domain),
-      
+
       getDominantDomain: () => {
         const items = get().items;
         if (items.length === 0) return 'retail';
-        
+
         const counts: Record<string, number> = {};
         items.forEach(item => {
           const d = item.domain || 'retail';
           counts[d] = (counts[d] || 0) + item.quantity;
         });
-        
+
         let dominant: CommerceDomain = 'retail';
         let max = 0;
-        
+
         Object.entries(counts).forEach(([domain, count]) => {
           if (count > max) {
             max = count;
             dominant = domain as CommerceDomain;
           }
         });
-        
+
         return dominant;
       },
 

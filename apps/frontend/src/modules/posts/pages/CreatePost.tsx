@@ -9,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { ImagePlus, Video, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { safeBack } from '@/lib/navigation';
 
 type PostType = 'product' | 'service' | 'bid' | 'video';
 
@@ -76,7 +75,7 @@ export function CreatePost() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log('Submitting post type:', postType, 'Data:', data);
       toast.success(`Successfully published new ${postType}!`);
-      safeBack(navigate, '/');
+      navigate(-1);
     } catch (error) {
       toast.error('Failed to create post');
     }
@@ -85,9 +84,8 @@ export function CreatePost() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto pt-safe pb-24 md:pb-8 px-4 mt-8">
       <button
-        onClick={() => safeBack(navigate, '/')}
+        onClick={() => navigate(-1)}
         className="inline-flex items-center gap-2 text-white/70 hover:text-white w-fit cursor-pointer"
-        title="ফিরে যান"
       >
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
@@ -244,8 +242,8 @@ export function CreatePost() {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => safeBack(navigate, '/')}
-            className="text-white hover:bg-white/10 min-w-24 cursor-pointer"
+            onClick={() => navigate(-1)}
+            className="text-white hover:bg-white/10 min-w-24"
           >
             Cancel
           </Button>

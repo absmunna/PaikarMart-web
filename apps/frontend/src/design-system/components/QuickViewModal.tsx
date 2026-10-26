@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  X, ShoppingCart, Star, ShieldCheck, Store, 
-  Minus, Plus, Check, ChevronRight, Tag, MapPin, Truck, RefreshCw 
+import {
+  X, ShoppingCart, Star, ShieldCheck, Store,
+  Minus, Plus, Check, ChevronRight, Tag, MapPin, Truck, RefreshCw
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";

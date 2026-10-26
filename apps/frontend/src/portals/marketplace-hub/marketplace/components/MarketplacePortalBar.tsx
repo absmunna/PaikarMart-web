@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-  BarChart2, ShoppingBag, Truck, MapPin, 
-  Settings, Star, Plane, Briefcase, Tag, Layout 
+import {
+  BarChart2, ShoppingBag, Truck, MapPin,
+  Settings, Star, Plane, Briefcase, Tag, Layout
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -32,7 +32,7 @@ export const MarketplacePortalBar = ({ selected, onChange }: CategoryNavBarProps
         {portals.map((portal) => {
           const Icon = portal.icon;
           const isActive = selected === portal.id;
-          
+
           return (
             <button
               key={portal.id}
@@ -41,8 +41,8 @@ export const MarketplacePortalBar = ({ selected, onChange }: CategoryNavBarProps
             >
               <div className={`
                 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-all duration-300
-                ${isActive 
-                  ? `bg-gradient-to-br ${portal.color} shadow-lg shadow-white/5 scale-110` 
+                ${isActive
+                  ? `bg-gradient-to-br ${portal.color} shadow-lg shadow-white/5 scale-110`
                   : 'bg-[var(--pm-surface)]/50 border border-[var(--pm-border)] group-hover:border-white/20'
                 }
               `}>
@@ -54,9 +54,9 @@ export const MarketplacePortalBar = ({ selected, onChange }: CategoryNavBarProps
               `}>
                 {portal.label}
               </span>
-              
+
               {isActive && (
-                <motion.div 
+                <motion.div
                   layoutId="portal-active"
                   className="w-6 md:w-8 h-1 bg-cyan-400 rounded-full mt-0.5 shadow-[0_0_8px_rgba(34,211,238,0.5)]"
                 />

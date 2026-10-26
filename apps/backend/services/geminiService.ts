@@ -61,7 +61,7 @@ export class GeminiService {
       // In Interactions API, we can use previous_interaction_id or just send the prompt.
       // For a simple chat, we'll just send the last message but provide history if possible.
       const lastMessage = messages[messages.length - 1];
-      
+
       const interaction = await ai.interactions.create({
         model: "gemini-3.5-flash",
         system_instruction: systemInstruction || "You are a helpful assistant for Paikar Mart, a social commerce super app in Bangladesh. Help users with product questions, order tracking, and business advice.",
@@ -79,7 +79,7 @@ export class GeminiService {
    * Generates a streaming chat response
    */
   static async generateStreamingChatResponse(
-    messages: { role: string, content: string }[], 
+    messages: { role: string, content: string }[],
     systemInstruction?: string,
     tools?: any[]
   ) {

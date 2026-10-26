@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { 
+import {
   Building2, ArrowLeft, Star, MapPin, Calendar, Users, Globe, Award,
   ShieldCheck, Phone, Mail, FileText, CheckCircle2, MessageSquare, AlertCircle
 } from 'lucide-react';
@@ -14,9 +14,9 @@ interface FactoryProfileViewProps {
   onNotify: (msg: string, type: 'success' | 'warning' | 'error') => void;
 }
 
-export const FactoryProfileView: React.FC<FactoryProfileViewProps> = ({ 
-  factoryId, 
-  onNavigate, 
+export const FactoryProfileView: React.FC<FactoryProfileViewProps> = ({
+  factoryId,
+  onNavigate,
   onBack,
   onNotify
 }) => {
@@ -24,7 +24,7 @@ export const FactoryProfileView: React.FC<FactoryProfileViewProps> = ({
   const factoryProducts = MOCK_B2B_PRODUCTS.filter(p => p.vendorId === factory.id);
 
   const [activeTab, setActiveTab] = useState<'products' | 'info' | 'certs' | 'contact'>('products');
-  
+
   // Custom cover trigger simulation
   const [coverPhoto, setCoverPhoto] = useState(factory.banner);
 
@@ -127,8 +127,8 @@ export const FactoryProfileView: React.FC<FactoryProfileViewProps> = ({
             key={tb.id}
             onClick={() => setActiveTab(tb.id as any)}
             className={`flex-1 text-center py-2.5 rounded-xl text-xs font-black whitespace-nowrap px-4 ${
-              activeTab === tb.id 
-                ? 'bg-[#1f2833] text-white shadow-md' 
+              activeTab === tb.id
+                ? 'bg-[#1f2833] text-white shadow-md'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -240,7 +240,7 @@ export const FactoryProfileView: React.FC<FactoryProfileViewProps> = ({
           <div className="space-y-4">
             <div className="p-4 bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-2xl space-y-3.5 text-xs">
               <h3 className="text-xs font-black text-white uppercase tracking-wider">Direct Communications Desk</h3>
-              
+
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
                 <span className="font-bold text-white">+880 (17) 000-00000 (Trade Relations)</span>

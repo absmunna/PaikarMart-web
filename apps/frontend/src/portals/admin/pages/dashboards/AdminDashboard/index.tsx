@@ -1,264 +1,240 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  ShieldCheck, Users, Activity, Lock, Search, Plus, Bot, 
-  KeyRound, AlertTriangle, CheckCircle2, Package, Trash2, 
-  FileCheck, XCircle, Clock, UserCheck, Terminal, DollarSign,
-  TrendingUp, RefreshCw, Sliders, ShieldAlert, ArrowUpRight
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldCheck, Users, Activity, Lock, Search, Plus, Bot, KeyRound, AlertTriangle, CheckCircle2, Package, Trash2, FileCheck, XCircle, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useProductStore } from '@/modules/product';
 import { useKycStore } from '@/modules/admin';
-import { 
-  PendingVendorsPanel, 
-  VendorPerformanceDashboard,
-  EscrowManagementPanel,
-  DevOpsFlagsPanel,
-  ModerationQueuePanel
-} from '@/portals/admin/components';
-import { useAdminGovernanceStore } from '@/modules/admin';
 
-export const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'pending-vendors' | 'escrow' | 'moderation' | 'devops' | 'inventory' | 'delegation' | 'security'>('overview');
+export const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'delegation' | 'inventory' | 'security' | 'ai' | 'kyc'>('overview');
+  const [showAiChat, setShowAiChat] = useState(false);
   const { products, addProduct, removeProduct } = useProductStore();
   const { submissions, updateStatus } = useKycStore();
-  const { metrics, health, isLoading, lastUpdated, fetchAllAdminData } = useAdminGovernanceStore();
-
-  useEffect(() => {
-    fetchAllAdminData();
-  }, [fetchAllAdminData]);
 
   const pkStoreProducts = products.filter(p => p.portal === 'pk-store');
 
-  const TAB_CONFIG = [
-    { id: 'overview', icon: Activity, label: 'ওভারভিউ (Overview)' },
-    { id: 'pending-vendors', icon: UserCheck, label: `ভেন্ডর অনুমোদন (${metrics.pendingVendors})` },
-    { id: 'escrow', icon: ShieldCheck, label: `এসক্রো ও ডিসপুট (${metrics.activeEscrowCount})` },
-    { id: 'moderation', icon: ShieldAlert, label: `সোশ্যাল মডারেশন (${metrics.pendingModerationCount})` },
-    { id: 'devops', icon: Terminal, label: 'DevOps ও ফ্ল্যাগস' },
-    { id: 'inventory', icon: Package, label: `পিকে স্টোর (${pkStoreProducts.length})` },
-    { id: 'delegation', icon: Users, label: 'টিম এক্সেস' },
-    { id: 'security', icon: Lock, label: 'সিকিউরিটি' }
-  ];
-
-  const currentTabObj = TAB_CONFIG.find(t => t.id === activeTab);
-
   return (
-    <div className="flex flex-col min-h-full bg-[var(--pm-bg)] relative pb-20 lg:pb-8">
-      
-      {/* Top Header with Breadcrumb & Quick Stats */}
-      <header className="p-6 pb-2 border-b border-[var(--pm-border)]">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-          <div>
-            {/* Breadcrumb Trail */}
-            <div className="flex items-center gap-2 text-xs text-[var(--pm-text-muted)] mb-1">
-              <span>Admin Console</span>
-              <span>/</span>
-              <span>Governance</span>
-              <span>/</span>
-              <span className="text-[var(--pm-text)] font-semibold">{currentTabObj?.label}</span>
-            </div>
+    <div className="flex flex-col min-h-full bg-[var(--pm-bg)] relative pb-20 lg:pb-6">
 
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-[var(--pm-text)] tracking-tight">
-                  সুপার অ্যাডমিন গভর্ন্যান্স কন্ট্রোল প্যানেল
-                </h1>
-                <p className="text-xs text-[var(--pm-text-muted)] font-medium">
-                  Multi-Vendor Governance, Escrow Finance, Social Moderation & Global DevOps
-                </p>
-              </div>
-            </div>
+      {/* Header */}
+      <header className="p-6 pb-2">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-indigo-500" />
           </div>
-
-          {/* Quick System Telemetry */}
-          <div className="flex items-center gap-3">
-            <div className="px-3 py-1.5 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-xs text-[var(--pm-text-muted)] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>DB Pool: <strong className="text-[var(--pm-text)] font-mono tabular-nums">{health.apiLatency}ms</strong></span>
-              <span className="text-zinc-600">·</span>
-              <span>Sessions: <strong className="text-[var(--pm-text)] font-mono tabular-nums">{health.activeSessions}</strong></span>
-            </div>
-
-            <button
-              onClick={() => fetchAllAdminData()}
-              className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] transition-colors cursor-pointer"
-              title="Refresh Data"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
+          <div>
+            <h1 className="text-xl font-black text-[var(--pm-text)] tracking-tight">Super Admin Panel</h1>
+            <p className="text-xs text-[var(--pm-text-muted)] font-medium">Complete Access, KYC Verification & PK Store Ownership</p>
           </div>
         </div>
       </header>
 
-      {/* Tabs Navigation Bar */}
+      {/* Tabs */}
       <div className="px-6 py-4 overflow-x-auto hide-scrollbar">
         <div className="flex gap-2 min-w-max">
-          {TAB_CONFIG.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-[var(--pm-accent)] text-white shadow-md shadow-[var(--pm-accent)]/20' 
-                    : 'bg-[var(--pm-surface)] text-[var(--pm-text-muted)] border border-[var(--pm-border)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)]'
-                }`}
-              >
-                <Icon className="w-4 h-4" /> {tab.label}
-              </button>
-            );
-          })}
+          {[
+            { id: 'overview', icon: Activity, label: 'Overview' },
+            { id: 'kyc', icon: FileCheck, label: `KYC Queue (${submissions.filter(s => s.status === 'pending').length})` },
+            { id: 'delegation', icon: Users, label: 'Delegation' },
+            { id: 'inventory', icon: Package, label: 'Inventory' },
+            { id: 'security', icon: Lock, label: 'Security' },
+            { id: 'ai', icon: Bot, label: 'AI Analytics' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                activeTab === tab.id
+                ? 'bg-[var(--pm-accent)] text-white shadow-lg shadow-[var(--pm-accent)]/20'
+                : 'bg-[var(--pm-surface-hover)] text-[var(--pm-text-muted)] border border-[var(--pm-border)] hover:text-[var(--pm-text)]'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" /> {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Main Content Viewport */}
+      {/* Main Content Area */}
       <div className="flex-1 px-6 space-y-6">
+
         <AnimatePresence mode="wait">
-          
-          {/* 1. OVERVIEW TAB */}
+          {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (
-            <motion.div 
-              key="overview" 
-              initial={{ opacity: 0, y: 8 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              exit={{ opacity: 0 }} 
-              className="space-y-6"
-            >
-              {/* Executive Metrics Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
-                  <p className="text-[11px] font-semibold text-[var(--pm-text-muted)]">মোট মার্কেটপ্লেস জিএমভি (GMV)</p>
-                  <p className="text-xl font-bold font-mono tabular-nums text-[var(--pm-text)] mt-1">
-                    ৳ {(metrics.totalGMV / 1000000).toFixed(2)}M
-                  </p>
-                  <div className="flex items-center gap-1 text-xs text-emerald-500 font-medium mt-1">
-                    <TrendingUp className="w-3.5 h-3.5" /> +16.4% এই মাসে
+            <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { label: 'Total Revenue', value: '৳ 2.4M', trend: '+14%' },
+                  { label: 'Active Sellers', value: '1,204', trend: '+5%' },
+                  { label: 'PK Store Sales', value: '840', trend: '+22%' },
+                  { label: 'Security Threats', value: '0', trend: 'Safe', color: 'text-cyan-500' }
+                ].map((stat, i) => (
+                  <div key={i} className="glass p-4 rounded-2xl border border-[var(--pm-border)]/50">
+                    <p className="text-[10px] uppercase font-bold text-[var(--pm-text-muted)] mb-1">{stat.label}</p>
+                    <p className="text-xl font-black text-[var(--pm-text)]">{stat.value}</p>
+                    <p className={`text-xs font-bold mt-2 ${stat.color || 'text-[var(--pm-accent)]'}`}>{stat.trend}</p>
                   </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
-                  <p className="text-[11px] font-semibold text-[var(--pm-text-muted)]">প্ল্যাটফর্ম প্রফিট (Take-Rate)</p>
-                  <p className="text-xl font-bold font-mono tabular-nums text-emerald-400 mt-1">
-                    ৳ {metrics.platformProfit.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-[var(--pm-text-muted)] mt-1">৫% গড়ে কমিশন ও ফি</p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
-                  <p className="text-[11px] font-semibold text-[var(--pm-text-muted)]">এসক্রো ভল্ট ডিপোজিট (Held)</p>
-                  <p className="text-xl font-bold font-mono tabular-nums text-amber-400 mt-1">
-                    ৳ {metrics.heldEscrowAmount.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-amber-500 mt-1">{metrics.activeEscrowCount} টি অর্ডার হোল্ডে</p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
-                  <p className="text-[11px] font-semibold text-[var(--pm-text-muted)]">মোট নিবন্ধিত ইউজার</p>
-                  <p className="text-xl font-bold font-mono tabular-nums text-[var(--pm-text)] mt-1">
-                    {metrics.totalUsers.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-cyan-400 mt-1">Wholesale + Retail</p>
-                </div>
+                ))}
               </div>
 
-              {/* Vendor Performance & Analytics Chart */}
-              <VendorPerformanceDashboard />
-
-              {/* Quick Action Pillars */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div 
-                  onClick={() => setActiveTab('pending-vendors')}
-                  className="p-5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center">
-                      <UserCheck className="w-5 h-5" />
-                    </div>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-[var(--pm-accent)] transition-colors" />
-                  </div>
-                  <h3 className="text-sm font-bold text-[var(--pm-text)]">ভেন্ডর অনুমোদন কিউ</h3>
-                  <p className="text-xs text-[var(--pm-text-muted)] mt-1">
-                    {metrics.pendingVendors} টি নতুন ট্রেড লাইসেন্স ও এনআইডি ভেরিফিকেশন পেন্ডিং।
-                  </p>
-                </div>
-
-                <div 
-                  onClick={() => setActiveTab('escrow')}
-                  className="p-5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] hover:border-cyan-500 transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
-                      <ShieldCheck className="w-5 h-5" />
-                    </div>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-cyan-400 transition-colors" />
-                  </div>
-                  <h3 className="text-sm font-bold text-[var(--pm-text)]">এসক্রো ও ডিসপুট ডেস্ক</h3>
-                  <p className="text-xs text-[var(--pm-text-muted)] mt-1">
-                    ৳ {metrics.heldEscrowAmount.toLocaleString()} মূল্যের ট্রানজেকশন সুরক্ষা ও সালিশি।
-                  </p>
-                </div>
-
-                <div 
-                  onClick={() => setActiveTab('devops')}
-                  className="p-5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] hover:border-emerald-500 transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                      <Terminal className="w-5 h-5" />
-                    </div>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
-                  </div>
-                  <h3 className="text-sm font-bold text-[var(--pm-text)]">DevOps ও ফিচার ফ্ল্যাগস</h3>
-                  <p className="text-xs text-[var(--pm-text-muted)] mt-1">
-                    রিয়েল-টাইম হট টগল, রোলআউট স্লাইডার ও গিট ডিপ্লয়মেন্ট হেলথ।
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* 2. PENDING VENDORS TAB */}
-          {activeTab === 'pending-vendors' && (
-            <motion.div key="pending-vendors" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              <PendingVendorsPanel />
-            </motion.div>
-          )}
-
-          {/* 3. ESCROW & DISPUTES TAB */}
-          {activeTab === 'escrow' && (
-            <motion.div key="escrow" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              <EscrowManagementPanel />
-            </motion.div>
-          )}
-
-          {/* 4. SOCIAL MODERATION TAB */}
-          {activeTab === 'moderation' && (
-            <motion.div key="moderation" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              <ModerationQueuePanel />
-            </motion.div>
-          )}
-
-          {/* 5. DEVOPS & FEATURE FLAGS TAB */}
-          {activeTab === 'devops' && (
-            <motion.div key="devops" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              <DevOpsFlagsPanel />
-            </motion.div>
-          )}
-
-          {/* 6. PK STORE INVENTORY TAB */}
-          {activeTab === 'inventory' && (
-            <motion.div key="inventory" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-              {/* Add Product Form */}
-              <div className="p-6 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
+              <div className="glass p-5 rounded-3xl border border-[var(--pm-border)]/50">
                 <h3 className="font-bold text-[var(--pm-text)] mb-4 flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-[var(--pm-accent)]" /> নতুন পিকে স্টোর কিউরেটেড প্রোডাক্ট যোগ করুন
+                  <Activity className="w-4 h-4 text-[var(--pm-accent)]" /> System Health
                 </h3>
-                <form 
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-[var(--pm-text-muted)]">Database Status</span>
+                    <span className="text-cyan-500 font-bold flex items-center gap-1"><CheckCircle2 className="w-4 h-4"/> Optimal</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-[var(--pm-text-muted)]">API Latency</span>
+                    <span className="text-[var(--pm-text)] font-bold">42ms</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* KYC VERIFICATION QUEUE TAB */}
+          {activeTab === 'kyc' && (
+            <motion.div key="kyc" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+              <div className="glass p-5 rounded-3xl border border-[var(--pm-border)]/50 border-l-4 border-l-[var(--pm-accent)] relative overflow-hidden">
+                <h2 className="font-black text-lg text-[var(--pm-text)] mb-1 flex items-center gap-2">
+                  <FileCheck className="w-5 h-5 text-[var(--pm-accent)]" /> Vendor & Merchant KYC Queue
+                </h2>
+                <p className="text-sm text-[var(--pm-text-muted)]">
+                  Inspect and verify vendor trade licenses, NID documents, and business credentials. Approving instantly grants verified trust badges and unlocks merchant payout capabilities.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {submissions.length === 0 ? (
+                  <div className="text-center py-12 glass rounded-3xl border border-[var(--pm-border)]/50">
+                    <p className="text-sm text-[var(--pm-text-muted)] font-bold">No KYC submissions in queue.</p>
+                  </div>
+                ) : (
+                  submissions.map((item) => (
+                    <div key={item.id} className="glass p-5 rounded-3xl border border-[var(--pm-border)]/50 space-y-4">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] flex items-center justify-center font-black text-lg">
+                            {item.vendorName.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-base font-black text-[var(--pm-text)]">{item.storeName}</h4>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                item.status === 'verified' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30' :
+                                item.status === 'rejected' ? 'bg-red-500/10 text-red-500 border border-red-500/30' :
+                                'bg-amber-500/10 text-amber-500 border border-amber-500/30'
+                              }`}>
+                                {item.status.toUpperCase()}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[var(--pm-text-muted)] mt-0.5">
+                              Owner: <strong className="text-[var(--pm-text)]">{item.vendorName}</strong> ({item.phone}) • Role: {item.role}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                          {item.status === 'pending' ? (
+                            <>
+                              <button
+                                onClick={() => updateStatus(item.id, 'verified', 5)}
+                                className="flex-1 sm:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-1.5"
+                              >
+                                <CheckCircle2 className="w-4 h-4" /> Approve & Grant Badge
+                              </button>
+                              <button
+                                onClick={() => updateStatus(item.id, 'rejected')}
+                                className="flex-1 sm:flex-none px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                              >
+                                <XCircle className="w-4 h-4" /> Reject
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-xs font-bold text-[var(--pm-text-muted)] flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5" /> Reviewed • Trust Level: {item.trustLevel}★
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3 border-t border-[var(--pm-border)]/50 text-xs">
+                        <div>
+                          <span className="text-[var(--pm-text-muted)] block text-[10px] uppercase font-bold">Trade License</span>
+                          <span className="font-mono font-bold text-[var(--pm-text)]">{item.tradeLicenseNo}</span>
+                        </div>
+                        <div>
+                          <span className="text-[var(--pm-text-muted)] block text-[10px] uppercase font-bold">NID Number</span>
+                          <span className="font-mono font-bold text-[var(--pm-text)]">{item.nidNumber}</span>
+                        </div>
+                        <div>
+                          <span className="text-[var(--pm-text-muted)] block text-[10px] uppercase font-bold">Submitted At</span>
+                          <span className="font-medium text-[var(--pm-text)]">{item.submittedAt}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* DELEGATION TAB */}
+          {activeTab === 'delegation' && (
+            <motion.div key="delegation" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+              <div className="glass p-5 rounded-3xl border border-[var(--pm-border)]/50 border-l-4 border-l-indigo-500 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                  <KeyRound className="w-24 h-24" />
+                </div>
+                <h2 className="font-black text-lg text-[var(--pm-text)] mb-2">PK Store Ownership</h2>
+                <p className="text-sm text-[var(--pm-text-muted)] max-w-[80%]">
+                  PaikarMart Super Admin has full ownership of the PK Store. You can safely delegate "Moderator" access to staff to manage inventory without exposing core financials.
+                </p>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <h3 className="font-bold text-[var(--pm-text)]">Assigned Moderators</h3>
+                <button className="flex items-center gap-1 px-3 py-1.5 bg-[var(--pm-accent)]/10 text-[var(--pm-accent)] rounded-lg text-xs font-bold hover:bg-[var(--pm-accent)]/20 transition-colors">
+                  <Plus className="w-3 h-3" /> Add Moderator
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { name: 'Arif Hossain', role: 'Inventory Moderator', email: 'arif@paikarmart.com', status: 'Active' },
+                  { name: 'Tania Akter', role: 'Order Fulfillment', email: 'tania@paikarmart.com', status: 'Active' },
+                ].map((mod, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-4 glass rounded-2xl border border-[var(--pm-border)]/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold">
+                        {mod.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[var(--pm-text)]">{mod.name}</p>
+                        <p className="text-[10px] text-[var(--pm-text-muted)]">{mod.role} • {mod.email}</p>
+                      </div>
+                    </div>
+                    <button className="px-3 py-1 border border-red-500/30 text-red-500 rounded-lg text-xs font-bold hover:bg-red-500/10 transition-colors">
+                      Revoke
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* INVENTORY TAB */}
+          {activeTab === 'inventory' && (
+            <motion.div key="inventory" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+
+              {/* Add Product Form */}
+              <div className="glass p-5 rounded-3xl border border-[var(--pm-border)]/50">
+                <h3 className="font-bold text-[var(--pm-text)] mb-4 flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-[var(--pm-accent)]" /> Add New PK Store Product
+                </h3>
+                <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     const formData = new FormData(e.currentTarget);
@@ -275,122 +251,119 @@ export const AdminDashboard: React.FC = () => {
                   }}
                   className="space-y-3"
                 >
-                  <input name="name" required placeholder="পণ্যের নাম (Product Name)" className="w-full bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]" />
+                  <input name="name" required placeholder="Product Name" className="w-full bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none" />
                   <div className="grid grid-cols-2 gap-3">
-                    <input name="price" type="number" required placeholder="বিক্রয় মূল্য ৳ (Price)" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]" />
-                    <input name="originalPrice" type="number" required placeholder="প্রকৃত মূল্য ৳ (Original Price)" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]" />
+                    <input name="price" type="number" required placeholder="Price (৳)" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none" />
+                    <input name="originalPrice" type="number" required placeholder="Original Price (৳)" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <input name="cashback" type="number" required placeholder="পিকে কয়েন ক্যাশব্যাক" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]" />
-                    <input name="tag" required placeholder="ট্যাগ (যেমন: Premium, Exclusive, 100% Pure)" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]" />
+                    <input name="cashback" type="number" required placeholder="PK Coin Cashback" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none" />
+                    <input name="tag" required placeholder="Tag (e.g. Pure, Exclusive)" className="bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none" />
                   </div>
-                  <input name="image" required placeholder="ইমেজ লিঙ্ক (Image URL: https://...)" className="w-full bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]" />
-                  
-                  <button type="submit" className="w-full py-3 bg-[var(--pm-accent)] hover:bg-[var(--pm-accent)]/90 text-white font-bold rounded-xl transition-all cursor-pointer">
-                    পণ্যটি পিকে স্টোরে পাবলিশ করুন
+                  <input name="image" required placeholder="Image URL (https://...)" className="w-full bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none" />
+
+                  <button type="submit" className="w-full py-3 bg-[var(--pm-accent)] text-white font-bold rounded-xl active:scale-95 transition-all shadow-lg shadow-[var(--pm-accent)]/20">
+                    Publish Product
                   </button>
                 </form>
               </div>
 
               {/* Product List */}
               <div className="space-y-3">
-                <h3 className="font-bold text-[var(--pm-text)] text-sm flex items-center gap-2">
-                  <Package className="w-4 h-4 text-[var(--pm-accent)]" /> বর্তমান পিকে স্টোর ইনভেন্টরি ({pkStoreProducts.length})
+                <h3 className="font-bold text-[var(--pm-text)] flex items-center gap-2">
+                  <Package className="w-4 h-4 text-[var(--pm-accent)]" /> Current Inventory ({pkStoreProducts.length})
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {pkStoreProducts.map(product => (
-                    <div key={product.id} className="flex gap-3 p-3 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] relative group">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-black/10 shrink-0">
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <h4 className="text-xs font-bold text-[var(--pm-text)] truncate">{product.name}</h4>
-                        <p className="text-xs text-[var(--pm-accent)] font-mono font-bold mt-1">৳ {product.price}</p>
-                      </div>
-                      <button 
-                        onClick={() => removeProduct(product.id)}
-                        className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer shrink-0 self-center"
-                        title="Delete Product"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                {pkStoreProducts.map(product => (
+                  <div key={product.id} className="flex gap-3 p-3 glass rounded-2xl border border-[var(--pm-border)]/50 relative group">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-black/10 shrink-0">
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* 7. DELEGATION TAB */}
-          {activeTab === 'delegation' && (
-            <motion.div key="delegation" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-              <div className="p-5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] space-y-2">
-                <h2 className="font-bold text-base text-[var(--pm-text)] flex items-center gap-2">
-                  <KeyRound className="w-5 h-5 text-indigo-400" /> রোল ডেলিগেশন ও টিম অ্যাক্সেস কন্ট্রোল
-                </h2>
-                <p className="text-xs text-[var(--pm-text-muted)] leading-relaxed">
-                  সুপার অ্যাডমিন হিসেবে আপনি নির্দিষ্ট স্টাফ সদস্যদের 'মডারেটর', 'ফিনান্স অফিসার' বা 'ইনভেন্টরি ম্যানেজার' রোল প্রদান করতে পারেন। এতে মূল ফিনান্সিয়াল ব্যালেন্স বা সিস্টেম ডাটাবেজ উন্মুক্ত না করেই টিম পরিচালনা করা যায়।
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {[
-                  { name: 'আরিফ হোসেন (Arif Hossain)', role: 'ইনভেন্টরি মডারেটর (Inventory Moderator)', email: 'arif@paikarmart.com', status: 'সক্রিয়' },
-                  { name: 'তানিয়া আক্তার (Tania Akter)', role: 'অর্ডার ও ডেলিভারি ডিসপুট অফিসার', email: 'tania@paikarmart.com', status: 'সক্রিয়' },
-                  { name: 'ফারহান মাহমুদ (Farhan Mahmud)', role: 'সোশ্যাল কনটেন্ট ও বিড কমপ্লায়েন্স অফিসার', email: 'farhan@paikarmart.com', status: 'সক্রিয়' },
-                ].map((mod, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-xs">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold">
-                        {mod.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-[var(--pm-text)]">{mod.name}</p>
-                        <p className="text-[11px] text-[var(--pm-text-muted)]">{mod.role} · {mod.email}</p>
-                      </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <h4 className="text-sm font-bold text-[var(--pm-text)] truncate">{product.name}</h4>
+                      <p className="text-xs text-[var(--pm-accent)] font-black mt-1">৳ {product.price}</p>
                     </div>
-                    <span className="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">
-                      {mod.status}
-                    </span>
+                    <button
+                      onClick={() => removeProduct(product.id)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 ))}
               </div>
             </motion.div>
           )}
 
-          {/* 8. SECURITY TAB */}
+          {/* SECURITY TAB */}
           {activeTab === 'security' && (
-            <motion.div key="security" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
-                  <ShieldCheck className="w-6 h-6 text-cyan-400 mb-2" />
-                  <p className="text-xs font-bold text-[var(--pm-text)]">ক্লাউড সিকিউরিটি ও আরবিক গার্ড</p>
-                  <p className="text-[11px] text-[var(--pm-text-muted)] mt-0.5">Firebase Token Verification & JWT RBAC সক্রিয়</p>
+            <motion.div key="security" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="glass p-4 rounded-2xl border border-cyan-500/30 bg-cyan-500/5">
+                  <ShieldCheck className="w-6 h-6 text-cyan-500 mb-2" />
+                  <p className="text-xs font-bold text-[var(--pm-text)]">DDoS Protection</p>
+                  <p className="text-[10px] text-[var(--pm-text-muted)]">Active & Blocking</p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)]">
-                  <Lock className="w-6 h-6 text-emerald-400 mb-2" />
-                  <p className="text-xs font-bold text-[var(--pm-text)]">এন্ড-টু-এন্ড এনক্রিপশন</p>
-                  <p className="text-[11px] text-[var(--pm-text-muted)] mt-0.5">SSL / TLS 1.3 ও সিকিউর সল্ট হ্যাশিং এনফোর্সড</p>
+                <div className="glass p-4 rounded-2xl border border-cyan-500/30 bg-cyan-500/5">
+                  <Lock className="w-6 h-6 text-cyan-500 mb-2" />
+                  <p className="text-xs font-bold text-[var(--pm-text)]">End-to-End Encrypted</p>
+                  <p className="text-[10px] text-[var(--pm-text-muted)]">AES-256 Enabled</p>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] space-y-3">
-                <h3 className="font-bold text-xs text-[var(--pm-text)]">সাম্প্রতিক অথেনটিকেশন ও অ্যাক্সেস লগস</h3>
+              <div>
+                <h3 className="font-bold text-[var(--pm-text)] mb-4">Recent Access Logs</h3>
                 <div className="space-y-2">
                   {[
-                    { event: 'সুপার অ্যাডমিন সেশন ভেরিফাইড', ip: '103.42.xxx.xxx', time: 'এইমাত্র', ok: true },
-                    { event: 'ভেন্ডর পিন রিকোয়েস্ট (Nagad Payout)', ip: '118.179.xxx.xxx', time: '৪৫ মিনিট পূর্বে', ok: true },
-                    { event: 'অননুমোদিত রুট রিকোয়েস্ট ব্লকড (/api/v1/admin/secret)', ip: '45.134.xxx.xxx', time: '২ ঘণ্টা পূর্বে', ok: false }
+                    { event: 'Admin Login', ip: '192.168.1.1', time: 'Just now', type: 'success' },
+                    { event: 'Failed Login Attempt', ip: '103.45.xx.xx', time: '2 hours ago', type: 'danger' },
+                    { event: 'Moderator Access Granted', ip: 'System', time: 'Yesterday', type: 'info' }
                   ].map((log, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[var(--pm-surface-hover)] text-xs">
-                      <div className="flex items-center gap-2.5">
-                        {log.ok ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <AlertTriangle className="w-4 h-4 text-rose-500" />}
-                        <span className="text-[var(--pm-text)]">{log.event}</span>
+                    <div key={i} className="flex items-center justify-between p-3 glass rounded-xl border border-[var(--pm-border)]/50 text-xs">
+                      <div className="flex items-center gap-3">
+                        {log.type === 'danger' ? <AlertTriangle className="w-4 h-4 text-red-500" /> : <ShieldCheck className="w-4 h-4 text-cyan-500" />}
+                        <div>
+                          <p className={`font-bold ${log.type === 'danger' ? 'text-red-500' : 'text-[var(--pm-text)]'}`}>{log.event}</p>
+                          <p className="text-[10px] text-[var(--pm-text-muted)]">IP: {log.ip}</p>
+                        </div>
                       </div>
-                      <span className="text-[10px] text-zinc-500 font-mono">{log.ip} · {log.time}</span>
+                      <span className="text-[10px] text-[var(--pm-text-muted)]">{log.time}</span>
                     </div>
                   ))}
                 </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* AI ANALYTICS TAB */}
+          {activeTab === 'ai' && (
+            <motion.div key="ai" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="h-full min-h-[400px] flex flex-col">
+              <div className="flex-1 glass rounded-t-3xl border border-[var(--pm-border)]/50 p-6 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center relative">
+                  <Bot className="w-10 h-10 text-indigo-500" />
+                  <span className="absolute top-0 right-0 w-4 h-4 bg-cyan-500 rounded-full border-2 border-[var(--pm-surface)] animate-pulse" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-[var(--pm-text)]">PaikarMart AI Shield</h2>
+                  <p className="text-sm text-[var(--pm-text-muted)] max-w-[250px] mt-2">
+                    I am actively monitoring the store for fraud, predicting sales trends, and auditing logs.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-2 mt-4">
+                  <span className="px-3 py-1 bg-white/5 border border-[var(--pm-border)] rounded-full text-[10px] font-bold text-[var(--pm-text)]">Analyze Sales</span>
+                  <span className="px-3 py-1 bg-white/5 border border-[var(--pm-border)] rounded-full text-[10px] font-bold text-[var(--pm-text)]">Check Anomalies</span>
+                  <span className="px-3 py-1 bg-white/5 border border-[var(--pm-border)] rounded-full text-[10px] font-bold text-[var(--pm-text)]">Generate Report</span>
+                </div>
+              </div>
+              <div className="p-4 glass rounded-b-3xl border border-t-0 border-[var(--pm-border)]/50 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Ask AI Assistant to analyze store data..."
+                  className="flex-1 bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl px-4 py-2 text-sm text-[var(--pm-text)] outline-none"
+                />
+                <button className="px-4 py-2 bg-[var(--pm-accent)] text-white rounded-xl text-sm font-bold shadow-lg shadow-[var(--pm-accent)]/20 active:scale-95">
+                  Ask
+                </button>
               </div>
             </motion.div>
           )}
@@ -401,5 +374,3 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 };
-
-export default AdminDashboard;

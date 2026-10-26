@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Check, CreditCard, MapPin, Truck, ShieldCheck, ChevronRight, 
-  ShoppingBag, Globe, AlertCircle, Plus, Trash2, Edit2, Sparkles, 
-  Clock, Calendar, DollarSign, Navigation, FileText, CheckCircle2, 
+import {
+  Check, CreditCard, MapPin, Truck, ShieldCheck, ChevronRight,
+  ShoppingBag, Globe, AlertCircle, Plus, Trash2, Edit2, Sparkles,
+  Clock, Calendar, DollarSign, Navigation, FileText, CheckCircle2,
   Wallet, ChevronDown, Landmark, Map, Zap, Plane, Package, Car, Bike
 } from 'lucide-react';
 import { formatBDT } from '@/lib/format';
@@ -13,8 +13,6 @@ import { useAddressStore, SavedAddress } from '@/modules/profile';
 import { useWalletStore } from '@/modules/wallet';
 import { cn } from "@/lib/utils";
 import { toast } from 'sonner';
-import { useAuth } from '@/modules/auth';
-import { useAuthStore } from '@/modules/auth/store/useAuthStore';
 
 interface CartItem {
   id: string;
@@ -25,15 +23,15 @@ interface CartItem {
   category?: string;
 }
 
-export type UniversalCheckoutType = 
-  | 'retail' 
-  | 'wholesale' 
-  | 'digital' 
-  | 'service' 
-  | 'food' 
-  | 'courier' 
-  | 'truck' 
-  | 'rent_car' 
+export type UniversalCheckoutType =
+  | 'retail'
+  | 'wholesale'
+  | 'digital'
+  | 'service'
+  | 'food'
+  | 'courier'
+  | 'truck'
+  | 'rent_car'
   | 'deal';
 
 interface CheckoutStepperProps {
@@ -41,47 +39,32 @@ interface CheckoutStepperProps {
   subtotal: number;
   discount: number;
   checkoutType?: UniversalCheckoutType;
-  onOrderCompleted: (details: { 
-    address: string; 
-    delivery: string; 
-    payment: string; 
-    total: number; 
-    doubleAddresses?: { pickup: string; drop: string };
-    guestName?: string;
-    guestPhone?: string;
-    guestEmail?: string;
-  }) => Promise<void>;
+  onOrderCompleted: (details: { address: string; delivery: string; payment: string; total: number; doubleAddresses?: { pickup: string; drop: string } }) => Promise<void>;
 }
 
 // Preset saved addresses are now managed via useAddressStore
 
-export const CheckoutStepper = ({ 
-  items, 
-  subtotal, 
-  discount, 
+export const CheckoutStepper = ({
+  items,
+  subtotal,
+  discount,
   checkoutType = 'retail',
-  onOrderCompleted 
+  onOrderCompleted
 }: CheckoutStepperProps) => {
   const { isBn } = useLanguage();
   const [step, setStep] = useState(0);
-
-  // Authentication status
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
-  const [guestName, setGuestName] = useState('');
-  const [guestPhone, setGuestPhone] = useState('');
-  const [guestEmail, setGuestEmail] = useState('');
 
   // Address Book from unified store
   const { addresses: savedAddresses, addAddress } = useAddressStore();
   const [selectedAddrId, setSelectedAddrId] = useState<string>(savedAddresses[0]?.id || '');
   const [selectedDropAddrId, setSelectedDropAddrId] = useState<string>(savedAddresses[1]?.id || savedAddresses[0]?.id || ''); // for courier, rent_car, truck
-  
+
   // Custom Address Form Visibility & State
   const [showAddForm, setShowAddForm] = useState(false);
   const [formType, setFormType] = useState<'primary' | 'drop'>('primary'); // which address slot to add to
   const [customAddressDetails, setCustomAddressDetails] = useState<AddressDetails | null>(null);
   const [isCustomAddressValid, setIsCustomAddressValid] = useState(false);
-  
+
   // Custom address fields not covered by BDAddressSelector
   const [road, setRoad] = useState('');
   const [house, setHouse] = useState('');
@@ -248,18 +231,12 @@ export const CheckoutStepper = ({
   // Next step navigation handler
   const handleNext = () => {
     if (step < steps.length - 1) {
-      if (step === 0 && !isAuthenticated) {
-        if (!guestName.trim() || !guestPhone.trim()) {
-          toast.error(isBn ? "দয়া করে নাম ও মোবাইল নম্বর প্রদান করুন" : "Please fill in your name and phone number for auto-account creation.");
-          return;
-        }
-      }
       setStep(step + 1);
     } else {
       // Complete Order callback with standard format
       const primaryAddress = getAddressString(selectedAddrId);
       const isTwoWay = ['courier', 'truck', 'rent_car'].includes(checkoutType);
-      
+
       const details = {
         address: primaryAddress,
         delivery: activeDelivery.id,
@@ -268,10 +245,7 @@ export const CheckoutStepper = ({
         doubleAddresses: isTwoWay ? {
           pickup: primaryAddress,
           drop: getAddressString(selectedDropAddrId)
-        } : undefined,
-        guestName: !isAuthenticated ? guestName : undefined,
-        guestPhone: !isAuthenticated ? guestPhone : undefined,
-        guestEmail: !isAuthenticated ? guestEmail : undefined,
+        } : undefined
       };
 
       onOrderCompleted(details);
@@ -280,7 +254,6 @@ export const CheckoutStepper = ({
 
   const isNextDisabled = () => {
     if (step === 0) {
-      if (!isAuthenticated && (!guestName.trim() || !guestPhone.trim())) return true;
       // Must have valid selected addresses
       if (!selectedAddrId) return true;
       if (['courier', 'truck', 'rent_car'].includes(checkoutType) && !selectedDropAddrId) return true;
@@ -290,7 +263,7 @@ export const CheckoutStepper = ({
 
   return (
     <div className="bg-[#0b101c] border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl relative">
-      
+
       {/* Dynamic Upper Accent Bar based on portal type */}
       <div className={cn(
         "h-1.5 w-full",
@@ -310,8 +283,8 @@ export const CheckoutStepper = ({
             <div key={s.id} className="flex items-center gap-2 shrink-0">
               <div className={cn(
                 "w-9 h-9 rounded-xl flex items-center justify-center border transition-all duration-300",
-                isActive 
-                  ? 'bg-cyan-400/10 border-cyan-400/30 text-cyan-400 shadow-[0_0_15px_rgba(0,230,118,0.15)]' 
+                isActive
+                  ? 'bg-cyan-400/10 border-cyan-400/30 text-cyan-400 shadow-[0_0_15px_rgba(0,230,118,0.15)]'
                   : 'bg-zinc-900/60 border-white/5 text-zinc-500'
               , isCurrent && 'ring-2 ring-cyan-400/50 scale-105 bg-black/20')}>
                 {i < step ? <Check className="w-4 h-4 stroke-[3]" /> : <Icon className="w-4 h-4" />}
@@ -352,7 +325,7 @@ export const CheckoutStepper = ({
                       {getAddressHeaderLabel()}
                     </h3>
                   </div>
-                  
+
                   {!showAddForm && (
                     <button
                       onClick={() => {
@@ -367,64 +340,9 @@ export const CheckoutStepper = ({
                   )}
                 </div>
 
-                {!isAuthenticated && (
-                  <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/30 space-y-3.5 text-left">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4.5 h-4.5 text-cyan-400 animate-pulse shrink-0" />
-                      <div>
-                        <h4 className="text-xs font-black uppercase text-zinc-100 tracking-tight">
-                          {isBn ? "গেস্ট চেকআউট ও অটো অ্যাকাউন্ট ক্রিয়েশন" : "Guest Checkout & Instant Auto-Account"}
-                        </h4>
-                        <p className="text-[10px] text-zinc-400 font-medium">
-                          {isBn ? "লগইন করা ছাড়াই সরাসরি অর্ডার করুন। আপনার তথ্য দিয়ে স্বয়ংক্রিয়ভাবে বায়ার প্রোফাইল তৈরি হবে।" : "Enter contact info to proceed. A free buyer account will be created automatically upon checkout."}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                      <div>
-                        <label className="block text-[8.5px] font-black text-zinc-400 uppercase tracking-widest mb-1">
-                          {isBn ? "আপনার পুরো নাম *" : "Full Name *"}
-                        </label>
-                        <input
-                          type="text"
-                          value={guestName}
-                          onChange={(e) => setGuestName(e.target.value)}
-                          placeholder="e.g. Rahim Ahmed"
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-400/50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[8.5px] font-black text-zinc-400 uppercase tracking-widest mb-1">
-                          {isBn ? "মোবাইল নম্বর (এসএমএস ট্র্যাক) *" : "Phone Number (SMS Track) *"}
-                        </label>
-                        <input
-                          type="tel"
-                          value={guestPhone}
-                          onChange={(e) => setGuestPhone(e.target.value)}
-                          placeholder="e.g. 01700000000"
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-400/50"
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="block text-[8.5px] font-black text-zinc-400 uppercase tracking-widest mb-1">
-                          {isBn ? "ইমেইল অ্যাড্রেস (ঐচ্ছিক)" : "Email Address (Optional)"}
-                        </label>
-                        <input
-                          type="email"
-                          value={guestEmail}
-                          onChange={(e) => setGuestEmail(e.target.value)}
-                          placeholder="e.g. rahim@example.com"
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-400/50"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {showAddForm ? (
                   /* Custom Address Form slide-down */
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     className="p-5 rounded-2xl bg-black/40 border border-cyan-400/20 space-y-4 text-left"
@@ -434,7 +352,7 @@ export const CheckoutStepper = ({
                         <Map className="w-4 h-4 text-cyan-400" />
                         {isBn ? `নতুন ঠিকানা (${formType === 'primary' ? 'পিকআপ/মূল' : 'ড্রপ/গন্তব্য'})` : `Add Address (${formType === 'primary' ? 'Primary' : 'Droppoint'})`}
                       </span>
-                      <button 
+                      <button
                         onClick={() => setShowAddForm(false)}
                         className="text-[10px] text-zinc-500 hover:text-white uppercase font-bold"
                       >
@@ -442,7 +360,7 @@ export const CheckoutStepper = ({
                       </button>
                     </div>
 
-                    <BDAddressSelector 
+                    <BDAddressSelector
                       onChange={(details, isValid) => {
                         setCustomAddressDetails(details);
                         setIsCustomAddressValid(isValid);
@@ -455,11 +373,11 @@ export const CheckoutStepper = ({
                         <label className="block text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">
                           {isBn ? "রাস্তা নম্বর / রোড" : "Road / Street Info"}
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={road}
                           onChange={(e) => setRoad(e.target.value)}
-                          placeholder="e.g. Road 5A" 
+                          placeholder="e.g. Road 5A"
                           className="w-full bg-black/50 border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-400/40"
                         />
                       </div>
@@ -467,11 +385,11 @@ export const CheckoutStepper = ({
                         <label className="block text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">
                           {isBn ? "বাসা / ফ্ল্যাট / ওয়্যারহাউজ নং" : "House / Flat / Building Name"}
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={house}
                           onChange={(e) => setHouse(e.target.value)}
-                          placeholder="e.g. Apartment 3B, Concord Tower" 
+                          placeholder="e.g. Apartment 3B, Concord Tower"
                           className="w-full bg-black/50 border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-400/40"
                         />
                       </div>
@@ -482,11 +400,11 @@ export const CheckoutStepper = ({
                         <label className="block text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">
                           {isBn ? "নিকটবর্তী পরিচিত চিহ্ন" : "Landmark / Landmark details"}
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={landmark}
                           onChange={(e) => setLandmark(e.target.value)}
-                          placeholder="e.g. Near Dhanmondi Lake or Pillar 12" 
+                          placeholder="e.g. Near Dhanmondi Lake or Pillar 12"
                           className="w-full bg-black/50 border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-400/40"
                         />
                       </div>
@@ -494,11 +412,11 @@ export const CheckoutStepper = ({
                         <label className="block text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">
                           {isBn ? "ডেলিভারি নোট বা বিশেষ নির্দেশ" : "Delivery Note / Sourcing Note"}
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={deliveryNote}
                           onChange={(e) => setDeliveryNote(e.target.value)}
-                          placeholder="e.g. Keep at warehouse gate, call manager first" 
+                          placeholder="e.g. Keep at warehouse gate, call manager first"
                           className="w-full bg-black/50 border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-cyan-400/40"
                         />
                       </div>
@@ -511,7 +429,7 @@ export const CheckoutStepper = ({
                         <span>Map GPS Link: </span>
                         <span className="font-mono text-zinc-300 text-[9px]">{mapPin}</span>
                       </div>
-                      <button 
+                      <button
                         type="button"
                         onClick={() => {
                           const lat = (23.7 + Math.random() * 0.1).toFixed(4);
@@ -536,15 +454,15 @@ export const CheckoutStepper = ({
                 ) : (
                   /* Normal State: Show address card deck */
                   <div className="space-y-4">
-                    
+
                     {/* Primary Address Deck */}
                     <div className="space-y-2 text-left">
                       <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500 block">
-                        {['courier', 'truck', 'rent_car'].includes(checkoutType) 
+                        {['courier', 'truck', 'rent_car'].includes(checkoutType)
                           ? (isBn ? "১. পিকআপ / লোডিং পয়েন্ট" : "1. Pickup / Loading Location")
                           : (isBn ? "শিপিং / ডেলিভারি পয়েন্ট" : "Consignment Destination")}
                       </span>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {savedAddresses.map((addr) => (
                           <button
@@ -552,16 +470,16 @@ export const CheckoutStepper = ({
                             onClick={() => setSelectedAddrId(addr.id)}
                             className={cn(
                               "p-4 rounded-xl border text-left relative transition-all duration-300 group",
-                              selectedAddrId === addr.id 
-                                ? "bg-cyan-500/5 border-cyan-400/40 text-white shadow-md shadow-cyan-400/5" 
+                              selectedAddrId === addr.id
+                                ? "bg-cyan-500/5 border-cyan-400/40 text-white shadow-md shadow-cyan-400/5"
                                 : "bg-black/20 border-white/5 text-zinc-400 hover:border-zinc-800"
                             )}
                           >
                             <div className="flex items-center justify-between">
                               <span className={cn(
                                 "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
-                                selectedAddrId === addr.id 
-                                  ? "bg-cyan-400/10 border-cyan-400/20 text-cyan-400" 
+                                selectedAddrId === addr.id
+                                  ? "bg-cyan-400/10 border-cyan-400/20 text-cyan-400"
                                   : "bg-white/5 border-white/5 text-zinc-500"
                               )}>
                                 {isBn ? addr.labelBn : addr.label}
@@ -571,11 +489,11 @@ export const CheckoutStepper = ({
 
                             <p className="text-xs font-black text-zinc-100 mt-2">{addr.fullName}</p>
                             <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">{addr.area}, {addr.upazila}, {addr.district}</p>
-                            
+
                             {addr.landmark && (
                               <p className="text-[9px] text-cyan-400/80 font-bold uppercase mt-1">📍 {addr.landmark}</p>
                             )}
-                            
+
                             {selectedAddrId === addr.id && (
                               <div className="absolute right-3 top-3 w-4.5 h-4.5 rounded-full bg-cyan-400 flex items-center justify-center text-black">
                                 <Check className="w-3 h-3 stroke-[3]" />
@@ -603,7 +521,7 @@ export const CheckoutStepper = ({
                             + {isBn ? "নতুন ড্রপ লোকেশন" : "Add Drop Address"}
                           </button>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {savedAddresses.map((addr) => (
                             <button
@@ -611,16 +529,16 @@ export const CheckoutStepper = ({
                               onClick={() => setSelectedDropAddrId(addr.id)}
                               className={cn(
                                 "p-4 rounded-xl border text-left relative transition-all duration-300 group",
-                                selectedDropAddrId === addr.id 
-                                  ? "bg-cyan-500/5 border-cyan-500/40 text-white shadow-md shadow-cyan-500/5" 
+                                selectedDropAddrId === addr.id
+                                  ? "bg-cyan-500/5 border-cyan-500/40 text-white shadow-md shadow-cyan-500/5"
                                   : "bg-black/20 border-white/5 text-zinc-400 hover:border-zinc-800"
                               )}
                             >
                               <div className="flex items-center justify-between">
                                 <span className={cn(
                                   "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
-                                  selectedDropAddrId === addr.id 
-                                    ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400" 
+                                  selectedDropAddrId === addr.id
+                                    ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
                                     : "bg-white/5 border-white/5 text-zinc-500"
                                 )}>
                                   {isBn ? addr.labelBn : addr.label}
@@ -630,11 +548,11 @@ export const CheckoutStepper = ({
 
                               <p className="text-xs font-black text-zinc-100 mt-2">{addr.fullName}</p>
                               <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">{addr.area}, {addr.upazila}, {addr.district}</p>
-                              
+
                               {addr.landmark && (
                                 <p className="text-[9px] text-cyan-400/80 font-bold uppercase mt-1">📍 {addr.landmark}</p>
                               )}
-                              
+
                               {selectedDropAddrId === addr.id && (
                                 <div className="absolute right-3 top-3 w-4.5 h-4.5 rounded-full bg-cyan-400 flex items-center justify-center text-black">
                                   <Check className="w-3 h-3 stroke-[3]" />
@@ -654,20 +572,20 @@ export const CheckoutStepper = ({
                             <Navigation className="w-3.5 h-3.5 text-yellow-400" />
                             {isBn ? "মাল্টি-স্টপ ডেলিভারি (ঐচ্ছিক)" : "Multi-Stop Delivery (Optional)"}
                           </span>
-                          <button 
+                          <button
                             onClick={addStop}
                             className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-[8px] text-yellow-400 font-black uppercase"
                           >
                             + {isBn ? "স্টপ যোগ করুন" : "Add Stop"}
                           </button>
                         </div>
-                        
+
                         {stops.length > 0 && (
                           <div className="space-y-1.5">
                             {stops.map((stop) => (
                               <div key={stop.id} className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5">
                                 <span className="text-[10px] font-bold text-zinc-300 font-mono">{stop.location}</span>
-                                <button 
+                                <button
                                   onClick={() => removeStop(stop.id)}
                                   className="text-[9px] text-rose-500 uppercase font-bold"
                                 >
@@ -701,7 +619,7 @@ export const CheckoutStepper = ({
                     <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 block mb-1">
                       {isBn ? "তারিখ ও সময়সূচী" : "Execution Date & Sourcing Slot"}
                     </span>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Date Picker */}
                       <div>
@@ -709,7 +627,7 @@ export const CheckoutStepper = ({
                           {isBn ? "তারিখ নির্বাচন করুন" : "Select Specific Date"}
                         </label>
                         <div className="relative">
-                          <input 
+                          <input
                             type="date"
                             value={scheduledDate}
                             onChange={(e) => setScheduledDate(e.target.value)}
@@ -756,8 +674,8 @@ export const CheckoutStepper = ({
                               onClick={() => setRecurringCycle(cy.id as any)}
                               className={cn(
                                 "py-2.5 rounded-lg border text-[9px] font-black uppercase tracking-wider transition-all",
-                                recurringCycle === cy.id 
-                                  ? "bg-cyan-500/10 border-cyan-500 text-cyan-400" 
+                                recurringCycle === cy.id
+                                  ? "bg-cyan-500/10 border-cyan-500 text-cyan-400"
                                   : "bg-black/30 border-white/5 text-zinc-500"
                               )}
                             >
@@ -773,13 +691,13 @@ export const CheckoutStepper = ({
                 {/* Delivery Option Selection Grid */}
                 <div className="grid grid-cols-1 gap-4 text-left">
                   {deliveryOptions.map((option) => (
-                    <button 
+                    <button
                       key={option.id}
                       onClick={() => setDelivery(option.id)}
                       className={cn(
                         "p-4 rounded-xl border text-left flex items-start gap-4 transition-all duration-300 relative overflow-hidden group",
-                        delivery === option.id 
-                          ? "bg-cyan-500/5 border-cyan-400/40 text-white" 
+                        delivery === option.id
+                          ? "bg-cyan-500/5 border-cyan-400/40 text-white"
                           : "bg-black/20 border-white/5 text-zinc-400 hover:border-zinc-800"
                       )}
                     >
@@ -787,14 +705,14 @@ export const CheckoutStepper = ({
                         "p-3 rounded-xl flex items-center justify-center transition-colors",
                         delivery === option.id ? "bg-cyan-400/10 text-cyan-400" : "bg-zinc-900 text-zinc-500"
                       )}>
-                        {checkoutType === 'food' ? <Zap className="w-5 h-5 animate-pulse" /> : 
+                        {checkoutType === 'food' ? <Zap className="w-5 h-5 animate-pulse" /> :
                          checkoutType === 'digital' ? <Globe className="w-5 h-5" /> :
                          checkoutType === 'courier' ? <Package className="w-5 h-5" /> :
                          checkoutType === 'rent_car' ? <Car className="w-5 h-5" /> :
                          checkoutType === 'truck' ? <Truck className="w-5 h-5" /> :
                          <Truck className="w-5 h-5" />}
                       </div>
-                      
+
                       <div className="flex-1">
                         <div className="flex justify-between items-center">
                           <p className="text-xs font-black uppercase tracking-tight text-zinc-100">
@@ -854,7 +772,7 @@ export const CheckoutStepper = ({
                       </p>
                     </div>
                   </div>
-                  
+
                   <button
                     type="button"
                     onClick={() => {
@@ -889,8 +807,8 @@ export const CheckoutStepper = ({
                       onClick={() => setPayment(method.id)}
                       className={cn(
                         "p-4 rounded-xl border flex justify-between items-center transition-all duration-200 text-left relative overflow-hidden",
-                        payment === method.id 
-                          ? "bg-zinc-900 border-cyan-400/40" 
+                        payment === method.id
+                          ? "bg-zinc-900 border-cyan-400/40"
                           : cn("bg-black/20", method.color)
                       )}
                     >
@@ -910,8 +828,8 @@ export const CheckoutStepper = ({
                         )}
                         <div className={cn(
                           "w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center transition-all",
-                          payment === method.id 
-                            ? "border-cyan-400 bg-cyan-400 text-black" 
+                          payment === method.id
+                            ? "border-cyan-400 bg-cyan-400 text-black"
                             : "border-zinc-700"
                         )}>
                           {payment === method.id && <Check className="w-3 h-3 stroke-[3]" />}
@@ -934,13 +852,13 @@ export const CheckoutStepper = ({
                 </div>
 
                 <div className="bg-black/30 rounded-2xl border border-white/5 p-5 space-y-4 text-xs">
-                  
+
                   {/* Address Summary */}
                   <div className="pb-4 border-b border-white/5 space-y-1.5">
                     <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">
                       {['courier', 'truck', 'rent_car'].includes(checkoutType) ? "Logistics Route Details" : "Delivery Sourcing Target"}
                     </span>
-                    
+
                     {['courier', 'truck', 'rent_car'].includes(checkoutType) ? (
                       <div className="space-y-2">
                         <div className="flex items-start gap-2">
@@ -951,7 +869,7 @@ export const CheckoutStepper = ({
                           <span className="w-4 h-4 rounded bg-cyan-500/10 text-cyan-400 text-[8px] font-bold flex items-center justify-center shrink-0 mt-0.5">B</span>
                           <p className="text-zinc-200 leading-relaxed font-semibold">{getAddressString(selectedDropAddrId)}</p>
                         </div>
-                        
+
                         {stops.length > 0 && (
                           <div className="pl-6 space-y-1">
                             {stops.map((st, sidx) => (
@@ -1023,7 +941,7 @@ export const CheckoutStepper = ({
                         <span className="font-mono">-{formatBDT(Math.min(subtotalWithVat + finalDeliveryCost - discount, walletBalance))}</span>
                       </div>
                     )}
-                    
+
                     <div className="pt-3 border-t border-white/5 flex justify-between items-end">
                       <div>
                         <span className="text-[9px] font-black uppercase text-zinc-500 tracking-wider block">Final Securing Ledger Settle</span>
@@ -1048,7 +966,7 @@ export const CheckoutStepper = ({
 
       {/* Stepper Footer Controls */}
       <div className="px-6 sm:px-8 py-5 bg-black/40 border-t border-white/5 flex justify-between items-center select-none">
-        <button 
+        <button
           onClick={() => setStep(s => Math.max(0, s - 1))}
           disabled={step === 0}
           className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
@@ -1056,13 +974,13 @@ export const CheckoutStepper = ({
           {step > 0 ? (isBn ? 'পিছনে যান' : 'Back') : (isBn ? 'বাতিল' : 'Cancel')}
         </button>
 
-        <button 
+        <button
           onClick={handleNext}
           disabled={isNextDisabled()}
           className="px-8 py-4 bg-gradient-to-r from-cyan-400 to-teal-400 hover:from-cyan-500 hover:to-teal-500 text-black rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_4px_25px_rgba(16,185,129,0.3)] flex items-center gap-2"
         >
-          {step === steps.length - 1 
-            ? (isBn ? 'অর্ডার লক করুন' : 'Lock Escrow & Place Order') 
+          {step === steps.length - 1
+            ? (isBn ? 'অর্ডার লক করুন' : 'Lock Escrow & Place Order')
             : (isBn ? 'পরবর্তী ধাপ' : 'Next Step')}
           <ChevronRight className="w-3.5 h-3.5" />
         </button>

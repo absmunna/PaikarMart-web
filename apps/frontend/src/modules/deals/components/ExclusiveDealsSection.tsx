@@ -38,9 +38,9 @@ export const ExclusiveDealsSection: React.FC<ExclusiveDealsSectionProps> = ({ de
             </div>
           </div>
         </div>
-        
-        <Link 
-          to="/marketplace" 
+
+        <Link
+          to="/marketplace"
           className="flex items-center gap-2 text-[10px] font-black text-orange-400 uppercase tracking-widest hover:text-orange-300 transition-colors group"
         >
           View All Exclusive Drops

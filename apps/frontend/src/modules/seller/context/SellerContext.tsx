@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { 
-  collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where 
+import {
+  collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { SellerProduct, SellerOrder, SellerVerificationPayload, ServiceBooking, DeliveryTask, ReturnRequest } from "../types";
@@ -87,7 +87,7 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
   const createProduct = useCallback(async (payload: Omit<SellerProduct, 'id' | 'sellerId'>) => {
     const sellerId = auth.currentUser?.uid || "seller-main";
     let productId = `p_${Date.now()}`;
-    
+
     // 1. Persist to real Cloud Firestore
     try {
       const docRef = await addDoc(collection(db, "products"), {

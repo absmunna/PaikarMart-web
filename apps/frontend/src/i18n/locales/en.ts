@@ -13,7 +13,7 @@ export const en = {
   login: "Login",
   profile: "Profile",
   searchPlaceholder: "Search wholesalers, products...",
-  
+
   // Quick Access / Portals
   pkShop: "PK Shop",
   market: "Market",
@@ -148,7 +148,7 @@ export const en = {
   stockIndexUpdate: "Update stock index",
   timeAgoHours: "hours ago",
   timeAgoDays: "days ago",
-  
+
   // Product & Category
   featuredCategories: "Featured Categories",
   seeAll: "See All",

@@ -45,7 +45,7 @@ export function ReviewsSection({
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>(DEFAULT_REVIEWS);
   const [tab, setTab] = useState<"all" | "reviews" | "qa">("all");
-  
+
   // New input states
   const [showInputForm, setShowInputForm] = useState<"review" | "qa" | null>(null);
   const [newText, setNewText] = useState("");
@@ -68,7 +68,7 @@ export function ReviewsSection({
 
   const handleSubmit = () => {
     if (!newText.trim()) return;
-    
+
     const newEntry: Review = {
       id: Date.now().toString(),
       user: user?.name || "Guest User",
@@ -86,8 +86,8 @@ export function ReviewsSection({
 
   const handleReplySubmit = (id: string) => {
     if (!replyText.trim()) return;
-    
-    setReviews(reviews.map(r => 
+
+    setReviews(reviews.map(r =>
       r.id === id ? { ...r, reply: replyText } : r
     ));
     setReplyText("");
@@ -173,7 +173,7 @@ export function ReviewsSection({
           <h4 className="text-sm font-bold text-[var(--pm-text)] mb-3">
             {showInputForm === "review" ? "Write a Review" : "Ask a Question"}
           </h4>
-          
+
           {showInputForm === "review" && (
             <div className="flex gap-1 mb-3">
               {[1, 2, 3, 4, 5].map((s) => (
@@ -194,7 +194,7 @@ export function ReviewsSection({
             placeholder={showInputForm === "review" ? "What did you like or dislike?" : "What do you want to know about this product?"}
             className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-xl p-3 text-sm text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)] transition-colors min-h-[80px]"
           />
-          
+
           <div className="flex justify-end gap-2 mt-3">
             <button
               onClick={() => setShowInputForm(null)}
@@ -228,7 +228,7 @@ export function ReviewsSection({
                     {r.date}
                   </span>
                 </div>
-                
+
                 {r.isQA ? (
                   <div className="text-[10px] font-black uppercase tracking-wider text-[var(--pm-accent)] mt-0.5 mb-1 flex items-center gap-1">
                     <span className="bg-[var(--pm-accent)]/20 px-1.5 py-0.5 rounded">Q&amp;A</span>
@@ -247,11 +247,11 @@ export function ReviewsSection({
                     ))}
                   </div>
                 )}
-                
+
                 <p className="text-sm text-[var(--pm-text)] mt-1.5 leading-relaxed">
                   {r.text}
                 </p>
-                
+
                 {r.reply ? (
                   <div className="mt-3 p-3 bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-xl relative">
                     <div className="absolute top-3 left-0 w-1 h-full bg-[var(--pm-accent)] rounded-r-full -translate-y-3" />
@@ -267,7 +267,7 @@ export function ReviewsSection({
                     <div className="mt-3">
                       {replyingTo === r.id ? (
                         <div className="mt-2 flex gap-2">
-                          <input 
+                          <input
                             autoFocus
                             type="text"
                             value={replyText}
@@ -275,7 +275,7 @@ export function ReviewsSection({
                             placeholder="Type your response..."
                             className="flex-1 bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-lg px-3 py-1.5 text-xs text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]"
                           />
-                          <button 
+                          <button
                             onClick={() => handleReplySubmit(r.id)}
                             className="bg-[var(--pm-accent)] text-white px-3 py-1.5 rounded-lg text-xs font-bold"
                           >
@@ -283,7 +283,7 @@ export function ReviewsSection({
                           </button>
                         </div>
                       ) : (
-                         <button 
+                         <button
                           onClick={() => setReplyingTo(r.id)}
                           className="text-[10px] uppercase font-bold text-[var(--pm-accent)] border border-[var(--pm-accent)]/20 px-2 py-1 rounded hover:bg-[var(--pm-accent)]/10 transition"
                         >

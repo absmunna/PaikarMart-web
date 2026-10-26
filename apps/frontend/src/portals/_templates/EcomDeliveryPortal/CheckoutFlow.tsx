@@ -82,10 +82,10 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
               {[1, 2, 3].map((s) => (
                 <div key={s} className="flex-1 flex items-center gap-2">
                   <div className={`w-6 h-6 rounded-lg text-[10px] font-black flex items-center justify-center border transition-all ${
-                    step === s 
-                      ? 'bg-[var(--pm-accent)] text-black border-transparent shadow shadow-orange-500/20' 
-                      : step > s 
-                        ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400' 
+                    step === s
+                      ? 'bg-[var(--pm-accent)] text-black border-transparent shadow shadow-orange-500/20'
+                      : step > s
+                        ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400'
                         : 'border-white/5 bg-white/[0.01] text-zinc-500'
                   }`}>
                     {step > s ? <Check className="w-3.5 h-3.5" /> : s}
@@ -144,8 +144,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
                     <button
                       onClick={() => setPaymentMethod('bkash')}
                       className={`p-4 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between ${
-                        paymentMethod === 'bkash' 
-                          ? 'bg-[#e2136e]/10 border-[#e2136e]/50 text-white shadow-inner shadow-[#e2136e]/5' 
+                        paymentMethod === 'bkash'
+                          ? 'bg-[#e2136e]/10 border-[#e2136e]/50 text-white shadow-inner shadow-[#e2136e]/5'
                           : 'bg-white/[0.01] border-white/5 text-zinc-400 hover:bg-white/[0.02]'
                       }`}
                     >
@@ -165,8 +165,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
                     <button
                       onClick={() => setPaymentMethod('nagad')}
                       className={`p-4 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between ${
-                        paymentMethod === 'nagad' 
-                          ? 'bg-[#f37021]/10 border-[#f37021]/50 text-white shadow-inner shadow-[#f37021]/5' 
+                        paymentMethod === 'nagad'
+                          ? 'bg-[#f37021]/10 border-[#f37021]/50 text-white shadow-inner shadow-[#f37021]/5'
                           : 'bg-white/[0.01] border-white/5 text-zinc-400 hover:bg-white/[0.02]'
                       }`}
                     >
@@ -186,8 +186,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
                     <button
                       onClick={() => setPaymentMethod('wallet')}
                       className={`p-4 rounded-2xl border text-left cursor-pointer transition-all flex items-center justify-between ${
-                        paymentMethod === 'wallet' 
-                          ? 'bg-orange-500/10 border-orange-500/50 text-white' 
+                        paymentMethod === 'wallet'
+                          ? 'bg-orange-500/10 border-orange-500/50 text-white'
                           : 'bg-white/[0.01] border-white/5 text-zinc-400 hover:bg-white/[0.02]'
                       }`}
                     >

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { 
-  Store, Star, Truck, ShieldCheck, Zap, CheckCircle2, 
+import {
+  Store, Star, Truck, ShieldCheck, Zap, CheckCircle2,
   ArrowUpDown, Plus, ShoppingCart, Lock, Edit3, Check, X,
   ExternalLink, ChevronDown, ChevronUp, AlertCircle
 } from "lucide-react";
@@ -78,7 +78,7 @@ export const MultiSellerOffersSection: React.FC<MultiSellerOffersSectionProps> =
 
   return (
     <div className="mt-8 bg-[#141624] p-6 md:p-8 rounded-[2rem] border border-white/5 shadow-2xl text-left text-white select-none">
-      
+
       {/* Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-4 border-b border-white/5 pb-5">
         <div>
@@ -169,7 +169,7 @@ export const MultiSellerOffersSection: React.FC<MultiSellerOffersSectionProps> =
                 }`}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  
+
                   {/* Left Column: Seller info & badges */}
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -357,7 +357,7 @@ export const MultiSellerOffersSection: React.FC<MultiSellerOffersSectionProps> =
             মার্চেন্টদের জন্য স্বয়ংক্রিয় ASIN ইনভেন্টরি লিংকিং নীতি:
           </p>
           <p className="text-[11px] leading-relaxed">
-            একই পণ্যের জন্য ডুপ্লিকেট ক্যাটালগ পেজ তৈরি না করে সরাসরি বিদ্যমান ASIN এ আপনার স্টক ও প্রাইস লিঙ্ক করুন। 
+            একই পণ্যের জন্য ডুপ্লিকেট ক্যাটালগ পেজ তৈরি না করে সরাসরি বিদ্যমান ASIN এ আপনার স্টক ও প্রাইস লিঙ্ক করুন।
             সবচেয়ে সাশ্রয়ী মূল্য, দ্রুত ডেলিভারি এবং উচ্চ রেটিং সম্পন্ন বিক্রেতা স্বয়ংক্রিয়ভাবে মূল 'Buy Box' এ অগ্রাধিকার পাবেন।
           </p>
         </div>

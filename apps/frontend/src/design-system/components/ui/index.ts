@@ -1,8 +1,8 @@
-export * from './Button';
-export * from './Input';
+export * from './button';
+export * from './input';
 export * from './Card';
-export * from './Badge';
-export * from './Skeleton';
+export * from './badge';
+export * from './Skeleton/Skeleton';
 export * from './GlassCard';
 
 // Radix / Tailwind primitives

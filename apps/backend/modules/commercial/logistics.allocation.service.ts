@@ -3,7 +3,7 @@ import { HyperlocalEngineService } from './hyperlocal.engine.service';
 
 export type DispatchType = 'instant' | 'scheduled';
 
-export type RiderStatus = 
+export type RiderStatus =
   | 'searching'
   | 'assigned'
   | 'arrived_at_store'
@@ -181,7 +181,7 @@ export class LogisticsAllocationService {
     const etaPickup = Math.ceil(pickupDistanceKm * 3.5) + 3;
     const etaDelivery = Math.ceil(deliveryDistanceKm * 3.5) + 12;
 
-    const initialStatus: RiderStatus = isInstant 
+    const initialStatus: RiderStatus = isInstant
       ? (selectedRider ? 'assigned' : 'searching')
       : 'searching';
 
@@ -266,8 +266,8 @@ export class LogisticsAllocationService {
     const bookingId = `SRV-${Date.now().toString().slice(-6)}`;
     const isInstant = params.dispatchType === 'instant';
 
-    const isTechnician = params.serviceType.includes('technician') || 
-                         params.serviceType.includes('electrician') || 
+    const isTechnician = params.serviceType.includes('technician') ||
+                         params.serviceType.includes('electrician') ||
                          params.serviceType.includes('servicing');
 
     const providerType = isTechnician ? 'technician_kit' : 'motorcycle';

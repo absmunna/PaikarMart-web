@@ -64,7 +64,7 @@ src/
 │   ├── wallet/
 │   ├── feed/
 │   ├── product/
-│   └── ... 
+│   └── ...
 │
 ├── portals/                  # Page-Level Views / Hubs (Composed using modules & design-system)
 │   ├── marketplace-hub/

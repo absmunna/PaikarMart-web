@@ -1,11 +1,11 @@
-﻿import { 
-  doc, 
-  getDoc, 
+import {
+  doc,
+  getDoc,
   getDocs,
   collection,
-  setDoc, 
-  updateDoc, 
-  serverTimestamp, 
+  setDoc,
+  updateDoc,
+  serverTimestamp,
   Timestamp,
   query,
   limit
@@ -44,7 +44,7 @@ export const userService = {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
-      
+
       if (data.name) (profileData as any).name = data.name;
       if (data.email) (profileData as any).email = data.email;
       if (data.phone) (profileData as any).phone = data.phone;
@@ -67,7 +67,7 @@ export const userService = {
         ...data,
         updatedAt: serverTimestamp()
       };
-      
+
       // Ensure we don't accidentally update immutable fields during an update
       delete updateData.id;
       delete updateData.createdAt;

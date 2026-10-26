@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Car, Truck, Construction, Hammer, 
+import {
+  Car, Truck, Construction, Hammer,
   Calendar, MapPin, Search, Star,
-  CheckCircle2, Clock, Filter, 
+  CheckCircle2, Clock, Filter,
   ArrowRight, Info, Building2, Tag,
   PartyPopper, Home as HomeIcon, Building
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { StoryBar } from '@/shared/StoryBar';
 import { PortalIconBar } from '@/shared/PortalIconBar';
 import { toast } from 'sonner';
 
@@ -30,7 +31,7 @@ const FEATURED_RENTALS = [
 export default function RentHome() {
   const [isBilingual, setIsBilingual] = useState(true);
   const [activeCat, setActiveCat] = useState('all');
-  
+
   const t = (en: string, bn: string) => isBilingual ? bn : en;
 
   const handleRent = (name: string) => {
@@ -41,12 +42,13 @@ export default function RentHome() {
     <div className="min-h-screen bg-[#02040a] text-white pb-32">
       {/* Portal Header Rule */}
       <section className="pt-4 px-2 space-y-1">
+        <StoryBar context="rent" />
         <PortalIconBar context="logistics" />
       </section>
 
       <div className="max-w-7xl mx-auto px-4 mt-6 space-y-10">
         {/* Hero Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative rounded-[3rem] bg-gradient-to-br from-indigo-950/30 via-zinc-900/40 to-black border border-white/5 p-10 overflow-hidden shadow-2xl"
@@ -57,19 +59,19 @@ export default function RentHome() {
               <span className="px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em]">
                 {t('Rental Marketplace', 'রেন্টাল মার্কেটপ্লেস')}
               </span>
-              <button 
+              <button
                 onClick={() => setIsBilingual(!isBilingual)}
                 className="text-[10px] text-zinc-500 hover:text-white"
               >
                 {isBilingual ? 'English' : 'বাংলা'}
               </button>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none">
               {t('Rent Everything', 'ভাড়া নিন সবকিছু')} <br />
               <span className="text-indigo-400">{t('Pay as you use', 'ব্যবহার অনুযায়ী পেমেন্ট')}</span>
             </h1>
-            
+
             <p className="text-zinc-400 text-sm max-w-md leading-relaxed">
               {t(
                 'From daily car rentals to heavy construction machinery, find the best verified rental providers in your area.',
@@ -80,7 +82,7 @@ export default function RentHome() {
             <div className="flex flex-wrap gap-4 pt-4">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-                <input 
+                <input
                   type="text"
                   placeholder={t('Search vehicles, tools, equipment...', 'গাড়ি, যন্ত্রপাতি বা ইভেন্ট সামগ্রী খুঁজুন...')}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-indigo-500/50 transition-colors"
@@ -95,7 +97,7 @@ export default function RentHome() {
 
         {/* Categories Bar */}
         <div className="flex items-center gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          <button 
+          <button
             onClick={() => setActiveCat('all')}
             className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all border ${
               activeCat === 'all' ? 'bg-white text-black border-white' : 'bg-white/5 text-zinc-500 border-white/5 hover:border-white/20'
@@ -104,7 +106,7 @@ export default function RentHome() {
             {t('All Items', 'সব আইটেম')}
           </button>
           {CATEGORIES.map(cat => (
-            <button 
+            <button
               key={cat.id}
               onClick={() => setActiveCat(cat.id)}
               className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition-all border ${
@@ -132,7 +134,7 @@ export default function RentHome() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {FEATURED_RENTALS.map((item, idx) => (
-              <motion.div 
+              <motion.div
                 key={item.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -142,7 +144,7 @@ export default function RentHome() {
                 <div className="aspect-[4/3] rounded-2xl bg-white/5 flex items-center justify-center text-4xl mb-4 group-hover:scale-105 transition-transform">
                   {item.img}
                 </div>
-                
+
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-zinc-500 font-black uppercase">{item.category}</span>
@@ -152,7 +154,7 @@ export default function RentHome() {
                     </div>
                   </div>
                   <h3 className="font-bold text-white group-hover:text-indigo-400 transition-colors">{t(item.nameEn, item.nameBn)}</h3>
-                  
+
                   <div className="pt-2 flex items-end justify-between">
                     <div>
                       <p className="text-[10px] text-zinc-500 uppercase font-black">{t('Starting from', 'শুরু')}</p>
@@ -160,8 +162,8 @@ export default function RentHome() {
                         ৳{item.price} <span className="text-[10px] text-zinc-500">/ {t(item.unit, item.unit)}</span>
                       </p>
                     </div>
-                    <Button 
-                      size="icon" 
+                    <Button
+                      size="icon"
                       onClick={() => handleRent(t(item.nameEn, item.nameBn))}
                       className="rounded-xl bg-white/5 hover:bg-indigo-500 text-white border border-white/10"
                     >

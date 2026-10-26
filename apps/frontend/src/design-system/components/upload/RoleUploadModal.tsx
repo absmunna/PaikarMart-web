@@ -41,7 +41,7 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
   }, [isOpen, defaultRole, isSellerOrHigher, isContentCreator, isServiceProvider]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -148,7 +148,7 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
               </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
           >
@@ -236,15 +236,15 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
 
           {/* File Drag & Drop Zone */}
           <div className="border-2 border-dashed border-white/15 hover:border-[#FF7A00]/50 rounded-2xl p-6 text-center bg-white/[0.01] hover:bg-white/[0.03] transition-all relative">
-            <input 
-              type="file" 
+            <input
+              type="file"
               accept={
-                activeTab === 'reel' ? 'video/*' : 
-                activeTab === 'product' || activeTab === 'service' ? 'image/*,video/*' : 
+                activeTab === 'reel' ? 'video/*' :
+                activeTab === 'product' || activeTab === 'service' ? 'image/*,video/*' :
                 '*/*'
               }
               onChange={handleFileChange}
-              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
 
             {selectedFile ? (
@@ -283,8 +283,8 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
               <label className="block text-xs font-bold text-zinc-300 mb-1">
                 {activeTab === 'reel' ? 'ভিডিও শিরোনাম (Video Title)' : 'শিরোনাম (Title)'} *
               </label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="যেমন: প্রিমিয়াম ঢাকাই জামদানি শাড়ি..."
@@ -297,7 +297,7 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
               <label className="block text-xs font-bold text-zinc-300 mb-1">
                 বিবরণ (Description)
               </label>
-              <textarea 
+              <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 rows={2}
@@ -311,8 +311,8 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
                 <label className="block text-xs font-bold text-zinc-300 mb-1">
                   মূল্য / রেট (Price ৳)
                 </label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={price}
                   onChange={e => setPrice(e.target.value)}
                   placeholder="2500"
@@ -326,8 +326,8 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
                 <label className="block text-xs font-bold text-zinc-300 mb-1">
                   সর্বনিম্ন অর্ডার (MOQ)
                 </label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={moq}
                   onChange={e => setMoq(e.target.value)}
                   className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:border-[#FF7A00] focus:outline-none"
@@ -339,7 +339,7 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
               <label className="block text-xs font-bold text-zinc-300 mb-1">
                 ক্যাটাগরি (Category)
               </label>
-              <select 
+              <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
                 className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#FF7A00] focus:outline-none"
@@ -356,8 +356,8 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
               <label className="block text-xs font-bold text-zinc-300 mb-1">
                 অবস্থান (Location)
               </label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={location}
                 onChange={e => setLocation(e.target.value)}
                 placeholder="Dhaka, Bangladesh"
@@ -377,9 +377,9 @@ export const RoleUploadModal: React.FC<RoleUploadModalProps> = ({
                 <span>{progress}%</span>
               </div>
               <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-[#FF7A00] to-pink-500 transition-all duration-300" 
-                  style={{ width: `${progress}%` }} 
+                <div
+                  className="h-full bg-gradient-to-r from-[#FF7A00] to-pink-500 transition-all duration-300"
+                  style={{ width: `${progress}%` }}
                 />
               </div>
             </div>

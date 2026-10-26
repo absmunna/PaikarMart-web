@@ -10,7 +10,7 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(undefine
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<ThemeMode>('deepDark');
-  
+
   useEffect(() => {
     document.documentElement.className = theme === 'deepDark' ? '' : theme;
   }, [theme]);

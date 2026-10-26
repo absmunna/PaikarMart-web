@@ -41,14 +41,14 @@ export const SearchBar = () => {
   }, []);
 
   // Filter products live
-  const matchingProducts = query.trim().length > 0 
+  const matchingProducts = query.trim().length > 0
     ? mockProducts.filter((p: any) => {
         const q = query.toLowerCase();
-        const matchesQuery = 
+        const matchesQuery =
           (p.name || p.title || '').toLowerCase().includes(q) ||
           (p.category || '').toLowerCase().includes(q) ||
           (p.seller || '').toLowerCase().includes(q);
-        
+
         if (selectedCategory === 'all') return matchesQuery;
         if (selectedCategory === 'wholesale') return matchesQuery && p.portal === 'wholesale';
         if (selectedCategory === 'retail') return matchesQuery && p.portal === 'b2c';
@@ -78,10 +78,10 @@ export const SearchBar = () => {
 
   return (
     <div ref={containerRef} className="relative w-full select-none">
-      
+
       {/* Search Input Bar with Category Selector */}
       <div className="relative w-full flex items-center bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-2xl p-1 group focus-within:ring-2 focus-within:ring-[var(--pm-accent)]/30 focus-within:border-[var(--pm-accent)] transition-all duration-300 shadow-inner">
-        
+
         {/* Category Dropdown Button (Desktop) */}
         <div className="relative hidden md:block">
           <button
@@ -119,9 +119,9 @@ export const SearchBar = () => {
         {/* Search Input */}
         <div className="flex-1 flex items-center pl-2.5 pr-1">
           <Search className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />
-          <input 
-            type="text" 
-            placeholder="পণ্য, পাইকারি প্রস্তুতকারক বা ব্র্যান্ড খুঁজুন..." 
+          <input
+            type="text"
+            placeholder="পণ্য, পাইকারি প্রস্তুতকারক বা ব্র্যান্ড খুঁজুন..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
@@ -226,8 +226,8 @@ export const SearchBar = () => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {trendingSearches.map((item, i) => (
-                      <button 
-                        key={i} 
+                      <button
+                        key={i}
                         type="button"
                         className="text-[11px] font-bold text-[var(--pm-text)] bg-white/5 hover:bg-[var(--pm-accent)] hover:text-white border border-[var(--pm-border)] px-3 py-1 rounded-xl transition-all cursor-pointer active:scale-95"
                         onClick={() => {

@@ -42,8 +42,8 @@ export const SocialTicker: React.FC<SocialTickerProps> = ({
   }, [recentBuyers, currentViewers, stockLeft]);
 
   // If no metric is available or everything is 0/undefined, don't render (per mandate: no fake data)
-  const hasData = (recentBuyers !== undefined && recentBuyers > 0) || 
-                  (currentViewers !== undefined && currentViewers > 0) || 
+  const hasData = (recentBuyers !== undefined && recentBuyers > 0) ||
+                  (currentViewers !== undefined && currentViewers > 0) ||
                   (stockLeft !== undefined && stockLeft > 0);
 
   if (!hasData) return null;
@@ -51,10 +51,10 @@ export const SocialTicker: React.FC<SocialTickerProps> = ({
   return (
     <div className="bg-zinc-950/60 backdrop-blur-md rounded-2xl border border-white/5 p-4 flex flex-col md:flex-row gap-3 md:items-center justify-around overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-orange-500/5 opacity-50" />
-      
+
       <AnimatePresence mode="popLayout">
         {recentBuyers !== undefined && buyers > 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -75,7 +75,7 @@ export const SocialTicker: React.FC<SocialTickerProps> = ({
         )}
 
         {currentViewers !== undefined && viewers > 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -96,7 +96,7 @@ export const SocialTicker: React.FC<SocialTickerProps> = ({
         )}
 
         {stockLeft !== undefined && stock > 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}

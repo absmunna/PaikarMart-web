@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, ArrowLeft, X, TrendingUp, Filter, ShoppingBag, 
-  Store, Building2, Flame, Wrench, ChevronRight, Star, 
+import {
+  Search, ArrowLeft, X, TrendingUp, Filter, ShoppingBag,
+  Store, Building2, Flame, Wrench, ChevronRight, Star,
   MapPin, SlidersHorizontal, Tag, Sparkles
 } from 'lucide-react';
 import { mockProducts } from '@/lib/workspace-stub';
-import { safeBack } from '@/lib/navigation';
 
 const POPULAR_SEARCHES = [
   'সুন্দরবনের মধু',
@@ -33,7 +32,7 @@ export const SearchPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
-  
+
   const [query, setQuery] = useState(initialQuery);
   const [activeCategory, setActiveCategory] = useState('all');
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
@@ -82,8 +81,8 @@ export const SearchPage: React.FC = () => {
     return mockProducts.filter(p => {
       const title = (p.title || p.name || '').toLowerCase();
       const cat = (p.category || '').toLowerCase();
-      const vendorStr = typeof p.vendor === 'string' 
-        ? p.vendor.toLowerCase() 
+      const vendorStr = typeof p.vendor === 'string'
+        ? p.vendor.toLowerCase()
         : (p.vendor?.name || p.vendorName || '').toLowerCase();
       return title.includes(qLower) || cat.includes(qLower) || vendorStr.includes(qLower);
     });
@@ -91,15 +90,15 @@ export const SearchPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] pb-20 select-none">
-      
+
       {/* ━━━ TOP SEARCH HEADER ━━━ */}
       <div className="sticky top-0 z-40 bg-[var(--pm-surface)]/95 backdrop-blur-md border-b border-[var(--pm-border)] shadow-sm">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
-          
+
           {/* Back button */}
           <button
-            onClick={() => safeBack(navigate, '/')}
-            className="p-2 rounded-xl text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] active:scale-95 transition-all shrink-0 cursor-pointer"
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-xl text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] active:scale-95 transition-all shrink-0"
             title="ফিরে যান"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -108,7 +107,7 @@ export const SearchPage: React.FC = () => {
           {/* Search Input Box */}
           <form onSubmit={handleSearchSubmit} className="flex-1 relative flex items-center">
             <Search className="absolute left-3.5 w-4 h-4 text-[var(--pm-accent)] pointer-events-none" />
-            
+
             <input
               type="text"
               value={query}
@@ -172,11 +171,11 @@ export const SearchPage: React.FC = () => {
 
       {/* ━━━ MAIN BODY CONTENT ━━━ */}
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 space-y-5">
-        
+
         {/* If no query, show Recent and Trending searches */}
         {!query.trim() && (
           <div className="space-y-4">
-            
+
             {/* Recent Searches */}
             {recentSearches.length > 0 && (
               <div className="bg-[var(--pm-surface)] rounded-2xl p-4 border border-[var(--pm-border)]">
@@ -276,9 +275,9 @@ export const SearchPage: React.FC = () => {
                 >
                   {/* Image */}
                   <div className="aspect-square bg-[var(--pm-bg)] relative overflow-hidden">
-                    <img 
-                      src={product.image} 
-                      alt={product.title} 
+                    <img
+                      src={product.image}
+                      alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     {product.badge && (
