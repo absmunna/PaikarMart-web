@@ -6,12 +6,19 @@ services:
   - type: web
     name: paikarmart-backend
     runtime: node
-    plan: free
+    plan: free # Note: This is the plan tier name on Render
     region: singapore
     autoDeploy: true
     branch: main
-    buildCommand: npm install && cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build
-    startCommand: sh -c "if [ -f apps/backend/dist/server.js ]; then node --no-deprecation apps/backend/dist/server.js; else echo 'Error: dist/server.js not found, build may have failed.' && exit 1; fi"
+    # pnpm দিয়ে সঠিক উপায়ে ডাটাবেজ প্রিজমা জেনারেট এবং শুধুমাত্র ব্যাকএন্ড অ্যাপটি বিল্ড করার জন্য:
+    buildCommand: >-
+      npm install -g pnpm@9.1.0 --prefix ~/.npm-global &&
+      export PATH=~/.npm-global/bin:$PATH &&
+      pnpm install &&
+      pnpm --filter ./packages/database exec prisma generate &&
+      pnpm --filter ./apps/backend build
+    # রান করার আগে dist/server.js সঠিকভাবে তৈরি হয়েছে কিনা তা চেক করে রান করবে:
+    startCommand: sh -c "if [ -f apps/backend/dist/server.js ]; then node --no-deprecation apps/backend/dist/server.js; else echo 'Error: dist/server.js not found' && exit 1; fi"
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
@@ -23,7 +30,7 @@ services:
       - key: JWT_SECRET
         generateValue: true # Render automatically generates a secure 32+ character key
       - key: CLIENT_URL
-        sync: false # Set in Render Dashboard: your Vercel deployment URL (e.g. https://paikarmart.vercel.app)
+        sync: false # Set in Render Dashboard: your Vercel deployment URL
       - key: CORS_ORIGINS
         sync: false
       - key: GEMINI_API_KEY
