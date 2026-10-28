@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getNotifications, markAllNotificationsRead } from '../services/notification.api';
 
 export interface AppNotification {
   id: string;
@@ -15,6 +16,7 @@ export interface AppNotification {
 interface NotificationsState {
   notifications: AppNotification[];
   isOpen: boolean;
+  isLoading: boolean;
   openDrawer: () => void;
   closeDrawer: () => void;
   markAsRead: (id: string) => void;
@@ -22,6 +24,7 @@ interface NotificationsState {
   removeNotification: (id: string) => void;
   addNotification: (notif: Omit<AppNotification, 'id' | 'isRead' | 'time'>) => void;
   getUnreadCount: () => number;
+  fetchNotifications: () => Promise<void>;
 }
 
 const DEFAULT_NOTIFICATIONS: AppNotification[] = [
@@ -72,7 +75,11 @@ export const useNotificationsStore = create<NotificationsState>()(
     (set, get) => ({
       notifications: DEFAULT_NOTIFICATIONS,
       isOpen: false,
-      openDrawer: () => set({ isOpen: true }),
+      isLoading: false,
+      openDrawer: () => {
+        set({ isOpen: true });
+        get().fetchNotifications();
+      },
       closeDrawer: () => set({ isOpen: false }),
       markAsRead: (id) =>
         set((state) => ({
@@ -80,10 +87,12 @@ export const useNotificationsStore = create<NotificationsState>()(
             n.id === id ? { ...n, isRead: true } : n
           ),
         })),
-      markAllAsRead: () =>
+      markAllAsRead: () => {
         set((state) => ({
           notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
-        })),
+        }));
+        markAllNotificationsRead().catch(() => {});
+      },
       removeNotification: (id) =>
         set((state) => ({
           notifications: state.notifications.filter((n) => n.id !== id),
@@ -101,6 +110,29 @@ export const useNotificationsStore = create<NotificationsState>()(
       },
       getUnreadCount: () => {
         return get().notifications.filter((n) => !n.isRead).length;
+      },
+      fetchNotifications: async () => {
+        try {
+          set({ isLoading: true });
+          const remoteList = await getNotifications();
+          if (remoteList && remoteList.length > 0) {
+            const mapped: AppNotification[] = remoteList.map((rn) => ({
+              id: rn.id,
+              title: rn.title,
+              message: rn.body || rn.title,
+              time: rn.createdAt ? new Date(rn.createdAt).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : 'সম্প্রতি',
+              category: (rn.kind === 'order' ? 'orders' : rn.kind === 'reward' ? 'offers' : 'system') as any,
+              isRead: rn.read,
+              link: rn.link || '/orders',
+              iconType: (rn.kind === 'order' ? 'order' : rn.kind === 'reward' ? 'coin' : 'system') as any
+            }));
+            set({ notifications: mapped, isLoading: false });
+            return;
+          }
+          set({ isLoading: false });
+        } catch (err) {
+          set({ isLoading: false });
+        }
       }
     }),
     {

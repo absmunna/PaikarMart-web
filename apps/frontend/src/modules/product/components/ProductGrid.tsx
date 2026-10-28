@@ -1,5 +1,5 @@
 import { ProductCard } from "./ProductCard";
-import { ProductCardSkeleton } from "@/components/ui/ProductCard/ProductCardSkeleton";
+import { ProductGridSkeleton } from "@/components/ui/ProductCard/ProductGridSkeleton";
 import { Product } from "@/modules/app";
 
 interface ProductGridProps {
@@ -18,13 +18,7 @@ export function ProductGrid({
   viewMode = 'grid',
 }: ProductGridProps) {
   if (isLoading || products === undefined) {
-    return (
-      <div className={viewMode === 'list' ? 'flex flex-col gap-3' : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3.5 sm:gap-4'}>
-        {Array.from({ length: skeletonCount }).map((_, i) => (
-          <ProductCardSkeleton key={i} viewMode={viewMode} />
-        ))}
-      </div>
-    );
+    return <ProductGridSkeleton count={skeletonCount} viewMode={viewMode} />;
   }
 
   if (products.length === 0) {

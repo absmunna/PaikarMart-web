@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { listOrders, listSellerOrders } from '../services/order.api';
 
 export type OrderState = 
   | 'ORDER_CREATED'
@@ -52,11 +53,17 @@ export interface Order {
 
 interface OrderTrackingState {
   orders: Order[];
+  sellerOrders: Order[];
   activeOrder: Order | null;
+  isLoading: boolean;
+  error: string | null;
   setOrders: (orders: Order[]) => void;
+  setSellerOrders: (orders: Order[]) => void;
   updateOrder: (orderId: string, updates: Partial<Order>) => void;
   setActiveOrder: (order: Order | null) => void;
   addOrder: (order: Order) => void;
+  fetchOrders: () => Promise<void>;
+  fetchSellerOrders: (vendorId?: string) => Promise<void>;
   releaseEscrow: (orderId: string) => Promise<void>;
   raiseDispute: (orderId: string, reason: string) => Promise<void>;
 }
@@ -65,15 +72,41 @@ export const useOrderTrackingStore = create<OrderTrackingState>()(
   persist(
     (set, get) => ({
       orders: [],
+      sellerOrders: [],
       activeOrder: null,
+      isLoading: false,
+      error: null,
       setOrders: (orders) => set({ orders }),
+      setSellerOrders: (sellerOrders) => set({ sellerOrders }),
       addOrder: (order) => set((state) => ({ orders: [order, ...state.orders] })),
       updateOrder: (orderId, updates) => set((state) => {
         const updatedOrders = state.orders.map(o => o.id === orderId ? { ...o, ...updates } : o);
+        const updatedSellerOrders = state.sellerOrders.map(o => o.id === orderId ? { ...o, ...updates } : o);
         const updatedActive = state.activeOrder?.id === orderId ? { ...state.activeOrder, ...updates } : state.activeOrder;
-        return { orders: updatedOrders, activeOrder: updatedActive };
+        return { orders: updatedOrders, sellerOrders: updatedSellerOrders, activeOrder: updatedActive };
       }),
       setActiveOrder: (order) => set({ activeOrder: order }),
+
+      fetchOrders: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const data = await listOrders();
+          // Normalize API Order to Tracking Order if needed, but here we assume compatibility or minimal mapping
+          set({ orders: data as any[], isLoading: false });
+        } catch (err: any) {
+          set({ error: err.message || 'Failed to fetch personal orders', isLoading: false });
+        }
+      },
+
+      fetchSellerOrders: async (vendorId?: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const data = await listSellerOrders(vendorId);
+          set({ sellerOrders: data as any[], isLoading: false });
+        } catch (err: any) {
+          set({ error: err.message || 'Failed to fetch shop orders', isLoading: false });
+        }
+      },
 
       releaseEscrow: async (orderId: string) => {
         // Call backend escrow release endpoint

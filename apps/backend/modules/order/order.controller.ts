@@ -169,7 +169,7 @@ export const addOrder = async (req: Request, res: Response) => {
       deliveryLat,
       deliveryLng
     } = req.body;
-    const userId = req.headers['x-user-id'] as string || 'dev-user-id';
+    const userId = (req as any).user?.id || 'dev-user-id';
 
     const targetProductId = productId || (items?.[0]?.productId || 'pk-01');
     const orderQuantity = parseInt(quantity || items?.[0]?.quantity || 1, 10);

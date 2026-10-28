@@ -11,7 +11,7 @@ import {
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   signInAnonymously
 } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, query, collection, where, getDocs } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import { auth, db, googleProvider, facebookProvider } from "@/lib/firebase";
 import { safeStorage } from "@/modules/app";
@@ -103,8 +103,10 @@ export interface AuthContextValue {
   logout: () => Promise<void>;
   signOut: () => Promise<void>;
   
-  // Password & Verification
+  // Password, Verification & OTP
   sendPasswordReset: (email: string) => Promise<void>;
+  sendVerification: (identifier: string) => Promise<any>;
+  verifyVerification: (identifier: string, code: string) => Promise<any>;
   reloadUser: () => Promise<void>;
   submitVerification: (data: VerificationData) => Promise<void>;
   
@@ -119,6 +121,7 @@ export interface AuthContextValue {
   hasPermission: (permission: string) => boolean;
   switchPersonaRole: (targetRole: AppRole) => void;
   promoteToSeller: (shopName: string, type: "retail" | "wholesale" | "service", address: string) => void;
+  promoteToCreator: () => Promise<void>;
 }
 
 const STORAGE_KEY = "pm.auth.v2";
@@ -158,29 +161,32 @@ function uid(prefix = "u") {
 }
 
 async function syncUserWithBackend(payload: {
-  uid: string;
-  email?: string;
+  role?: string;
   fullName?: string;
   name?: string;
   phone?: string;
-  role?: string;
   avatarUrl?: string;
-}) {
+}, idToken: string) {
   try {
     const res = await fetch('/api/v1/auth/sync', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
       body: JSON.stringify(payload)
     });
     if (res.ok) {
       const data = await res.json();
-      if (data.token) {
-        persistToken(data.token);
+      if (data.token || data.accessToken) {
+        persistToken(data.token || data.accessToken);
       }
+      return data;
     }
   } catch (err) {
     console.warn('Backend sync non-blocking error:', err);
   }
+  return null;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -225,14 +231,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             };
             setUser(appUser);
             // Synchronize user into Supabase PostgreSQL
+            const idToken = await currentUser.getIdToken();
             syncUserWithBackend({
-              uid: currentUser.uid,
-              email: appUser.email,
               fullName: appUser.fullName,
               phone: appUser.phone,
               role: appUser.role,
               avatarUrl: appUser.avatarUrl
-            });
+            }, idToken);
             return;
           } else {
             // First time auth - create document in real Firestore
@@ -257,14 +262,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               verification: { status: "unverified" },
             } as AppUser;
             setUser(newUser);
+            const idToken = await currentUser.getIdToken();
             syncUserWithBackend({
-              uid: currentUser.uid,
-              email: newUser.email,
               fullName: newUser.fullName,
               phone: newUser.phone,
               role: newUser.role,
               avatarUrl: newUser.avatarUrl
-            });
+            }, idToken);
             return;
           }
         } catch (err) {
@@ -322,14 +326,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(next);
         const token = await u.getIdToken();
         persistToken(token);
+        const idToken = await u.getIdToken();
         syncUserWithBackend({
-          uid: u.uid,
-          email: next.email,
           fullName: next.fullName,
           phone: next.phone,
           role: next.role,
           avatarUrl: next.avatarUrl
-        });
+        }, idToken);
         toast.success("Successfully logged in with Google (Firebase Connected)!");
       }
     } catch (error) {
@@ -337,24 +340,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.info("Google login popup closed by user");
         return;
       }
-      console.warn("Google popup login fallback:", error);
-      const mockUser: AppUser = {
-        id: `google_${Date.now()}`,
-        fullName: "Google Test User",
-        name: "Google Test User",
-        email: "google.user@paikarmart.com",
-        phone: "01700000000",
-        avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
-        role: "buyer",
-        roles: ["buyer"],
-        roleGroup: getRoleGroup("buyer"),
-        permissions: getPermissionsForRole("buyer", true),
-        emailVerified: true,
-        verification: { status: "verified" },
-        createdAt: new Date().toISOString(),
-      };
-      setUser(mockUser);
-      toast.success("Logged in with Google");
+      console.error(" Google popup login error:", error);
+      toast.error("Google Login failed. Please try again.");
     }
   }, []);
 
@@ -392,98 +379,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const loginWithPhone = useCallback(async (phone: string, password: string): Promise<AppUser> => {
-    const role: AppRole = "buyer";
-    const next: AppUser = {
-      id: uid("u"),
-      fullName: phone,
-      name: phone,
-      phone,
-      role,
-      roles: ["buyer", role],
-      roleGroup: getRoleGroup(role),
-      permissions: getPermissionsForRole(role, false),
-      verification: { status: "unverified" },
-      createdAt: new Date().toISOString(),
-    };
-    setUser(next);
-    persistToken(`token_${Date.now()}`);
-    toast.success(`Welcome back ${phone}!`);
-    return next;
-  }, []);
-
   const login = useCallback(async (email: string, password: string): Promise<AppUser> => {
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      const u = cred.user;
-      const userRef = doc(db, "users", u.uid);
-      const snap = await getDoc(userRef);
-      let userData: any = snap.exists() ? snap.data() : null;
-      if (!userData) {
-        userData = {
-          id: u.uid,
-          email: u.email || email,
-          name: u.displayName || email.split("@")[0],
-          role: "buyer",
-          roles: ["buyer"],
-          walletBalance: 25000,
-          createdAt: new Date().toISOString(),
-        };
-        await setDoc(userRef, userData);
-      }
-      const token = await u.getIdToken();
-      persistToken(token);
-      const primaryRole: AppRole = (userData.role as AppRole) || "buyer";
-      const appUser: AppUser = {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const u = cred.user;
+    const userRef = doc(db, "users", u.uid);
+    const snap = await getDoc(userRef);
+    let userData: any = snap.exists() ? snap.data() : null;
+    if (!userData) {
+      userData = {
         id: u.uid,
-        fullName: userData.name || u.displayName || email.split("@")[0],
-        name: userData.name || u.displayName || email.split("@")[0],
-        email: userData.email || email,
-        phone: userData.phone || "",
-        avatarUrl: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name || u.uid}`,
-        avatar: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name || u.uid}`,
-        role: primaryRole,
-        roles: Array.isArray(userData.roles) ? userData.roles : [primaryRole],
-        roleGroup: getRoleGroup(primaryRole),
-        permissions: getPermissionsForRole(primaryRole, userData.verification?.status === "verified"),
-        emailVerified: u.emailVerified,
-        verification: userData.verification || { status: "unverified" },
-        seller: userData.seller,
-        createdAt: userData.createdAt || new Date().toISOString(),
-      };
-      setUser(appUser);
-      syncUserWithBackend({
-        uid: u.uid,
-        email: appUser.email,
-        fullName: appUser.fullName,
-        phone: appUser.phone,
-        role: appUser.role,
-        avatarUrl: appUser.avatarUrl
-      });
-      toast.success("Logged in successfully (Firebase DB Connected)!");
-      return appUser;
-    } catch (err: any) {
-      console.warn("Firebase email login fallback:", err?.message);
-      const role: AppRole = "buyer";
-      const next: AppUser = {
-        id: uid("u"),
-        fullName: email.split("@")[0],
-        name: email.split("@")[0],
-        email,
-        phone: "",
-        role,
+        email: u.email || email,
+        name: u.displayName || email.split("@")[0],
+        role: "buyer",
         roles: ["buyer"],
-        roleGroup: getRoleGroup(role),
-        permissions: getPermissionsForRole(role, false),
-        verification: { status: "unverified" },
+        walletBalance: 25000,
         createdAt: new Date().toISOString(),
       };
-      setUser(next);
-      persistToken(`token_${Date.now()}`);
-      toast.success("Logged in successfully!");
-      return next;
+      await setDoc(userRef, userData);
     }
+    const token = await u.getIdToken();
+    persistToken(token);
+    const primaryRole: AppRole = (userData.role as AppRole) || "buyer";
+    const appUser: AppUser = {
+      id: u.uid,
+      fullName: userData.name || u.displayName || email.split("@")[0],
+      name: userData.name || u.displayName || email.split("@")[0],
+      email: userData.email || email,
+      phone: userData.phone || "",
+      avatarUrl: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name || u.uid}`,
+      avatar: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name || u.uid}`,
+      role: primaryRole,
+      roles: Array.isArray(userData.roles) ? userData.roles : [primaryRole],
+      roleGroup: getRoleGroup(primaryRole),
+      permissions: getPermissionsForRole(primaryRole, userData.verification?.status === "verified"),
+      emailVerified: u.emailVerified,
+      verification: userData.verification || { status: "unverified" },
+      seller: userData.seller,
+      createdAt: userData.createdAt || new Date().toISOString(),
+    };
+    setUser(appUser);
+    const idToken = await u.getIdToken();
+    syncUserWithBackend({
+      fullName: appUser.fullName,
+      phone: appUser.phone,
+      role: appUser.role,
+      avatarUrl: appUser.avatarUrl
+    }, idToken);
+    toast.success("Logged in successfully!");
+    return appUser;
   }, []);
+
+  const loginWithPhone = useCallback(async (phone: string, password: string): Promise<AppUser> => {
+    const cleanPhone = phone.trim();
+    const mappedEmail = `${cleanPhone}@paikarmart.com`;
+    return login(mappedEmail, password);
+  }, [login]);
 
   const logout = useCallback(async () => {
     try {
@@ -522,71 +472,119 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  const sendVerification = useCallback(async (identifier: string) => {
+    try {
+      const endpoint = identifier.includes('@') ? '/api/v1/auth/send-otp' : '/api/v1/auth/send-otp';
+      const body = identifier.includes('@') ? { email: identifier, purpose: 'register' } : { phone: identifier, purpose: 'register' };
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error('কোড পাঠানো সম্ভব হয়নি');
+      return await res.json();
+    } catch (err) {
+      console.error('Send OTP error:', err);
+      throw err;
+    }
+  }, []);
+
+  const verifyVerification = useCallback(async (identifier: string, code: string) => {
+    try {
+      const endpoint = '/api/v1/auth/verify-otp';
+      const body = identifier.includes('@') ? { email: identifier, otp: code } : { phone: identifier, otp: code };
+      console.log('Sending OTP verification:', { endpoint, body });
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('Verify OTP failed:', errorData);
+        throw new Error(errorData.message || 'ভুল ওটিপি কোড');
+      }
+      return await res.json();
+    } catch (err) {
+      console.error('Verify OTP error:', err);
+      throw err;
+    }
+  }, []);
+
   const registerUser = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string }): Promise<AppUser> => {
     const role: AppRole = "buyer";
-    const userEmail = input.email || `${input.phone || Date.now()}@paikarmart.com`;
-    let userId = uid("u");
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, userEmail, (input as any).password || "Paikar123456!");
-      userId = cred.user.uid;
-      const token = await cred.user.getIdToken();
-      persistToken(token);
-    } catch (err: any) {
-      console.warn("Firebase Auth create error, using generated UID:", err?.message);
-    }
+    const cleanEmail = input.email && input.email.includes('@') ? input.email.trim().toLowerCase() : '';
+    const cleanPhone = input.phone ? input.phone.trim().replace(/[^0-9]/g, '') : '';
 
-    const profileDoc = {
-      id: userId,
-      name: input.fullName || input.name || userEmail.split("@")[0],
-      email: userEmail,
-      phone: input.phone || "",
-      role,
-      roles: ["buyer"],
-      walletBalance: 25000,
-      avatarUrl: input.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
-      createdAt: new Date().toISOString(),
-    };
+    const userEmail = cleanEmail || `${cleanPhone || Date.now()}@paikarmart.com`;
+    const password = (input as any).password || "Paikar123456!";
 
     try {
+      const cred = await createUserWithEmailAndPassword(auth, userEmail, password);
+      const u = cred.user;
+      const userId = u.uid;
+      const idToken = await u.getIdToken();
+      persistToken(idToken);
+
+      const profileDoc = {
+        id: userId,
+        name: input.fullName || input.name || userEmail.split("@")[0],
+        email: cleanEmail,
+        phone: cleanPhone || "",
+        role,
+        roles: ["buyer"],
+        walletBalance: 25000,
+        avatarUrl: input.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+        createdAt: new Date().toISOString(),
+      };
+
       await setDoc(doc(db, "users", userId), profileDoc);
-    } catch (err) {
-      console.warn("Firestore profile save error:", err);
-    }
 
-    const next: AppUser = {
-      ...input,
-      id: userId,
-      fullName: profileDoc.name,
-      name: profileDoc.name,
-      email: userEmail,
-      role,
-      roles: ["buyer"],
-      roleGroup: getRoleGroup(role),
-      permissions: getPermissionsForRole(role, false),
-      createdAt: profileDoc.createdAt,
-    };
-    setUser(next);
-    syncUserWithBackend({
-      uid: userId,
-      email: userEmail,
-      fullName: next.fullName,
-      phone: input.phone,
-      role: 'buyer',
-      avatarUrl: profileDoc.avatarUrl
-    });
-    toast.success("Account registered and saved in database!");
-    return next;
+      const next: AppUser = {
+        ...input,
+        id: userId,
+        fullName: profileDoc.name,
+        name: profileDoc.name,
+        email: userEmail,
+        phone: cleanPhone || "",
+        role,
+        roles: ["buyer"],
+        roleGroup: getRoleGroup(role),
+        permissions: getPermissionsForRole(role, false),
+        createdAt: profileDoc.createdAt,
+      };
+      
+      setUser(next);
+
+      syncUserWithBackend({
+        fullName: next.fullName,
+        phone: cleanPhone,
+        role: 'buyer',
+        avatarUrl: profileDoc.avatarUrl
+      }, idToken);
+
+      toast.success("Account registered successfully!");
+      return next;
+    } catch (error: any) {
+      console.error("Registration Error:", error);
+      toast.error(error.message || "Failed to register account.");
+      throw error;
+    }
   }, []);
 
   const registerSeller = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { seller: SellerProfileData; password?: string }): Promise<AppUser> => {
     const role: AppRole = "seller";
     const userEmail = input.email || `${input.phone || Date.now()}@paikarmart.com`;
+    
     let userId = uid("s");
+    let idToken = "";
+
     try {
       const cred = await createUserWithEmailAndPassword(auth, userEmail, (input as any).password || "Paikar123456!");
-      userId = cred.user.uid;
-      const token = await cred.user.getIdToken();
-      persistToken(token);
+      const u = cred.user;
+      userId = u.uid;
+      idToken = await u.getIdToken();
+      persistToken(idToken);
     } catch (err: any) {
       console.warn("Firebase Auth seller create error:", err?.message);
     }
@@ -623,37 +621,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       seller: input.seller,
       createdAt: profileDoc.createdAt,
     };
+    
     setUser(next);
-    syncUserWithBackend({
-      uid: userId,
-      email: userEmail,
-      fullName: next.fullName,
-      phone: input.phone,
-      role: 'seller',
-      avatarUrl: profileDoc.avatarUrl
-    });
+
+    if (idToken) {
+      syncUserWithBackend({
+        fullName: next.fullName,
+        phone: input.phone,
+        role: 'seller',
+        avatarUrl: profileDoc.avatarUrl
+      }, idToken);
+    }
+
     toast.success("Seller store registered and saved in database!");
     return next;
   }, []);
 
   const registerFactory = useCallback(async (input: { fullName: string; phone: string; email: string; factory: Record<string, any> }): Promise<AppUser> => {
-    const role: AppRole = "factory";
-    const next: AppUser = {
-      id: uid("f"),
-      fullName: input.fullName,
-      name: input.fullName,
-      phone: input.phone,
-      email: input.email,
-      role,
-      roles: ["buyer", "factory"],
-      roleGroup: getRoleGroup(role),
-      permissions: getPermissionsForRole(role, false),
-      factory: input.factory as FactoryProfileData,
-      createdAt: new Date().toISOString(),
-    };
-    setUser(next);
-    toast.success("Factory account registered successfully!");
-    return next;
+    try {
+      const role: AppRole = "factory";
+      const next: AppUser = {
+        id: uid("f"),
+        fullName: input.fullName,
+        name: input.fullName,
+        phone: input.phone,
+        email: input.email,
+        role,
+        roles: ["buyer", "factory"],
+        roleGroup: getRoleGroup(role),
+        permissions: getPermissionsForRole(role, false),
+        factory: input.factory as FactoryProfileData,
+        createdAt: new Date().toISOString(),
+      };
+      setUser(next);
+      toast.success("Factory account registered successfully!");
+      return next;
+    } catch (error: any) {
+      console.error("Factory registration error:", error);
+      toast.error("Failed to register factory account.");
+      throw error;
+    }
   }, []);
 
   const hasRole = useCallback((targetRoles: AppRole | AppRole[] | string | string[]) => {
@@ -710,6 +717,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  const promoteToCreator = useCallback(async () => {
+    if (user) {
+      const updated: AppUser = {
+        ...user,
+        role: "content_creator",
+        roles: Array.from(new Set([...user.roles, "content_creator" as AppRole])),
+        roleGroup: getRoleGroup("content_creator"),
+        permissions: getPermissionsForRole("content_creator", user.verification?.status === "verified")
+      };
+      setUser(updated);
+      try {
+        await updateDoc(doc(db, "users", user.id), {
+          role: "content_creator",
+          roles: Array.from(new Set([...user.roles, "content_creator" as AppRole])),
+        });
+      } catch (err) {
+        console.warn("Firestore promoteToCreator error:", err);
+      }
+      toast.success("অভিনন্দন! আপনি এখন একজন কন্টেন্ট ক্রিয়েটর।");
+    }
+  }, [user]);
+
   const value: AuthContextValue = useMemo(() => ({
     user,
     firebaseUser,
@@ -734,6 +763,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut: logout,
     
     sendPasswordReset,
+    sendVerification,
+    verifyVerification,
     reloadUser,
     submitVerification,
     
@@ -745,13 +776,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     hasRoleGroup,
     hasPermission,
     switchPersonaRole,
-    promoteToSeller
+    promoteToSeller,
+    promoteToCreator
   }), [
     user, firebaseUser, loading,
     loginWithPhone, login, loginWithGoogle, loginWithFacebook, loginAsGuest, logout,
-    sendPasswordReset, reloadUser, submitVerification,
+    sendPasswordReset, sendVerification, verifyVerification, reloadUser, submitVerification,
     registerUser, registerSeller, registerFactory,
-    hasRole, hasRoleGroup, hasPermission, switchPersonaRole, promoteToSeller
+    hasRole, hasRoleGroup, hasPermission, switchPersonaRole, promoteToSeller, promoteToCreator
   ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

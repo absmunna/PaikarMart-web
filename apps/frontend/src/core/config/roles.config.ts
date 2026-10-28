@@ -58,7 +58,7 @@ export const ROLE_HIERARCHY: Record<AppRole, RoleConfig> = {
   nearby_shop: { role: 'nearby_shop', labelEn: 'Local Physical Shop', labelBn: 'শারীরিক দোকান', color: 'bg-pink-600/90 text-white', requiredTrustLevel: 5 },
   service_provider: { role: 'service_provider', labelEn: 'Service Pro', labelBn: 'সার্ভিস প্রোভাইডার', color: 'bg-purple-600/90 text-white', requiredTrustLevel: 4 },
   digital_seller: { role: 'digital_seller', labelEn: 'Digital Creator', labelBn: 'ডিজিটাল সেলার', color: 'bg-violet-600/90 text-white', requiredTrustLevel: 4 },
-  content_creator: { role: 'content_creator', labelEn: 'Media Creator', labelBn: 'মিডিয়া ক্রিয়েটর', color: 'bg-pink-500/90 text-white', requiredTrustLevel: 2 },
+  content_creator: { role: 'content_creator', labelEn: 'Content Creator', labelBn: 'কন্টেন্ট ক্রিয়েটর', color: 'bg-pink-500 text-white font-bold', requiredTrustLevel: 2 },
   property_agent: { role: 'property_agent', labelEn: 'Property Agent', labelBn: 'রিয়েল এস্টেট এজেন্ট', color: 'bg-amber-600/90 text-white', requiredTrustLevel: 5 },
   employer: { role: 'employer', labelEn: 'Employer', labelBn: 'নিয়োগকর্তা', color: 'bg-teal-500/90 text-white', requiredTrustLevel: 5 },
   moderator: { role: 'moderator', labelEn: 'Moderator', labelBn: 'মডারেটর', color: 'bg-yellow-500/90 text-black font-semibold', requiredTrustLevel: 4 },
@@ -257,7 +257,12 @@ export const PERMISSIONS = {
   CAN_MANAGE_COMMISSIONS: 'CAN_MANAGE_COMMISSIONS',
   CAN_VIEW_PLATFORM_ANALYTICS: 'CAN_VIEW_PLATFORM_ANALYTICS',
   CAN_RESOLVE_DISPUTES: 'CAN_RESOLVE_DISPUTES',
-  CAN_ACCESS_AUDIT_LOGS: 'CAN_ACCESS_AUDIT_LOGS'
+  CAN_ACCESS_AUDIT_LOGS: 'CAN_ACCESS_AUDIT_LOGS',
+
+  // Content Creator Scopes
+  CAN_POST_VIDEO_CONTENT: 'CAN_POST_VIDEO_CONTENT',
+  CAN_MONETIZE_CONTENT: 'CAN_MONETIZE_CONTENT',
+  CAN_MANAGE_CHANNEL: 'CAN_MANAGE_CHANNEL'
 } as const;
 
 export type Permission = keyof typeof PERMISSIONS;
@@ -342,6 +347,12 @@ export function getPermissionsForRole(role: AppRole, isVerified = false): string
       vendorBase.push(
         PERMISSIONS.CAN_CREATE_SERVICE,
         PERMISSIONS.CAN_MANAGE_SERVICES
+      );
+    } else if (role === 'content_creator') {
+      vendorBase.push(
+        PERMISSIONS.CAN_POST_VIDEO_CONTENT,
+        PERMISSIONS.CAN_MONETIZE_CONTENT,
+        PERMISSIONS.CAN_MANAGE_CHANNEL
       );
     }
 

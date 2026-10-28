@@ -12,6 +12,19 @@ export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
+export { 
+  RecaptchaVerifier, 
+  signInWithPhoneNumber, 
+  signInWithPopup, 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  EmailAuthProvider,
+  PhoneAuthProvider
+} from "firebase/auth";
 export const storage = getStorage(app);
 
 export const googleProvider = new GoogleAuthProvider();

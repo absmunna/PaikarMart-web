@@ -8,11 +8,12 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "cd apps/backend && npx tsx server.ts",
-    "build": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build",
+    "dev": "cd apps/backend && PORT=3000 npx tsx server.ts",
+    "build": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
+    "build:frontend": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build",
     "build:backend": "cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build",
     "build:all": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
-    "start": "node --no-deprecation apps/backend/dist/server.js",
+    "start": "cd apps/backend && node dist/server.js",
     "postinstall": "cd packages/database && npx --yes prisma generate",
     "typecheck": "npm run lint --workspace=@paikarmart/frontend",
     "lint": "npm run lint --workspace=@paikarmart/frontend"
@@ -22,6 +23,8 @@
     "typescript": "~5.8.2"
   },
   "dependencies": {
+    "firebase-admin": "^14.5.0",
+    "react-player": "^3.4.0",
     "recharts": "^3.10.1"
   }
 }

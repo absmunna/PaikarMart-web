@@ -3,6 +3,7 @@ import {
   collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where 
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
+import { toast } from "sonner";
 import { SellerProduct, SellerOrder, SellerVerificationPayload, ServiceBooking, DeliveryTask, ReturnRequest } from "../types";
 
 const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL ?? '/api/v1';
@@ -225,9 +226,9 @@ export function SellerProvider({ children }: { children: React.ReactNode }) {
 
 const defaultSellerValue: SellerContextValue = {
   isSeller: false,
-  becomeSeller: () => {},
+  becomeSeller: () => toast.info("দোকানদার হিসেবে নিবন্ধন করুন (Register as Seller)"),
   profile: { verificationStatus: "unsubmitted" },
-  updateProfile: () => {},
+  updateProfile: () => toast.error("প্রোফাইল আপডেট করতে লগইন প্রয়োজন"),
   products: [],
   orders: [],
   serviceBookings: [],
@@ -235,13 +236,13 @@ const defaultSellerValue: SellerContextValue = {
   returnsRequests: [],
   loading: false,
   error: null,
-  fetchProducts: async () => {},
-  fetchOrders: async () => {},
-  createProduct: async () => ({} as any),
-  updateProduct: async () => ({} as any),
-  deleteProduct: async () => {},
-  setOrderStatus: async () => ({} as any),
-  submitVerification: async () => ({}),
+  fetchProducts: async () => { toast.error("পণ্য দেখতে সেলার লগইন প্রয়োজন"); },
+  fetchOrders: async () => { toast.error("অর্ডার দেখতে সেলার লগইন প্রয়োজন"); },
+  createProduct: async () => { toast.error("পণ্য যোগ করতে সেলার লগইন প্রয়োজন"); return {} as any; },
+  updateProduct: async () => { toast.error("পণ্য আপডেট করতে সেলার লগইন প্রয়োজন"); return {} as any; },
+  deleteProduct: async () => { toast.error("পণ্য ডিলিট করতে সেলার লগইন প্রয়োজন"); },
+  setOrderStatus: async () => { toast.error("অর্ডার স্ট্যাটাস পরিবর্তন করতে সেলার লগইন প্রয়োজন"); return {} as any; },
+  submitVerification: async () => { toast.info("ভেরিফিকেশন সাবমিট করতে লগইন করুন"); return ({}); },
   verificationStatus: "unsubmitted",
 };
 

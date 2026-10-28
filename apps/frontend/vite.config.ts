@@ -11,6 +11,7 @@ export default defineConfig(({mode}) => {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
     resolve: {
+      dedupe: ['react', 'react-dom'],
       alias: [
         { find: '@/app', replacement: path.resolve(__dirname, './src/app') },
         { find: '@/core', replacement: path.resolve(__dirname, './src/core') },
@@ -42,6 +43,9 @@ export default defineConfig(({mode}) => {
         { find: 'shared', replacement: path.resolve(__dirname, '../../packages/shared') },
         { find: '@', replacement: path.resolve(__dirname, './src') },
       ],
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-player'],
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

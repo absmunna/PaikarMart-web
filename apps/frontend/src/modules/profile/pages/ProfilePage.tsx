@@ -72,7 +72,7 @@ export function ProfilePage() {
     followingCount: 385,
     avatarUrl: user?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80',
     coverUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1400&q=80',
-    email: user?.email || 'abs.munna1@gmail.com',
+    email: user?.email || '',
     phone: user?.phone || '+880 1712-345678',
     website: 'https://paikarmart.com'
   });

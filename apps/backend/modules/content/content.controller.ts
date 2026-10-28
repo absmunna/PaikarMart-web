@@ -4,7 +4,7 @@ import { AuthenticatedRequest } from '../../middleware/auth';
 import { eventBus } from '../../services/eventBus';
 
 // Valid ContentType structures
-const VALID_CONTENT_TYPES = ['PRODUCT', 'BUSINESS', 'SERVICE', 'ANNOUNCEMENT', 'OFFER'];
+const VALID_CONTENT_TYPES = ['PRODUCT', 'BUSINESS', 'SERVICE', 'ANNOUNCEMENT', 'OFFER', 'VIDEO', 'REEL'];
 
 export const createContentItem = async (req: AuthenticatedRequest, res: Response) => {
   try {

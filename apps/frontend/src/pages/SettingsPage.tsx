@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
   ChevronLeft, Settings2, ShieldCheck, HelpCircle, Bell, Info, 
   Palette, Check, User, Lock, Eye, Trash2, LogOut, ChevronRight, 
-  Smartphone, Mail, Globe, Moon, Sun, Shield
+  Smartphone, Mail, Globe, Moon, Sun, Shield, Monitor, SlidersHorizontal
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -12,6 +12,8 @@ import { useAuthStore } from '@/modules/auth/store/authStore';
 import { useTranslation } from '@/core/lib/i18n';
 import { useNotificationSettingsStore } from '@/modules/notification/store/notificationSettingsStore';
 import { safeBack } from '@/lib/navigation';
+import { useDomainViewMode } from '@/core/hooks/useDomainViewMode';
+import { useNavSettingsStore } from '@/app/AppShell/useNavSettingsStore';
 
 export const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -20,6 +22,8 @@ export const SettingsPage: React.FC = () => {
   const { lang, setLang } = useAppStore();
   const { user, isAuthenticated, logout, updateProfile } = useAuthStore();
   const { push, email, inApp, togglePush } = useNotificationSettingsStore();
+  const { isDesktopView, toggleViewMode, setDesktopView } = useDomainViewMode();
+  const { navBehavior, setNavBehavior } = useNavSettingsStore();
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const themeList = [
@@ -39,7 +43,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--pm-bg)] pb-28 pt-4 px-4 max-w-2xl mx-auto">
+    <div className={`min-h-screen bg-[var(--pm-bg)] pb-28 pt-4 px-4 mx-auto transition-all duration-300 ${isDesktopView ? 'max-w-4xl' : 'max-w-md'}`}>
       {/* Header */}
       <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--pm-border)]">
         <div className="flex items-center gap-3">
@@ -152,6 +156,106 @@ export const SettingsPage: React.FC = () => {
               }`}
             >
               English
+            </button>
+          </div>
+        </div>
+
+        {/* Display Layout & View Mode (Desktop vs Mobile Frame) */}
+        <div className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-5 shadow-xs space-y-3">
+          <div className="flex items-center gap-2">
+            <Monitor className="w-5 h-5 text-[var(--pm-accent)]" />
+            <div>
+              <h2 className="font-black text-sm text-[var(--pm-text)]">ডিসপ্লে ও স্ক্রিন ভিউ মোড</h2>
+              <p className="text-[10px] text-[var(--pm-text-muted)]">
+                বড় স্ক্রিনে ফুল-উইডথ ডেস্কটপ পোর্টাল নাকি মোবাইল ফ্রেম সিমুলেটর মোড দেখতে চান তা নির্বাচন করুন
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <button
+              onClick={() => setDesktopView(true)}
+              className={`p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                isDesktopView
+                  ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10 text-[var(--pm-text)] shadow-xs scale-[1.01]'
+                  : 'border-[var(--pm-border)] bg-[var(--pm-bg)] text-[var(--pm-text-muted)] hover:border-[var(--pm-border)]/80'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                  <Monitor className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-bold text-xs text-[var(--pm-text)]">ফুল স্ক্রিন ডেস্কটপ ভিউ</p>
+                  <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">বড় স্ক্রিনে ফুল সাইডবার ও ড্যাশবোর্ড</p>
+                </div>
+              </div>
+              {isDesktopView && <Check className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />}
+            </button>
+
+            <button
+              onClick={() => setDesktopView(false)}
+              className={`p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                !isDesktopView
+                  ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10 text-[var(--pm-text)] shadow-xs scale-[1.01]'
+                  : 'border-[var(--pm-border)] bg-[var(--pm-bg)] text-[var(--pm-text-muted)] hover:border-[var(--pm-border)]/80'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                  <Smartphone className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-bold text-xs text-[var(--pm-text)]">মোবাইল অ্যাপ ফ্রেম ভিউ</p>
+                  <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">স্মার্টফোন ফ্রেম ও বটম নেভিগেশন</p>
+                </div>
+              </div>
+              {!isDesktopView && <Check className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Scroll Responsive Navbar Mode Control */}
+        <div className="bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-3xl p-5 shadow-xs space-y-3">
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="w-5 h-5 text-[var(--pm-accent)]" />
+            <div>
+              <h2 className="font-black text-sm text-[var(--pm-text)]">ন্যাভিগেশন বার স্ক্রল রেসপন্সিভ মোড</h2>
+              <p className="text-[10px] text-[var(--pm-text-muted)]">
+                স্ক্রল করার সাথে সাথে টপ হেডার ও বটম বার স্বয়ংক্রিয়ভাবে হাইড হওয়া বা স্থির থাকা নির্ধারণ করুন
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <button
+              onClick={() => setNavBehavior('auto-hide')}
+              className={`p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                navBehavior === 'auto-hide'
+                  ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10 text-[var(--pm-text)] shadow-xs scale-[1.01]'
+                  : 'border-[var(--pm-border)] bg-[var(--pm-bg)] text-[var(--pm-text-muted)] hover:border-[var(--pm-border)]/80'
+              }`}
+            >
+              <div>
+                <p className="font-bold text-xs text-[var(--pm-text)]">অটো-হাইড (Auto-Hide)</p>
+                <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">নিচে স্ক্রলে হাইড, উপরে স্ক্রলে দৃশ্যমান (Recommended)</p>
+              </div>
+              {navBehavior === 'auto-hide' && <Check className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />}
+            </button>
+
+            <button
+              onClick={() => setNavBehavior('fixed')}
+              className={`p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                navBehavior === 'fixed'
+                  ? 'border-[var(--pm-accent)] bg-[var(--pm-accent)]/10 text-[var(--pm-text)] shadow-xs scale-[1.01]'
+                  : 'border-[var(--pm-border)] bg-[var(--pm-bg)] text-[var(--pm-text-muted)] hover:border-[var(--pm-border)]/80'
+              }`}
+            >
+              <div>
+                <p className="font-bold text-xs text-[var(--pm-text)]">স্থির বার (Always Fixed)</p>
+                <p className="text-[10px] text-[var(--pm-text-muted)] mt-0.5">সবসময় স্ক্রিনে হেডার ও বটম বার স্থির থাকবে</p>
+              </div>
+              {navBehavior === 'fixed' && <Check className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />}
             </button>
           </div>
         </div>

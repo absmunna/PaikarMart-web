@@ -1,147 +1,139 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Truck, ShoppingBag, RotateCcw, HelpCircle, Eye, Star, Search, CheckCircle2 } from 'lucide-react';
+import { 
+  Truck, ShoppingBag, RotateCcw, HelpCircle, 
+  Eye, Star, Search, CheckCircle2, Package, 
+  Store, AlertCircle, Loader2, ChevronRight
+} from 'lucide-react';
 import { toast } from 'sonner';
-
-interface OrderItem {
-  id: string;
-  item: string;
-  qty: number;
-  price: number;
-  image: string;
-  store: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
-  date: string;
-  deliveryDate?: string;
-  trackingId?: string;
-  riderName?: string;
-  riderPhone?: string;
-}
+import { useOrderTrackingStore } from '@/modules/orders';
+import { useAuth } from '@/modules/auth';
+import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 export function PersonalOrdersTab() {
+  const navigate = useNavigate();
+  const { isSeller, isAdmin } = useAuth();
+  const { 
+    orders, 
+    sellerOrders, 
+    fetchOrders, 
+    fetchSellerOrders, 
+    isLoading 
+  } = useOrderTrackingStore();
+
+  const [viewMode, setViewMode] = useState<'buyer' | 'seller'>('buyer');
   const [activeFilter, setActiveFilter] = useState<'all' | 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const orders: OrderItem[] = [
-    {
-      id: 'PK-ORD-9028',
-      item: 'Realme Smart Band 2 With Heart Rate Tracker',
-      qty: 1,
-      price: 2450,
-      image: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=200',
-      store: 'Realme BD Official',
-      status: 'pending',
-      date: '21 June 2026',
-      trackingId: 'TRK-RLM-9028'
-    },
-    {
-      id: 'PK-ORD-8823',
-      item: 'Premium Cotton Polo Shirt - Assorted Colors (Bulk / পাইকারি প্যাকেজ)',
-      qty: 20,
-      price: 9000,
-      image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=200',
-      store: 'Bangladesh Textile Wholesale',
-      status: 'shipped',
-      date: '18 June 2026',
-      trackingId: 'TRK-REDX-8823',
-      riderName: 'Jamal Uddin',
-      riderPhone: '01711223344'
-    },
-    {
-      id: 'PK-ORD-7492',
-      item: 'AC Deep Chem-Wash Service (এসি সার্ভিসিং)',
-      qty: 1,
-      price: 1500,
-      image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=200',
-      store: 'Dhaka AC Service Pro',
-      status: 'delivered',
-      date: '10 June 2026',
-      deliveryDate: '10 June 2026'
-    },
-    {
-      id: 'PK-ORD-7102',
-      item: 'High Speed Memory Card Class 10 (64GB)',
-      qty: 2,
-      price: 1100,
-      image: 'https://images.unsplash.com/photo-1558442074-3c19857bc1a3?w=200',
-      store: 'Micro Electronics',
-      status: 'cancelled',
-      date: '02 June 2026'
-    },
-    {
-      id: 'PK-ORD-6582',
-      item: 'Chapa Shutki Fresh Premium Hilsa (বিটুবি বাল্ক অর্ডার)',
-      qty: 5,
-      price: 3500,
-      image: 'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=200',
-      store: 'CoxS Bazar Dry Fish Mart',
-      status: 'returned',
-      date: '25 May 2026'
+  useEffect(() => {
+    fetchOrders();
+    if (isSeller || isAdmin) {
+      fetchSellerOrders();
     }
-  ];
+  }, [fetchOrders, fetchSellerOrders, isSeller, isAdmin]);
 
-  const handleTrack = (ord: OrderItem) => {
-    if (ord.status === 'shipped') {
-      toast.info(
-        `অর্ডার ট্র্যাকিং আইডি: ${ord.trackingId}\nরাইডার: ${ord.riderName} (${ord.riderPhone})`,
-        { duration: 5000 }
-      );
-    } else if (ord.status === 'pending') {
-      toast.success('অর্ডার প্রক্রিয়াধীন রয়েছে। দ্রুতই কুরিয়ারে হস্তান্তর করা হবে!');
-    } else if (ord.status === 'delivered') {
-      toast.success('অর্ডারটি জুন ১০ তারিখে সফলভাবে ডেলিভারি হয়েছে!');
-    } else {
-      toast.error('অর্ডার ট্র্যাক করা সম্ভব নয় / Tracking unavailable.');
-    }
+  const activeOrdersList = viewMode === 'seller' ? sellerOrders : orders;
+
+  const filteredOrders = useMemo(() => {
+    return activeOrdersList.filter(ord => {
+      // Basic status mapping for filter
+      const status = String(ord.status).toLowerCase();
+      if (activeFilter !== 'all') {
+         if (activeFilter === 'pending' && status !== 'pending' && status !== 'order_created') return false;
+         if (activeFilter === 'processing' && status !== 'processing' && status !== 'packing') return false;
+         if (activeFilter === 'shipped' && status !== 'shipped' && status !== 'in_transit' && status !== 'out_for_delivery') return false;
+         if (activeFilter === 'delivered' && status !== 'delivered' && status !== 'completed') return false;
+         if (activeFilter === 'cancelled' && status !== 'cancelled') return false;
+         if (activeFilter === 'returned' && status !== 'returned') return false;
+      }
+      
+      if (searchQuery.trim() !== '') {
+        const q = searchQuery.toLowerCase();
+        const itemName = ord.items?.[0]?.name || ord.items?.[0]?.productTitle || '';
+        return (
+          itemName.toLowerCase().includes(q) || 
+          ord.id.toLowerCase().includes(q) || 
+          (ord.orderNo && ord.orderNo.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
+  }, [activeOrdersList, activeFilter, searchQuery]);
+
+  const handleTrack = (ord: any) => {
+    navigate(`/orders/track/${ord.id}`);
   };
 
-  const handleReturn = (ord: OrderItem) => {
-    toast.success(`${ord.id} অর্ডারের রিফান্ড ও রিটার্ন রিকোয়েস্ট জমা হয়েছে! / Return request placed!`);
-  };
-
-  const filteredOrders = orders.filter(ord => {
-    if (activeFilter !== 'all' && ord.status !== activeFilter) return false;
-    if (searchQuery.trim() !== '') {
-      const q = searchQuery.toLowerCase();
-      return ord.item.toLowerCase().includes(q) || ord.id.toLowerCase().includes(q) || ord.store.toLowerCase().includes(q);
-    }
-    return true;
-  });
-
-  const filterConfigs: { id: typeof activeFilter; labelBn: string; labelEn: string; color: string }[] = [
-    { id: 'all', labelBn: 'সকল অর্ডার', labelEn: 'All Orders', color: 'bg-zinc-800 text-white' },
-    { id: 'pending', labelBn: 'অপেক্ষমান', labelEn: 'Pending', color: 'bg-amber-500/10 text-amber-500 border border-amber-500/20' },
-    { id: 'processing', labelBn: 'প্রক্রিয়াকরণ', labelEn: 'Processing', color: 'bg-blue-500/10 text-blue-500 border border-blue-500/20' },
-    { id: 'shipped', labelBn: 'পাঠানো হয়েছে', labelEn: 'Shipped', color: 'bg-purple-500/10 text-purple-500 border border-purple-500/20' },
-    { id: 'delivered', labelBn: 'ডেলিভার্ড', labelEn: 'Delivered', color: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' },
-    { id: 'cancelled', labelBn: 'বাতিল', labelEn: 'Cancelled', color: 'bg-rose-500/10 text-rose-400 border border-rose-500/20' },
-    { id: 'returned', labelBn: 'রিটার্ন ও রিফান্ড', labelEn: 'Returned', color: 'bg-zinc-700/50 text-zinc-300' }
+  const filterConfigs: { id: typeof activeFilter; labelBn: string; labelEn: string }[] = [
+    { id: 'all', labelBn: 'সকল অর্ডার', labelEn: 'All Orders' },
+    { id: 'pending', labelBn: 'অপেক্ষমান', labelEn: 'Pending' },
+    { id: 'processing', labelBn: 'প্রক্রিয়াকরণ', labelEn: 'Processing' },
+    { id: 'shipped', labelBn: 'পাঠানো হয়েছে', labelEn: 'Shipped' },
+    { id: 'delivered', labelBn: 'ডেলিভার্ড', labelEn: 'Delivered' },
+    { id: 'cancelled', labelBn: 'বাতিল', labelEn: 'Cancelled' },
+    { id: 'returned', labelBn: 'রিটার্ন', labelEn: 'Returned' }
   ];
 
   return (
     <div className="space-y-6 text-left">
+      {/* Header & Toggle */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+            {viewMode === 'seller' ? <Store className="w-6 h-6 text-amber-400" /> : <ShoppingBag className="w-6 h-6 text-cyan-400" />}
+            {viewMode === 'seller' ? 'Shop Orders / দোকানের অর্ডারসমূহ' : 'My Orders / আমার অর্ডারসমূহ'}
+          </h2>
+        </div>
+
+        {(isSeller || isAdmin) && (
+          <div className="flex bg-zinc-900/50 p-1 rounded-xl border border-white/5">
+            <button
+              onClick={() => setViewMode('buyer')}
+              className={cn(
+                "px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all flex items-center gap-2",
+                viewMode === 'buyer' ? "bg-cyan-500 text-black shadow-lg" : "text-zinc-500 hover:text-white"
+              )}
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              কেনাকাটা
+            </button>
+            <button
+              onClick={() => setViewMode('seller')}
+              className={cn(
+                "px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all flex items-center gap-2",
+                viewMode === 'seller' ? "bg-amber-500 text-black shadow-lg" : "text-zinc-500 hover:text-white"
+              )}
+            >
+              <Store className="w-3.5 h-3.5" />
+              আমার দোকান
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Search Input */}
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
         <input
           type="text"
-          placeholder="অর্ডার নম্বর বা পণ্যের নাম দিয়ে খুঁজুন... / Search by Order ID, Item or Merchant..."
+          placeholder="অর্ডার নম্বর বা পণ্যের নাম দিয়ে খুঁজুন... / Search by Order ID or Item..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10 pr-4 py-3 bg-zinc-950/60 border border-white/5 rounded-2xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
         />
       </div>
 
-      {/* Filter Tabs scrollbar */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-hide no-scrollbar select-none">
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar select-none">
         {filterConfigs.map((fil) => (
           <button
             key={fil.id}
             onClick={() => setActiveFilter(fil.id)}
             className={`px-4 py-2 rounded-xl text-[11px] font-black tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer text-left shrink-0 ${
               activeFilter === fil.id
-                ? 'bg-cyan-500 text-black shadow-[0_4px_12px_rgba(16,185,129,0.25)]'
-                : 'bg-white/[0.02] text-zinc-400 hover:text-white border border-white/5'
+                ? 'bg-white/10 text-white border border-white/20'
+                : 'bg-white/[0.02] text-zinc-500 hover:text-white border border-white/5'
             }`}
           >
             <span>{fil.labelBn}</span>
@@ -150,78 +142,72 @@ export function PersonalOrdersTab() {
         ))}
       </div>
 
-      {/* Orders List / Grid */}
+      {/* Orders List */}
       <div className="space-y-4">
-        {filteredOrders.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-zinc-500">
+            <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+            <p className="text-xs font-bold animate-pulse">লোড হচ্ছে...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
           <div className="text-center py-16 border border-white/[0.03] rounded-3xl bg-white/[0.005]">
-            <ShoppingBag className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
-            <h3 className="text-sm font-bold text-white uppercase">কোনো অর্ডার পাওয়া যায়নি</h3>
-            <p className="text-xs text-zinc-500 mt-1 uppercase">No orders found matching this filter.</p>
+            <Package className="w-12 h-12 text-zinc-800 mx-auto mb-3" />
+            <h3 className="text-sm font-bold text-zinc-500 uppercase">কোনো অর্ডার পাওয়া যায়নি</h3>
+            <p className="text-[10px] text-zinc-600 mt-1 uppercase">No orders found matching this filter.</p>
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
             {filteredOrders.map((ord) => (
               <motion.div
                 key={ord.id}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all group"
               >
-                {/* Header info */}
-                <div className="p-4 bg-zinc-950/40 border-b border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-3">
-                    <span className="font-extrabold text-[var(--pm-accent)]">{ord.id}</span>
-                    <span className="text-zinc-600">•</span>
-                    <span className="text-zinc-400">তারিখ: {ord.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-wide">মেইড ইন বাংলাদেশ</span>
-                    <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                      ord.status === 'delivered' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' :
-                      ord.status === 'shipped' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' :
-                      ord.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-                      ord.status === 'cancelled' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-                      'bg-zinc-800 text-zinc-300'
-                    }`}>
-                      {ord.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Items layout */}
                 <div className="p-4 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                  <div className="flex items-center gap-3.5">
-                    <img src={ord.image} alt={ord.item} className="w-16 h-16 rounded-xl object-cover bg-zinc-900 border border-white/5" />
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shrink-0">
+                      <img 
+                        src={ord.items?.[0]?.image || ord.items?.[0]?.productImage || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200'} 
+                        alt="Product" 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
                     <div className="space-y-1">
-                      <h4 className="text-xs md:text-sm font-black text-white leading-tight line-clamp-2">{ord.item}</h4>
-                      <p className="text-[10px] text-zinc-400">স্টোর: <span className="text-white font-semibold">{ord.store}</span> | পরিমাণ: <span className="text-white font-semibold">{ord.qty}টি</span></p>
-                      <p className="text-[10px] text-zinc-500 uppercase font-black tracking-wide">ভ্যাট অন্তর্ভুক্ত (৫% VAT + ১০% কয়েন ক্যাশব্যাক)</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black text-cyan-500 font-mono tracking-tighter">#{ord.orderNo || ord.id.slice(0, 8)}</span>
+                        <span className={cn(
+                          "px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider",
+                          String(ord.status).toLowerCase() === 'delivered' || String(ord.status).toLowerCase() === 'completed' ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                          String(ord.status).toLowerCase() === 'cancelled' ? "bg-rose-500/10 text-rose-400 border border-rose-500/20" :
+                          "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                        )}>
+                          {ord.status}
+                        </span>
+                      </div>
+                      <h4 className="text-xs md:text-sm font-black text-white leading-tight line-clamp-1">
+                        {ord.items?.[0]?.name || ord.items?.[0]?.productTitle || 'পণ্য সামগ্রী'}
+                      </h4>
+                      <p className="text-[10px] text-zinc-500">
+                        তারিখ: <span className="text-zinc-400">{typeof ord.createdAt === 'string' ? ord.createdAt.split('T')[0] : 'সম্প্রতি'}</span>
+                      </p>
                     </div>
                   </div>
 
-                  <div className="w-full md:w-auto flex md:flex-col items-center md:items-end justify-between gap-2.5 pt-3 md:pt-0 border-t md:border-t-0 border-white/5">
+                  <div className="w-full md:w-auto flex md:flex-col items-center md:items-end justify-between gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-white/5">
                     <div className="text-left md:text-right">
-                      <span className="text-[10px] text-zinc-500 block">মোট মূল্য / Total Price</span>
-                      <span className="text-sm font-black text-white">৳{(ord.price * ord.qty).toLocaleString()}</span>
+                      <span className="text-[10px] text-zinc-500 block uppercase font-bold tracking-widest">Total</span>
+                      <span className="text-sm font-black text-white">৳{ord.total?.toLocaleString()}</span>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => handleTrack(ord)}
-                        className="px-3.5 py-2 bg-cyan-500 hover:bg-cyan-400 text-black font-black text-[10px] uppercase tracking-widest rounded-xl transition-all cursor-pointer"
-                      >
-                        ট্র্যাক অর্ডার / Track
-                      </button>
-                      {ord.status === 'delivered' && (
-                        <button
-                          onClick={() => handleReturn(ord)}
-                          className="px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-extrabold text-[10px] uppercase rounded-xl transition-all cursor-pointer"
-                        >
-                          রিটার্ন / Refund
-                        </button>
-                      )}
-                    </div>
+                    <button
+                      onClick={() => handleTrack(ord)}
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      View Details
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
                   </div>
                 </div>
               </motion.div>

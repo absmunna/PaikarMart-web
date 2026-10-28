@@ -105,8 +105,8 @@ export const addProduct = async (req: Request, res: Response) => {
     const { name, description, price, originalPrice, images, isPKStore, category, stock } = req.body;
     
     // Check user role from headers (simulated) or authenticated request user context
-    const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-seller-id';
-    const userRole = req.headers['x-user-role'] as string || (req as any).user?.role || 'buyer';
+    const userId = (req as any).user?.id || 'dev-seller-id';
+    const userRole = (req as any).user?.role || 'buyer';
 
     const allowedSellerRoles = [
       'seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'factory', 'rural', 'wholesale', 

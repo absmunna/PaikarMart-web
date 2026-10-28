@@ -3,19 +3,82 @@ import { db, expandStory, expandDemand, expandProduct, genId } from "@backend/ap
 import { requireAuth } from "../../middleware/auth";
 import { requireRole } from "../../middleware/permission";
 
+import { prisma } from "@backend/config/database";
+
 const router: IRouter = Router();
 
 router.get("/categories", (_req, res) => res.json(db.categories));
 
 router.get("/stories", (_req, res) => res.json(db.stories.map(expandStory)));
 
-router.get("/notifications", (_req, res) =>
+router.get(["/notifications", "/api/notifications"], async (req: any, res) => {
+  try {
+    if (process.env.DATABASE_URL) {
+      const userId = req.user?.dbProfile?.id || req.user?.id || req.query?.userId;
+      const dbNotifs = await prisma.notification.findMany({
+        where: userId ? { userId } : {},
+        orderBy: { createdAt: 'desc' },
+        take: 50
+      });
+      if (dbNotifs && dbNotifs.length > 0) {
+        const mapped = dbNotifs.map((n: any) => ({
+          id: n.id,
+          userId: n.userId,
+          kind: n.type || "system",
+          type: n.type || "system",
+          title: n.title,
+          body: n.body,
+          read: n.read,
+          createdAt: n.createdAt.toISOString()
+        }));
+        return res.json(mapped);
+      }
+    }
+  } catch (err) {
+    console.warn("Prisma notifications query fallback:", err);
+  }
+
   res.json(
     [...db.notifications].sort((a, b) =>
       b.createdAt.localeCompare(a.createdAt),
     ),
-  ),
-);
+  );
+});
+
+router.post(["/notifications/mark-all-read", "/api/notifications/mark-all-read"], async (req: any, res) => {
+  try {
+    if (process.env.DATABASE_URL) {
+      const userId = req.user?.dbProfile?.id || req.user?.id;
+      if (userId) {
+        await prisma.notification.updateMany({
+          where: { userId, read: false },
+          data: { read: true }
+        });
+      }
+    }
+    db.notifications.forEach(n => { n.read = true; });
+    res.json({ success: true, message: "সকল নোটিফিকেশন পড়া হয়েছে হিসেবে চিহ্নিত করা হয়েছে" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to mark notifications as read" });
+  }
+});
+
+router.patch(["/notifications/:id/read", "/api/notifications/:id/read"], async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    if (process.env.DATABASE_URL) {
+      await prisma.notification.update({
+        where: { id },
+        data: { read: true }
+      }).catch(() => {});
+    }
+    const target = db.notifications.find(n => n.id === id);
+    if (target) target.read = true;
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update notification" });
+  }
+});
 
 router.get("/demands", (req, res) => {
   const { mine } = req.query as { mine?: string };

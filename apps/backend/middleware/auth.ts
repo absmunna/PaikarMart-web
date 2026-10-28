@@ -2,7 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppRole, RoleGroup, getRoleGroup, getPermissionsForRole } from "../../frontend/src/core/config/roles.config";
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_12345';
+export const JWT_SECRET = (() => {
+  if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET environment variable is missing in production environment.');
+    throw new Error('FATAL: JWT_SECRET must be configured in production environment.');
+  }
+  return process.env.JWT_SECRET || 'fallback_secret_key_12345';
+})();
 
 export interface AuthenticatedUser {
   id: string;

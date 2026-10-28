@@ -325,14 +325,16 @@ router.get('/shops/:id', async (req, res) => {
 });
 
 // Single id route fallback
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   if (['feed', 'services', 'events', 'shops'].includes(id)) {
-    return; // let other handlers process
+    return next(); // let subsequent handlers process reserved paths
   }
   const shop = BASE_NEARBY_SHOPS.find(s => s.id === id);
   if (shop) {
-    const enriched = enrichShopWithDistance(shop, 23.8103, 90.4125, 10.0);
+    const userLat = req.query.lat ? parseFloat(req.query.lat as string) : 23.8103;
+    const userLng = req.query.lng ? parseFloat(req.query.lng as string) : 90.4125;
+    const enriched = enrichShopWithDistance(shop, userLat, userLng, 10.0);
     return res.json({ status: 'success', data: enriched });
   }
   res.status(404).json({ status: 'error', message: 'Shop not found' });

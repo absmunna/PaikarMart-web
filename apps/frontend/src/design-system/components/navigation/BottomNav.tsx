@@ -1,15 +1,20 @@
 import React from 'react';
 import { 
-  Home, Newspaper, LayoutGrid, MessageSquare, User
+  Home, Newspaper, LayoutGrid, MessageSquare, User, LogIn, PlayCircle
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from '@/core/lib/i18n';
 import { useAuth } from '@/modules/auth';
+import { useNavSettingsStore } from '@/app/AppShell/useNavSettingsStore';
 
-export const BottomNav = () => {
+export const BottomNav = ({ isVisible }: { isVisible?: boolean }) => {
   const location = useLocation();
-  const { t } = useTranslation();
-  const { user } = useAuth();
+  const { t, lang } = useTranslation();
+  const { user, isAuthenticated } = useAuth();
+  const isNavVisibleStore = useNavSettingsStore((s) => s.isNavVisible);
+  const navBehavior = useNavSettingsStore((s) => s.navBehavior);
+
+  const shouldShow = navBehavior === 'fixed' ? true : (isVisible !== undefined ? isVisible : isNavVisibleStore);
 
   const isPortalActive = location.pathname === '/portals' || 
                          location.pathname === '/apps' || 
@@ -17,21 +22,32 @@ export const BottomNav = () => {
                          location.pathname === '/portal-hub' ||
                          location.pathname.startsWith('/portals/');
 
+  const isVideoActive = location.pathname === '/video' || 
+                        location.pathname.startsWith('/video/') || 
+                        location.pathname === '/reels';
+
   const isActive = (path: string) => {
     if (path === '/portals') return isPortalActive;
+    if (path === '/video') return isVideoActive;
     return location.pathname === path;
   };
+
+  const profilePath = isAuthenticated ? '/profile' : '/login';
+  const profileLabel = isAuthenticated ? t('profile') : (lang === 'BN' ? 'লগইন' : 'Login');
+  const ProfileIcon = isAuthenticated ? User : LogIn;
 
   const navItems = [
     { label: t('home'), icon: Home, path: '/' },
     { label: t('feed'), icon: Newspaper, path: '/feed' },
     { label: t('apps'), icon: LayoutGrid, path: '/portals', isCenter: true },
-    { label: t('messages'), icon: MessageSquare, path: '/messages' },
-    { label: t('profile'), icon: User, path: '/profile' },
+    { label: lang === 'BN' ? 'ভিডিও' : 'Video', icon: PlayCircle, path: '/video' },
+    { label: profileLabel, icon: ProfileIcon, path: profilePath },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 glass h-[64px] w-full max-w-[480px] sm:max-w-[540px] md:max-w-[600px] lg:max-w-[640px] border-t border-[var(--pm-border)] pb-safe shadow-[0_-4px_16px_rgba(0,0,0,0.1)] flex items-center select-none">
+    <nav className={`absolute bottom-0 left-0 right-0 z-40 glass h-[64px] w-full border-t border-[var(--pm-border)] pb-safe shadow-[0_-4px_16px_rgba(0,0,0,0.1)] flex items-center select-none transition-transform duration-300 ease-in-out ${
+      shouldShow ? 'translate-y-0' : 'translate-y-full pointer-events-none'
+    }`}>
       <div className="w-full h-full flex items-center justify-around px-2 relative">
         {navItems.map((item) => (
           item.isCenter ? (
@@ -85,5 +101,3 @@ export const BottomNav = () => {
 };
 
 export default BottomNav;
-
-

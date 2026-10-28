@@ -15,18 +15,7 @@ export interface PKShopTeamMember {
 }
 
 // In-memory persistent registry for PK Shop Managers/Moderators (resilient when DB offline)
-export const pkShopTeamRegistry: PKShopTeamMember[] = [
-  {
-    id: "pk-team-1",
-    userId: "admin-master",
-    email: "abs.munna1@gmail.com",
-    name: "System Super Admin",
-    role: "STORE_MANAGER",
-    permissions: ["products:write", "orders:write", "inventory:write", "team:write"],
-    addedBy: "system",
-    createdAt: new Date().toISOString()
-  }
-];
+export const pkShopTeamRegistry: PKShopTeamMember[] = [];
 
 export const isUserSuperAdmin = (req: AuthenticatedRequest): boolean => {
   if (!req.user) return false;

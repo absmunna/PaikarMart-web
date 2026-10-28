@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingBag, Flame, ChevronRight, ChevronLeft, Sparkles, 
   Factory, Award, MapPin, Activity, Store, Wrench, Laptop, Briefcase,
-  Shirt, Smartphone, Wheat
+  Shirt, Smartphone, Wheat, PlayCircle
 } from 'lucide-react';
 import { PORTAL_CATEGORIES_MAP, PortalContextType } from '@/shared/constants/categoriesData';
 import { useCategoryStore } from '@/store/categoryStore';
@@ -143,6 +143,7 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
   // Modern Category & Portal Icons List
   const categoryItems = [
     { id: 'all', icon: ShoppingBag, label: 'সব প্রোডাক্ট', path: '/', categoryKey: 'all', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
+    { id: 'video', icon: PlayCircle, label: 'ভিডিও পোর্টাল', path: '/video', categoryKey: 'video', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
     { id: 'wholesale', icon: Factory, label: 'পাইকারি আড়ত', path: '/wholesale', categoryKey: 'wholesale', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' },
     { id: 'pk-shop', icon: Sparkles, label: 'পিকে স্টোর', path: '/pk-shop', categoryKey: 'pk-shop', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
     { id: 'brands', icon: Award, label: 'ব্র্যান্ড শপ', path: '/brands', categoryKey: 'brands', color: 'text-pink-400 bg-pink-500/10 border-pink-500/20' },

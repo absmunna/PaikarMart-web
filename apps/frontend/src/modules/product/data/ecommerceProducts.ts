@@ -1,5 +1,6 @@
 export interface EcommerceProduct {
   id: string;
+  asin?: string;
   name: string;
   title?: string;
   category: "wholesale" | "retail" | "fashion" | "electronics" | "grocery" | "pharmacy" | "dropship";
@@ -25,6 +26,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Wholesale / B2B ───
   {
     id: "wh-1",
+    asin: "PASIN-B08WH01",
     name: "এক্সপোর্ট কোয়ালিটি কটন ড্রপ-শোল্ডার টি-শার্ট লট",
     title: "এক্সপোর্ট কোয়ালিটি কটন ড্রপ-শোল্ডার টি-শার্ট লট (১৮০ GSM)",
     category: "wholesale",
@@ -51,6 +53,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "wh-2",
+    asin: "PASIN-B08WH02",
     name: "জেনুইন লেদার প্রিমিয়াম মানিব্যাগ পাইকারি লট",
     title: "জেনুইন লেদার প্রিমিয়াম মানিব্যাগ পাইকারি লট (হস্তনির্মিত)",
     category: "wholesale",
@@ -76,6 +79,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "wh-3",
+    asin: "PASIN-B08WH03",
     name: "সোলার প্যানেল ৩৩০W ইন্ডাস্ট্রিয়াল এনার্জি প্যাক",
     title: "সোলার প্যানেল ৩৩০W ইন্ডাস্ট্রিয়াল মনোক্রিস্টালাইন এনার্জি প্যাক",
     category: "wholesale",
@@ -102,6 +106,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Retail ───
   {
     id: "ret-1",
+    asin: "PASIN-B08RET01",
     name: "দিনাজপুরের সুগন্ধি কাটারিভোগ চাল (প্রিমিয়াম)",
     title: "দিনাজপুরের ঐতিহ্যবাহী সুগন্ধি কাটারিভোগ চাল (প্রিমিয়াম গ্রেড)",
     category: "retail",
@@ -124,6 +129,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "ret-2",
+    asin: "PASIN-B08RET02",
     name: "টাঙ্গাইল ট্র্যাডিশনাল হ্যান্ডলুম তাঁতের সুতি শাড়ি",
     title: "টাঙ্গাইল ট্র্যাডিশনাল হ্যান্ডলুম জামদানি মোটিফ সুতি শাড়ি",
     category: "retail",
@@ -145,6 +151,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "ret-3",
+    asin: "PASIN-B08RET03",
     name: "খাঁটি কাঠের ঘানির সরিষার তেল (১ লিটার কাচের বোতল)",
     title: "খাঁটি কাঠের ঘানির প্রথম চাপ সরিষার তেল (১ লিটার)",
     category: "retail",
@@ -169,6 +176,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Fashion ───
   {
     id: "fsh-1",
+    asin: "PASIN-B08FSH01",
     name: "প্রিমিয়াম লিনেন কটন কাবলি সেট (এলিগ্যান্ট কালেকশন)",
     title: "প্রিমিয়াম লিনেন কটন কাবলি সেট উইথ পায়জামা",
     category: "fashion",
@@ -191,6 +199,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "fsh-2",
+    asin: "PASIN-B08FSH02",
     name: "আল্ট্রা-কমফোর্ট স্লিম ফিট ডেনিম জিন্স",
     title: "আল্ট্রা-কমফোর্ট স্ট্রেচেবল স্লিম ফিট ডেনিম জিন্স",
     category: "fashion",
@@ -213,6 +222,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "fsh-3",
+    asin: "PASIN-B08FSH03",
     name: "দুবাই প্রিমিয়াম চেরি জর্জেট এমব্রয়ডারি আবায়া",
     title: "দুবাই প্রিমিয়াম চেরি জর্জেট এমব্রয়ডারি ডিজাইনার আবায়া",
     category: "fashion",
@@ -237,6 +247,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Electronics ───
   {
     id: "el-1",
+    asin: "PASIN-B08ELEC01",
     name: "Samsung Galaxy A55 5G (8GB/128GB Official)",
     title: "Samsung Galaxy A55 5G (Awesome Iceblue, 8GB RAM, 128GB Storage)",
     category: "electronics",
@@ -259,6 +270,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "el-2",
+    asin: "PASIN-B08ELEC02",
     name: "ANC ট্রু ওয়্যারলেস স্টেরিও ব্লুটুথ ইয়ারবাডস",
     title: "অ্যাক্টিভ নয়েজ ক্যান্সেলেশন (ANC) ট্রু ওয়্যারলেস স্টেরিও বাডস প্রো",
     category: "electronics",
@@ -280,6 +292,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "el-3",
+    asin: "PASIN-B08ELEC03",
     name: "Smart Watch Ultra AMOLED ডিসপ্লে ও কলিং",
     title: "Smart Watch Ultra 2.02 Inch HD AMOLED ডিসপ্লে ব্লুটুথ কলিং ঘড়ি",
     category: "electronics",
@@ -303,6 +316,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Grocery ───
   {
     id: "gr-1",
+    asin: "PASIN-B08GROC01",
     name: "পদ্মা নদীর রূপালী ইলিশ (তাজা বরফ ছাড়া, ১.২ কেজি)",
     title: "পদ্মা নদীর আসল রূপালী ইলিশ মাছ (১.২ কেজি সাইজ, তাজা)",
     category: "grocery",
@@ -325,6 +339,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "gr-2",
+    asin: "PASIN-B08GROC02",
     name: "সুন্দরবনের প্রাকৃতিক খাঁটি খলিশা ফুলের মধু",
     title: "সুন্দরবনের প্রাকৃতিক ১০০% খাঁটি খলিশা ফুলের মধু (১ কেজি কাচের জার)",
     category: "grocery",
@@ -347,6 +362,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "gr-3",
+    asin: "PASIN-B08GROC03",
     name: "পাবনার ঐতিহ্যবাহী স্পেশাল গাওয়া ঘি (১ কেজি জার)",
     title: "পাবনার ঈশ্বরদীর ঐতিহ্যবাহী খাঁটি দানাদার গাওয়া ঘি",
     category: "grocery",
@@ -371,6 +387,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Pharmacy ───
   {
     id: "ph-1",
+    asin: "PASIN-B08PHARM01",
     name: "অটোমেটিক ডিজিটাল ডিজিটাল ব্লাড প্রেসার মনিটর",
     title: "অটোমেটিক ডিজিটাল আপার আর্ম ব্লাড প্রেসার মনিটর (বিপি মেশিন)",
     category: "pharmacy",
@@ -392,6 +409,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "ph-2",
+    asin: "PASIN-B08PHARM02",
     name: "ওমেগা-৩ ট্রিপল স্ট্রেন্থ ফিশ অয়েল ক্যাপসুল (৬০টি)",
     title: "ওমেগা-৩ ট্রিপল স্ট্রেন্থ ফিশ অয়েল ১০০০mg সফটজেল (৬০ ক্যাপসুল)",
     category: "pharmacy",
@@ -413,6 +431,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "ph-3",
+    asin: "PASIN-B08PHARM03",
     name: "ডিজিটাল গ্লুকোমিটার সুগার টেস্ট কিট ও ২৫ স্ট্রিপস",
     title: "ডিজিটাল রক্তের সুগার মাপার গ্লুকোমিটার কমপ্লিট কিট উইথ ২৫ স্ট্রিপস",
     category: "pharmacy",
@@ -435,6 +454,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   // ─── Dropship ───
   {
     id: "dr-1",
+    asin: "PASIN-B08DROP01",
     name: "ইউএসবি রিচার্জেবল পোর্টেবল স্মুদি ও জুস ব্লেন্ডার",
     title: "ইউএসবি রিচার্জেবল ৬-ব্লেড পোর্টেবল পার্সোনাল জুসার ও স্মুদি ব্লেন্ডার",
     category: "dropship",
@@ -456,6 +476,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "dr-2",
+    asin: "PASIN-B08DROP02",
     name: "মিনি ব্লুটুথ পকেট থার্মাল ফটো ও লেবেল প্রিন্টার",
     title: "মিনি ওয়্যারলেস পকেট থার্মাল ব্লুটুথ প্রিন্টার (কালি বিহীন)",
     category: "dropship",
@@ -477,6 +498,7 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
   },
   {
     id: "dr-3",
+    asin: "PASIN-B08DROP03",
     name: "মাল্টিফাংশনাল অ্যান্টি-থেফট ল্যাপটপ ব্যাকপ্যাক",
     title: "ওয়াটারপ্রুফ মাল্টিফাংশনাল অ্যান্টি-থেফট ১৫.৬ ইঞ্চি ল্যাপটপ ব্যাকপ্যাক",
     category: "dropship",

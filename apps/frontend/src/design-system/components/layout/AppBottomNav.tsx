@@ -13,7 +13,6 @@ export const AppBottomNav: React.FC = () => {
     { icon: Home, label: 'Home', path: '/' },
     { icon: LayoutGrid, label: 'Feed', path: '/feed' },
     { icon: PlusSquare, label: 'Hub', path: '/portals', isCenter: true },
-    { icon: MessageCircle, label: 'Chat', path: '/messages', authRequired: true },
     { icon: User, label: 'Profile', path: isAuthenticated ? '/profile' : '/auth/login' },
   ];
 

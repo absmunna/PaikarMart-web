@@ -39,9 +39,10 @@ export function canAccessPortal(role: AppRole, portal: string): boolean {
   if (role === 'super_admin' || role === 'admin') return true;
   
   const portalRoles: Record<string, AppRole[]> = {
-    'seller': ['seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'b2b_seller', 'brand_seller'],
+    'seller': ['seller', 'retail_seller', 'wholesale_seller', 'factory_seller', 'b2b_seller', 'brand_seller', 'content_creator'],
     'factory': ['factory', 'factory_seller'],
     'rider': ['rider'],
+    'creator': ['content_creator', 'admin', 'super_admin', 'moderator'],
     'admin': ['admin', 'super_admin', 'moderator'],
   };
 

@@ -10,16 +10,11 @@ import { cn } from "@/lib/utils";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { CategoryNavBar } from "@shared/CategoryNavBar";
 
-// Import modular B2B sub-components (new add)
-import { B2BHomeView } from "@/portals/business-hub/b2b/components/B2BHomeView";
-import { B2BProductsView } from "@/portals/business-hub/b2b/components/B2BProductsView";
-import { B2BProductDetailView } from "@/portals/business-hub/b2b/components/B2BProductDetailView";
-import { FactoryDirectoryView } from "@/portals/business-hub/b2b/components/FactoryDirectoryView";
-import { FactoryProfileView } from "@/portals/business-hub/b2b/components/FactoryProfileView";
-import { SupplierDirectoryView } from "@/portals/business-hub/b2b/components/SupplierDirectoryView";
-import { RFQMarketplaceView } from "@/portals/business-hub/b2b/components/RFQMarketplaceView";
-import { RFQDetailView } from "@/portals/business-hub/b2b/components/RFQDetailView";
-import { B2BTradeFeedView } from "@/portals/business-hub/b2b/components/B2BTradeFeedView";
+import { 
+  B2BHomeView, B2BProductsView, B2BProductDetailView, 
+  FactoryDirectoryView, FactoryProfileView, SupplierDirectoryView, 
+  RFQMarketplaceView, RFQDetailView, B2BTradeFeedView 
+} from "@/portals/marketplace-hub/wholesale/components/b2b";
 
 const CHAIN_STEPS = [
   {

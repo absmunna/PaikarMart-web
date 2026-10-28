@@ -179,11 +179,12 @@ export class BkashPaymentProvider implements IPaymentProvider {
         message: data.statusMessage || 'Payment execution failed'
       };
     } catch (err: any) {
+      console.error('[bKash Provider] Verify error:', err);
       return {
         transactionId,
-        status: 'success', // fallback
+        status: 'failed',
         provider: 'bkash',
-        isSandbox: true
+        isSandbox: !this.isConfigured() || transactionId.startsWith('BKASH-')
       };
     }
   }

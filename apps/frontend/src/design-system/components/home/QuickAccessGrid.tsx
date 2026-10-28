@@ -16,6 +16,7 @@ interface Tile {
 }
 
 const tiles: Tile[] = [
+  { label: 'ভিডিও', icon: PlayCircle, color: 'from-rose-500 to-red-600', route: '/video' },
   { label: 'PK Shop', icon: Star, color: 'from-indigo-600 to-purple-700', route: '/pk-shop' },
   { label: 'Market', icon: ShoppingBag, color: 'from-orange-400 to-pink-500', route: '/b2c' },
   { label: 'পাইকার', icon: Building2, color: 'from-blue-400 to-indigo-600', route: '/wholesale' },

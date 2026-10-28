@@ -24,7 +24,8 @@
     "socket.io": "^4.8.3",
     "vite": "^6.2.3",
     "ws": "^8.21.3",
-    "xss": "^1.0.15"
+    "xss": "^1.0.15",
+    "esbuild": "^0.25.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -18,6 +18,10 @@ import ChatList from '@/portals/messages/pages/ChatList';
 import ChatDetail from '@/portals/messages/pages/ChatDetail';
 import CartPage from '@/modules/cart/pages/CartPage';
 import VideoHub from '@/portals/video/VideoHub';
+import ShortsViewer from '@/portals/video/ShortsViewer';
+import LiveStreamView from '@/portals/video/LiveStreamView';
+import CreatorChannel from '@/portals/video/CreatorChannel';
+import VideoWatchView from '@/portals/video/VideoWatchView';
 import { HubPage } from '@/pages/HubPage';
 import { NewsPage } from '@/modules/news/pages/NewsPage';
 import { 
@@ -38,9 +42,14 @@ export const publicRoutes = (
     <Route path="/unauthorized" element={<UnauthorizedPage />} />
     <Route path="/demand" element={<Demand />} />
     <Route path="/demand/:id" element={<DemandDetail />} />
-    <Route path="/reels" element={<Reels />} />
+    <Route path="/reels" element={<ShortsViewer />} />
     <Route path="/video" element={<VideoHub />} />
-    <Route path="/video/*" element={<VideoHub />} />
+    <Route path="/video/shorts" element={<ShortsViewer />} />
+    <Route path="/video/live" element={<LiveStreamView />} />
+    <Route path="/video/live/:id" element={<LiveStreamView />} />
+    <Route path="/video/channel/:id" element={<CreatorChannel />} />
+    <Route path="/video/watch/:id" element={<VideoWatchView />} />
+    <Route path="/video/:id" element={<VideoWatchView />} />
     <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
     <Route path="/profile/:id" element={<AuthGuard><ProfilePage /></AuthGuard>} />
     <Route path="/u/:id" element={<ProfilePage />} />

@@ -11,6 +11,7 @@ import { useAuth } from '@/modules/auth';
 import { useLocationStore } from '@/modules/location';
 import { toast } from 'sonner';
 import { postService } from '@/core/services/postService';
+import { StoryBar } from '@/design-system/components/feed/StoryBar';
 
 // Standard non-location category pills for Feed
 const SOCIAL_FILTER_PILLS = [
@@ -155,7 +156,10 @@ export default function Feed() {
     <div className="w-full pb-28 min-h-screen bg-[var(--pm-bg)] select-none">
       <div className="max-w-4xl mx-auto px-3 sm:px-6 space-y-4 pt-3">
         
-
+        {/* ─── 1. SELLER STORIES BAR ─── */}
+        <div className="max-w-[620px] mx-auto w-full">
+          <StoryBar />
+        </div>
 
         {/* ─── 2. SOCIAL FILTER PILLS & POST CREATION BUTTON ─── */}
         <div className="flex items-center justify-between gap-2 max-w-[620px] mx-auto w-full pt-1">

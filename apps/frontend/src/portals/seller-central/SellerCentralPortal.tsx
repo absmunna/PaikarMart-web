@@ -1181,7 +1181,12 @@ export function SellerCentralPortal() {
                               {p.categoryId}
                             </span>
                           </div>
-                          <p className="text-xs text-emerald-400 font-extrabold mt-1">৳{p.price}</p>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <p className="text-xs text-emerald-400 font-extrabold">৳{p.price}</p>
+                            <span className="font-mono text-[9px] text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-md uppercase font-bold">
+                              ASIN: {p.asin || `PASIN-${p.id}`}
+                            </span>
+                          </div>
                         </div>
                         <div className="flex items-center justify-between text-xs text-slate-400">
                           <span>

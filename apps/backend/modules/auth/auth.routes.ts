@@ -10,6 +10,8 @@ import {
   getDbStatus 
 } from './auth.controller';
 
+import { verifyFirebaseToken } from '../../middleware/firebaseAuth';
+
 const router = Router();
 
 router.post('/register', register);
@@ -18,7 +20,7 @@ router.post('/forgot-password', forgotPassword);
 router.post('/send-otp', sendOtp);
 router.post('/request-otp', sendOtp);
 router.post('/verify-otp', verifyOtp);
-router.post('/sync', syncUser);
+router.post('/sync', verifyFirebaseToken, syncUser);
 router.get('/db-status', getDbStatus);
 router.get('/me', getCurrentUser);
 

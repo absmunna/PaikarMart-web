@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, Wallet, Search, User, ChevronDown, Check, X } from 'lucide-react';
+import { MapPin, Wallet, Search, User, ChevronDown, Check, X, PlayCircle } from 'lucide-react';
 import { useWalletStore } from '@/modules/wallet';
 import { useAuth } from '@/modules/auth';
 import { useNavigate } from 'react-router-dom';
@@ -185,8 +185,23 @@ export const HomeHeader: React.FC = () => {
         )}
       </form>
 
-      {/* Right: Wallet & Notifications (Zero-pill glass approach) */}
-      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+      {/* Right: Video Portal & Wallet */}
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/video')}
+          className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/25 hover:bg-rose-500/20 text-rose-400 cursor-pointer transition-all group"
+          title="ভিডিও পোর্টাল ও কমার্স হাব"
+        >
+          <PlayCircle className="w-4 h-4 text-rose-500 fill-rose-500/20 group-hover:scale-110 transition-transform" />
+          <span className="text-[11px] font-black tracking-tight text-rose-300 hidden sm:inline">ভিডিও</span>
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+          </span>
+        </motion.button>
+
         <motion.div 
           whileHover={{ y: -1 }}
           whileTap={{ scale: 0.98 }}

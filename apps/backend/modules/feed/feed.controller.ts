@@ -532,7 +532,9 @@ export const getSocialFeed = async (req: Request, res: Response) => {
       district, 
       filter = 'all', 
       tag,
-      search 
+      search,
+      type,
+      mediaType 
     } = req.query;
 
     const pageNum = parseInt(String(page), 10) || 1;
@@ -540,6 +542,7 @@ export const getSocialFeed = async (req: Request, res: Response) => {
     const locFilter = String(district || location || '').toLowerCase().trim();
     const tagFilter = String(tag || '').toLowerCase().trim();
     const searchFilter = String(search || '').toLowerCase().trim();
+    const typeFilter = String(type || mediaType || '').toLowerCase().trim();
 
     // If real database is connected, attempt to fetch from DB
     if (db.isConnected()) {
@@ -669,6 +672,15 @@ export const getSocialFeed = async (req: Request, res: Response) => {
         p.content.toLowerCase().includes(searchFilter) ||
         p.sellerName.toLowerCase().includes(searchFilter) ||
         p.location.toLowerCase().includes(searchFilter)
+      );
+    }
+
+    // Filter by type / mediaType (e.g. video / reel)
+    if (typeFilter) {
+      posts = posts.filter(p => 
+        (p.mediaType && p.mediaType.toLowerCase() === typeFilter) ||
+        (p.type && p.type.toLowerCase() === typeFilter) ||
+        (typeFilter === 'video' && Boolean(p.videoUrl))
       );
     }
 
@@ -940,15 +952,16 @@ export const getPosts = getSocialFeed;
 export const createPost = async (req: Request, res: Response) => {
   try {
     const { content, type, images, videoUrl, productId, tags, price, location } = req.body;
+    const authorUser = (req as any).user?.dbProfile || (req as any).user;
 
     const newPost = {
       id: `post-user-${Date.now()}`,
       type: type || 'retail',
-      sellerId: 'u-current',
-      sellerName: 'সেলার পার্টনার',
-      storeName: 'আমার অনলাইন শপ',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-      location: location || 'ঢাকা, বাংলাদেশ',
+      sellerId: authorUser?.id || 'u-current',
+      sellerName: authorUser?.fullName || authorUser?.name || 'সেলার পার্টনার',
+      storeName: authorUser?.vendorProfile?.shopName || 'আমার অনলাইন শপ',
+      avatarUrl: authorUser?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      location: location || authorUser?.vendorProfile?.location || 'ঢাকা, বাংলাদেশ',
       district: 'Dhaka',
       division: 'Dhaka',
       isVerified: true,
@@ -962,7 +975,7 @@ export const createPost = async (req: Request, res: Response) => {
       videoUrl: videoUrl || null,
       product: productId ? {
         id: productId,
-        title: content.slice(0, 30),
+        title: (content || '').slice(0, 30),
         price: price || 1200,
         originalPrice: null,
         discount: 0,
@@ -975,6 +988,31 @@ export const createPost = async (req: Request, res: Response) => {
       userInteractions: { isLiked: false, isSaved: false, isFollowing: false },
       reviews: []
     };
+
+    if (db.isConnected()) {
+      try {
+        let authorId = authorUser?.id || (req as any).user?.uid;
+        if (!authorId) {
+          const firstUser = await prisma.user.findFirst();
+          authorId = firstUser?.id;
+        }
+
+        if (authorId) {
+          const dbPost = await prisma.post.create({
+            data: {
+              authorId,
+              content: content || '',
+              mediaUrls: images && images.length > 0 ? images : ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800'],
+              type: type === 'wholesale' ? 'buying_demand' : 'regular',
+              productId: productId || null
+            }
+          });
+          newPost.id = dbPost.id;
+        }
+      } catch (dbErr) {
+        console.warn('[Feed Controller] Prisma post create fallback to in-memory:', dbErr);
+      }
+    }
 
     inMemorySocialPosts.unshift(newPost as any);
     return res.status(201).json({ success: true, post: newPost });
@@ -1005,6 +1043,28 @@ export const likePost = async (req: Request, res: Response) => {
 export const getComments = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (db.isConnected() && !id.startsWith('post-soc-')) {
+      try {
+        const dbComments = await prisma.comment.findMany({
+          where: { postId: id },
+          include: { author: true },
+          orderBy: { createdAt: 'desc' }
+        });
+        if (dbComments && dbComments.length > 0) {
+          const formatted = dbComments.map((c: any) => ({
+            id: c.id,
+            authorName: c.author?.fullName || 'ভেরিফায়েড বায়ার',
+            verifiedBuyer: true,
+            rating: 5,
+            text: c.content,
+            timestamp: new Date(c.createdAt).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })
+          }));
+          return res.json(formatted);
+        }
+      } catch (e) {
+        console.warn('Prisma getComments fallback:', e);
+      }
+    }
     const target = inMemorySocialPosts.find(p => p.id === id);
     return res.json(target?.reviews || []);
   } catch (error) {
@@ -1016,16 +1076,40 @@ export const createComment = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { content, authorName, rating } = req.body;
+    const authorUser = (req as any).user?.dbProfile || (req as any).user;
     const target = inMemorySocialPosts.find(p => p.id === id);
 
     const newRev = {
       id: `rev-${Date.now()}`,
-      authorName: authorName || 'ভেরিফায়েড বায়ার',
+      authorName: authorUser?.fullName || authorName || 'ভেরিফায়েড বায়ার',
       verifiedBuyer: true,
       rating: rating || 5,
       text: content || 'পণ্যটি ভালো লেগেছে!',
       timestamp: 'এইমাত্র'
     };
+
+    if (db.isConnected() && !id.startsWith('post-soc-')) {
+      try {
+        let authorUserId = authorUser?.id || (req as any).user?.uid;
+        if (!authorUserId) {
+          const firstUser = await prisma.user.findFirst();
+          authorUserId = firstUser?.id;
+        }
+
+        if (authorUserId) {
+          const dbComment = await prisma.comment.create({
+            data: {
+              postId: id,
+              authorUserId,
+              content: content || ''
+            }
+          });
+          newRev.id = dbComment.id;
+        }
+      } catch (dbErr) {
+        console.warn('[Feed Controller] Prisma comment create fallback:', dbErr);
+      }
+    }
 
     if (target) {
       target.reviews.unshift(newRev);

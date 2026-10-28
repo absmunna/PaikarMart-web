@@ -16,6 +16,8 @@ import { Products as B2BProducts } from '@/portals/marketplace-hub/wholesale/pag
 import { Orders as B2BOrders } from '@/portals/marketplace-hub/wholesale/pages/Orders';
 
 import NearbyHome from '@/portals/local-hub/subportals/nearby/pages/NearbyHome';
+import { LocalHubHome } from '@/portals/local-hub/pages/LocalHubHome';
+import LocalShopDetailPage from '@/portals/local-hub/pages/LocalShopDetailPage';
 import ServicesHome from '@/portals/services-hub/services/pages/ServicesHome';
 import RideHome from '@/portals/logistics-hub/ride/pages/RideHome';
 import DigitalHome from '@/portals/marketplace-hub/digital/pages/DigitalHome';
@@ -133,6 +135,13 @@ export const portalRoutes = (
     <Route path="/pharmacy" element={<PharmacyHome />} />
     <Route path="/portal/electronics" element={<ElectronicsHome />} />
     <Route path="/electronics" element={<ElectronicsHome />} />
+    {/* Local Hub, Nearby Stores & Dedicated Local Shop Detail Page */}
+    <Route path="/nearby/shop/:id" element={<LocalShopDetailPage />} />
+    <Route path="/portal/nearby/shop/:id" element={<LocalShopDetailPage />} />
+    <Route path="/local/shop/:id" element={<LocalShopDetailPage />} />
+    <Route path="/local-hub/shop/:id" element={<LocalShopDetailPage />} />
+    <Route path="/local-hub" element={<LocalHubHome />} />
+    <Route path="/portal/local-hub" element={<LocalHubHome />} />
     <Route path="/portal/nearby" element={<NearbyHome />} />
     <Route path="/nearby" element={<NearbyHome />} />
     <Route path="/local" element={<NearbyHome />} />

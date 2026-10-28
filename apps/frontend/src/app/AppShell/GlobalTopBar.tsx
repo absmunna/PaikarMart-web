@@ -31,6 +31,7 @@ import { Button } from "@ui/button";
 import { cn } from "@/lib/utils";
 import { MegaSearch } from "@/modules/search";
 import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
+import { useAuth } from "@/app/context/AuthContext";
 
 interface GlobalTopBarProps {
   onToggleSidebar?: () => void;
@@ -43,6 +44,7 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   const [isMegaSearchOpen, setIsMegaSearchOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -258,13 +260,15 @@ export const GlobalTopBar: React.FC<GlobalTopBarProps> = ({
                 </>
               )}
 
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("/messages")}
-                className="w-10 h-10 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] relative"
-              >
-                <MessageSquare className="w-5 h-5" strokeWidth={2} />
-              </motion.button>
+              {isAuthenticated && (
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/messages")}
+                  className="w-10 h-10 flex items-center justify-center text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] relative"
+                >
+                  <MessageSquare className="w-5 h-5" strokeWidth={2} />
+                </motion.button>
+              )}
 
               <motion.button
                 whileTap={{ scale: 0.95 }}

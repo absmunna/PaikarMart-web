@@ -2,6 +2,8 @@ import { Router, type IRouter } from "express";
 import { db, cartTotals, computeBreakdown, genId } from "@backend/api/lib/db";
 import type { Order, OrderItem, OrderStatus, StatusHistoryEntry } from "@backend/api/lib/db";
 import { prisma } from "@backend/config/database";
+import { authMiddleware } from "@backend/middleware/auth";
+import { RoleGuard } from "@backend/middleware/role";
 
 const router: IRouter = Router();
 
@@ -13,21 +15,15 @@ const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   cancelled:  [],
 };
 
-// ── GET /api/orders  ─────────────────────────────────────────────────────────
-// Returns buyer's own orders (newest first)
-router.get("/orders", async (_req, res) => {
+// ── GET /api/orders & /api/v1/orders  ─────────────────────────────────────────
+// Returns buyer's own personal orders (newest first)
+router.get(["/orders", "/v1/orders"], authMiddleware, RoleGuard(['buyer', 'seller', 'vendor', 'admin', 'super_admin', 'nearby_shop', 'service_provider']), async (req: any, res) => {
   try {
-    if (!process.env.DATABASE_URL) {
-      const buyer = db.orders.filter((o) => o.buyerId === db.currentUser.id);
-      return res.json([...buyer].sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
-    }
-
-    const userId = db.currentUser.id;
+    const userId = req.user?.dbProfile?.id || req.user?.id || req.user?.uid;
     const dbOrders = await prisma.order.findMany({
       where: {
         OR: [
-          { buyerId: userId },
-          { sellerId: userId }
+          { buyerId: userId }
         ]
       },
       include: {
@@ -74,7 +70,7 @@ router.get("/orders", async (_req, res) => {
 
 // ── GET /api/orders/all  ─────────────────────────────────────────────────────
 // Admin view: all orders
-router.get("/orders/all", async (_req, res) => {
+router.get("/orders/all", authMiddleware, RoleGuard(['admin']), async (_req, res) => {
   try {
     if (!process.env.DATABASE_URL) {
       return res.json([...db.orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
@@ -107,23 +103,11 @@ router.get("/orders/all", async (_req, res) => {
   }
 });
 
-// ── GET /api/orders/seller  ──────────────────────────────────────────────────
-// Seller view
-router.get("/orders/seller", async (req, res) => {
+// ── GET /api/orders/seller & /api/v1/orders/seller  ────────────────────────────
+// Seller view (customer orders incoming to this vendor shop)
+router.get(["/orders/seller", "/v1/orders/seller"], authMiddleware, RoleGuard(['seller', 'vendor', 'admin', 'super_admin', 'nearby_shop', 'service_provider']), async (req: any, res) => {
   try {
-    if (!process.env.DATABASE_URL) {
-      const vendorId = (req.query["vendorId"] as string) ?? "v1";
-      const sellerOrders = db.orders
-        .filter((o) => o.items.some((i) => i.vendorId === vendorId))
-        .map((o) => ({
-          ...o,
-          items: o.items.filter((i) => i.vendorId === vendorId),
-        }))
-        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-      return res.json(sellerOrders);
-    }
-
-    const vendorId = (req.query["vendorId"] as string) || db.currentUser.id;
+    const vendorId = (req.query["vendorId"] as string) || req.user?.dbProfile?.id || req.user?.id || req.user?.uid;
     const dbOrders = await prisma.order.findMany({
       where: { sellerId: vendorId },
       include: { items: true },

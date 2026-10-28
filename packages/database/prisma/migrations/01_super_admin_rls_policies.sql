@@ -11,7 +11,7 @@ BEGIN
   RETURN EXISTS (
     SELECT 1 FROM "User"
     WHERE id = auth.uid()::text
-      AND (role::text IN ('admin', 'super_admin', 'SUPER_ADMIN') OR email = 'abs.munna1@gmail.com')
+      AND (role::text IN ('admin', 'super_admin', 'SUPER_ADMIN'))
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

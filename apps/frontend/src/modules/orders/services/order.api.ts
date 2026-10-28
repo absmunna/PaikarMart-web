@@ -48,6 +48,7 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
   return api.post<Order>("/orders", input);
 }
 
-export async function listSellerOrders(sellerId: string): Promise<Order[]> {
-  return api.get<Order[]>(`/seller/orders?sellerId=${encodeURIComponent(sellerId)}`);
+export async function listSellerOrders(vendorId?: string): Promise<Order[]> {
+  const query = vendorId ? `?vendorId=${encodeURIComponent(vendorId)}` : "";
+  return api.get<Order[]>(`/orders/seller${query}`);
 }

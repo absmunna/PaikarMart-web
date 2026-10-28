@@ -4,7 +4,7 @@ import {
   User, Shield, Box, MessageSquare, History, 
   Settings, Zap, Store, MapPin, LayoutGrid, Bell, Grid3x3, Compass, Newspaper
 } from 'lucide-react';
-import { UserRole } from './routeConfig';
+import { AppRole as UserRole } from '@/config/roles.config';
 
 export interface NavItem {
   id: string;

@@ -39,7 +39,10 @@ import vendorsRouter from './api/routes/vendors';
 import miscRouter from './api/routes/misc';
 import meRouter from './api/routes/me';
 
+import { initializeFirebaseAdmin } from './config/firebase';
+
 dotenv.config();
+initializeFirebaseAdmin();
 
 // Multi-path .env fallback for monorepo development & production
 const envPathsToTry = [
@@ -57,9 +60,49 @@ for (const envPath of envPathsToTry) {
 
 
 
+// Guard against process crashes in production due to unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
+  // Bypass & handle all AI Studio internal control plane routes to prevent 404 or HTML fallthroughs
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/__aistudio_internal_control_plane')) {
+      return res.status(200).json({ status: "ok", service: "paikarmart" });
+    }
+    next();
+  });
+
+  // Dedicated lightweight health check handler for Cloud Run, Nginx, and Container probes
+  const healthCheckHandler = (req: express.Request, res: express.Response) => {
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json({
+      status: "ok",
+      service: "paikarmart",
+      timestamp: new Date().toISOString(),
+      database: {
+        connected: db.isConnected(),
+        status: db.isConnected() ? "connected" : "mock_resilient_mode"
+      }
+    });
+  };
+
+  app.get([
+    "/health",
+    "/healthz",
+    "/status",
+    "/_health",
+    "/api/health",
+    "/api/status",
+    "/api/v1/health"
+  ], healthCheckHandler);
 
   // Initialize Database
   // Don't await this if it fails or there is no DB, so it doesn't block startup
@@ -161,8 +204,9 @@ async function startServer() {
   const distPath = path.join(frontendRoot, 'dist');
   const indexHtml = path.join(distPath, 'index.html');
 
-  // Strict production detection: only use static dist when explicitly in production mode
-  const isProduction = process.env.NODE_ENV === "production";
+  // Production detection: explicit production env OR running compiled bundle from dist
+  const isCompiledBundle = __dirname.endsWith('dist') || __dirname.includes(path.sep + 'dist');
+  const isProduction = process.env.NODE_ENV === "production" || isCompiledBundle;
 
   // Serve static public assets (PWA manifest, icons, service worker)
   const publicPath = path.join(frontendRoot, 'public');

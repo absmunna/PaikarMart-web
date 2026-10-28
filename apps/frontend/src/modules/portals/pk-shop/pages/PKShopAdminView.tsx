@@ -22,7 +22,7 @@ export const PKShopAdminView: React.FC = () => {
     if (!isAuthenticated || !user) return false;
     const role = String(user.role || '').toLowerCase();
     const email = user.email?.toLowerCase();
-    return role === 'admin' || role === 'super_admin' || email === 'abs.munna1@gmail.com';
+    return role === 'admin' || role === 'super_admin';
   }, [isAuthenticated, user]);
 
   const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'team'>('products');
@@ -669,7 +669,7 @@ export const PKShopAdminView: React.FC = () => {
                         </p>
                       </div>
 
-                      {member.email !== 'abs.munna1@gmail.com' && (
+                      {true && (
                         <button
                           onClick={() => handleRemoveTeamMember(member.id)}
                           className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors"

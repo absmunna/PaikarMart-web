@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Search, Menu, ShoppingBag, Palette, MessageSquare, Plus, Sparkles, Building2, Store, Wrench, Flame, User, LogIn } from 'lucide-react';
+import { Bell, Search, Menu, ShoppingBag, Palette, MessageSquare, Plus, Sparkles, Building2, Store, Wrench, Flame, User, LogIn, Monitor, Smartphone } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { SearchBar } from './SearchBar';
 import { useCartStore, useCartDrawerStore } from '@/modules/cart';
@@ -10,8 +10,10 @@ import { useLiveChatStore } from '../chat/LiveChatDrawer';
 import { useLanguage } from '@/modules/language';
 import { LocationPicker } from './LocationPicker';
 import { ThemeLangSwitcher } from './ThemeLangSwitcher';
+import { useDomainViewMode } from '@/core/hooks/useDomainViewMode';
+import { useNavSettingsStore } from '@/app/AppShell/useNavSettingsStore';
 
-export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
+export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; isVisible?: boolean }) => {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const openCart = useCartDrawerStore((state) => state.open);
   const { user, isAuthenticated, isSeller } = useAuth();
@@ -19,9 +21,16 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const { isBn } = useLanguage();
   const unreadNotifications = getUnreadCount();
   const navigate = useNavigate();
+  const { isDesktopView, toggleViewMode } = useDomainViewMode();
+  const isNavVisibleStore = useNavSettingsStore((s) => s.isNavVisible);
+  const navBehavior = useNavSettingsStore((s) => s.navBehavior);
+
+  const shouldShow = navBehavior === 'fixed' ? true : (isVisible !== undefined ? isVisible : isNavVisibleStore);
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 glass h-[60px] md:h-[64px] w-full border-b border-[var(--pm-border)]/60 select-none">
+    <header className={`absolute top-0 left-0 right-0 z-50 glass h-[60px] md:h-[64px] w-full border-b border-[var(--pm-border)]/60 select-none transition-transform duration-300 ease-in-out ${
+      shouldShow ? 'translate-y-0' : '-translate-y-full pointer-events-none shadow-none'
+    }`}>
       <nav className="w-full mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
         
         {/* Zone 1: Brand / Portal Switcher */}
@@ -92,10 +101,29 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <LocationPicker />
           </div>
 
-          {/* Global Theme & Language Picker (Hidden on mobile UI) */}
+          {/* Global Theme & Language Picker */}
           <div className="shrink-0 hidden sm:block">
             <ThemeLangSwitcher />
           </div>
+
+          {/* View Mode Toggle: Desktop Full Screen vs Mobile Frame */}
+          <button
+            onClick={toggleViewMode}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] text-[var(--pm-text)] text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+            title={isDesktopView ? "মোবাইল ফ্রেম ভিউতে স্যুইচ করুন" : "ফুল স্ক্রিন ডেস্কটপ ভিউতে স্যুইচ করুন"}
+          >
+            {isDesktopView ? (
+              <>
+                <Smartphone className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
+                <span className="hidden xl:inline text-[11px]">মোবাইল ফ্রেম</span>
+              </>
+            ) : (
+              <>
+                <Monitor className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
+                <span className="hidden xl:inline text-[11px]">ডেস্কটপ ভিউ</span>
+              </>
+            )}
+          </button>
 
           {/* Cart Icon with badge */}
           <button 
@@ -125,43 +153,15 @@ export const Navbar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             )}
           </button>
 
-          {/* User State: Guest vs Logged-In Profile Avatar */}
-          {isAuthenticated && user ? (
-            <Link
-              to="/profile"
-              className="flex items-center gap-1.5 p-1 pl-1.5 rounded-full bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] transition-all group cursor-pointer"
-              title={isSeller ? "সেলার স্টোরফ্রন্ট / Seller Storefront" : "বায়ার ককপিট / Buyer Cockpit"}
+          {/* Message Icon - Only shown when user is logged in */}
+          {isAuthenticated && user && (
+            <button 
+              onClick={() => navigate('/messages')}
+              className="relative p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer"
+              title="Messages"
             >
-              <div className="relative">
-                <div className="w-7 h-7 rounded-full overflow-hidden border border-[var(--pm-accent)] bg-[var(--pm-bg)] flex items-center justify-center">
-                  {user.avatar || (user as any).avatarUrl ? (
-                    <img
-                      src={user.avatar || (user as any).avatarUrl}
-                      alt={user.name || "User"}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                  ) : (
-                    <User className="w-4 h-4 text-[var(--pm-accent)]" />
-                  )}
-                </div>
-                <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-[var(--pm-surface)]" />
-              </div>
-              <span className="hidden xl:inline text-[11px] font-bold text-[var(--pm-text)] max-w-[90px] truncate group-hover:text-[var(--pm-accent)] transition-colors pr-1">
-                {user.fullName || user.name || (isSeller ? 'দোকান' : 'প্রোফাইল')}
-              </span>
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--pm-accent)]/10 hover:bg-[var(--pm-accent)]/20 border border-[var(--pm-accent)]/30 text-[var(--pm-accent)] hover:text-white text-xs font-bold transition-all active:scale-95 whitespace-nowrap cursor-pointer"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>{isBn ? 'লগইন' : 'Login'}</span>
-            </Link>
+              <MessageSquare className="w-4.5 h-4.5" />
+            </button>
           )}
 
           {/* Direct Desktop CTA: Post Demand */}

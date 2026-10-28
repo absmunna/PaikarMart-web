@@ -26,7 +26,6 @@ import { useAuth } from '@/modules/auth';
 import { useCartDrawerStore } from '@/modules/cart';
 import { HomeHeader } from '@/components/home/HomeHeader';
 import { CategoryNavBar } from '@shared/CategoryNavBar';
-import { SubPortalNav } from '@/design-system/components/navigation/SubPortalNav';
 import { useCategoryStore } from '@/store/categoryStore';
 import { toast } from 'sonner';
 
@@ -345,7 +344,6 @@ export const B2CHome = () => {
   return (
     <div className="w-full pb-20 space-y-6 bg-[var(--pm-bg)] min-h-screen text-[var(--pm-text)] select-none">
       <HomeHeader />
-      <SubPortalNav />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* ━━━ HERO ZONE ━━━ */}

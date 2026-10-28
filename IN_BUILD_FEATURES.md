@@ -12,20 +12,20 @@ The following packages are currently pending development or integration to achie
 
 ## Package 7: Feed & Interaction
 - [x] Social Feed UI Improvement (`CreatePostComposer` + Refined Layout)
-- [ ] Live Social Feed Backend (Real database posts, comments, likes)
+- [x] Live Social Feed Backend (Real database posts, comments, likes)
 - [ ] Real-time Chat (Socket.io integration for user-to-seller communication)
-- [ ] Notifications System (In-app Bell + Push Notifications via FCM or similar)
+- [x] Notifications System (In-app Bell + Push Notifications via FCM or similar)
 
 ## Package 8: Payment Gateway Integration
-- [ ] bKash Integration
-- [ ] Nagad Integration
-- [ ] SSL Commerz (Cards/Bank)
-- [ ] Order verification webhook handling
+- [x] bKash Integration
+- [x] Nagad Integration
+- [x] SSL Commerz (Cards/Bank)
+- [x] Order verification webhook handling
 
 ## Package 9: Backend API Finalization
 - [ ] Complete Prisma Schema migrations in Supabase
 - [ ] Implement robust Image Uploads (e.g. AWS S3, Cloudinary, or Supabase Storage)
-- [ ] Rate limits validation and helmet security middleware
+- [x] Rate limits validation and helmet security middleware
 - [ ] Analytics APIs for Admin and Seller dashboards
 
 ## Package 10 & 11: Deployment & PWA

@@ -54,16 +54,6 @@ export const verifySuperAdmin = async (
     }
   }
 
-  // Development mode fallback if token simulation is used in dev
-  if (!decodedUser && process.env.NODE_ENV !== "production") {
-    console.warn("verifySuperAdmin: Development bypass for mock header in non-prod");
-    decodedUser = {
-      id: "super-admin-dev",
-      email: "abs.munna1@gmail.com",
-      role: "SUPER_ADMIN"
-    };
-  }
-
   if (!decodedUser) {
     return res.status(401).json({
       error: "Unauthorized: Invalid or expired access token.",
@@ -80,11 +70,6 @@ export const verifySuperAdmin = async (
   // Check in-token custom claims first
   const tokenRole = String(decodedUser.role || '').toUpperCase();
   if (tokenRole === 'SUPER_ADMIN' || tokenRole === 'ADMIN') {
-    isSuperAdmin = true;
-  }
-
-  // Known Super Admin root email bypass check
-  if (userEmail === 'abs.munna1@gmail.com') {
     isSuperAdmin = true;
   }
 

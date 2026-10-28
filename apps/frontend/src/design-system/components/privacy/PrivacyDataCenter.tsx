@@ -26,6 +26,8 @@ import { privacyService, PrivacySettings } from '@/services/privacyService';
 import { collection, query, where, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from '@/lib/firebase';
 import { uploadService } from '@/services/uploadService';
+import { toast } from 'sonner';
+
 
 export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
@@ -131,7 +133,7 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
         setSuccessMsg("ডাটা সফলভাবে ডিলিট করা হয়েছে।");
         setTimeout(() => setSuccessMsg(""), 2500);
       } catch (err: any) {
-        alert("ডিলিট করতে ব্যর্থ হয়েছে: " + err.message);
+        toast.error("ডিলিট করতে ব্যর্থ হয়েছে: " + err.message);
       }
     }
   };
@@ -168,7 +170,7 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
       setSuccessMsg("তথ্য আপডেট সম্পন্ন হয়েছে!");
       setTimeout(() => setSuccessMsg(""), 2500);
     } catch (err: any) {
-      alert("আপডেট করতে ব্যর্থ হয়েছে: " + err.message);
+      toast.error("আপডেট করতে ব্যর্থ হয়েছে: " + err.message);
     } finally {
       setSavingEdit(false);
     }
@@ -177,7 +179,7 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
   const handleKycUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!kycFile) {
-      alert("অনুগ্রহ করে ট্রেড লাইসেন্স বা NID ফাইলের স্ক্যান কপি ফাইল নির্বাচন করুন।");
+      toast.error("অনুগ্রহ করে ট্রেড লাইসেন্স বা NID ফাইলের স্ক্যান কপি ফাইল নির্বাচন করুন।");
       return;
     }
 
@@ -197,7 +199,7 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
       setSuccessMsg("গোপনীয় ট্রেড লাইসেন্স / KYC ডকুমেন্ট এনক্রিপ্টেড ফায়ারবেস স্টোরেজে আপলোড করা হয়েছে!");
       setTimeout(() => setSuccessMsg(""), 3000);
     } catch (e: any) {
-      alert("KYC আপলোড ব্যর্থ হয়েছে: " + e.message);
+      toast.error("KYC আপলোড ব্যর্থ হয়েছে: " + e.message);
     } finally {
       setUploadingKyc(false);
     }
@@ -211,16 +213,16 @@ export const PrivacyDataCenter: React.FC<{ isOpen: boolean; onClose: () => void 
 
   const handleDeleteAccountFinal = async () => {
     if (confirmDeleteText !== "DELETE") {
-      alert("নিশ্চিত করতে অনুগ্রহ করে 'DELETE' কথাটি নিখুঁতভাবে লিখুন।");
+      toast.error("নিশ্চিত করতে অনুগ্রহ করে 'DELETE' কথাটি নিখুঁতভাবে লিখুন।");
       return;
     }
 
     try {
       await privacyService.deleteAccountAndAllData(userId);
-      alert("আপনার সমস্ত ফায়ারবেস ডাটা ও একাউন্ট সফলভাবে ডিলিট করা হয়েছে।");
+      toast.success("আপনার সমস্ত ফায়ারবেস ডাটা ও একাউন্ট সফলভাবে ডিলিট করা হয়েছে।");
       window.location.reload();
     } catch (e: any) {
-      alert("ডিলিট করতে সমস্যা হয়েছে: " + e.message);
+      toast.error("ডিলিট করতে সমস্যা হয়েছে: " + e.message);
     }
   };
 

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma, db } from '../../config/database';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_12345';
+import { JWT_SECRET } from '../../middleware/auth';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -211,10 +211,9 @@ export const sendOtp = async (req: Request, res: Response) => {
 
     return res.json({
       success: true,
-      message: `কোড সফলভাবে পাঠানো হয়েছে: ${code}`,
+      message: 'কোড সফলভাবে পাঠানো হয়েছে',
       email: identifier,
-      expiresInSeconds: 300,
-      demoCode: code
+      expiresInSeconds: 300
     });
   } catch (error) {
     console.error('Send OTP Error:', error);
@@ -233,8 +232,8 @@ export const verifyOtp = async (req: Request, res: Response) => {
     }
 
     const stored = otpStore.get(identifier);
-    // Allow demo universal code '1234' or '123456' in dev mode, or the generated code
-    const isValid = inputOtp === '1234' || inputOtp === '123456' || (stored && stored.code === inputOtp && Date.now() <= stored.expiresAt);
+    // Verify stored code and expiration
+    const isValid = (stored && stored.code === inputOtp && Date.now() <= stored.expiresAt);
 
     if (!isValid) {
       return res.status(400).json({ error: 'ভুল ওটিপি কোড অথবা মেয়াদের সময় শেষ হয়ে গেছে।' });
@@ -356,17 +355,22 @@ export const getCurrentUser = async (req: Request, res: Response) => {
   }
 };
 
-export const syncUser = async (req: Request, res: Response) => {
+export const syncUser = async (req: any, res: Response) => {
   try {
-    const { uid, email, name, fullName, role, phone, avatar, avatarUrl } = req.body;
-    if (!uid) {
-      return res.status(400).json({ error: 'Firebase uid is required for user sync' });
+    const firebaseUser = req.user; // From verifyFirebaseToken middleware
+    const { role, fullName: bodyFullName, name: bodyName, avatarUrl: bodyAvatarUrl } = req.body;
+    
+    if (!firebaseUser) {
+      return res.status(401).json({ error: 'Unauthorized: No firebase user found in request' });
     }
 
+    const uid = firebaseUser.uid;
+    const email = firebaseUser.email || `${uid}@paikarmart.com`;
+    const effectiveEmail = email.trim();
+    const phone = firebaseUser.phone_number || req.body.phone || null;
     const effectiveRole = (role as any) || 'buyer';
-    const effectiveEmail = email || `${uid}@paikarmart.com`;
-    const effectiveFullName = (fullName || name || effectiveEmail.split('@')[0]).trim();
-    const effectiveAvatar = avatarUrl || avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`;
+    const effectiveFullName = (bodyFullName || bodyName || firebaseUser.name || email.split('@')[0]).trim();
+    const effectiveAvatar = bodyAvatarUrl || firebaseUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`;
 
     let user: any = null;
 

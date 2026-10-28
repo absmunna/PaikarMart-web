@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ECOMMERCE_PRODUCTS } from '@/modules/product/data/ecommerceProducts';
 
 // ─── Types ───────────────────────────────────────────────
 export interface Product {
   id: string;
+  asin?: string;
   name: string;
   title?: string;
   price: number;
@@ -139,6 +141,11 @@ export const getGetPlatformStatsQueryKey = () => ['platform-stats'];
 
 // ─── Mock Products ────────────────────────────────────────
 export const mockProducts: Product[] = [
+  ...ECOMMERCE_PRODUCTS.map(p => ({
+    ...p,
+    type: p.category,
+    portal: p.category
+  })),
   { id: '1', name: 'ইলিশ মাছ (বড়)', price: 1200, originalPrice: 1500, discount: 20, image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', category: 'মাছ', seller: 'ঢাকা ফিশ মার্ট', rating: 4.5, reviewCount: 128, stock: 50, unit: 'কেজি', type: 'retail' },
   { id: '2', name: 'বাসমতি চাল (প্রিমিয়াম)', price: 180, originalPrice: 200, discount: 10, image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400', category: 'চাল', seller: 'আড়ং রাইস', rating: 4.8, reviewCount: 256, stock: 200, unit: 'কেজি', type: 'retail' },
   { id: '3', name: 'Samsung Galaxy A55', price: 45000, originalPrice: 50000, discount: 10, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400', category: 'মোবাইল', seller: 'টেক বাজার', rating: 4.6, reviewCount: 89, stock: 15, type: 'retail' },

@@ -46,9 +46,50 @@ export const FeedPage: React.FC = () => {
     });
   };
 
+  const [touchStart, setTouchStart] = useState(0);
+  const [pullDist, setPullDist] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (window.scrollY === 0) {
+      setTouchStart(e.touches[0].clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (window.scrollY === 0 && touchStart > 0) {
+      const dist = e.touches[0].clientY - touchStart;
+      if (dist > 0) {
+        setPullDist(Math.min(dist, 100));
+      }
+    }
+  };
+
+  const handleTouchEnd = async () => {
+    if (pullDist > 50) {
+      setIsRefreshing(true);
+      await refresh();
+      setIsRefreshing(false);
+    }
+    setTouchStart(0);
+    setPullDist(0);
+  };
+
   return (
-    <div className="w-full pb-24 min-h-screen bg-[var(--pm-bg)] select-none">
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 space-y-4 pt-3">
+    <div 
+      className="w-full pb-24 min-h-screen bg-[var(--pm-bg)] select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Pull to refresh indicator */}
+      <div 
+        className="fixed top-0 left-0 right-0 flex justify-center items-center overflow-hidden transition-all duration-300"
+        style={{ height: pullDist }}
+      >
+        <RefreshCw className={`w-6 h-6 text-[var(--pm-accent)] ${isRefreshing ? 'animate-spin' : ''}`} />
+      </div>
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 space-y-4 pt-3" style={{ transform: `translateY(${pullDist > 0 ? pullDist/2 : 0}px)` }}>
 
         {/* ─── 2. ACTION & FILTER BAR ─── */}
         <div className="flex items-center justify-between gap-2 max-w-[620px] mx-auto w-full">

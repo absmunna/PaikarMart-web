@@ -2,413 +2,222 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  UserPlus, Mail, Lock, User, Phone, 
-  Store, ArrowRight, Loader2, 
-  CheckCircle2, ArrowLeft, ShieldCheck, Eye, EyeOff, Shield
+  UserPlus, Mail, Lock, User, ArrowRight, Loader2, 
+  ArrowLeft, ShieldCheck, Shield
 } from 'lucide-react';
-import { useAuthStore } from '@/modules/auth';
 import { useAuth } from '@/modules/auth';
-import { authService } from '@/modules/auth';
+import { OtpInput } from "@/components/ui/OtpInput";
 import { toast } from 'sonner';
+import { cn } from "@/lib/utils";
 
 export const Register: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+880');
+  const [verificationMethod, setVerificationMethod] = useState<'email' | 'phone'>('email');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(true);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Validation state
+  const [identifierError, setIdentifierError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState<0 | 1 | 2 | 3>(0);
+  
+  // Verification step state
+  const [step, setStep] = useState<'register' | 'verify'>('register');
+  const [otp, setOtp] = useState('');
 
   const navigate = useNavigate();
-  const { login: storeLogin, setUser: setStoreUser } = useAuthStore();
-  const { 
-    registerUser, 
-    loginWithGoogle: contextLoginWithGoogle 
-  } = useAuth();
-
-  // Password strength calculation
-  const getPasswordStrength = (pwd: string) => {
-    if (!pwd) return 0;
-    let score = 0;
-    if (pwd.length >= 6) score++;
-    if (pwd.length >= 8) score++;
-    if (/[0-9]/.test(pwd)) score++;
-    if (/[^A-Za-z0-9]/.test(pwd)) score++;
-    return score;
-  };
-
-  const pwdScore = getPasswordStrength(password);
+  const { registerUser, sendVerification, verifyVerification } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    // Validation
-    const cleanPhone = phone.trim();
-    if (!cleanPhone || cleanPhone.length < 11) {
-      setError('সঠিক ১১ ডিজিটের মোবাইল নম্বর প্রদান করুন (যেমন: 017XXXXXXXX)');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('পাসওয়ার্ড এবং নিশ্চিতকরণ পাসওয়ার্ড মেলেনি');
-      return;
-    }
-
-    if (!agreeTerms) {
-      setError('পাইকার মার্টের ব্যবহারের শর্তাবলী ও নীতি মেনে নেওয়া বাধ্যতামূলক');
-      return;
-    }
-
+    if (password.length < 6) { setError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'); return; }
+    if (password !== confirmPassword) { setError('পাসওয়ার্ড মেলেনি'); return; }
+    if (!agreeTerms) { setError('শর্তাবলী মেনে নেওয়া বাধ্যতামূলক'); return; }
     setLoading(true);
-
     try {
-      // 1. Try real backend API register
-      try {
-        await authService.register({
-          name: name.trim(),
-          email: email.trim() || `${cleanPhone}@paikarmart.com`,
-          password,
-          role: 'buyer',
-        });
-      } catch (apiErr: any) {
-        console.warn('API register fallback applied:', apiErr?.message);
-      }
-
-      // 2. Try AuthContext register
-      if (registerUser) {
-        await registerUser({
-          fullName: name.trim(),
-          name: name.trim(),
-          phone: cleanPhone,
-          email: email.trim(),
-          password,
-        });
-      }
-
-      // 3. Sync to AuthStore
-      const userProfile = {
-        id: `usr_${Date.now()}`,
-        name: name.trim(),
-        fullName: name.trim(),
-        email: email.trim() || `${cleanPhone}@paikarmart.com`,
-        phone: cleanPhone,
-        role: 'buyer' as const,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name.trim()}`
-      };
-
-      storeLogin(userProfile);
-      setStoreUser(userProfile as any);
-
-      toast.success('অভিনন্দন! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।');
-      navigate('/');
+      // 1. Send OTP first
+      const method = verificationMethod === 'email' ? email : `${countryCode}${phone}`;
+      await sendVerification(method.trim());
+      setStep('verify');
+      toast.success('কোড পাঠানো হয়েছে!');
     } catch (err: any) {
-      setError(err?.message || 'অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      setError(err?.message || 'কোড পাঠানো সম্ভব হয়নি');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignup = async () => {
-    setLoading(true);
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
+    setLoading(true);
     try {
-      if (contextLoginWithGoogle) {
-        await contextLoginWithGoogle();
-      }
-      const userProfile = {
-        id: `usr_${Date.now()}`,
-        name: 'Google User',
-        fullName: 'Google User',
-        email: 'user@gmail.com',
-        role: 'buyer' as const,
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=GoogleUser'
-      };
-      storeLogin(userProfile);
-      setStoreUser(userProfile as any);
-      toast.success('Google অ্যাকাউন্ট দিয়ে সফলভাবে সাইন আপ হয়েছে!');
+      const method = verificationMethod === 'email' ? email : `${countryCode}${phone}`;
+      await verifyVerification(method.trim(), otp);
+      
+      // 2. Register user only after verification success
+      await registerUser({
+        fullName: name.trim(),
+        name: name.trim(),
+        email: email.trim() || undefined,
+        phone: phone ? `${countryCode}${phone.trim()}` : undefined,
+        password,
+      });
+
+      toast.success('অ্যাকাউন্ট তৈরি হয়েছে!');
       navigate('/');
-    } catch {
-      toast.success('Google অ্যাকাউন্ট দিয়ে সফলভাবে সাইন আপ হয়েছে!');
-      navigate('/');
+    } catch (err: any) {
+      setError(err?.message || 'ভেরিফিকেশন ব্যর্থ হয়েছে');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-b from-[var(--pm-bg)] via-[var(--pm-surface)] to-[var(--pm-bg)] py-10 selection:bg-[var(--pm-accent)] selection:text-white">
-      {/* Back to Home Link */}
-      <div className="w-full max-w-lg mb-4 flex items-center justify-between">
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] transition-colors py-1.5 px-3 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] shadow-xs"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          হোমপেজে ফিরুন
+    <div className="min-h-screen flex flex-col justify-center items-center p-3 bg-gradient-to-b from-[var(--pm-bg)] via-[var(--pm-surface)] to-[var(--pm-bg)] selection:bg-[var(--pm-accent)] selection:text-white">
+      <div className="w-full max-w-sm mb-2.5 flex items-center justify-between">
+        <Link to="/login" className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] transition-colors py-1 px-2.5 rounded-full bg-[var(--pm-surface)] border border-[var(--pm-border)] shadow-xs">
+          <ArrowLeft className="w-3 h-3" />
+          লগইনে ফিরুন
         </Link>
-        <span className="text-[11px] font-bold text-[var(--pm-text-muted)] flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-          ১০০% নিরাপদ রেজিস্ট্রেশন
+        <span className="text-[10px] font-bold text-[var(--pm-text-muted)] flex items-center gap-1">
+          <ShieldCheck className="w-3 h-3 text-emerald-500" />
+          নিরাপদ রেজিস্ট্রেশন
         </span>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg bg-[var(--pm-surface)] p-6 sm:p-8 rounded-3xl border border-[var(--pm-border)] shadow-2xl relative overflow-hidden backdrop-blur-md"
-      >
-        {/* Subtle decorative glow */}
-        <div className="absolute -top-16 -right-16 w-36 h-36 bg-[var(--pm-accent)]/15 rounded-full blur-3xl pointer-events-none" />
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm bg-[var(--pm-surface)] p-5 sm:p-6 rounded-2xl border border-[var(--pm-border)] shadow-xl relative overflow-hidden backdrop-blur-md">
+        <div className="absolute -top-12 -right-12 w-28 h-28 bg-[var(--pm-accent)]/15 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Brand Header */}
-        <div className="text-center mb-5 relative z-10">
-          <div className="w-14 h-14 bg-gradient-to-tr from-[var(--pm-accent)] to-amber-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[var(--pm-accent)]/25">
-            <UserPlus className="w-7 h-7" />
+        <div className="text-center mb-4 relative z-10">
+          <div className="w-11 h-11 bg-gradient-to-tr from-[var(--pm-accent)] to-amber-500 text-white rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md shadow-[var(--pm-accent)]/20">
+            <UserPlus className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl font-black text-[var(--pm-text)] tracking-tight">
-            নতুন অ্যাকাউন্ট তৈরি করুন
+          <h1 className="text-xl font-black text-[var(--pm-text)] tracking-tight">
+            {step === 'register' ? 'নতুন অ্যাকাউন্ট' : 'ভেরিফিকেশন'}
           </h1>
-          <p className="text-xs text-[var(--pm-text-muted)] font-medium mt-1">
-            পাইকার মার্টে কেনাকাটা, পিকে ক্যাশব্যাক ও দ্রুত হোম ডেলিভারি পান
-          </p>
         </div>
+        
+        {error && <div className="mb-3 p-2.5 bg-red-500/10 border border-red-500/25 rounded-xl text-red-500 text-[11px] font-semibold">{error}</div>}
 
-        {/* Dedicated Seller Portal Callout Banner */}
-        <div className="mb-5 p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-[var(--pm-accent)]/10 to-orange-500/10 border border-amber-500/25 flex items-center justify-between gap-3 relative z-10">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-xs">
-              <Store className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-black text-[var(--pm-text)] truncate">
-                পাইকারি বা মার্চেন্ট সেলার হতে চান?
-              </p>
-              <p className="text-[10px] text-[var(--pm-text-muted)] truncate">
-                মিল-গেট, আড়ত বা লোকাল শপের জন্য সেলার পেজে যান
-              </p>
-            </div>
-          </div>
-          <Link
-            to="/become-seller"
-            className="px-3 py-1.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white text-[11px] font-black transition-all shrink-0 shadow-xs flex items-center gap-1 active:scale-95"
-          >
-            সেলার ফরম <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-
-        {/* Error Alert */}
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: -5 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-red-500/10 border border-red-500/25 rounded-2xl text-red-500 text-xs font-semibold flex items-center gap-2"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-            <span>{error}</span>
-          </motion.div>
-        )}
-
-        <form onSubmit={handleRegister} className="space-y-4">
-          {/* Full Name */}
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
-              পুরো নাম
-            </label>
-            <div className="relative">
-              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl py-2.5 pl-10 pr-4 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] outline-none font-medium transition-all"
-                placeholder="যেমন: মোঃ আব্দুল্লাহ মুনসুর"
-              />
-            </div>
-          </div>
-
-          {/* Mobile Number with +880 badge */}
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
-              মোবাইল নম্বর <span className="text-red-500">*</span>
-            </label>
-            <div className="flex rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-bg)] overflow-hidden focus-within:border-[var(--pm-accent)] transition-all">
-              <span className="bg-[var(--pm-surface-hover)] px-3 py-2.5 text-xs font-black text-[var(--pm-text)] border-r border-[var(--pm-border)] flex items-center gap-1.5 shrink-0 select-none">
-                🇧🇩 +880
-              </span>
-              <input 
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-                className="w-full bg-transparent py-2.5 px-3.5 text-xs text-[var(--pm-text)] outline-none font-medium"
-                placeholder="017XXXXXXXX"
-                maxLength={11}
-              />
-            </div>
-          </div>
-
-          {/* Email Address */}
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
-              ইমেইল ঠিকানা <span className="text-[var(--pm-text-muted)] font-normal">(ঐচ্ছিক)</span>
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl py-2.5 pl-10 pr-4 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] outline-none font-medium transition-all"
-                placeholder="example@mail.com"
-              />
-            </div>
-          </div>
-
-          {/* Password with Strength Indicator */}
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
-              নিরাপদ পাসওয়ার্ড <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
-                type={showPassword ? "text" : "password"}
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl py-2.5 pl-10 pr-10 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] outline-none font-medium transition-all"
-                placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] transition-colors p-0.5"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+        {step === 'register' ? (
+          <form onSubmit={handleRegister} className="space-y-3 relative z-10">
+            <input type="text" placeholder="পুরো নাম" value={name} onChange={(e) => setName(e.target.value)} required className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-xl py-2 pl-3 pr-3 text-[11px] text-[var(--pm-text)] outline-none font-medium transition-all" />
+            <div className="flex gap-4 pb-2">
+              <label className="flex items-center gap-2 text-[11px] font-bold text-zinc-300 cursor-pointer">
+                <input type="radio" checked={verificationMethod === 'email'} onChange={() => setVerificationMethod('email')} className="accent-[var(--pm-accent)]" />
+                ইমেইল দিয়ে ভেরিফাই
+              </label>
+              <label className="flex items-center gap-2 text-[11px] font-bold text-zinc-300 cursor-pointer">
+                <input type="radio" checked={verificationMethod === 'phone'} onChange={() => setVerificationMethod('phone')} className="accent-[var(--pm-accent)]" />
+                ফোন দিয়ে ভেরিফাই
+              </label>
             </div>
 
-            {/* Password strength mini bar */}
-            {password && (
-              <div className="pt-1 px-1">
-                <div className="h-1 w-full bg-[var(--pm-border)] rounded-full overflow-hidden flex gap-1">
-                  <div className={`h-full flex-1 transition-all ${pwdScore >= 1 ? 'bg-red-500' : 'bg-transparent'}`} />
-                  <div className={`h-full flex-1 transition-all ${pwdScore >= 2 ? 'bg-amber-500' : 'bg-transparent'}`} />
-                  <div className={`h-full flex-1 transition-all ${pwdScore >= 3 ? 'bg-blue-500' : 'bg-transparent'}`} />
-                  <div className={`h-full flex-1 transition-all ${pwdScore >= 4 ? 'bg-emerald-500' : 'bg-transparent'}`} />
-                </div>
-                <span className="text-[9px] text-[var(--pm-text-muted)] mt-0.5 block">
-                  {pwdScore <= 1 && 'দুর্বল পাসওয়ার্ড'}
-                  {pwdScore === 2 && 'মোটামুটি পাসওয়ার্ড'}
-                  {pwdScore === 3 && 'শক্তিশালী পাসওয়ার্ড'}
-                  {pwdScore >= 4 && 'অত্যন্ত নিরাপদ পাসওয়ার্ড'}
-                </span>
+            <div className="space-y-1">
+              <input type="email" placeholder="ইমেইল" value={email} disabled={verificationMethod !== 'email'} onChange={(e) => {
+                const val = e.target.value;
+                setEmail(val);
+                if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                  setIdentifierError('বৈধ ইমেইল দিন');
+                } else {
+                  setIdentifierError(null);
+                }
+              }} className={cn("w-full bg-[var(--pm-bg)] border rounded-xl py-2 pl-3 pr-3 text-[11px] text-[var(--pm-text)] outline-none font-medium transition-all", identifierError && email ? "border-red-500" : "border-[var(--pm-border)]")} />
+            </div>
+            
+            <div className="space-y-1">
+              <div className="flex gap-2">
+                <select value={countryCode} disabled={verificationMethod !== 'phone'} onChange={(e) => setCountryCode(e.target.value)} className="bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-xl py-2 px-2 text-[11px] text-[var(--pm-text)] outline-none">
+                  <option value="+880">+880 (BD)</option>
+                  <option value="+91">+91 (IN)</option>
+                </select>
+                <input type="tel" placeholder="মোবাইল নম্বর" value={phone} disabled={verificationMethod !== 'phone'} onChange={(e) => {
+                  const val = e.target.value;
+                  setPhone(val);
+                  if (val && !/^\d{10}$/.test(val)) {
+                    setIdentifierError('বৈধ ১০ ডিজিটের নম্বর দিন');
+                  } else {
+                    setIdentifierError(null);
+                  }
+                }} className={cn("w-full bg-[var(--pm-bg)] border rounded-xl py-2 pl-3 pr-3 text-[11px] text-[var(--pm-text)] outline-none font-medium transition-all", identifierError && phone ? "border-red-500" : "border-[var(--pm-border)]")} />
               </div>
-            )}
-          </div>
-
-          {/* Confirm Password */}
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-[var(--pm-text-secondary)] block ml-1">
-              পাসওয়ার্ড নিশ্চিত করুন <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-text-muted)]" />
-              <input 
-                type={showPassword ? "text" : "password"}
-                required
-                minLength={6}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full bg-[var(--pm-bg)] border border-[var(--pm-border)] rounded-2xl py-2.5 pl-10 pr-4 text-xs text-[var(--pm-text)] focus:border-[var(--pm-accent)] outline-none font-medium transition-all"
-                placeholder="পুনরায় পাসওয়ার্ড লিখুন"
-              />
+              {identifierError && <p className="text-[9px] text-red-500 pl-1">{identifierError}</p>}
             </div>
-          </div>
+            
+            <div className="space-y-1">
+              <div className="relative">
+                <input type={showPassword ? "text" : "password"} placeholder="পাসওয়ার্ড" value={password} onChange={(e) => {
+                  const val = e.target.value;
+                  setPassword(val);
+                  
+                  // Strength calculation
+                  let strength = 0;
+                  if (val.length >= 6) strength++;
+                  if (/[A-Z]/.test(val)) strength++;
+                  if (/[0-9!@#$%^&*]/.test(val)) strength++;
+                  setPasswordStrength(strength as any);
 
-          {/* Terms & Conditions Agreement */}
-          <div className="flex items-start gap-2 ml-1 pt-1">
-            <input
-              type="checkbox"
-              id="agreeTerms"
-              checked={agreeTerms}
-              onChange={(e) => setAgreeTerms(e.target.checked)}
-              className="w-4 h-4 mt-0.5 rounded border-[var(--pm-border)] text-[var(--pm-accent)] focus:ring-[var(--pm-accent)] accent-[var(--pm-accent)]"
-            />
-            <label htmlFor="agreeTerms" className="text-xs font-medium text-[var(--pm-text-muted)] cursor-pointer select-none leading-relaxed">
-              আমি পাইকার মার্টের{' '}
-              <Link to="/terms" className="text-[var(--pm-accent)] hover:underline font-bold">ব্যবহারের শর্তাবলী</Link>
-              {' '}এবং{' '}
-              <Link to="/privacy" className="text-[var(--pm-accent)] hover:underline font-bold">গোপনীয়তা নীতি</Link>
-              {' '}মেনে নিতে সম্মত।
-            </label>
-          </div>
+                  if (val && val.length < 6) {
+                    setPasswordError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
+                  } else {
+                    setPasswordError(null);
+                  }
+                }} required className={cn("w-full bg-[var(--pm-bg)] border rounded-xl py-2 pl-3 pr-9 text-[11px] text-[var(--pm-text)] outline-none font-medium transition-all", passwordError ? "border-red-500 focus:border-red-600" : "border-[var(--pm-border)] focus:border-[var(--pm-accent)]")} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-2.5 text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)]">
+                  {showPassword ? <Mail className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+              
+              {password && (
+                <div className="flex gap-1 pt-1">
+                  {[1, 2, 3].map((level) => (
+                    <div
+                      key={level}
+                      className={cn(
+                        "h-1 flex-1 rounded-full transition-all duration-300",
+                        passwordStrength >= level
+                          ? (passwordStrength === 1 ? "bg-red-500" : passwordStrength === 2 ? "bg-amber-500" : "bg-emerald-500")
+                          : "bg-white/10"
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
+              {passwordError && <p className="text-[9px] text-red-500 pl-1">{passwordError}</p>}
+            </div>
+            
+            <div className="space-y-1">
+              <input type={showPassword ? "text" : "password"} placeholder="পাসওয়ার্ড নিশ্চিত করুন" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className={cn("w-full bg-[var(--pm-bg)] border rounded-xl py-2 pl-3 pr-3 text-[11px] text-[var(--pm-text)] outline-none font-medium transition-all", confirmPassword && password !== confirmPassword ? "border-red-500" : "border-[var(--pm-border)]")} />
+              {confirmPassword && password !== confirmPassword && <p className="text-[9px] text-red-500 pl-1">পাসওয়ার্ড মেলেনি</p>}
+            </div>
+            
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <input type="checkbox" id="agreeTerms" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="w-3.5 h-3.5 rounded border-[var(--pm-border)] text-[var(--pm-accent)] focus:ring-[var(--pm-accent)] accent-[var(--pm-accent)]" />
+              <label htmlFor="agreeTerms" className="text-[11px] font-medium text-[var(--pm-text-muted)] cursor-pointer select-none">শর্তাবলী মেনে নিচ্ছি</label>
+            </div>
 
-          {/* Submit Button */}
-          <button 
-            type="submit"
-            disabled={loading || !agreeTerms}
-            className="w-full bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-white font-black py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[var(--pm-accent)]/20 text-xs mt-2 disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>অ্যাকাউন্ট তৈরি সম্পন্ন করুন <ArrowRight className="w-4 h-4" /></>}
-          </button>
-        </form>
-
-        {/* ━━━━ Social Divider ━━━━ */}
-        <div className="relative my-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[var(--pm-border)]" />
-          </div>
-          <div className="relative flex justify-center text-[10px] uppercase font-black">
-            <span className="bg-[var(--pm-surface)] px-3 text-[var(--pm-text-muted)] tracking-wider">অথবা</span>
-          </div>
-        </div>
-
-        {/* Real Google Signup Button */}
-        <button
-          type="button"
-          onClick={handleGoogleSignup}
-          disabled={loading}
-          className="w-full py-2.5 px-4 bg-[var(--pm-bg)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] text-[var(--pm-text)] font-bold text-xs rounded-2xl flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-2xs active:scale-98"
-        >
-          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          Google দিয়ে দ্রুত সাইন আপ করুন
-        </button>
-
-        {/* Footer Link to Login */}
-        <div className="mt-6 text-center text-xs">
-          <p className="text-[var(--pm-text-muted)] font-medium">
-            ইতিমধ্যেই অ্যাকাউন্ট আছে?{' '}
-            <Link to="/login" className="text-[var(--pm-accent)] font-black hover:underline ml-1">
-              সাইন ইন করুন
-            </Link>
-          </p>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="mt-5 pt-4 border-t border-[var(--pm-border)]/50 text-center">
-          <p className="text-[10px] text-[var(--pm-text-muted)] flex items-center justify-center gap-1.5 font-medium">
-            <Shield className="w-3.5 h-3.5 text-emerald-500" />
-            ভেরিফাইড মার্চেন্ট নেটওয়ার্ক ও নিরাপদ এসক্রো ট্রাস্ট দ্বারা পরিচালিত
-          </p>
-        </div>
+            <button type="submit" disabled={loading} className="w-full bg-[var(--pm-accent)] hover:opacity-95 text-white font-black py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-[var(--pm-accent)]/20 text-[11px] mt-1 disabled:opacity-50">
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <>পরবর্তী ধাপ <ArrowRight className="w-3.5 h-3.5" /></>}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerify} className="space-y-3 relative z-10">
+            <OtpInput value={otp} onChange={setOtp} />
+            
+            <button type="submit" disabled={loading} className="w-full bg-emerald-600 hover:opacity-95 text-white font-black py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-emerald-600/20 text-[11px] disabled:opacity-50">
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <>অ্যাকাউন্ট তৈরি করুন <ArrowRight className="w-3.5 h-3.5" /></>}
+            </button>
+          </form>
+        )}
       </motion.div>
     </div>
   );

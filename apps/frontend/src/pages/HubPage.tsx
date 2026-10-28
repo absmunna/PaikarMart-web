@@ -1,7 +1,7 @@
 import { 
   Star, ShoppingBag, Building2, MapPin, Newspaper, 
   Wrench, Monitor, Wallet, Car, Package,
-  ChevronRight, Sparkles, FileText, ArrowLeft
+  ChevronRight, Sparkles, FileText, ArrowLeft, PlayCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -17,6 +17,7 @@ interface PortalHub {
 }
 
 const ALL_PORTALS: PortalHub[] = [
+  { id: 'video', name: 'Video Commerce', banglaTitle: 'ভিডিও পোর্টাল', href: '/video', gradient: 'from-rose-500 to-red-600', icon: PlayCircle },
   { id: 'pk-shop', name: 'PK Shop', banglaTitle: 'পিকে শপ', href: '/pk-shop', gradient: 'from-purple-500 to-indigo-600', icon: Star },
   { id: 'retail', name: 'Retail Market', banglaTitle: 'খুচরা মার্কেট', href: '/shop', gradient: 'from-orange-400 to-orange-600', icon: ShoppingBag },
   { id: 'wholesale', name: 'Wholesale B2B', banglaTitle: 'পাইকারি আড়ত', href: '/wholesale', gradient: 'from-indigo-400 to-indigo-600', icon: Building2 },

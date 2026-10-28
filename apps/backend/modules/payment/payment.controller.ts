@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IPaymentProvider, IPaymentRequest, IPaymentResponse } from './interfaces/PaymentProvider';
 import { BkashPaymentProvider } from './providers/bkash.provider';
 import { NagadPaymentProvider } from './providers/nagad.provider';
+import { SslCommerzPaymentProvider } from './providers/sslcommerz.provider';
 import { WalletService } from '../wallet/wallet.service';
 
 const providers: Record<string, IPaymentProvider> = {};
@@ -10,9 +11,10 @@ export const registerProvider = (provider: IPaymentProvider) => {
   providers[provider.name.toLowerCase()] = provider;
 };
 
-// Register real bKash and Nagad providers
+// Register real bKash, Nagad, and SSLCommerz providers
 registerProvider(new BkashPaymentProvider());
 registerProvider(new NagadPaymentProvider());
+registerProvider(new SslCommerzPaymentProvider());
 
 // Helper mock provider for auxiliary methods (rocket, card, bank)
 class AuxiliaryProvider implements IPaymentProvider {
@@ -42,7 +44,7 @@ class AuxiliaryProvider implements IPaymentProvider {
 export const getPaymentProviders = async (req: Request, res: Response) => {
   const list = Object.keys(providers).map(key => ({
     id: key,
-    name: key === 'bkash' ? 'bKash (বিকাশ)' : key === 'nagad' ? 'Nagad (নগদ)' : key.toUpperCase(),
+    name: key === 'bkash' ? 'bKash (বিকাশ)' : key === 'nagad' ? 'Nagad (নগদ)' : key === 'sslcommerz' ? 'SSLCommerz (Visa/Mastercard/Bank)' : key.toUpperCase(),
     active: true,
     supportedCurrencies: ['BDT']
   }));

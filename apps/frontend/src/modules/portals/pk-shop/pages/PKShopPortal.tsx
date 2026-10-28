@@ -40,7 +40,7 @@ export const PKShopPortal: React.FC = () => {
     if (!isAuthenticated || !user) return false;
     const role = String(user.role || '').toLowerCase();
     const email = user.email?.toLowerCase();
-    return role === 'admin' || role === 'super_admin' || email === 'abs.munna1@gmail.com';
+    return role === 'admin' || role === 'super_admin';
   }, [isAuthenticated, user]);
 
   const loadProducts = async () => {

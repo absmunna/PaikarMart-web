@@ -13,6 +13,7 @@ export * as profileModule from './profile';
 export * as reviewsModule from './reviews';
 export * as wishlistModule from './wishlist';
 export * as dealsModule from './deals';
+export * as videoModule from './video';
 
 // Direct store re-exports for convenience
 export { useCartStore } from './cart';
@@ -21,3 +22,4 @@ export { useOrderStore } from './orders';
 export { useLocationStore } from './location';
 export { useNotificationStore } from './notification';
 export { useSearchStore } from './search';
+export { useVideoStore } from './video';

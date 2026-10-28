@@ -23,7 +23,7 @@ export const corsMiddleware = cors({
     // Allow localhost with any port during development
     if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
 
-    return callback(null, true); // Fallback allow to avoid blocking legitimate frontend calls
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
