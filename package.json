@@ -9,12 +9,11 @@
   ],
   "scripts": {
     "dev": "cd apps/backend && PORT=3000 npx tsx server.ts",
-    "build": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
-    "build:frontend": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build",
-    "build:backend": "cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build",
-    "build:all": "cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
+    "build": "cd packages/database && pnpm exec prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
+    "build:frontend": "cd packages/database && pnpm exec prisma generate && cd ../../apps/frontend && npm run build",
+    "build:backend": "cd packages/database && pnpm exec prisma generate && cd ../../apps/backend && npm run build",
+    "build:all": "cd packages/database && pnpm exec prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
     "start": "cd apps/backend && node dist/server.js",
-    "postinstall": "cd packages/database && npx --yes prisma generate",
     "typecheck": "npm run lint --workspace=@paikarmart/frontend",
     "lint": "npm run lint --workspace=@paikarmart/frontend"
   },
