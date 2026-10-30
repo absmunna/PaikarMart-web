@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, RefreshCw, CheckCircle2, ArrowRight } from 'lucide-react';
 import { auth } from '@/lib/firebase';
@@ -59,6 +59,11 @@ export const VerifyEmailPage: React.FC = () => {
             We sent a verification link to <span className="font-semibold text-gray-800">{auth.currentUser?.email || "your email"}</span>.
             Please click the link in the email to activate your PaikarMart account.
           </p>
+          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-left">
+            <p className="text-xs text-amber-800 font-medium">
+              💡 <strong>টিপস:</strong> ইনবক্সে ইমেইল না পেলে আপনার ইমেইলের <strong>Spam / Junk</strong> বা <strong>Promotions</strong> ফোল্ডারটি চেক করুন এবং <em>"Report not spam"</em> করে লিংকে ক্লিক করুন।
+            </p>
+          </div>
         </div>
 
         <div className="space-y-3 pt-4">

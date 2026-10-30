@@ -492,7 +492,7 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
         <div className="space-y-2">
           {matchesSearch('Marketplace মার্কেটপ্লেস') && (
             <NavLink
-              to="/marketplace"
+              to="/market"
               onClick={handleNavClick}
               className={({ isActive }) => cn(
                 "p-3.5 rounded-2xl border border-[var(--pm-border)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] flex items-center justify-between transition-all cursor-pointer group shadow-xs border-l-4 border-l-cyan-500",

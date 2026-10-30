@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Route } from 'react-router-dom';
 import { AuthGuard } from '@/guards/AuthGuard';
 import { RoleGuard } from '@/guards/RoleGuard';
 
-import { SettingsPage } from '@/pages/SettingsPage';
-import { NotificationSettingsPage } from '@/modules/notification/pages/NotificationSettingsPage';
-import { ProfilePage } from '@/modules/profile';
-import { WalletPage } from '@/pages/WalletPage';
-import { SellerCentralPortal } from '@/portals/seller-central/SellerCentralPortal';
-import BecomeSellerPage from '@/portals/seller-central/pages/BecomeSellerPage';
+const SettingsPage = lazy(() => import('@/pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const NotificationSettingsPage = lazy(() => import('@/modules/notification/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
+const ProfilePage = lazy(() => import('@/modules/profile').then(m => ({ default: m.ProfilePage })));
+const WalletPage = lazy(() => import('@/pages/WalletPage').then(m => ({ default: m.WalletPage })));
+const SellerCentralPortal = lazy(() => import('@/portals/seller-central/SellerCentralPortal').then(m => ({ default: m.SellerCentralPortal })));
+const BecomeSellerPage = lazy(() => import('@/portals/seller-central/pages/BecomeSellerPage'));
 
 const ALLOWED_BUSINESS_ROLES = [
   'seller',

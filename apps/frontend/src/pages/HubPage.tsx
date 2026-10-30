@@ -22,7 +22,7 @@ const ALL_PORTALS: PortalHub[] = [
   { id: 'retail', name: 'Retail Market', banglaTitle: 'খুচরা মার্কেট', href: '/shop', gradient: 'from-orange-400 to-orange-600', icon: ShoppingBag },
   { id: 'wholesale', name: 'Wholesale B2B', banglaTitle: 'পাইকারি আড়ত', href: '/wholesale', gradient: 'from-indigo-400 to-indigo-600', icon: Building2 },
   { id: 'nearby', name: 'Nearby Stores', banglaTitle: 'লোকাল শপ', href: '/nearby', gradient: 'from-emerald-400 to-emerald-600', icon: MapPin },
-  { id: 'feed', name: 'Social Feed', banglaTitle: 'সোশ্যাল ফিড', href: '/feed', gradient: 'from-pink-400 to-pink-600', icon: Newspaper },
+  { id: 'feed', name: 'Home', banglaTitle: 'হোম (ফিড)', href: '/', gradient: 'from-pink-400 to-pink-600', icon: Newspaper },
   { id: 'services', name: 'Services Hub', banglaTitle: 'সার্ভিস হাব', href: '/services', gradient: 'from-purple-400 to-purple-600', icon: Wrench },
   { id: 'digital', name: 'Digital & OTT', banglaTitle: 'ডিজিটাল গুডস', href: '/digital', gradient: 'from-violet-400 to-violet-600', icon: Monitor },
   { id: 'wallet', name: 'Super Wallet', banglaTitle: 'সুপার ওয়ালেট', href: '/wallet', gradient: 'from-amber-400 to-amber-600', icon: Wallet },

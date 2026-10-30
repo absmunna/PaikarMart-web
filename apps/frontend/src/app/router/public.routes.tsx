@@ -1,38 +1,45 @@
+import React, { lazy } from 'react';
 import { Route } from 'react-router-dom';
 import { AuthGuard } from '@/guards/AuthGuard';
-import Home from '@/pages/Home';
-import Feed from '@/pages/Feed';
-import ProductDetails from '@/portals/marketplace-hub/marketplace/pages/ProductDetailsView';
+import HomePage from '@/pages/HomePage';
+import MarketPage from '@/pages/MarketPage';
 import { Login } from '@/pages/auth/Login';
 import { Register } from '@/pages/auth/Register';
 import { UnauthorizedPage } from '@/pages/auth/UnauthorizedPage';
-import Demand from '@/pages/Demand';
-import { DemandDetail } from '@/pages/DemandDetail';
-import Reels from '@/pages/Reels';
-import { ProfilePage } from '@/modules/profile';
-import { PortalHubPage } from '@/modules/portals';
-import { SearchPage } from '@/pages/SearchPage';
-import Notifications from '@/modules/notification/pages/notifications';
-import { NotificationSettingsPage } from '@/modules/notification/pages/NotificationSettingsPage';
-import ChatList from '@/portals/messages/pages/ChatList';
-import ChatDetail from '@/portals/messages/pages/ChatDetail';
-import CartPage from '@/modules/cart/pages/CartPage';
-import VideoHub from '@/portals/video/VideoHub';
-import ShortsViewer from '@/portals/video/ShortsViewer';
-import LiveStreamView from '@/portals/video/LiveStreamView';
-import CreatorChannel from '@/portals/video/CreatorChannel';
-import VideoWatchView from '@/portals/video/VideoWatchView';
-import { HubPage } from '@/pages/HubPage';
-import { NewsPage } from '@/modules/news/pages/NewsPage';
-import { 
-  TermsPage, PrivacyPolicyPage, ECommercePolicyPage, 
-  SellerRulesPage, FAQPage, QNAPage, ContactPage 
-} from '@/pages/legal';
+
+const ProductDetails = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/ProductDetailsView'));
+const Demand = lazy(() => import('@/pages/Demand'));
+const DemandDetail = lazy(() => import('@/pages/DemandDetail').then(m => ({ default: m.DemandDetail })));
+const ProfilePage = lazy(() => import('@/modules/profile').then(m => ({ default: m.ProfilePage })));
+const PortalHubPage = lazy(() => import('@/modules/portals').then(m => ({ default: m.PortalHubPage })));
+const SearchPage = lazy(() => import('@/pages/SearchPage').then(m => ({ default: m.SearchPage })));
+const Notifications = lazy(() => import('@/modules/notification/pages/notifications'));
+const NotificationSettingsPage = lazy(() => import('@/modules/notification/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
+const ChatList = lazy(() => import('@/portals/messages/pages/ChatList'));
+const ChatDetail = lazy(() => import('@/portals/messages/pages/ChatDetail'));
+const CartPage = lazy(() => import('@/modules/cart/pages/CartPage'));
+const VideoHub = lazy(() => import('@/portals/video/VideoHub'));
+const ShortsViewer = lazy(() => import('@/portals/video/ShortsViewer'));
+const LiveStreamView = lazy(() => import('@/portals/video/LiveStreamView'));
+const CreatorChannel = lazy(() => import('@/portals/video/CreatorChannel'));
+const VideoWatchView = lazy(() => import('@/portals/video/VideoWatchView'));
+const HubPage = lazy(() => import('@/pages/HubPage').then(m => ({ default: m.HubPage })));
+const NewsPage = lazy(() => import('@/modules/news/pages/NewsPage').then(m => ({ default: m.NewsPage })));
+
+const TermsPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.TermsPage })));
+const PrivacyPolicyPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.PrivacyPolicyPage })));
+const ECommercePolicyPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.ECommercePolicyPage })));
+const SellerRulesPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.SellerRulesPage })));
+const FAQPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.FAQPage })));
+const QNAPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.QNAPage })));
+const ContactPage = lazy(() => import('@/pages/legal').then(m => ({ default: m.ContactPage })));
 
 export const publicRoutes = (
   <>
-    <Route path="/" element={<Home />} />
-    <Route path="/feed" element={<Feed />} />
+    <Route path="/" element={<HomePage />} />
+    <Route path="/market" element={<MarketPage />} />
+    <Route path="/social" element={<HomePage />} />
+    <Route path="/feed" element={<HomePage />} />
     <Route path="/product/:id" element={<ProductDetails />} />
     <Route path="/cart" element={<CartPage />} />
     <Route path="/login" element={<Login />} />

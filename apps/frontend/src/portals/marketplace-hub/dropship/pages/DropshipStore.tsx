@@ -18,7 +18,7 @@ const MOCK_STORES = {
     name: 'Smart Deals BD',
     subtitle: 'পেইকার মার্টের সরাসরি আমদানিকৃত সেরা বিদেশি কালেকশন',
     theme: {
-      primary: '#ff6b00',
+      primary: 'var(--pm-accent)',
       bg: 'bg-gradient-to-tr from-amber-500 to-orange-600',
     },
     banner: {

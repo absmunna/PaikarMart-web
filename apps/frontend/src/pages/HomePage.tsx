@@ -21,7 +21,7 @@ const SOCIAL_FILTER_PILLS = [
   { id: 'retail', label: 'খুচরা অফার', icon: Store }
 ];
 
-export default function Feed() {
+export default function HomePage() {
   const { user } = useAuth();
   const { 
     city: userCity, 
@@ -199,7 +199,7 @@ export default function Feed() {
           {isLoading && socialPosts.length === 0 ? (
             <div className="text-center py-16 bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] p-8 shadow-sm space-y-3">
               <RefreshCw className="w-7 h-7 animate-spin text-[var(--pm-accent)] mx-auto" />
-              <p className="text-xs text-[var(--pm-text-muted)] font-bold">লাইভ ফিড লোড হচ্ছে...</p>
+              <p className="text-xs text-[var(--pm-text-muted)] font-bold">লাইভ সোশ্যাল হোম লোড হচ্ছে...</p>
             </div>
           ) : displayedPosts.length === 0 ? (
             <div className="text-center py-16 px-4 bg-[var(--pm-surface)] rounded-3xl border border-[var(--pm-border)] border-dashed space-y-3 shadow-sm">

@@ -9,7 +9,8 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-  signInAnonymously
+  signInAnonymously,
+  sendEmailVerification
 } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc, query, collection, where, getDocs } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
@@ -522,6 +523,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const cred = await createUserWithEmailAndPassword(auth, userEmail, password);
       const u = cred.user;
+      
+      // Only send verification if it's a real email
+      if (cleanEmail) {
+        try {
+          await sendEmailVerification(u);
+        } catch (e) {
+          console.warn("Email verification failed to send:", e);
+        }
+      }
+      
       const userId = u.uid;
       const idToken = await u.getIdToken();
       persistToken(idToken);
@@ -574,7 +585,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerSeller = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { seller: SellerProfileData; password?: string }): Promise<AppUser> => {
     const role: AppRole = "seller";
-    const userEmail = input.email || `${input.phone || Date.now()}@paikarmart.com`;
+    const cleanEmail = input.email && input.email.includes('@') ? input.email.trim().toLowerCase() : '';
+    const userEmail = cleanEmail || `${input.phone || Date.now()}@paikarmart.com`;
     
     let userId = uid("s");
     let idToken = "";
@@ -582,6 +594,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const cred = await createUserWithEmailAndPassword(auth, userEmail, (input as any).password || "Paikar123456!");
       const u = cred.user;
+      
+      if (cleanEmail) {
+        try {
+          await sendEmailVerification(u);
+        } catch (e) {
+          console.warn("Email verification failed to send:", e);
+        }
+      }
+      
       userId = u.uid;
       idToken = await u.getIdToken();
       persistToken(idToken);

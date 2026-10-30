@@ -4,7 +4,7 @@ import { db, storage, handleFirestoreError, OperationType } from '@/lib/firebase
 import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import { useAuth } from '@/context/AuthContext';
-import { DatabaseBackupModal } from '@/components/backup/DatabaseBackupModal';
+import { DatabaseBackupModal } from './components/DatabaseBackupModal';
 
 interface VaultFile {
   id: string;

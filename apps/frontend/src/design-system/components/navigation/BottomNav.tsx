@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  Home, Newspaper, LayoutGrid, MessageSquare, User, LogIn, PlayCircle
+  Home, Newspaper, LayoutGrid, MessageSquare, User, LogIn, PlayCircle, Store
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from '@/core/lib/i18n';
@@ -28,7 +28,7 @@ export const BottomNav = ({ isVisible }: { isVisible?: boolean }) => {
 
   const isActive = (path: string) => {
     if (path === '/portals') return isPortalActive;
-    if (path === '/video') return isVideoActive;
+    if (path === '/messages') return location.pathname.startsWith('/messages');
     return location.pathname === path;
   };
 
@@ -37,10 +37,10 @@ export const BottomNav = ({ isVisible }: { isVisible?: boolean }) => {
   const ProfileIcon = isAuthenticated ? User : LogIn;
 
   const navItems = [
-    { label: t('home'), icon: Home, path: '/' },
-    { label: t('feed'), icon: Newspaper, path: '/feed' },
-    { label: t('apps'), icon: LayoutGrid, path: '/portals', isCenter: true },
-    { label: lang === 'BN' ? 'ভিডিও' : 'Video', icon: PlayCircle, path: '/video' },
+    { label: lang === 'BN' ? 'এক্সপ্লোর' : 'Explore', icon: LayoutGrid, path: '/portals' },
+    { label: lang === 'BN' ? 'মার্কেট' : 'Market', icon: Store, path: '/market' },
+    { label: t('home'), icon: Home, path: '/', isCenter: true },
+    { label: lang === 'BN' ? 'মেসেজ' : 'Messages', icon: MessageSquare, path: '/messages' },
     { label: profileLabel, icon: ProfileIcon, path: profilePath },
   ];
 
@@ -54,15 +54,20 @@ export const BottomNav = ({ isVisible }: { isVisible?: boolean }) => {
             <Link 
               key={item.path}
               to={item.path}
-              className={`relative -mt-6 w-12 h-12 rounded-full flex items-center justify-center shadow-md transition-all duration-300 active:scale-95 cursor-pointer ${
+              className={`relative -mt-7 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 active:scale-90 cursor-pointer overflow-hidden border-2 ${
                 isActive(item.path) 
-                ? 'bg-[var(--pm-accent)] text-white shadow-[var(--pm-accent)]/30 scale-105' 
-                : 'bg-[var(--pm-surface)] text-[var(--pm-accent)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)]'
+                ? 'border-white scale-110 shadow-xl' 
+                : 'border-white/10 hover:border-white/40'
               }`}
-              title="Super Hubs (10 Modules)"
-              aria-label="Super Hubs / Portals"
+              style={{ backgroundColor: '#006a4e' }} // Bangladesh Bottle Green
+              title="Home (Social Feed)"
+              aria-label="Home"
             >
-              <item.icon className="w-6 h-6 transition-transform duration-300" />
+              <item.icon 
+                className="relative z-10 w-7 h-7 text-white transition-transform duration-300" 
+                fill={isActive(item.path) ? '#f42a41' : '#f42a41'} // Bangladesh Red inside the icon
+                strokeWidth={2.5}
+              />
             </Link>
           ) : (
             <Link 

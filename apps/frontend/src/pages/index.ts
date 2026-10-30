@@ -1,6 +1,6 @@
 // Core App Pages
-export { default as Home } from './Home';
-export { default as Feed } from './Feed';
+export { default as HomePage } from './HomePage';
+export { default as MarketPage } from './MarketPage';
 export { ProfilePage as Profile } from '@/modules/profile';
 export { default as Reels } from './Reels';
 export { default as HubPage } from './HubPage';

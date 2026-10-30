@@ -3,7 +3,7 @@ export interface EcommerceProduct {
   asin?: string;
   name: string;
   title?: string;
-  category: "wholesale" | "retail" | "fashion" | "electronics" | "grocery" | "pharmacy" | "dropship";
+  category: "wholesale" | "retail" | "fashion" | "electronics" | "grocery" | "pharmacy" | "dropship" | "pk-shop" | "digital" | "nearby";
   price: number;
   originalPrice?: number;
   discount?: number;
@@ -517,5 +517,101 @@ export const ECOMMERCE_PRODUCTS: EcommerceProduct[] = [
     reviewCount: 140,
     stock: 200,
     colors: ["Space Grey", "Carbon Black"]
+  },
+
+  // ─── PK Shop (Premium) ───
+  {
+    id: "pk-1",
+    name: "পিকে প্রিমিয়াম মাস্কাট খেজুর (৫ কেজি বক্স)",
+    category: "pk-shop",
+    price: 4500,
+    originalPrice: 5500,
+    discount: 18,
+    image: "https://images.unsplash.com/photo-1590005354167-6da97870c912?w=800&q=80",
+    sellerName: "PK Store Official",
+    sellerLocation: "Dhaka",
+    isVerified: true,
+    rating: 5.0,
+    reviewCount: 450,
+    stock: 200
+  },
+  {
+    id: "pk-2",
+    name: "পিকে এক্সক্লুসিভ জেনুইন লেদার অফিস ব্যাগ",
+    category: "pk-shop",
+    price: 8500,
+    originalPrice: 12000,
+    discount: 29,
+    image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?w=800&q=80",
+    sellerName: "PK Store Official",
+    sellerLocation: "Dhaka",
+    isVerified: true,
+    rating: 4.9,
+    reviewCount: 120,
+    stock: 50
+  },
+
+  // ─── Digital Goods ───
+  {
+    id: "dg-1",
+    name: "অ্যাডোবি ক্রিয়েটিভ ক্লাউড ১ বছরের সাবস্ক্রিপশন",
+    category: "digital",
+    price: 15000,
+    originalPrice: 18000,
+    discount: 16,
+    image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80",
+    sellerName: "Digital Hub",
+    sellerLocation: "Cloud",
+    isVerified: true,
+    rating: 4.8,
+    reviewCount: 300,
+    stock: 999
+  },
+  {
+    id: "dg-2",
+    name: "উডেমি প্রিমিয়াম কোর্স অ্যাক্সেস (ফুল প্যাক)",
+    category: "digital",
+    price: 2500,
+    originalPrice: 10000,
+    discount: 75,
+    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80",
+    sellerName: "EduTech BD",
+    sellerLocation: "Online",
+    isVerified: true,
+    rating: 4.7,
+    reviewCount: 150,
+    stock: 1000
+  },
+
+  // ─── Nearby (Local Shop) ───
+  {
+    id: "nb-1",
+    name: "তাজা লাল আতা (৫০০ গ্রাম)",
+    category: "nearby",
+    price: 120,
+    originalPrice: 150,
+    discount: 20,
+    image: "https://images.unsplash.com/photo-1528821128474-27f9e77457aa?w=800&q=80",
+    sellerName: "বিসমিল্লাহ ফ্রেশ ফ্রুটস",
+    sellerLocation: "মিরপুর-১, ঢাকা",
+    isVerified: true,
+    rating: 4.9,
+    reviewCount: 45,
+    stock: 20
+  },
+  {
+    id: "nb-2",
+    name: "প্রিমিয়াম বাসমতি চাল (৫ কেজি প্যাকেট)",
+    category: "nearby",
+    price: 850,
+    originalPrice: 950,
+    discount: 10,
+    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
+    sellerName: "মা জেনারেল স্টোর",
+    sellerLocation: "উত্তরা, ঢাকা",
+    isVerified: true,
+    rating: 4.7,
+    reviewCount: 120,
+    stock: 50
   },
 ];

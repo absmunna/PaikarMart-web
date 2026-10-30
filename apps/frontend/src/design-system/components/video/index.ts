@@ -1,4 +1,4 @@
 export * from './VideoPlayer';
-export { VideoUploadForm } from '../../../components/video/VideoUploadForm';
-export { VideoCommentsSection } from '../../../components/video/VideoCommentsSection';
+export { VideoUploadForm } from './VideoUploadForm';
+export { VideoCommentsSection } from './VideoCommentsSection';
 export { default } from './VideoPlayer';

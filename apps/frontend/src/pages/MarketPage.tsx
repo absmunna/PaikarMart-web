@@ -28,7 +28,7 @@ const MOBILE_SUPER_HUBS = [
   { id: 'services', name: 'সার্ভিস হাব', path: '/services', icon: Wrench, gradient: 'from-purple-500 to-pink-600' },
   { id: 'digital', name: 'ডিজিটাল গুডস', path: '/digital', icon: Monitor, gradient: 'from-cyan-500 to-blue-600' },
   { id: 'pk-shop', name: 'পিকে স্টোর', path: '/pk-shop', icon: Star, gradient: 'from-yellow-500 to-amber-600' },
-  { id: 'feed', name: 'সোশ্যাল ফিড', path: '/feed', icon: Newspaper, gradient: 'from-rose-500 to-pink-600' },
+  { id: 'feed', name: 'হোম ফিড', path: '/', icon: Newspaper, gradient: 'from-rose-500 to-pink-600' },
   { id: 'demand', name: 'ডিমান্ড বোর্ড', path: '/demand', icon: Flame, gradient: 'from-red-500 to-orange-600' },
   { id: 'wallet', name: 'সুপার ওয়ালেট', path: '/wallet', icon: Wallet, gradient: 'from-violet-500 to-purple-700' },
   { id: 'orders', name: 'অর্ডার ট্র্যাকিং', path: '/orders', icon: Package, gradient: 'from-emerald-600 to-teal-800' },
@@ -38,14 +38,16 @@ const COMMERCE_CATEGORIES = [
   { id: 'all', name: 'সকল পণ্য' },
   { id: 'wholesale', name: 'পাইকারি আড়ত' },
   { id: 'retail', name: 'খুচরা মার্কেট' },
+  { id: 'pk-shop', name: 'পিকে স্টোর' },
+  { id: 'nearby', name: 'লোকাল শপ' },
   { id: 'fashion', name: 'ফ্যাশন' },
   { id: 'electronics', name: 'ইলেকট্রনিক্স' },
   { id: 'grocery', name: 'গ্রোসারি' },
   { id: 'pharmacy', name: 'ফার্মেসি' },
-  { id: 'dropship', name: 'ড্রপশিপ' },
+  { id: 'digital', name: 'ডিজিটাল গুডস' },
 ];
 
-export default function Home() {
+export default function MarketPage() {
   const navigate = useNavigate();
   const { addItem } = useCartStore();
   const { city: userLocation } = useLocationStore();
@@ -191,7 +193,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-3 px-1">
               <span className="text-[11px] font-black text-white uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
-                সুপার অ্যাপ পোর্টাল হাব
+                মার্কেটপ্লেস পোর্টাল হাব
               </span>
               <Link to="/portals" className="text-[10px] font-bold text-[var(--pm-accent)] hover:underline">
                 সব দেখুন →
@@ -271,7 +273,7 @@ export default function Home() {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between px-1">
               <h2 className="text-sm font-black text-white flex items-center gap-2">
-                <span>আজকের সেরা কালেকশন</span>
+                <span>মার্কেটপ্লেস কালেকশন</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               </h2>
               <span className="text-[10px] text-zinc-400 font-bold">

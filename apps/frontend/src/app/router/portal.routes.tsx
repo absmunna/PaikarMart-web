@@ -1,36 +1,36 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { B2CLayout } from '@/portals/marketplace-hub/retail/layouts/B2CLayout';
-import { B2CHome } from '@/portals/marketplace-hub/retail/pages/B2CHome';
-import { PKShopHome } from '@/portals/marketplace-hub/pk-shop';
-import { PKShopAdminView } from '@/modules/portals/pk-shop';
-import MarketplaceHubPortal from '@/portals/marketplace-hub/MarketplaceHubPortal';
-import BrandShopsHome from '@/portals/marketplace-hub/brand-shops/pages/BrandShopsHome';
-import DropshipStore from '@/portals/marketplace-hub/dropship/pages/DropshipStore';
-import AutoPortal from '@/portals/marketplace-hub/auto/pages/AutoHome';
-import { B2BLayout } from '@/portals/marketplace-hub/wholesale/layouts/B2BLayout';
-import { B2BHome } from '@/portals/marketplace-hub/wholesale/pages/B2BHome';
-import { Dashboard as B2BDashboard } from '@/portals/marketplace-hub/wholesale/pages/Dashboard';
-import { Products as B2BProducts } from '@/portals/marketplace-hub/wholesale/pages/Products';
-import { Orders as B2BOrders } from '@/portals/marketplace-hub/wholesale/pages/Orders';
+const B2CLayout = lazy(() => import('@/portals/marketplace-hub/retail/layouts/B2CLayout').then(m => ({ default: m.B2CLayout })));
+const B2CHome = lazy(() => import('@/portals/marketplace-hub/retail/pages/B2CHome').then(m => ({ default: m.B2CHome })));
+const PKShopHome = lazy(() => import('@/portals/marketplace-hub/pk-shop').then(m => ({ default: m.PKShopHome })));
+const PKShopAdminView = lazy(() => import('@/modules/portals/pk-shop').then(m => ({ default: m.PKShopAdminView })));
+const MarketplaceHubPortal = lazy(() => import('@/portals/marketplace-hub/MarketplaceHubPortal'));
+const BrandShopsHome = lazy(() => import('@/portals/marketplace-hub/brand-shops/pages/BrandShopsHome'));
+const DropshipStore = lazy(() => import('@/portals/marketplace-hub/dropship/pages/DropshipStore'));
+const AutoPortal = lazy(() => import('@/portals/marketplace-hub/auto/pages/AutoHome'));
+const B2BLayout = lazy(() => import('@/portals/marketplace-hub/wholesale/layouts/B2BLayout').then(m => ({ default: m.B2BLayout })));
+const B2BHome = lazy(() => import('@/portals/marketplace-hub/wholesale/pages/B2BHome').then(m => ({ default: m.B2BHome })));
+const B2BDashboard = lazy(() => import('@/portals/marketplace-hub/wholesale/pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const B2BProducts = lazy(() => import('@/portals/marketplace-hub/wholesale/pages/Products').then(m => ({ default: m.Products })));
+const B2BOrders = lazy(() => import('@/portals/marketplace-hub/wholesale/pages/Orders').then(m => ({ default: m.Orders })));
 
-import NearbyHome from '@/portals/local-hub/subportals/nearby/pages/NearbyHome';
-import { LocalHubHome } from '@/portals/local-hub/pages/LocalHubHome';
-import LocalShopDetailPage from '@/portals/local-hub/pages/LocalShopDetailPage';
-import ServicesHome from '@/portals/services-hub/services/pages/ServicesHome';
-import RideHome from '@/portals/logistics-hub/ride/pages/RideHome';
-import DigitalHome from '@/portals/marketplace-hub/digital/pages/DigitalHome';
-import { GroceryHome } from '@/portals/local-hub/subportals/grocery/pages/GroceryHome';
-import { PharmacyHome } from '@/portals/local-hub/subportals/pharmacy/pages/PharmacyHome';
-import { ElectronicsHome } from '@/portals/local-hub/subportals/electronics/pages/ElectronicsHome';
-import ProductDetails from '@/portals/marketplace-hub/marketplace/pages/ProductDetailsView';
-import BecomeSellerPage from '@/portals/seller-central/pages/BecomeSellerPage';
-import { SellerCentralPortal } from '@/portals/seller-central/SellerCentralPortal';
-import { ExportHome } from '@/portals/marketplace-hub/wholesale/pages/export/ExportHome';
-import PortalComingSoon from '@/pages/PortalComingSoon';
-import VaultDashboard from '@/portals/client-vault/VaultDashboard';
-import VaultLogin from '@/portals/client-vault/VaultLogin';
+const NearbyHome = lazy(() => import('@/portals/local-hub/subportals/nearby/pages/NearbyHome'));
+const LocalHubHome = lazy(() => import('@/portals/local-hub/pages/LocalHubHome').then(m => ({ default: m.LocalHubHome })));
+const LocalShopDetailPage = lazy(() => import('@/portals/local-hub/pages/LocalShopDetailPage'));
+const ServicesHome = lazy(() => import('@/portals/services-hub/services/pages/ServicesHome'));
+const RideHome = lazy(() => import('@/portals/logistics-hub/ride/pages/RideHome'));
+const DigitalHome = lazy(() => import('@/portals/marketplace-hub/digital/pages/DigitalHome'));
+const GroceryHome = lazy(() => import('@/portals/local-hub/subportals/grocery/pages/GroceryHome').then(m => ({ default: m.GroceryHome })));
+const PharmacyHome = lazy(() => import('@/portals/local-hub/subportals/pharmacy/pages/PharmacyHome').then(m => ({ default: m.PharmacyHome })));
+const ElectronicsHome = lazy(() => import('@/portals/local-hub/subportals/electronics/pages/ElectronicsHome').then(m => ({ default: m.ElectronicsHome })));
+const ProductDetails = lazy(() => import('@/portals/marketplace-hub/marketplace/pages/ProductDetailsView'));
+const BecomeSellerPage = lazy(() => import('@/portals/seller-central/pages/BecomeSellerPage'));
+const SellerCentralPortal = lazy(() => import('@/portals/seller-central/SellerCentralPortal').then(m => ({ default: m.SellerCentralPortal })));
+const ExportHome = lazy(() => import('@/portals/marketplace-hub/wholesale/pages/export/ExportHome').then(m => ({ default: m.ExportHome })));
+const PortalComingSoon = lazy(() => import('@/pages/PortalComingSoon'));
+const VaultDashboard = lazy(() => import('@/portals/client-vault/VaultDashboard'));
+const VaultLogin = lazy(() => import('@/portals/client-vault/VaultLogin'));
 
 export const portalRoutes = (
   <>

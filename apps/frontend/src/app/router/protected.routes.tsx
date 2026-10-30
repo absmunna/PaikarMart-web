@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Route } from 'react-router-dom';
 import { AuthGuard } from '@/guards/AuthGuard';
 
-import { OrdersPage } from '@/pages/OrdersPage';
-import OrderDetailPage from '@/portals/orders/pages/OrderDetailPage';
-import { WishlistPage } from '@/pages/WishlistPage';
-import { HubPage } from '@/pages/HubPage';
-import { SettingsPage } from '@/pages/SettingsPage';
-import { NotificationSettingsPage } from '@/modules/notification/pages/NotificationSettingsPage';
-import { WalletPage } from '@/pages/WalletPage';
-import { VendorsPage } from '@/pages/VendorsPage';
+const OrdersPage = lazy(() => import('@/pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
+const OrderDetailPage = lazy(() => import('@/portals/orders/pages/OrderDetailPage'));
+const WishlistPage = lazy(() => import('@/pages/WishlistPage').then(m => ({ default: m.WishlistPage })));
+const HubPage = lazy(() => import('@/pages/HubPage').then(m => ({ default: m.HubPage })));
+const SettingsPage = lazy(() => import('@/pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const NotificationSettingsPage = lazy(() => import('@/modules/notification/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
+const WalletPage = lazy(() => import('@/pages/WalletPage').then(m => ({ default: m.WalletPage })));
+const VendorsPage = lazy(() => import('@/pages/VendorsPage').then(m => ({ default: m.VendorsPage })));
 
 export const protectedRoutes = (
   <>

@@ -9,4 +9,4 @@ export * from './components/ShoppableProductOverlay';
 export * from './components/VideoUploadModal';
 export * from './components/VideoCommentsDrawer';
 export * from './hooks/useVideoAnalytics';
-export { VideoPlayer } from '../../components/video/VideoPlayer';
+export { VideoPlayer } from '@/design-system/components/video/VideoPlayer';

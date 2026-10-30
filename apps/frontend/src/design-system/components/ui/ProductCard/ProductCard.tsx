@@ -80,7 +80,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(fu
 
         {/* Discount Badge */}
         {discount && discount > 0 && (
-          <span className="absolute top-2.5 left-2.5 bg-[var(--pm-accent,#ff6b00)] text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm">
+          <span className="absolute top-2.5 left-2.5 bg-[var(--pm-accent)] text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm">
             {discount}% ছাড়
           </span>
         )}
@@ -106,7 +106,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(fu
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-slate-900 dark:text-white text-xs leading-snug line-clamp-2 group-hover:text-[var(--pm-accent,#ff6b00)] transition-colors">
+          <h3 className="font-semibold text-slate-900 dark:text-white text-xs leading-snug line-clamp-2 group-hover:text-[var(--pm-accent)] transition-colors">
             {title}
           </h3>
 
@@ -142,7 +142,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(fu
             <button
               type="button"
               onClick={handleAddToCart}
-              className="p-2 bg-[var(--pm-accent,#ff6b00)] text-white rounded-lg hover:opacity-90 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+              className="p-2 bg-[var(--pm-accent)] text-white rounded-lg hover:opacity-90 transition-all shadow-sm active:scale-95 flex items-center justify-center"
               title="কার্টে যোগ করুন"
             >
               <ShoppingCart className="w-4 h-4" />

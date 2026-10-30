@@ -41,15 +41,28 @@ export const Register: React.FC = () => {
     if (password.length < 6) { setError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'); return; }
     if (password !== confirmPassword) { setError('পাসওয়ার্ড মেলেনি'); return; }
     if (!agreeTerms) { setError('শর্তাবলী মেনে নেওয়া বাধ্যতামূলক'); return; }
+    
     setLoading(true);
     try {
-      // 1. Send OTP first
-      const method = verificationMethod === 'email' ? email : `${countryCode}${phone}`;
-      await sendVerification(method.trim());
-      setStep('verify');
-      toast.success('কোড পাঠানো হয়েছে!');
+      if (verificationMethod === 'email') {
+        // 1. Email Flow: Register immediately and trigger Firebase verification
+        await registerUser({
+          fullName: name.trim(),
+          name: name.trim(),
+          email: email.trim(),
+          password,
+        });
+        toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল চেক করুন।');
+        navigate('/verify-email');
+      } else {
+        // 2. Phone Flow: Send OTP via backend
+        const method = `${countryCode}${phone}`;
+        await sendVerification(method.trim());
+        setStep('verify');
+        toast.success('কোড পাঠানো হয়েছে!');
+      }
     } catch (err: any) {
-      setError(err?.message || 'কোড পাঠানো সম্ভব হয়নি');
+      setError(err?.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে');
     } finally {
       setLoading(false);
     }
@@ -60,15 +73,14 @@ export const Register: React.FC = () => {
     setError(null);
     setLoading(true);
     try {
-      const method = verificationMethod === 'email' ? email : `${countryCode}${phone}`;
+      // Phone Flow: Verify OTP and then register
+      const method = `${countryCode}${phone}`;
       await verifyVerification(method.trim(), otp);
       
-      // 2. Register user only after verification success
       await registerUser({
         fullName: name.trim(),
         name: name.trim(),
-        email: email.trim() || undefined,
-        phone: phone ? `${countryCode}${phone.trim()}` : undefined,
+        phone: `${countryCode}${phone.trim()}`,
         password,
       });
 

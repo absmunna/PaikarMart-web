@@ -9,14 +9,13 @@ import { settingsRoutes } from './settings.routes';
 import { PageSkeleton } from '@/app/AppShell/GlobalSkeletonSystem';
 import { ErrorBoundary } from '@/design-system/components/common/ErrorBoundary';
 
-// Standalone pages
 import { Login } from '@/pages/auth/Login';
 import { Register } from '@/pages/auth/Register';
-import ForgotPassword from '@/pages/auth/ForgotPassword';
-import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
-import { CheckoutPage } from '@/pages/CheckoutPage';
-import { SandboxGatewayPage } from '@/pages/SandboxGatewayPage';
-import { NotFound } from '@/pages/NotFound';
+const ForgotPassword = React.lazy(() => import('@/pages/auth/ForgotPassword'));
+const VerifyEmailPage = React.lazy(() => import('@/pages/auth/VerifyEmailPage'));
+const CheckoutPage = React.lazy(() => import('@/pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
+const SandboxGatewayPage = React.lazy(() => import('@/pages/SandboxGatewayPage').then(m => ({ default: m.SandboxGatewayPage })));
+const NotFound = React.lazy(() => import('@/pages/NotFound').then(m => ({ default: m.NotFound })));
 import { ScrollToTop } from '@/shared/components/layout/ScrollToTop';
 
 export const AppRoutes: React.FC = () => {
