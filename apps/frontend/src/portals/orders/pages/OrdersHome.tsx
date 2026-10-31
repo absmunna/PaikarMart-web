@@ -16,6 +16,7 @@ import { useOrderTrackingStore, TrackingOrder, OrderState } from "@/modules/orde
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { safeBack } from "@/lib/navigation";
+import { buildApiUrl } from "@/core/config/api";
 
 type TabType = "all" | "pending" | "processing" | "shipping" | "delivered" | "cancelled" | "refund";
 
@@ -42,7 +43,7 @@ const getOrderTabCategory = (status: string, escrowStatus?: any): TabType => {
 };
 
 async function fetchOrders(): Promise<any[]> {
-  const res = await fetch("/api/v1/orders");
+  const res = await fetch(buildApiUrl("/orders"));
   if (!res.ok) throw new Error("Failed to load orders");
   return res.json();
 }

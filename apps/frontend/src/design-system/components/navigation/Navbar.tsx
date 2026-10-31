@@ -146,7 +146,7 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
             title="Notifications"
           >
             <Bell className="w-4.5 h-4.5" />
-            {unreadNotifications > 0 && (
+            {isAuthenticated && unreadNotifications > 0 && (
               <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border border-[var(--pm-surface)]">
                 {unreadNotifications}
               </span>

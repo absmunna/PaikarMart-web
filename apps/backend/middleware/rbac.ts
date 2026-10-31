@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { AuthenticatedRequest, JWT_SECRET } from "./auth";
+import { AuthenticatedRequest } from "./auth";
+import { JWT_SECRET } from "../config/env";
 import { prisma } from "../config/database";
 
 /**

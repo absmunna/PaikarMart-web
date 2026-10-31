@@ -1,22 +1,17 @@
 import React from 'react';
 import { 
   ShoppingBag, Sparkles, Factory, Award, MapPin, 
-  Activity, Store, Wrench, Laptop, Layers
+  Activity, Store, Wrench, Laptop, Layers, Users
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export const SUB_PORTALS = [
-  { id: 'all', nameBn: 'সব প্রোডাক্ট', nameEn: 'All Feed', icon: Layers, path: '/marketplace', gradient: 'from-amber-500 via-orange-600 to-rose-600' },
-  { id: 'wholesale', nameBn: 'পাইকারি আড়ত', nameEn: 'Wholesale B2B', icon: Factory, path: '/wholesale', gradient: 'from-indigo-600 to-blue-700' },
-  { id: 'retail', nameBn: 'খুচরা মার্কেট', nameEn: 'Retail Store', icon: ShoppingBag, path: '/b2c', gradient: 'from-blue-600 to-cyan-700' },
-  { id: 'pk-shop', nameBn: 'পিকে স্টোর', nameEn: 'PK Store', icon: Sparkles, path: '/pk-shop', gradient: 'from-amber-400 to-orange-500' },
-  { id: 'brands', nameBn: 'ব্র্যান্ড শোরুম', nameEn: 'Official Brands', icon: Award, path: '/brands', gradient: 'from-fuchsia-600 to-pink-700' },
-  { id: 'nearby', nameBn: 'লোকাল শপ', nameEn: 'Local Nearby', icon: MapPin, path: '/nearby', gradient: 'from-emerald-500 to-teal-600' },
-  { id: 'pharmacy', nameBn: 'অনলাইন ফার্মেসি', nameEn: 'Pharmacy', icon: Activity, path: '/pharmacy', gradient: 'from-teal-600 to-emerald-700' },
-  { id: 'grocery', nameBn: 'গ্রোসারি বাজার', nameEn: 'Grocery Farm', icon: Store, path: '/grocery', gradient: 'from-amber-600 to-orange-600' },
-  { id: 'services', nameBn: 'ডিজিটাল সার্ভিস', nameEn: 'Digital Services', icon: Wrench, path: '/services', gradient: 'from-purple-600 to-indigo-700' },
-  { id: 'digital', nameBn: 'ডিজিটাল প্রোডাক্ট', nameEn: 'Digital Goods', icon: Laptop, path: '/digital', gradient: 'from-violet-600 to-purple-700' }
+  { id: 'all', nameBn: 'সব ফিড', nameEn: 'All Feed', icon: Layers, path: '/', gradient: 'from-amber-500 via-orange-600 to-rose-600' },
+  { id: 'commerce', nameBn: 'কমার্স', nameEn: 'Commerce', icon: ShoppingBag, path: '/marketplace', gradient: 'from-blue-600 to-indigo-700' },
+  { id: 'services', nameBn: 'লজিস্টিকস', nameEn: 'Services & Logistics', icon: Wrench, path: '/services', gradient: 'from-amber-600 to-orange-700' },
+  { id: 'community', nameBn: 'কমিউনিটি', nameEn: 'Community', icon: Users, path: '/feed', gradient: 'from-purple-600 to-pink-700' },
+  { id: 'utility', nameBn: 'ইউটিলিটি', nameEn: 'Utility & Tools', icon: Laptop, path: '/workspace', gradient: 'from-teal-600 to-emerald-700' }
 ];
 
 export const SubPortalNav: React.FC = () => {

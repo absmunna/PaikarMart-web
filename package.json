@@ -3,19 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "packageManager": "pnpm@9.1.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
     "dev": "cd apps/backend && PORT=3000 npx tsx server.ts",
-    "build": "cd packages/database && (pnpm exec prisma generate 2>/dev/null || npx --yes prisma@5.22.0 generate) && cd ../../apps/frontend && (bun run build 2>/dev/null || npm run build) && cd ../backend && (bun run build 2>/dev/null || npm run build)",
-    "build:frontend": "cd packages/database && (pnpm exec prisma generate 2>/dev/null || npx --yes prisma@5.22.0 generate) && cd ../../apps/frontend && (bun run build 2>/dev/null || npm run build)",
-    "build:backend": "cd packages/database && (pnpm exec prisma generate 2>/dev/null || npx --yes prisma@5.22.0 generate) && cd ../../apps/backend && (bun run build 2>/dev/null || npm run build)",
-    "build:all": "cd packages/database && (pnpm exec prisma generate 2>/dev/null || npx --yes prisma@5.22.0 generate) && cd ../../apps/frontend && (bun run build 2>/dev/null || npm run build) && cd ../backend && (bun run build 2>/dev/null || npm run build)",
+    "build": "npm run build:all",
+    "build:frontend": "cd packages/database && npx prisma generate && cd ../../apps/frontend && npm run build",
+    "build:backend": "cd packages/database && npx prisma generate && cd ../../apps/backend && npm run build",
+    "build:all": "cd packages/database && npx prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build",
     "start": "cd apps/backend && node dist/server.js",
-    "typecheck": "npm run lint --workspace=@paikarmart/frontend",
-    "lint": "npm run lint --workspace=@paikarmart/frontend"
+    "typecheck": "cd apps/frontend && npx tsc --noEmit && cd ../backend && npx tsc --noEmit",
+    "lint": "cd apps/frontend && npx tsc --noEmit"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

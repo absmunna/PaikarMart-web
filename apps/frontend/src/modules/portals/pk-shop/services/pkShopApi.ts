@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { PKShopProduct, PKShopOrder, PKShopTeamMember, PKShopStats } from '../types';
+import { API_BASE_URL } from '@/core/config/api';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL 
-  ? `${import.meta.env.VITE_API_BASE_URL}/pk-shop`
-  : '/api/v1/pk-shop';
+const API_BASE = `${API_BASE_URL}/pk-shop`;
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('pm_auth_token') || 

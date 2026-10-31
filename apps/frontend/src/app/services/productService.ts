@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { buildApiUrl } from '@/core/config/api';
 
 export interface ProductDetails {
   id: string;
@@ -48,7 +49,7 @@ export interface QuestionAnswer {
 export const productService = {
   getProductDetails: async (id: string): Promise<ProductDetails> => {
     try {
-      const response = await axios.get(`/api/v1/products/${id}`);
+      const response = await axios.get(buildApiUrl(`/products/${id}`));
       return response.data;
     } catch {
       // Robust development fallback data
@@ -83,7 +84,7 @@ export const productService = {
 
   getSellerProfile: async (productId: string): Promise<SellerProfile> => {
     try {
-      const response = await axios.get(`/api/v1/products/${productId}/seller`);
+      const response = await axios.get(buildApiUrl(`/products/${productId}/seller`));
       return response.data;
     } catch {
       return {
@@ -99,7 +100,7 @@ export const productService = {
 
   getReviews: async (productId: string): Promise<Review[]> => {
     try {
-      const response = await axios.get(`/api/v1/products/${productId}/reviews`);
+      const response = await axios.get(buildApiUrl(`/products/${productId}/reviews`));
       return response.data;
     } catch {
       return [
@@ -125,7 +126,7 @@ export const productService = {
 
   getQuestionsAnswers: async (productId: string): Promise<QuestionAnswer[]> => {
     try {
-      const response = await axios.get(`/api/v1/products/${productId}/qna`);
+      const response = await axios.get(buildApiUrl(`/products/${productId}/qna`));
       return response.data;
     } catch {
       return [
@@ -150,7 +151,7 @@ export const productService = {
   },
 
   submitQuestion: async (productId: string, question: string): Promise<any> => {
-    const response = await axios.post(`/api/v1/products/${productId}/questions`, { question });
+    const response = await axios.post(buildApiUrl(`/products/${productId}/questions`), { question });
     return response.data;
   },
 

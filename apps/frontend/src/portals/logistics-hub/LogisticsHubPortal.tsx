@@ -6,7 +6,6 @@ import { Truck } from 'lucide-react';
 export default function LogisticsHubPortal() {
   return (
     <div className="min-h-screen pb-20">
-      <PortalIconBar context="logistics-hub" />
       <main className="p-4 space-y-4">
         <GlassCard className="p-6 flex items-center gap-4">
           <Truck className="w-8 h-8 text-[var(--pm-accent)]" />

@@ -6,7 +6,6 @@ import { Briefcase } from 'lucide-react';
 export default function BusinessHubPortal() {
   return (
     <div className="min-h-screen pb-20">
-      <PortalIconBar context="business-hub" />
       <main className="p-4 space-y-4">
         <GlassCard className="p-6 flex items-center gap-4">
           <Briefcase className="w-8 h-8 text-[var(--pm-accent)]" />

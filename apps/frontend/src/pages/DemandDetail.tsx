@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, MapPin, Tag, Calendar, MessageSquare, ShieldCheck, CheckCircle } from 'lucide-react';
 import { formatBDT } from '@/core/lib/format';
+import { buildApiUrl } from '@/core/config/api';
 
 interface DemandItem {
   id: string;
@@ -35,7 +36,7 @@ export function DemandDetail() {
   useEffect(() => {
     const fetchDemandDetail = async () => {
       try {
-        const res = await fetch(`/api/v1/demands/${id}`);
+        const res = await fetch(buildApiUrl(`/demands/${id}`));
         if (res.ok) {
           const data = await res.json();
           setDemand(data);

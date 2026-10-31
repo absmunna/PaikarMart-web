@@ -4,7 +4,8 @@ import {
   Package, Wallet, User, Bell, Car, PlayCircle,
   Pill, Egg, Utensils, Hotel, Briefcase, Landmark,
   Home, HeartPulse, GraduationCap, Calendar, Wifi, HelpCircle,
-  ShieldCheck, Boxes, Plane, Tv, Bus, Compass, Tractor, ClipboardList, Video, Truck
+  ShieldCheck, Boxes, Plane, Tv, Bus, Compass, Tractor, ClipboardList, Video, Truck,
+  Award, AlertTriangle, Layout, Key
 } from 'lucide-react';
 
 export interface PortalHub {
@@ -31,66 +32,81 @@ export interface PortalItem {
 
 export const HUB_REGISTRY: PortalHub[] = [
   {
-    id: 'marketplace-hub',
-    nameEn: 'Marketplace',
-    nameBn: 'মার্কেটপ্লেস',
-    descriptionEn: 'National product commerce, retail, wholesale & brands',
-    descriptionBn: 'দেশব্যাপী প্রোডাক্ট কমার্স, রিটেইল এবং ব্র্যান্ডস',
+    id: 'commerce-hub',
+    nameEn: 'Commerce',
+    nameBn: 'কমার্স ও শপিং',
+    descriptionEn: 'Everything you need to buy or sell - Retail & Wholesale',
+    descriptionBn: 'কেনা-বেচার সবকিছু - রিটেইল এবং হোলসেল',
     color: 'from-blue-600 to-indigo-800',
     iconName: 'ShoppingBag'
   },
   {
-    id: 'services-hub',
-    nameEn: 'Services',
-    nameBn: 'সার্ভিসেস',
-    descriptionEn: 'Professional, digital and home services',
-    descriptionBn: 'প্রফেশনাল, ডিজিটাল এবং হোম সার্ভিসেস',
+    id: 'services-logistics-hub',
+    nameEn: 'Services & Help',
+    nameBn: 'সেবা ও লজিস্টিকস',
+    descriptionEn: 'On-demand services, rides, and local expert help',
+    descriptionBn: 'অন-ডিমান্ড সার্ভিস, রাইড এবং লোকাল হেল্প',
     color: 'from-amber-500 to-orange-700',
     iconName: 'Wrench'
   },
   {
-    id: 'logistics-hub',
-    nameEn: 'Logistics',
-    nameBn: 'লজিস্টিকস',
-    descriptionEn: 'Ride, delivery, courier & transport',
-    descriptionBn: 'রাইড, ডেলিভারি, কুরিয়ার এবং ট্রান্সপোর্ট',
-    color: 'from-sky-500 to-blue-700',
-    iconName: 'Truck'
-  },
-  {
-    id: 'local-hub',
-    nameEn: 'Nearby',
-    nameBn: 'নিয়ারবাই',
-    descriptionEn: 'Hyperlocal shops, instant delivery & deals',
-    descriptionBn: 'এলাকাভিত্তিক শপ, ইনস্ট্যান্ট ডেলিভারি ও ডিলস',
-    color: 'from-orange-500 to-amber-700',
-    iconName: 'MapPin'
-  },
-  {
-    id: 'business-hub',
-    nameEn: 'Business',
-    nameBn: 'বিজনেস',
-    descriptionEn: 'B2B growth, corporate and manufacturers',
-    descriptionBn: 'বিটুবি গ্রোথ, কর্পোরেট এবং ম্যানুফ্যাকচারার',
-    color: 'from-slate-700 to-zinc-900',
-    iconName: 'Building2'
-  },
-  {
-    id: 'community-hub',
-    nameEn: 'Community',
-    nameBn: 'কমিউনিটি',
-    descriptionEn: 'Social feed, demands, news & video',
-    descriptionBn: 'সোশ্যাল ফিড, ডিমান্ড, নিউজ এবং ভিডিও',
+    id: 'community-content-hub',
+    nameEn: 'Community & Feed',
+    nameBn: 'কমিউনিটি ও ফিড',
+    descriptionEn: 'Social feed, demands, news and entertainment',
+    descriptionBn: 'সোশ্যাল ফিড, ডিমান্ড, নিউজ এবং বিনোদন',
     color: 'from-purple-600 to-pink-800',
     iconName: 'PlayCircle'
+  },
+  {
+    id: 'utility-pro-hub',
+    nameEn: 'Utility & Tools',
+    nameBn: 'ইউটিলিটি ও টুলস',
+    descriptionEn: 'Personal wallet, education, finance and workspace',
+    descriptionBn: 'পার্সোনাল ওয়ালেট, এডুকেশন, ফাইন্যান্স এবং ওয়ার্কস্পেস',
+    color: 'from-slate-700 to-zinc-900',
+    iconName: 'Layout'
   }
 ];
 
 export const PORTAL_REGISTRY: PortalItem[] = [
-  // --- WHOLESALE HUB ---
+  // --- COMMERCE HUB (Retail + Wholesale + Business) ---
+  {
+    id: 'pk-shop',
+    hubId: 'commerce-hub',
+    nameEn: 'PK Store',
+    nameBn: 'পিকে স্টোর',
+    realWorldModel: 'Verified Store',
+    route: '/pk-shop',
+    color: 'from-orange-500 to-amber-600',
+    status: 'active',
+    iconName: 'ShieldCheck'
+  },
+  {
+    id: 'marketplace',
+    hubId: 'commerce-hub',
+    nameEn: 'Marketplace',
+    nameBn: 'মার্কেটপ্লেস',
+    realWorldModel: 'Daraz',
+    route: '/marketplace',
+    color: 'from-orange-400 to-pink-500',
+    status: 'active',
+    iconName: 'ShoppingBag'
+  },
+  {
+    id: 'wholesale-main',
+    hubId: 'commerce-hub',
+    nameEn: 'Wholesale Market',
+    nameBn: 'হোলসেল মার্কেট',
+    realWorldModel: 'Indiamart',
+    route: '/wholesale',
+    color: 'from-blue-600 to-indigo-800',
+    status: 'active',
+    iconName: 'Boxes'
+  },
   {
     id: 'b2b',
-    hubId: 'business-hub',
+    hubId: 'commerce-hub',
     nameEn: 'B2B Trade',
     nameBn: 'পাইকার ট্রেড',
     realWorldModel: 'Alibaba',
@@ -101,7 +117,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'factory',
-    hubId: 'business-hub',
+    hubId: 'commerce-hub',
     nameEn: 'Factory Direct',
     nameBn: 'ফ্যাক্টরি ডাইরেক্ট',
     realWorldModel: 'Factory Sourcing',
@@ -111,65 +127,8 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'Landmark'
   },
   {
-    id: 'dropship',
-    hubId: 'business-hub',
-    nameEn: 'Dropship',
-    nameBn: 'ড্রপশিপিং',
-    realWorldModel: 'Oberlo',
-    route: '/dropship',
-    color: 'from-amber-500 to-orange-600',
-    status: 'active',
-    iconName: 'Package'
-  },
-  {
-    id: 'wholesale-main',
-    hubId: 'business-hub',
-    nameEn: 'Wholesale Market',
-    nameBn: 'হোলসেল মার্কেট',
-    realWorldModel: 'Indiamart',
-    route: '/wholesale',
-    color: 'from-blue-600 to-indigo-800',
-    status: 'active',
-    iconName: 'Boxes'
-  },
-  {
-    id: 'export',
-    hubId: 'business-hub',
-    nameEn: 'Export Hub',
-    nameBn: 'রপ্তানি হাব',
-    realWorldModel: 'TradeKey',
-    route: '/export',
-    color: 'from-sky-500 to-indigo-600',
-    status: 'active',
-    iconName: 'Plane'
-  },
-
-  // --- RETAIL HUB ---
-  {
-    id: 'marketplace',
-    hubId: 'marketplace-hub',
-    nameEn: 'Marketplace',
-    nameBn: 'মার্কেটপ্লেস',
-    realWorldModel: 'Daraz',
-    route: '/marketplace',
-    color: 'from-orange-400 to-pink-500',
-    status: 'active',
-    iconName: 'ShoppingBag'
-  },
-  {
-    id: 'retail-main',
-    hubId: 'marketplace-hub',
-    nameEn: 'Retail Store',
-    nameBn: 'রিটেইল স্টোর',
-    realWorldModel: 'Standard B2C',
-    route: '/retail',
-    color: 'from-teal-400 to-cyan-600',
-    status: 'active',
-    iconName: 'Store'
-  },
-  {
     id: 'fashion',
-    hubId: 'marketplace-hub',
+    hubId: 'commerce-hub',
     nameEn: 'Fashion',
     nameBn: 'ফ্যাশন',
     realWorldModel: 'Myntra',
@@ -180,7 +139,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'brand-shops',
-    hubId: 'marketplace-hub',
+    hubId: 'commerce-hub',
     nameEn: 'Brand Shops',
     nameBn: 'ব্র্যান্ড শপ',
     realWorldModel: 'Tmall',
@@ -190,21 +149,32 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'Award'
   },
   {
-    id: 'pk-shop',
-    hubId: 'marketplace-hub',
-    nameEn: 'PK Store',
-    nameBn: 'পিকে স্টোর',
-    realWorldModel: 'Verified Store',
-    route: '/pk-shop',
-    color: 'from-orange-500 to-amber-600',
+    id: 'export',
+    hubId: 'commerce-hub',
+    nameEn: 'Export Hub',
+    nameBn: 'রপ্তানি হাব',
+    realWorldModel: 'TradeKey',
+    route: '/export',
+    color: 'from-sky-500 to-indigo-600',
     status: 'active',
-    iconName: 'ShieldCheck'
+    iconName: 'Plane'
   },
 
-  // --- HYPERLOCAL HUB ---
+  // --- SERVICES & LOGISTICS HUB (Nearby + Help + Transport) ---
+  {
+    id: 'nearby',
+    hubId: 'services-logistics-hub',
+    nameEn: 'Nearby Shops',
+    nameBn: 'লোকাল শপ',
+    realWorldModel: 'Google Local',
+    route: '/local',
+    color: 'from-rose-400 to-purple-600',
+    status: 'active',
+    iconName: 'MapPin'
+  },
   {
     id: 'food',
-    hubId: 'local-hub',
+    hubId: 'services-logistics-hub',
     nameEn: 'Food Delivery',
     nameBn: 'ফুড ডেলিভারি',
     realWorldModel: 'FoodPanda',
@@ -215,7 +185,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'grocery',
-    hubId: 'local-hub',
+    hubId: 'services-logistics-hub',
     nameEn: 'Grocery',
     nameBn: 'গ্রোসারি',
     realWorldModel: 'Chaldal',
@@ -226,7 +196,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'pharmacy',
-    hubId: 'local-hub',
+    hubId: 'services-logistics-hub',
     nameEn: 'Pharmacy',
     nameBn: 'ফার্মেসি',
     realWorldModel: 'Pillstock',
@@ -236,32 +206,8 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'Pill'
   },
   {
-    id: 'nearby',
-    hubId: 'local-hub',
-    nameEn: 'Nearby Shops',
-    nameBn: 'লোকাল শপ',
-    realWorldModel: 'Google Local',
-    route: '/local',
-    color: 'from-rose-400 to-purple-600',
-    status: 'active',
-    iconName: 'MapPin'
-  },
-  {
-    id: 'ride',
-    hubId: 'logistics-hub',
-    nameEn: 'Ride Share',
-    nameBn: 'রাইড শেয়ার',
-    realWorldModel: 'Pathao',
-    route: '/ride',
-    color: 'from-yellow-400 to-amber-600',
-    status: 'active',
-    iconName: 'Car'
-  },
-
-  // --- SERVICE HUB ---
-  {
     id: 'services',
-    hubId: 'services-hub',
+    hubId: 'services-logistics-hub',
     nameEn: 'Expert Services',
     nameBn: 'সার্ভিসেস',
     realWorldModel: 'Sheba.xyz',
@@ -271,32 +217,21 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'Wrench'
   },
   {
-    id: 'digital-products',
-    hubId: 'services-hub',
-    nameEn: 'Digital Goods',
-    nameBn: 'ডিজিটাল প্রোডাক্ট',
-    realWorldModel: 'Envato',
-    route: '/digital-products',
-    color: 'from-indigo-400 to-purple-600',
+    id: 'ride',
+    hubId: 'services-logistics-hub',
+    nameEn: 'Ride Share',
+    nameBn: 'রাইড শেয়ার',
+    realWorldModel: 'Pathao',
+    route: '/ride',
+    color: 'from-yellow-400 to-amber-600',
     status: 'active',
-    iconName: 'Monitor'
-  },
-  {
-    id: 'jobs',
-    hubId: 'services-hub',
-    nameEn: 'Jobs & Gigs',
-    nameBn: 'চাকরি ও গিগ',
-    realWorldModel: 'Bdjobs',
-    route: '/jobs',
-    color: 'from-orange-500 to-blue-700',
-    status: 'active',
-    iconName: 'Briefcase'
+    iconName: 'Car'
   },
   {
     id: 'logistics',
-    hubId: 'logistics-hub',
-    nameEn: 'Delivery & Logistics',
-    nameBn: 'ডেলিভারি ও লজিস্টিকস',
+    hubId: 'services-logistics-hub',
+    nameEn: 'Logistics',
+    nameBn: 'ডেলিভারি',
     realWorldModel: 'Pathao Courier',
     route: '/logistics',
     color: 'from-orange-500 to-red-600',
@@ -304,8 +239,32 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'Truck'
   },
   {
+    id: 'transport',
+    hubId: 'services-logistics-hub',
+    nameEn: 'Transport',
+    nameBn: 'ট্রান্সপোর্ট',
+    realWorldModel: 'Shohoz Bus',
+    route: '/transport',
+    color: 'from-amber-500 to-orange-700',
+    status: 'active',
+    iconName: 'Bus'
+  },
+  {
+    id: 'emergency',
+    hubId: 'services-logistics-hub',
+    nameEn: 'Emergency',
+    nameBn: 'ইমার্জেন্সি',
+    realWorldModel: 'Ambulance/Police',
+    route: '/emergency',
+    color: 'from-red-500 to-rose-700',
+    status: 'active',
+    iconName: 'AlertTriangle'
+  },
+
+  // --- COMMUNITY & CONTENT HUB (Social + Media + Demand) ---
+  {
     id: 'demand',
-    hubId: 'community-hub',
+    hubId: 'community-content-hub',
     nameEn: 'Demand Board',
     nameBn: 'ডিমান্ড বোর্ড',
     realWorldModel: 'TaskRabbit',
@@ -315,54 +274,8 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'ClipboardList'
   },
   {
-    id: 'offer',
-    hubId: 'community-hub',
-    nameEn: 'Offers',
-    nameBn: 'অফার',
-    realWorldModel: 'Discount Board',
-    route: '/offer',
-    color: 'from-pink-500 to-rose-600',
-    status: 'active',
-    iconName: 'Tag'
-  },
-  {
-    id: 'live',
-    hubId: 'community-hub',
-    nameEn: 'Live Streams',
-    nameBn: 'লাইভ',
-    realWorldModel: 'Facebook Live',
-    route: '/live',
-    color: 'from-red-500 to-rose-600',
-    status: 'active',
-    iconName: 'Radio'
-  },
-  {
-    id: 'workspace',
-    hubId: 'services-hub',
-    nameEn: 'Workspace Office',
-    nameBn: 'ওয়ার্কস্পেস অফিস',
-    realWorldModel: 'Google Workspace',
-    route: '/workspace',
-    color: 'from-blue-500 to-indigo-600',
-    status: 'active',
-    iconName: 'ClipboardList'
-  },
-  {
-    id: 'finance',
-    hubId: 'services-hub',
-    nameEn: 'Finance',
-    nameBn: 'অর্থনীতি',
-    realWorldModel: 'Bank',
-    route: '/finance',
-    color: 'from-orange-500 to-amber-700',
-    status: 'active',
-    iconName: 'Wallet'
-  },
-
-  // --- MEDIA ---
-  {
     id: 'reels',
-    hubId: 'community-hub',
+    hubId: 'community-content-hub',
     nameEn: 'Shorts',
     nameBn: 'রিলস',
     realWorldModel: 'TikTok',
@@ -373,7 +286,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'video',
-    hubId: 'community-hub',
+    hubId: 'community-content-hub',
     nameEn: 'Video Library',
     nameBn: 'ভিডিও লাইব্রেরি',
     realWorldModel: 'YouTube',
@@ -384,7 +297,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'news',
-    hubId: 'community-hub',
+    hubId: 'community-content-hub',
     nameEn: 'News',
     nameBn: 'নিউজ',
     realWorldModel: 'Prothom Alo',
@@ -393,99 +306,55 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     status: 'active',
     iconName: 'Newspaper'
   },
-  
-  // --- SPECIALIZED HUB ---
   {
-    id: 'electronics',
-    hubId: 'services-hub',
-    nameEn: 'Electronics',
-    nameBn: 'ইলেকট্রনিক্স',
-    realWorldModel: 'Star Tech',
-    route: '/electronics',
+    id: 'offer',
+    hubId: 'community-content-hub',
+    nameEn: 'Offers',
+    nameBn: 'অফার',
+    realWorldModel: 'Discount Board',
+    route: '/offer',
+    color: 'from-pink-500 to-rose-600',
+    status: 'active',
+    iconName: 'Tag'
+  },
+  {
+    id: 'live',
+    hubId: 'community-content-hub',
+    nameEn: 'Live Streams',
+    nameBn: 'লাইভ',
+    realWorldModel: 'Facebook Live',
+    route: '/live',
+    color: 'from-red-500 to-rose-600',
+    status: 'active',
+    iconName: 'Radio'
+  },
+
+  // --- UTILITY & PRO HUB (Tools + Finance + Others) ---
+  {
+    id: 'finance',
+    hubId: 'utility-pro-hub',
+    nameEn: 'Finance',
+    nameBn: 'অর্থনীতি',
+    realWorldModel: 'Bank',
+    route: '/finance',
+    color: 'from-orange-500 to-amber-700',
+    status: 'active',
+    iconName: 'Wallet'
+  },
+  {
+    id: 'workspace',
+    hubId: 'utility-pro-hub',
+    nameEn: 'Workspace Office',
+    nameBn: 'ওয়ার্কস্পেস অফিস',
+    realWorldModel: 'Google Workspace',
+    route: '/workspace',
     color: 'from-blue-500 to-indigo-600',
     status: 'active',
-    iconName: 'Tv'
-  },
-  {
-    id: 'auto',
-    hubId: 'services-hub',
-    nameEn: 'Automotive',
-    nameBn: 'অটোমোবাইল',
-    realWorldModel: 'Auto Trader',
-    route: '/auto',
-    color: 'from-gray-500 to-slate-700',
-    status: 'active',
-    iconName: 'Car'
-  },
-  {
-    id: 'real-estate',
-    hubId: 'services-hub',
-    nameEn: 'Real Estate',
-    nameBn: 'রিয়েল এস্টেট',
-    realWorldModel: 'Bproperty',
-    route: '/real-estate',
-    color: 'from-teal-500 to-emerald-700',
-    status: 'active',
-    iconName: 'Home'
-  },
-  {
-    id: 'hotel',
-    hubId: 'services-hub',
-    nameEn: 'Hotel Booking',
-    nameBn: 'হোটেল বুকিং',
-    realWorldModel: 'Agoda',
-    route: '/hotel',
-    color: 'from-indigo-400 to-blue-600',
-    status: 'active',
-    iconName: 'Hotel'
-  },
-  {
-    id: 'transport',
-    hubId: 'logistics-hub',
-    nameEn: 'Transport',
-    nameBn: 'ট্রান্সপোর্ট',
-    realWorldModel: 'Shohoz Bus',
-    route: '/transport',
-    color: 'from-amber-500 to-orange-700',
-    status: 'active',
-    iconName: 'Bus'
-  },
-  {
-    id: 'rent',
-    hubId: 'logistics-hub',
-    nameEn: 'Rent',
-    nameBn: 'ভাড়া',
-    realWorldModel: 'Rentals',
-    route: '/rent',
-    color: 'from-zinc-500 to-slate-700',
-    status: 'active',
-    iconName: 'Key'
-  },
-  {
-    id: 'emergency',
-    hubId: 'logistics-hub',
-    nameEn: 'Emergency',
-    nameBn: 'ইমার্জেন্সি',
-    realWorldModel: 'Ambulance/Police',
-    route: '/emergency',
-    color: 'from-red-500 to-rose-700',
-    status: 'active',
-    iconName: 'AlertTriangle'
-  },
-  {
-    id: 'travel',
-    hubId: 'services-hub',
-    nameEn: 'Travel Tour',
-    nameBn: 'ট্রাভেল ট্যুর',
-    realWorldModel: 'ShareTrip',
-    route: '/travel',
-    color: 'from-orange-400 to-sky-600',
-    status: 'active',
-    iconName: 'Compass'
+    iconName: 'Monitor'
   },
   {
     id: 'healthcare',
-    hubId: 'services-hub',
+    hubId: 'utility-pro-hub',
     nameEn: 'Healthcare',
     nameBn: 'হেলথকেয়ার',
     realWorldModel: 'DocTime',
@@ -496,7 +365,7 @@ export const PORTAL_REGISTRY: PortalItem[] = [
   },
   {
     id: 'education',
-    hubId: 'services-hub',
+    hubId: 'utility-pro-hub',
     nameEn: 'Education',
     nameBn: 'এডুকেশন',
     realWorldModel: '10 Minute School',
@@ -506,19 +375,30 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'GraduationCap'
   },
   {
-    id: 'events',
-    hubId: 'services-hub',
-    nameEn: 'Events',
-    nameBn: 'ইভেন্টস',
-    realWorldModel: 'Eventbrite',
-    route: '/events',
-    color: 'from-purple-400 to-fuchsia-600',
+    id: 'dropship',
+    hubId: 'utility-pro-hub',
+    nameEn: 'Dropship',
+    nameBn: 'ড্রপশিপিং',
+    realWorldModel: 'Oberlo',
+    route: '/dropship',
+    color: 'from-amber-500 to-orange-600',
     status: 'active',
-    iconName: 'Calendar'
+    iconName: 'Package'
+  },
+  {
+    id: 'jobs',
+    hubId: 'utility-pro-hub',
+    nameEn: 'Jobs & Gigs',
+    nameBn: 'চাকরি ও গিগ',
+    realWorldModel: 'Bdjobs',
+    route: '/jobs',
+    color: 'from-orange-500 to-blue-700',
+    status: 'active',
+    iconName: 'Briefcase'
   },
   {
     id: 'agriculture',
-    hubId: 'services-hub',
+    hubId: 'utility-pro-hub',
     nameEn: 'Agriculture',
     nameBn: 'এগ্রিকালচার',
     realWorldModel: 'Agro',
@@ -528,8 +408,19 @@ export const PORTAL_REGISTRY: PortalItem[] = [
     iconName: 'Tractor'
   },
   {
+    id: 'hotel',
+    hubId: 'utility-pro-hub',
+    nameEn: 'Hotel Booking',
+    nameBn: 'হোটেল বুকিং',
+    realWorldModel: 'Agoda',
+    route: '/hotel',
+    color: 'from-indigo-400 to-blue-600',
+    status: 'active',
+    iconName: 'Hotel'
+  },
+  {
     id: 'telecom',
-    hubId: 'services-hub',
+    hubId: 'utility-pro-hub',
     nameEn: 'Telecom',
     nameBn: 'টেলিকম',
     realWorldModel: 'MyGP',
@@ -579,5 +470,9 @@ export const ICON_COMPONENTS_MAP: Record<string, any> = {
   Tractor,
   ClipboardList,
   Video,
-  Truck
+  Truck,
+  Award,
+  AlertTriangle,
+  Layout,
+  Key
 };

@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 import { useChatStore } from '../store/useChatStore';
 import { safeStorage } from "@/modules/app";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+import { API_BASE_URL, buildApiUrl } from '@/core/config/api';
 
 export const useChatEngine = () => {
   const { addMessage, updateLastMessage, setSessionStatus, sessions } = useChatStore();
@@ -28,7 +27,7 @@ export const useChatEngine = () => {
 
       const token = safeStorage.getItem('accessToken');
       
-      const response = await fetch(`${API_BASE_URL}/ai/chat`, {
+      const response = await fetch(buildApiUrl('/ai/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

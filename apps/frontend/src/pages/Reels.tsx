@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Store, ArrowLeft } from 'lucide-react';
 import { formatBDT } from '@/core/lib/format';
+import { buildApiUrl } from '@/core/config/api';
 
 interface ReelPost {
   id: string;
@@ -30,7 +31,7 @@ export default function Reels() {
   useEffect(() => {
     const fetchReels = async () => {
       try {
-        const res = await fetch('/api/v1/feed/posts?type=video');
+        const res = await fetch(buildApiUrl('/feed/posts?type=video'));
         if (res.ok) {
           const data = await res.json();
           setPosts(data);

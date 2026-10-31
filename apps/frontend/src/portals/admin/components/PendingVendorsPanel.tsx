@@ -5,6 +5,7 @@ import {
   Building2, Check, X, Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { buildApiUrl } from '@/core/config/api';
 
 export interface PendingVendorItem {
   id: string;
@@ -76,7 +77,7 @@ export const PendingVendorsPanel: React.FC = () => {
   const fetchVendors = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/v1/seller/pending-vendors');
+      const res = await fetch(buildApiUrl('/seller/pending-vendors'));
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
@@ -98,7 +99,7 @@ export const PendingVendorsPanel: React.FC = () => {
   const handleApprove = async (id: string) => {
     setActionLoading(prev => ({ ...prev, [id]: 'approve' }));
     try {
-      const res = await fetch(`/api/v1/seller/vendors/${id}/approve`, {
+      const res = await fetch(buildApiUrl(`/seller/vendors/${id}/approve`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -122,7 +123,7 @@ export const PendingVendorsPanel: React.FC = () => {
     setActionLoading(prev => ({ ...prev, [id]: 'reject' }));
     
     try {
-      const res = await fetch(`/api/v1/seller/vendors/${id}/reject`, {
+      const res = await fetch(buildApiUrl(`/seller/vendors/${id}/reject`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: rejectReason || 'কাগজপত্রে ত্রুটি রয়েছে' }),

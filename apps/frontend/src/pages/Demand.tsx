@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, MapPin, Users, Plus, X, Tag, DollarSign, Send } from 'lucide-react';
 import { formatBDT } from '@/core/lib/format';
+import { buildApiUrl } from '@/core/config/api';
 
 interface DemandItem {
   id: string;
@@ -42,7 +43,7 @@ export default function Demand() {
 
   const fetchDemands = async () => {
     try {
-      const res = await fetch('/api/v1/demands');
+      const res = await fetch(buildApiUrl('/demands'));
       if (res.ok) {
         const data = await res.json();
         setDemands(data);
@@ -103,7 +104,7 @@ export default function Demand() {
     };
 
     try {
-      const res = await fetch('/api/v1/demands', {
+      const res = await fetch(buildApiUrl('/demands'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

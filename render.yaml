@@ -10,12 +10,13 @@ services:
     region: singapore
     autoDeploy: true
     branch: main
-    # pnpm দিয়ে সঠিক উপায়ে ডাটাবেজ প্রিজমা জেনারেট এবং শুধুমাত্র ব্যাকএন্ড অ্যাপটি বিল্ড করার জন্য:
-    buildCommand: npm install && cd packages/database && npm install && npx prisma generate && cd ../../apps/frontend && npm run build && cd ../backend && npm run build
-    # রান করার আগে dist/server.js সঠিকভাবে তৈরি হয়েছে কিনা তা চেক করে রান করবে:
-    startCommand: sh -c "if [ -f apps/backend/dist/server.js ]; then node --no-deprecation apps/backend/dist/server.js; else echo 'Error: dist/server.js not found' && exit 1; fi"
+    # Build shared database schema and backend service only (frontend is deployed on Vercel):
+    buildCommand: npm run build:backend
+    startCommand: npm run start
     healthCheckPath: /api/v1/health
     envVars:
+      - key: NODE_VERSION
+        value: "20"
       - key: NODE_ENV
         value: production
       - key: PORT

@@ -12,6 +12,7 @@ import { useLanguage } from "@/modules/language";
 import { useOrderTrackingStore } from "@/modules/orders";
 import { LiveTrackingSheet } from "@/portals/orders/components/LiveTrackingSheet";
 import { safeBack } from "@/lib/navigation";
+import { buildApiUrl } from "@/core/config/api";
 
 const formatPrice = formatBDT;
 
@@ -79,7 +80,7 @@ export default function OrderDetailPage() {
     }
 
     // Fallback to API
-    fetch(`/api/v1/orders/${activeId}`)
+    fetch(buildApiUrl(`/orders/${activeId}`))
       .then(res => res.json())
       .then(o => setOrder(o ?? null))
       .catch(() => setOrder(null));

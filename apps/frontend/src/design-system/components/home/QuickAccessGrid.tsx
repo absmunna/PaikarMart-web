@@ -21,7 +21,7 @@ const tiles: Tile[] = [
   { label: 'Market', icon: ShoppingBag, color: 'from-orange-400 to-pink-500', route: '/b2c' },
   { label: 'পাইকার', icon: Building2, color: 'from-blue-400 to-indigo-600', route: '/wholesale' },
   { label: 'Nearby', icon: MapPin, color: 'from-rose-400 to-red-600', route: '/portal/nearby' },
-  { label: 'Feed', icon: Newspaper, color: 'from-sky-400 to-blue-600', route: '/feed' },
+  { label: 'Social', icon: Newspaper, color: 'from-sky-400 to-blue-600', route: '/' },
   { label: 'Services', icon: Wrench, color: 'from-amber-400 to-orange-600', route: '/portal/services' },
   { label: 'Digital', icon: Monitor, color: 'from-violet-400 to-purple-600', route: '/portal/digital' },
   { label: 'Wallet', icon: Wallet, color: 'from-green-400 to-emerald-600', route: '/wallet' },

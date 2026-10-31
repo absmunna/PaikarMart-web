@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { buildApiUrl } from '@/core/config/api';
 
 export type SystemSeverity = 'info' | 'warning' | 'critical';
 
@@ -176,11 +177,11 @@ export const useAdminGovernanceStore = create<AdminGovernanceState>()(
         set({ isLoading: true });
         try {
           const [metricsRes, escrowRes, modRes, flagsRes, logsRes] = await Promise.allSettled([
-            fetch('/api/v1/admin/metrics').then(r => r.json()),
-            fetch('/api/v1/admin/escrow').then(r => r.json()),
-            fetch('/api/v1/admin/moderation').then(r => r.json()),
-            fetch('/api/v1/admin/flags').then(r => r.json()),
-            fetch('/api/v1/admin/audit-logs').then(r => r.json())
+            fetch(buildApiUrl('/admin/metrics')).then(r => r.json()),
+            fetch(buildApiUrl('/admin/escrow')).then(r => r.json()),
+            fetch(buildApiUrl('/admin/moderation')).then(r => r.json()),
+            fetch(buildApiUrl('/admin/flags')).then(r => r.json()),
+            fetch(buildApiUrl('/admin/audit-logs')).then(r => r.json())
           ]);
 
           if (metricsRes.status === 'fulfilled' && metricsRes.value?.metrics) {
@@ -232,7 +233,7 @@ export const useAdminGovernanceStore = create<AdminGovernanceState>()(
 
       releaseEscrowAction: async (escrowId: string) => {
         try {
-          const res = await fetch(`/api/v1/admin/escrow/${escrowId}/release`, {
+          const res = await fetch(buildApiUrl(`/admin/escrow/${escrowId}/release`), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
           });
@@ -258,7 +259,7 @@ export const useAdminGovernanceStore = create<AdminGovernanceState>()(
 
       refundEscrowAction: async (escrowId: string, reason?: string) => {
         try {
-          const res = await fetch(`/api/v1/admin/escrow/${escrowId}/refund`, {
+          const res = await fetch(buildApiUrl(`/admin/escrow/${escrowId}/refund`), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ reason: reason || 'Admin resolved dispute in favor of buyer' })
@@ -285,7 +286,7 @@ export const useAdminGovernanceStore = create<AdminGovernanceState>()(
 
       resolveModerationAction: async (id: string, action: 'dismiss' | 'delete' | 'suspend', notes?: string) => {
         try {
-          const res = await fetch(`/api/v1/admin/moderation/${id}/resolve`, {
+          const res = await fetch(buildApiUrl(`/admin/moderation/${id}/resolve`), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action, notes })
@@ -314,7 +315,7 @@ export const useAdminGovernanceStore = create<AdminGovernanceState>()(
 
       toggleFeatureFlagAction: async (key: string, enabled: boolean, rolloutPercentage?: number) => {
         try {
-          const res = await fetch(`/api/v1/admin/flags/${key}`, {
+          const res = await fetch(buildApiUrl(`/admin/flags/${key}`), {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ enabled, rolloutPercentage })

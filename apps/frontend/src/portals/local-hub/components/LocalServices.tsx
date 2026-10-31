@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { LocalService } from '../types';
 import { cn } from '@/lib/utils';
+import { buildApiUrl } from '@/core/config/api';
 
 const SERVICE_CATEGORIES = [
   { id: 'electrical', name: 'Electrical', icon: Zap, color: 'text-yellow-400' },
@@ -25,7 +26,7 @@ export const LocalServices: React.FC = () => {
     const fetchServices = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/local/services');
+        const response = await fetch(buildApiUrl('/local/services'));
         const result = await response.json();
         if (result.status === 'success') {
           setServices(result.data);

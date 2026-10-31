@@ -251,12 +251,15 @@ model Notification {
   id             String   @id @default(uuid())
   userId         String
   user           User     @relation("UserNotifications", fields: [userId], references: [id])
-  type           String
+  type           String   // e.g., 'order_update', 'new_bid'
+  category       String   @default("system") // 'buying' | 'selling' | 'system'
   title          String
   body           String
+  link           String?  // Deep link URL
   actorAvatarUrl String?
   read           Boolean  @default(false)
   createdAt      DateTime @default(now())
+  metadata       Json?    // Flexible metadata for specific notification types
 }
 
 model Wallet {

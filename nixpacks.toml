@@ -5,7 +5,7 @@ nixPkgs = ["nodejs_20", "corepack"]
 cmds = ["corepack enable", "pnpm install"] 
  
 [phases.build] 
-cmds = ["pnpm run build"] 
+cmds = ["npm run build:backend"] 
  
 [start] 
-cmd = "pnpm start"
+cmd = "npm run start"

@@ -1,4 +1,5 @@
 import { VideoItem, LiveStreamSession, VideoComment, VideoUploadPayload } from '../types';
+import { buildApiUrl } from '@/core/config/api';
 
 export const INITIAL_VIDEOS: VideoItem[] = [
   {
@@ -292,7 +293,7 @@ class VideoService {
       if (params?.search) query.append('search', params.search);
       query.append('type', 'video');
 
-      const res = await fetch(`/api/v1/feed?${query.toString()}`);
+      const res = await fetch(buildApiUrl(`/feed?${query.toString()}`));
       if (res.ok) {
         const data = await res.json();
         if (data.posts && data.posts.length > 0) {
@@ -395,7 +396,7 @@ class VideoService {
     };
 
     try {
-      await fetch('/api/v1/content', {
+      await fetch(buildApiUrl('/content'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

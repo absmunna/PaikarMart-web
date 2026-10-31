@@ -1,4 +1,5 @@
 import { safeStorage } from "@/modules/app";
+import { buildApiUrl } from "@/core/config/api";
 
 export interface SendOtpResponse {
   success: boolean;
@@ -31,7 +32,7 @@ export async function sendEmailOtp(
   }
 
   try {
-    const res = await fetch("/api/v1/auth/send-otp", {
+    const res = await fetch(buildApiUrl("/auth/send-otp"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: cleanEmail, purpose }),
@@ -77,7 +78,7 @@ export async function verifyEmailOtp(
   }
 
   try {
-    const res = await fetch("/api/v1/auth/verify-otp", {
+    const res = await fetch(buildApiUrl("/auth/verify-otp"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: cleanEmail, otp: cleanOtp }),

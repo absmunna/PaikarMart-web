@@ -37,9 +37,9 @@ const MOCK_COMMENTS: Comment[] = [
 ];
 
 export async function getCommentsByTarget(targetType: CommentTarget, targetId: string): Promise<Comment[]> {
-  return api.get<Comment[]>(`/api/comments?targetType=${targetType}&targetId=${targetId}`);
+  return api.get<Comment[]>(`/comments?targetType=${targetType}&targetId=${targetId}`);
 }
 
 export async function addComment(comment: Omit<Comment, "id" | "createdAt" | "isSellerReply" | "verifiedBuyer">): Promise<Comment> {
-  return api.post<Comment>("/api/comments", comment);
+  return api.post<Comment>("/comments", comment);
 }

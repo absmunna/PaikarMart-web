@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma, db } from '../../config/database';
 
-import { JWT_SECRET } from '../../middleware/auth';
+import { JWT_SECRET } from '../../config/env';
 
 export const register = async (req: Request, res: Response) => {
   try {

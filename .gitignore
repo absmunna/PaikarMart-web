@@ -122,3 +122,4 @@ public/assets/aistudio/
 *.sqlite-journal
 prisma/*.db
 prisma/*.sqlite
+service-account.json

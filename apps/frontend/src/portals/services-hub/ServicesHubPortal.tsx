@@ -7,8 +7,6 @@ import { Wrench } from 'lucide-react';
 export default function ServicesHubPortal() {
   return (
     <div className="min-h-screen pb-20 p-4 space-y-6 bg-[var(--pm-bg)]">
-      <HomeHeader />
-      <PortalIconBar />
       <main className="space-y-4">
         <GlassCard className="p-6 flex items-center gap-4 border-[var(--pm-border)] bg-[var(--pm-surface)]">
           <Wrench className="w-8 h-8 text-[var(--pm-accent)]" />

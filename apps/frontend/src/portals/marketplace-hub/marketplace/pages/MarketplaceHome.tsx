@@ -221,11 +221,6 @@ export function MarketplaceHome() {
 
   return (
     <div className="w-full text-[var(--pm-text)] pb-24">
-      {/* ━━━ PORTAL HOMEPAGE HEADER (Top Priority) ━━━ */}
-      <section className="pt-4 space-y-1">
-        <PortalIconBar context="marketplace" />
-      </section>
-
       {/* Search & Segment Header */}
       <div className="sticky top-0 z-50 bg-[var(--pm-surface)]/90 backdrop-blur-md px-4 py-3 border-b border-[var(--pm-border)] mt-2">
         <div className="flex items-center gap-3">

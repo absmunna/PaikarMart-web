@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { SellerProductOffer } from "../types/product.types";
+import { buildApiUrl } from "@/core/config/api";
 
 interface LinkInventoryModalProps {
   isOpen: boolean;
@@ -91,7 +92,7 @@ export const LinkInventoryModal: React.FC<LinkInventoryModalProps> = ({
 
     // Attempt backend sync if available
     try {
-      await fetch(`/api/v1/catalog/master/${asin}/offers`, {
+      await fetch(buildApiUrl(`/catalog/master/${asin}/offers`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

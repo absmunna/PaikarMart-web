@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { formatBDT } from '@/lib/format';
 import { toast } from 'sonner';
 import { safeBack } from '@/lib/navigation';
+import { buildApiUrl } from '@/core/config/api';
 
 export const SandboxGatewayPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -63,7 +64,7 @@ export const SandboxGatewayPage: React.FC = () => {
 
     try {
       // Call backend verify endpoint
-      await fetch('/api/v1/payment/verify', {
+      await fetch(buildApiUrl('/payment/verify'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -18,7 +18,6 @@ import { orderRoutes } from "@backend/modules/order/order.routes";
 import { socialRoutes } from "@backend/modules/social/social.routes";
 import { nearbyRoutes } from "@backend/modules/nearby/nearby.routes";
 import { deliveryRoutes } from "@backend/modules/delivery/delivery.routes";
-import { dealRoutes } from "@backend/modules/deal/deal.routes";
 import searchRoutes from "@backend/modules/search/search.routes";
 import logisticsHubRoutes from "@backend/modules/delivery/logistics.hub.routes";
 import communityHubRoutes from "@backend/modules/content/community.hub.routes";
@@ -35,7 +34,6 @@ router.use("/search", searchRoutes);
 // --- MARKETPLACE HUB ---
 router.use("/marketplace", productRoutes);
 router.use("/marketplace/orders", orderRoutes);
-router.use("/marketplace/deals", dealRoutes);
 
 // --- LOGISTICS HUB ---
 router.use("/logistics", logisticsHubRoutes);

@@ -45,43 +45,51 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
     if (forcePortal) return forcePortal;
     const path = location.pathname.toLowerCase();
     
+    // Commerce Pillar
     if (
       path.startsWith('/wholesale') || 
       path.startsWith('/b2b') || 
       path.startsWith('/export') || 
-      path.startsWith('/rfq')
-    ) return 'wholesale';
+      path.startsWith('/pk-shop') ||
+      path.startsWith('/brands') ||
+      path.startsWith('/marketplace') ||
+      path.startsWith('/b2c') ||
+      path.startsWith('/dropship') ||
+      path.startsWith('/fashion') ||
+      path.startsWith('/electronics')
+    ) return 'commerce-hub';
 
+    // Services & Logistics Pillar
     if (
       path.startsWith('/local') || 
       path.startsWith('/nearby') || 
       path.startsWith('/grocery') || 
       path.startsWith('/pharmacy') ||
-      path.startsWith('/electronics-local')
-    ) return 'local';
+      path.startsWith('/services') ||
+      path.startsWith('/logistics') ||
+      path.startsWith('/ride') ||
+      path.startsWith('/food') ||
+      path.startsWith('/transport')
+    ) return 'services-logistics-hub';
 
+    // Community Pillar
     if (
-      path.startsWith('/services') || 
-      path.startsWith('/repair') || 
-      path.startsWith('/travel')
-    ) return 'services';
+      path.startsWith('/social') ||
+      path.startsWith('/feed') ||
+      path.startsWith('/video') ||
+      path.startsWith('/reels') ||
+      path.startsWith('/news') ||
+      path.startsWith('/demand')
+    ) return 'community-content-hub';
 
+    // Utility Pillar
     if (
-      path.startsWith('/logistics') || 
-      path.startsWith('/transport') || 
-      path.startsWith('/ride')
-    ) return 'logistics';
-
-    if (
-      path.startsWith('/marketplace') || 
-      path.startsWith('/b2c') || 
-      path.startsWith('/shop') || 
-      path.startsWith('/pk-shop') || 
-      path.startsWith('/brands') || 
-      path.startsWith('/dropship') || 
-      path.startsWith('/auto') ||
-      path.startsWith('/digital')
-    ) return 'retail';
+      path.startsWith('/wallet') ||
+      path.startsWith('/finance') ||
+      path.startsWith('/workspace') ||
+      path.startsWith('/education') ||
+      path.startsWith('/healthcare')
+    ) return 'utility-pro-hub';
 
     return 'all';
   }, [location.pathname, forcePortal]);
@@ -106,105 +114,75 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
     }
   }, [searchParams]);
 
-  // Routes where the category bar should be hidden
+  // Show category bar ONLY on the Marketplace Hub homepage (/marketplace or /market), hide everywhere else
   const shouldHide = useMemo(() => {
-    const path = location.pathname.toLowerCase();
-    const hiddenRoutes = [
-      '/',
-      '/feed',
-      '/social',
-      '/auth',
-      '/login',
-      '/register',
-      '/forgot-password',
-      '/verify-email',
-      '/settings',
-      '/profile',
-      '/reels',
-      '/checkout',
-      '/admin',
-      '/client-vault',
-      '/vault',
-      '/messages',
-      '/chat',
-      '/portals',
-      '/apps',
-      '/hub',
-      '/portal-hub',
-      '/cart',
-      '/orders',
-      '/wallet'
-    ];
-    return hiddenRoutes.some(r => path === r || path.startsWith(r + '/'));
+    const path = location.pathname.toLowerCase().replace(/\/$/, '');
+    const isMarketplaceHome = path === '/marketplace' || path === '/market';
+    return !isMarketplaceHome;
   }, [location.pathname]);
 
   if (shouldHide) {
     return null;
   }
 
-  // Modern Category & Portal Icons List
-  const categoryItems = [
-    { id: 'all', icon: ShoppingBag, label: 'সব প্রোডাক্ট', path: '/market', categoryKey: 'all', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
-    { id: 'video', icon: PlayCircle, label: 'ভিডিও পোর্টাল', path: '/video', categoryKey: 'video', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
-    { id: 'wholesale', icon: Factory, label: 'পাইকারি আড়ত', path: '/wholesale', categoryKey: 'wholesale', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' },
-    { id: 'pk-shop', icon: Sparkles, label: 'পিকে স্টোর', path: '/pk-shop', categoryKey: 'pk-shop', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
-    { id: 'brands', icon: Award, label: 'ব্র্যান্ড শপ', path: '/brands', categoryKey: 'brands', color: 'text-pink-400 bg-pink-500/10 border-pink-500/20' },
-    { id: 'nearby', icon: MapPin, label: 'লোকাল শপ', path: '/nearby', categoryKey: 'nearby', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
-    { id: 'grocery', icon: Store, label: 'মুদি ও খামার', path: '/grocery', categoryKey: 'grocery', color: 'text-amber-500 bg-amber-600/10 border-amber-600/20' },
-    { id: 'fashion', icon: Shirt, label: 'ফ্যাশন', path: '/marketplace?category=fashion', categoryKey: 'fashion', color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
-    { id: 'electronics', icon: Smartphone, label: 'ইলেকট্রনিক্স', path: '/marketplace?category=electronics', categoryKey: 'electronics', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
-    { id: 'pharmacy', icon: Activity, label: 'ফার্মেসি', path: '/pharmacy', categoryKey: 'pharmacy', color: 'text-teal-400 bg-teal-500/10 border-teal-500/20' },
-    { id: 'services', icon: Wrench, label: 'সার্ভিস হাব', path: '/services', categoryKey: 'services', color: 'text-violet-400 bg-violet-500/10 border-violet-500/20' },
-    { id: 'digital', icon: Laptop, label: 'ডিজিটাল', path: '/digital', categoryKey: 'digital', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
-    { id: 'seller', icon: Briefcase, label: 'সেলার হন', path: '/become-seller', categoryKey: 'seller', color: 'text-zinc-400 bg-zinc-500/10 border-zinc-500/20' },
+  // ─── 4 PILLARS OF PAIKAR MART ───
+  const pillarItems = [
+    { 
+      id: 'commerce', 
+      icon: ShoppingBag, 
+      label: 'কমার্স', 
+      path: '/marketplace', 
+      contextKey: 'commerce-hub',
+      color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' 
+    },
+    { 
+      id: 'services', 
+      icon: Wrench, 
+      label: 'লজিস্টিকস', 
+      path: '/services', 
+      contextKey: 'services-logistics-hub',
+      color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' 
+    },
+    { 
+      id: 'community', 
+      icon: PlayCircle, 
+      label: 'কমিউনিটি', 
+      path: '/feed', 
+      contextKey: 'community-content-hub',
+      color: 'text-pink-400 bg-pink-500/10 border-pink-500/20' 
+    },
+    { 
+      id: 'utility', 
+      icon: Laptop, 
+      label: 'ইউটিলিটি', 
+      path: '/workspace', 
+      contextKey: 'utility-pro-hub',
+      color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' 
+    },
   ];
 
   const categoriesList = PORTAL_CATEGORIES_MAP[portalContext] || PORTAL_CATEGORIES_MAP.all;
   const selectedCategoryObj = categoriesList.find(c => c.id === activeMainCategory) || categoriesList[0];
   const hasSubcategories = selectedCategoryObj?.subcategories && selectedCategoryObj.subcategories.length > 0;
 
-  const handleItemClick = (item: typeof categoryItems[0]) => {
-    // If clicking an item that corresponds to a category filter
-    if (location.pathname === '/' || location.pathname === '/marketplace') {
-      if (item.id === 'all') {
-        setMainCategory('all');
-        setSubCategory(null);
-        if (location.pathname !== '/') navigate('/');
-        return;
-      }
-      if (item.id === 'fashion' || item.id === 'electronics' || item.id === 'grocery') {
-        setMainCategory(item.id);
-        const newParams = new URLSearchParams(searchParams);
-        newParams.set('category', item.id);
-        newParams.delete('sub');
-        setSearchParams(newParams, { replace: true });
-        return;
-      }
-    }
-
-    // Otherwise navigate directly to the portal route
+  const handlePillarClick = (item: typeof pillarItems[0]) => {
+    setPortalContext(item.contextKey as PortalContextType);
     navigate(item.path);
+  };
+
+  const handleCategoryClick = (catId: string) => {
+    setMainCategory(catId);
+    setSubCategory(null);
+    
+    // Update URL if needed
+    if (portalContext === 'commerce-hub') {
+       navigate(`/marketplace?category=${catId}`);
+    }
   };
 
   const handleSelectSubCategory = (subSlug: string) => {
     const target = subSlug === 'all' || activeSubCategory === subSlug ? null : subSlug;
     setSubCategory(target);
-    const newParams = new URLSearchParams(searchParams);
-    if (!target) {
-      newParams.delete('sub');
-    } else {
-      newParams.set('sub', target);
-    }
-    setSearchParams(newParams, { replace: true });
-  };
-
-  const handleResetFilters = () => {
-    setMainCategory('all');
-    setSubCategory(null);
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete('category');
-    newParams.delete('sub');
-    setSearchParams(newParams, { replace: true });
   };
 
   const scrollCarousel = (direction: 'left' | 'right') => {
@@ -214,9 +192,6 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
     }
   };
 
-  const isHomeOrFeed = location.pathname === '/' || location.pathname === '/feed';
-  const hasActiveFilter = activeMainCategory !== 'all' || Boolean(activeSubCategory);
-
   return (
     <div className={cn(
       "sticky top-0 z-30 w-full bg-[var(--pm-bg)]/95 backdrop-blur-2xl border-b border-[var(--pm-border)] shadow-md transition-all duration-300 select-none",
@@ -224,63 +199,61 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
     )}>
       <div className="max-w-[1600px] mx-auto px-2 sm:px-4">
         
+        {/* ─── 1. CORE PILLARS BAR ─── */}
+        <div className="flex items-center justify-center gap-4 py-3 border-b border-white/5 overflow-x-auto no-scrollbar">
+          {pillarItems.map((pillar) => {
+            const isActive = portalContext === pillar.contextKey;
+            const Icon = pillar.icon;
+            return (
+              <button
+                key={pillar.id}
+                onClick={() => handlePillarClick(pillar)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-2xl transition-all active:scale-95 whitespace-nowrap",
+                  isActive 
+                    ? "bg-[var(--pm-accent)] text-white shadow-lg shadow-[var(--pm-accent)]/20 font-black" 
+                    : "bg-white/5 text-zinc-400 hover:text-white border border-white/5 hover:border-white/10"
+                )}
+              >
+                <Icon className={cn("w-4 h-4", isActive ? "stroke-[3px]" : "stroke-[2px]")} />
+                <span className="text-[11px] uppercase tracking-wider">{pillar.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-
-        {/* ─── 2. MAIN CATEGORY BAR (Iconic Modern Squircle Cards) ─── */}
+        {/* ─── 2. SUB-PORTALS / CATEGORIES (Iconic) ─── */}
         <div className="relative group/carousel py-3">
-          
-          {/* Scroll Navigation Arrows */}
-          <button
-            onClick={() => scrollCarousel('left')}
-            className="hidden md:flex absolute -left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] shadow-lg text-[var(--pm-text)] items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-all hover:scale-110 active:scale-95 cursor-pointer backdrop-blur-md"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={() => scrollCarousel('right')}
-            className="hidden md:flex absolute -right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] shadow-lg text-[var(--pm-text)] items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-all hover:scale-110 active:scale-95 cursor-pointer backdrop-blur-md"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
-          {/* Horizontal Icons Scrollable Track */}
           <div 
             ref={scrollContainerRef}
-            className="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth px-1"
+            className="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth px-1"
           >
-            {categoryItems.map((item) => {
-              const Icon = item.icon;
-              const isRouteActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
-              const isCategoryActive = (location.pathname === '/' || location.pathname === '/marketplace') && activeMainCategory === item.categoryKey;
-              const isActive = isRouteActive || isCategoryActive;
+            {categoriesList.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = activeMainCategory === cat.id;
 
               return (
                 <button
-                  key={item.id}
-                  onClick={() => handleItemClick(item)}
-                  className="flex flex-col items-center gap-2 shrink-0 transition-all active:scale-95 group/icon cursor-pointer select-none w-[68px]"
+                  key={cat.id}
+                  onClick={() => handleCategoryClick(cat.id)}
+                  className="flex flex-col items-center gap-1.5 shrink-0 transition-all active:scale-95 group/icon cursor-pointer w-[64px]"
                 >
                   <div className={cn(
-                    "w-13 h-13 sm:w-14 sm:h-14 rounded-2xl border flex items-center justify-center shadow-md transition-all duration-300",
+                    "w-12 h-12 rounded-[20px] border flex items-center justify-center transition-all duration-300 relative overflow-hidden",
                     isActive 
-                      ? "bg-[var(--pm-accent)] border-[var(--pm-accent)] shadow-lg shadow-[var(--pm-accent)]/30 scale-105" 
-                      : "bg-[var(--pm-surface)] border-[var(--pm-border)] group-hover/icon:border-[var(--pm-accent)]/50 group-hover/icon:scale-105"
+                      ? "bg-gradient-to-br from-[var(--pm-accent)] to-orange-600 border-[var(--pm-accent)] shadow-lg scale-105" 
+                      : "bg-[var(--pm-surface)] border-[var(--pm-border)] group-hover/icon:border-white/20"
                   )}>
-                    <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300",
-                      isActive ? "text-white bg-transparent" : item.color
-                    )}>
-                      <Icon className={cn("w-5 h-5", isActive ? "stroke-[2.5px]" : "")} />
-                    </div>
+                    <Icon className={cn(
+                      "w-5 h-5 relative z-10 transition-transform duration-300",
+                      isActive ? "text-white scale-110" : "text-zinc-500 group-hover/icon:text-zinc-200"
+                    )} />
                   </div>
                   <span className={cn(
-                    "text-[11px] font-black tracking-tight whitespace-nowrap transition-colors duration-300 truncate w-full text-center",
-                    isActive ? "text-[var(--pm-accent)] font-extrabold" : "text-[var(--pm-muted)] group-hover/icon:text-[var(--pm-text)]"
+                    "text-[9px] font-black tracking-tight whitespace-nowrap transition-colors duration-300 truncate w-full text-center uppercase",
+                    isActive ? "text-[var(--pm-accent)]" : "text-zinc-500 group-hover/icon:text-zinc-300"
                   )}>
-                    {item.label}
+                    {cat.nameBn}
                   </span>
                 </button>
               );
@@ -288,38 +261,28 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
           </div>
         </div>
 
-        {/* ─── 3. SUB-CATEGORY SLIDER STRIP (Contextual Sub-Categories) ─── */}
+        {/* ─── 3. FILTER CHIPS (Third Level) ─── */}
         <AnimatePresence mode="wait">
           {hasSubcategories && selectedCategoryObj.subcategories && (
             <motion.div
               key={selectedCategoryObj.id}
-              initial={{ opacity: 0, height: 0, y: -4 }}
-              animate={{ opacity: 1, height: 'auto', y: 0 }}
-              exit={{ opacity: 0, height: 0, y: -4 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden border-t border-[var(--pm-border)]/50 pt-2 pb-2.5"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden border-t border-white/5 pt-2 pb-3"
             >
-              <div 
-                ref={subScrollContainerRef}
-                className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth px-1"
-              >
-                <span className="text-[10px] text-[var(--pm-accent)] font-black uppercase tracking-wider shrink-0 flex items-center gap-1 mr-1">
-                  <Sparkles className="w-3 h-3 text-[var(--pm-accent)]" />
-                  ফিল্টার:
-                </span>
-
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar px-1">
                 {selectedCategoryObj.subcategories.map((sub) => {
                   const isSubActive = activeSubCategory === sub.slug || (sub.slug === 'all' && !activeSubCategory);
-
                   return (
                     <button
                       key={sub.id}
                       onClick={() => handleSelectSubCategory(sub.slug)}
                       className={cn(
-                        "shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shadow-xs",
+                        "shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-black transition-all whitespace-nowrap",
                         isSubActive
-                          ? "bg-[var(--pm-accent)] text-white shadow-sm shadow-[var(--pm-accent)]/30 font-black"
-                          : "text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] bg-[var(--pm-surface)] hover:bg-[var(--pm-surface-hover)] border border-[var(--pm-border)]"
+                          ? "bg-[var(--pm-accent)]/20 text-[var(--pm-accent)] border border-[var(--pm-accent)]/30"
+                          : "text-zinc-500 hover:text-zinc-300 bg-white/5 border border-white/5"
                       )}
                     >
                       {sub.nameBn}

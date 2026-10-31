@@ -32,10 +32,9 @@ export const unifiedSearch = async (req: Request, res: Response) => {
           OR: [
             { title: { contains: query, mode: 'insensitive' } },
             { description: { contains: query, mode: 'insensitive' } }
-          ],
-          isActive: true
+          ]
         },
-        include: { business: true },
+        include: { vendor: true },
         take: 10
       }),
 

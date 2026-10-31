@@ -26,16 +26,17 @@
 
 1. [Render.com](https://render.com)-এ যান এবং **New +** -> **Blueprint** নির্বাচন করুন (অথবা **Web Service**)।
 2. আপনার GitHub রিপোজিটরি সিলেক্ট করুন।
-3. **Build & Start Commands** (Blueprint ব্যবহার করলে স্বয়ংক্রিয়ভাবে সেট হয়ে যাবে):
-   - **Build Command**: `npm install && cd packages/database && npx --yes prisma generate && cd ../../apps/backend && npm run build`
-   - **Start Command**: `node apps/backend/dist/server.js`
+3. **Build & Start Commands** (Blueprint/Render ব্যবহার করলে স্বয়ংক্রিয়ভাবে সেট হয়ে যাবে):
+   - **Node Version**: `20.x`
+   - **Build Command**: `npm run build:backend`
+   - **Start Command**: `npm run start`
    - **Health Check Path**: `/api/v1/health`
 4. **Environment Variables (এনভায়রনমেন্ট ভ্যারিয়েবলস)** - কোন কি কোথায় পাবেন:
    - `DATABASE_URL`: Supabase -> Project Settings -> Database -> Connection string (URI) -> Transaction Pooler (Port 6543)
-     - ফরম্যাট: `postgresql://postgres.svhckgdpbfasmuzcekrd:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true`
+     - ফরম্যাট: `postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true`
      *(পাসওয়ার্ডে স্পেশাল ক্যারেক্টার থাকলে তা percent-encode করতে হবে)*
    - `DIRECT_URL`: Supabase -> Project Settings -> Database -> Connection string (URI) -> Direct Connection (Port 5432)
-     - ফরম্যাট: `postgresql://postgres:[YOUR-PASSWORD]@db.svhckgdpbfasmuzcekrd.supabase.co:5432/postgres`
+     - ফরম্যাট: `postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres`
    - `CLIENT_URL`: `https://paikarmart.com`
      *(আপনার নিজস্ব ডোমেইন `https://paikarmart.com` দিবেন। ব্যাকএন্ডের CORS স্বয়ংক্রিয়ভাবে `https://paikarmart.vercel.app` এবং `https://paikarmart.com` উভয়কেই অনুমতি দেয়)*
    - `CORS_ORIGINS`: `https://paikarmart.com,https://www.paikarmart.com,https://paikarmart.vercel.app`
@@ -53,11 +54,11 @@
 3. **Project Settings**:
    - **Framework Preset**: `Vite`
    - **Root Directory**: `./` (রুট থেকে হলে `vercel.json` স্বয়ংক্রিয়ভাবে হ্যান্ডেল করবে)
-   - **Build Command**: `cd packages/database && npx --yes prisma generate && cd ../../apps/frontend && npm run build`
+   - **Build Command**: `npm run build:frontend`
    - **Output Directory**: `apps/frontend/dist`
 4. **Environment Variables**:
    - `VITE_API_BASE_URL`: রেন্ডার ব্যাকএন্ডের লাইভ URL + `/api/v1` দিন (যেমন: `https://paikarmart-backend.onrender.com/api/v1`)
-   - `VITE_SUPABASE_URL`: `https://svhckgdpbfasmuzcekrd.supabase.co`
+   - `VITE_SUPABASE_URL`: `https://[YOUR-PROJECT-REF].supabase.co`
    - `VITE_SUPABASE_ANON_KEY`: Supabase Dashboard -> Project Settings -> API -> Project API Keys -> `anon` `public` কি-টি কপি করে এখানে পেস্ট করুন।
 5. **Domains**:
    - Vercel প্রজেক্টের **Settings** -> **Domains**-এ গিয়ে আপনার কাস্টম ডোমেইন `paikarmart.com` ও `www.paikarmart.com` অ্যাড করুন।

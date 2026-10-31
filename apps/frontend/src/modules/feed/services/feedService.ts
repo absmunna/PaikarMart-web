@@ -1,15 +1,16 @@
 import { FeedPost } from '../types';
+import { buildApiUrl } from '@/core/config/api';
 
 export const feedService = {
   getSocialFeed: async (district: string, filter: string): Promise<FeedPost[]> => {
     try {
-      const socRes = await fetch(`/api/v1/feed/social?district=${district}&filter=${filter}`);
+      const socRes = await fetch(buildApiUrl(`/feed/social?district=${district}&filter=${filter}`));
       if (socRes.ok) {
         const data = await socRes.json();
         return data.posts || [];
       }
       // Try fallback endpoint
-      const fallbackRes = await fetch(`/api/feed/social?district=${district}&filter=${filter}`);
+      const fallbackRes = await fetch(buildApiUrl(`/feed/social?district=${district}&filter=${filter}`));
       if (fallbackRes.ok) {
         const data = await fallbackRes.json();
         return data.posts || [];

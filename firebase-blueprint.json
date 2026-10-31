@@ -83,6 +83,24 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "Post creation timestamp" }
       },
       "required": ["id", "authorId", "content"]
+    },
+    "notifications": {
+      "title": "Notification",
+      "description": "Real-time in-app notification for transactions and activities",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string", "description": "Receiver UID" },
+        "type": { "type": "string" },
+        "category": { "type": "string", "enum": ["buying", "selling", "system"] },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "link": { "type": "string" },
+        "read": { "type": "boolean" },
+        "actorAvatarUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "title", "body"]
     }
   },
   "firestore": {
@@ -105,6 +123,10 @@
     "/posts/{postId}": {
       "schema": { "$ref": "#/entities/posts" },
       "description": "Social feed posts containing text, photo, video, files, and products"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/notifications" },
+      "description": "Real-time user notifications"
     }
   }
 }

@@ -18,6 +18,7 @@ import { auth, db, googleProvider, facebookProvider } from "@/lib/firebase";
 import { safeStorage } from "@/modules/app";
 import { AppRole, RoleGroup, getRoleGroup, getPermissionsForRole } from "@/config/roles.config";
 import { toast } from "sonner";
+import { buildApiUrl } from "@/core/config/api";
 
 export type { AppRole, RoleGroup };
 
@@ -169,7 +170,7 @@ async function syncUserWithBackend(payload: {
   avatarUrl?: string;
 }, idToken: string) {
   try {
-    const res = await fetch('/api/v1/auth/sync', {
+    const res = await fetch(buildApiUrl('/auth/sync'), {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -475,7 +476,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const sendVerification = useCallback(async (identifier: string) => {
     try {
-      const endpoint = identifier.includes('@') ? '/api/v1/auth/send-otp' : '/api/v1/auth/send-otp';
+      const endpoint = buildApiUrl('/auth/send-otp');
       const body = identifier.includes('@') ? { email: identifier, purpose: 'register' } : { phone: identifier, purpose: 'register' };
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -492,7 +493,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verifyVerification = useCallback(async (identifier: string, code: string) => {
     try {
-      const endpoint = '/api/v1/auth/verify-otp';
+      const endpoint = buildApiUrl('/auth/verify-otp');
       const body = identifier.includes('@') ? { email: identifier, otp: code } : { phone: identifier, otp: code };
       console.log('Sending OTP verification:', { endpoint, body });
       const res = await fetch(endpoint, {

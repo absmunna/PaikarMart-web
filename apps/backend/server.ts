@@ -1,4 +1,6 @@
 import express from "express";
+import http from "http";
+import { Server as SocketIOServer } from "socket.io";
 import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
@@ -7,7 +9,7 @@ import { createServer as createViteServer } from "vite";
 import morgan from 'morgan';
 import { helmetMiddleware } from './middleware/helmet';
 import { rateLimitMiddleware } from './middleware/rateLimit';
-import { corsMiddleware } from './middleware/cors';
+import { corsMiddleware, socketCorsOptions } from './middleware/cors';
 import { auditMiddleware } from './middleware/audit';
 import { sanitizeMiddleware } from './middleware/sanitize';
 import { db } from './config/database';
@@ -26,7 +28,7 @@ import { analyticsRoutes } from './modules/analytics/analytics.routes';
 import { nearbyRoutes } from './modules/nearby/nearby.routes';
 import { deliveryRoutes } from './modules/delivery/delivery.routes';
 import logisticsHubRoutes from './modules/delivery/logistics.hub.routes';
-import { dealRoutes } from './modules/deal/deal.routes';
+// import { dealRoutes } from './modules/deal/deal.routes';
 import { socialRoutes } from './modules/social/social.routes';
 import { contentRoutes } from './modules/content/content.routes';
 import { complianceRoutes } from './modules/compliance/compliance.routes';
@@ -35,10 +37,11 @@ import { commercialRoutes } from './modules/commercial/commercial.routes';
 import { pkShopRoutes } from './modules/portals/pkshop.routes';
 import { verificationRoutes } from './modules/verification/verification.routes';
 import { adminRoutes } from './modules/admin/admin.routes';
+import { notificationRoutes } from './modules/notification/notification.routes';
 import vendorsRouter from './api/routes/vendors';
 import miscRouter from './api/routes/misc';
 import meRouter from './api/routes/me';
-
+import { env } from './config/env';
 import { initializeFirebaseAdmin } from './config/firebase';
 
 dotenv.config();
@@ -68,9 +71,28 @@ process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });
 
+// Global Socket.IO instance exportable to real-time modules
+export let io: SocketIOServer | undefined;
+
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const PORT = parseInt(env.PORT, 10) || 3000;
+
+  // Reverse-proxy trust for Render, Cloud Run, and load balancers.
+  // Must be configured before rate limiter so rate limits work per real client IP.
+  app.set('trust proxy', 1);
+
+  // Attach HTTP server and Socket.IO with consistent CORS rules
+  const httpServer = http.createServer(app);
+  io = new SocketIOServer(httpServer, {
+    cors: socketCorsOptions,
+  });
+
+  io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+      // socket disconnected
+    });
+  });
 
   // Bypass & handle all AI Studio internal control plane routes to prevent 404 or HTML fallthroughs
   app.use((req, res, next) => {
@@ -137,7 +159,7 @@ async function startServer() {
   app.use('/api/local', nearbyRoutes);
   app.use('/api/v1/delivery', deliveryRoutes);
   app.use('/api/v1/logistics', logisticsHubRoutes);
-  app.use('/api/v1/deals', dealRoutes);
+  // app.use('/api/v1/deals', dealRoutes);
   app.use('/api/v1/social', socialRoutes);
   app.use('/api/v1/content', contentRoutes);
   app.use('/api/v1/compliance', complianceRoutes);
@@ -146,6 +168,7 @@ async function startServer() {
   app.use('/api/v1/pk-shop', pkShopRoutes);
   app.use('/api/v1/verifications', verificationRoutes);
   app.use('/api/v1/admin', adminRoutes);
+  app.use('/api/v1/notifications', notificationRoutes);
   
   // Cross-cutting utility routes
   app.use('/api/v1', vendorsRouter);
@@ -260,7 +283,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`==============================================`);
     console.log(`🚀 PAIKAR MART BACKEND API IS ONLINE & LIVE!`);
     console.log(`📡 Listening on: http://0.0.0.0:${PORT}`);

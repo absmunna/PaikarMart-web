@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, Wallet, Search, User, ChevronDown, Check, X, PlayCircle } from 'lucide-react';
+import { MapPin, Wallet, Search, User, ChevronDown, Check, X, PlayCircle, MessageSquare } from 'lucide-react';
 import { useWalletStore } from '@/modules/wallet';
 import { useAuth } from '@/modules/auth';
 import { useNavigate } from 'react-router-dom';
@@ -201,6 +201,22 @@ export const HomeHeader: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
           </span>
         </motion.button>
+
+        {/* Messaging Icon - Visible only to logged-in users */}
+        {isAuthenticated && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/messages')}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 flex items-center justify-center text-cyan-400 transition-all cursor-pointer shadow-sm relative group"
+            title="মেসেজ সেন্টার"
+          >
+            <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-500 group-hover:scale-110 transition-transform" />
+            
+            {/* Red dot for new messages (Placeholder simulation) */}
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-[var(--pm-bg)] animate-pulse" />
+          </motion.button>
+        )}
 
         <motion.div 
           whileHover={{ y: -1 }}

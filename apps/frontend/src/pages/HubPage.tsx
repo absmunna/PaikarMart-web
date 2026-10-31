@@ -16,19 +16,9 @@ interface PortalHub {
   icon: React.ElementType;
 }
 
-const ALL_PORTALS: PortalHub[] = [
-  { id: 'video', name: 'Video Commerce', banglaTitle: 'ভিডিও পোর্টাল', href: '/video', gradient: 'from-rose-500 to-red-600', icon: PlayCircle },
-  { id: 'pk-shop', name: 'PK Shop', banglaTitle: 'পিকে শপ', href: '/pk-shop', gradient: 'from-purple-500 to-indigo-600', icon: Star },
-  { id: 'retail', name: 'Retail Market', banglaTitle: 'খুচরা মার্কেট', href: '/shop', gradient: 'from-orange-400 to-orange-600', icon: ShoppingBag },
-  { id: 'wholesale', name: 'Wholesale B2B', banglaTitle: 'পাইকারি আড়ত', href: '/wholesale', gradient: 'from-indigo-400 to-indigo-600', icon: Building2 },
-  { id: 'nearby', name: 'Nearby Stores', banglaTitle: 'লোকাল শপ', href: '/nearby', gradient: 'from-emerald-400 to-emerald-600', icon: MapPin },
-  { id: 'feed', name: 'Home', banglaTitle: 'হোম (ফিড)', href: '/', gradient: 'from-pink-400 to-pink-600', icon: Newspaper },
-  { id: 'services', name: 'Services Hub', banglaTitle: 'সার্ভিস হাব', href: '/services', gradient: 'from-purple-400 to-purple-600', icon: Wrench },
-  { id: 'digital', name: 'Digital & OTT', banglaTitle: 'ডিজিটাল গুডস', href: '/digital', gradient: 'from-violet-400 to-violet-600', icon: Monitor },
-  { id: 'wallet', name: 'Super Wallet', banglaTitle: 'সুপার ওয়ালেট', href: '/wallet', gradient: 'from-amber-400 to-amber-600', icon: Wallet },
-  { id: 'ride', name: 'Logistics & Ride', banglaTitle: 'রাইড ও পার্সেল', href: '/ride', gradient: 'from-blue-400 to-blue-600', icon: Car },
-  { id: 'orders', name: 'Track Orders', banglaTitle: 'অর্ডার ট্র্যাকিং', href: '/orders', gradient: 'from-rose-400 to-rose-600', icon: Package },
-];
+import { ALL_PORTALS, ICON_COMPONENTS_MAP } from '@/portals';
+
+const ALL_HUBS_UI = ALL_PORTALS.slice(0, 15); // Show first 15 for compactness
 
 export const HubPage: React.FC = () => {
   const navigate = useNavigate();
@@ -55,21 +45,24 @@ export const HubPage: React.FC = () => {
 
       {/* Grid of Portals */}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-y-8 gap-x-4">
-        {ALL_PORTALS.map((portal) => (
-          <motion.div
-            key={portal.id}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate(portal.href)}
-            className="flex flex-col items-center gap-3 cursor-pointer group"
-          >
-            <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-[22px] bg-gradient-to-br ${portal.gradient} flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 group-hover:brightness-110 transition-all border border-white/10`}>
-              <portal.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white stroke-[2px]" />
-            </div>
-            <span className="text-[11px] sm:text-xs font-black text-center text-[var(--pm-text)] group-hover:text-[var(--pm-accent)] transition-colors">
-              {portal.banglaTitle}
-            </span>
-          </motion.div>
-        ))}
+        {ALL_HUBS_UI.map((portal) => {
+          const Icon = ICON_COMPONENTS_MAP[portal.icon] || ShoppingBag;
+          return (
+            <motion.div
+              key={portal.id}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate(portal.path)}
+              className="flex flex-col items-center gap-3 cursor-pointer group"
+            >
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-[22px] bg-zinc-900 flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 group-hover:bg-zinc-800 transition-all border border-white/10`}>
+                <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-[var(--pm-accent)] group-hover:text-white transition-colors stroke-[2px]" />
+              </div>
+              <span className="text-[10px] sm:text-[11px] font-black text-center text-[var(--pm-text)] group-hover:text-[var(--pm-accent)] transition-colors uppercase tracking-tight">
+                {portal.labelBn}
+              </span>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );

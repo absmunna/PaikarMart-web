@@ -21,10 +21,9 @@ async function getOrCreateDemoWallet(userId: string) {
         data: {
           id: userId,
           email: 'munna@paikarmart.com',
-          name: 'MD MUNNA',
-          password: 'demo-password',
+          fullName: 'MD MUNNA',
           role: 'seller'
-        },
+        } as any,
         include: { wallet: true }
       });
     }

@@ -1,8 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { formatDistanceToNow } from "date-fns";
-// Removed useListNotifications from @/modules/app
+import { 
+  collection, 
+  query, 
+  where, 
+  onSnapshot, 
+  orderBy, 
+  doc, 
+  updateDoc, 
+  deleteDoc,
+  writeBatch
+} from "firebase/firestore";
+import { db, auth } from "@/core/lib/firebase";
 import { 
   Bell, 
   ShoppingBag, 
@@ -15,304 +26,273 @@ import {
   ChevronRight,
   MessageCircle,
   BellOff,
-  Settings
+  Settings,
+  CreditCard
 } from "lucide-react";
 import { toast } from "sonner";
 import { safeBack } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
+import { api } from "@/core/lib/api";
 
 interface NotificationItem {
   id: string;
-  type: "order" | "promo" | "security" | "b2b" | "chat";
+  type: string;
+  category: "buying" | "selling" | "system";
   title: string;
-  description: string;
-  timestamp: string;
-  isRead: boolean;
-  actionUrl?: string;
+  body: string;
+  link?: string;
+  actorAvatarUrl?: string;
+  read: boolean;
+  createdAt: any;
 }
-
-const INITIAL_MOCK_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: "notif-1",
-    type: "order",
-    title: "অর্ডার সফলভাবে পাঠানো হয়েছে!",
-    description: "আপনার Afnan Electronics থেকে করা অর্ডার #PM-89241 লজিস্টিক পার্টনারের কাছে হস্তান্তর করা হয়েছে। ঢাকা পৌঁছাবে আগামীকাল।",
-    timestamp: "২ মিনিট আগে",
-    isRead: false,
-    actionUrl: "/orders/PM-89241"
-  },
-  {
-    id: "notif-2",
-    type: "b2b",
-    title: "নতুন B2B ডিমান্ড ম্যাচ পাওয়া গেছে!",
-    description: "১০০০ পিস সুতি শাড়ির জন্য আপনার সোর্সিং ম্যাচিং রেজাল্ট প্রস্তুত। এখনই কোটেশন সাবমিট করুন।",
-    timestamp: "২৫ মিনিট আগে",
-    isRead: false,
-    actionUrl: "/b2b"
-  },
-  {
-    id: "notif-3",
-    type: "chat",
-    title: "TechZone Official থেকে নতুন মেসেজ",
-    description: "\"ভাইয়া, আপনার পছন্দের কালারটি স্টকে চলে এসেছে। অর্ডার করতে ক্লিক করুন।\"",
-    timestamp: "১ ঘণ্টা আগে",
-    isRead: false,
-    actionUrl: "/messages"
-  },
-  {
-    id: "notif-4",
-    type: "promo",
-    title: "৫০% পর্যন্ত মেগা ক্যাশব্যাক অফার! 💥",
-    description: "শুধুমাত্র আজকের জন্য রিটেইল কার্ট পেমেন্টে পাচ্ছেন আকর্ষণীয় ফ্লাশ ডিসকাউন্ট অফার।",
-    timestamp: "৪ ঘণ্টা আগে",
-    isRead: true,
-    actionUrl: "/marketplace"
-  },
-  {
-    id: "notif-5",
-    type: "security",
-    title: "নতুন ডিভাইস থেকে লগইন ডিটেক্টেড",
-    description: "Chrome Browser on Windows (Dhaka) থেকে আপনার অ্যাকাউন্টে সাকসেসফুল লগইন হয়েছে।",
-    timestamp: "১ দিন আগে",
-    isRead: true
-  },
-  {
-    id: "notif-6",
-    type: "order",
-    title: "পেমেন্ট সফল হয়েছে",
-    description: "অর্ডার #PM-87102 এর জন্য ৪,৫০০ টাকা পেমেন্ট নিশ্চিত করা হয়েছে। ধন্যবাদ।",
-    timestamp: "২ দিন আগে",
-    isRead: true,
-    actionUrl: "/orders/PM-87102"
-  }
-];
-
-const formatNotificationTime = (timestamp: string) => {
-  if (!timestamp) return "সম্প্রতি";
-  const date = new Date(timestamp);
-  if (!isNaN(date.getTime())) {
-    try {
-      return formatDistanceToNow(date, { addSuffix: true });
-    } catch {
-      return timestamp;
-    }
-  }
-  return timestamp;
-};
 
 export default function Notifications() {
   const navigate = useNavigate();
-  
-  // Real Backend Data Fetching (Disabled for now)
-  const dbNotifications: any[] = [];
-  const isDbLoading = false;
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"buying" | "selling" | "system">("buying");
 
-  // Local state for fallback notifications & deletion tracking
-  const [localNotifs, setLocalNotifs] = useState<NotificationItem[]>(INITIAL_MOCK_NOTIFICATIONS);
-  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
-  const [activeTab, setActiveTab] = useState<"all" | "order" | "b2b" | "promo" | "security">("all");
+  useEffect(() => {
+    let isMounted = true;
 
-  // Merge & Normalise real database entries and mock items seamlessly
-  const parsedDbNotifications: NotificationItem[] = (dbNotifications || []).map((n: any) => ({
-    id: n.id || String(Math.random()),
-    type: (n.type === "review" || n.type === "message" || n.type === "delivery" || n.type === "system")
-      ? (n.type === "message" ? "chat" : "order") 
-      : (n.type || "order"),
-    title: n.title || "নতুন নোটিফিকেশন",
-    description: n.body || n.message || "",
-    timestamp: n.createdAt
-      ? (() => {
-          const d = new Date(n.createdAt);
-          return !isNaN(d.getTime()) ? d.toISOString() : String(n.createdAt);
-        })()
-      : "সম্প্রতি",
-    isRead: n.read || false,
-    actionUrl: n.link || undefined
-  }));
+    const loadNotifications = async () => {
+      try {
+        const res: any = await api.get("/notifications");
+        if (isMounted && res && Array.isArray(res.notifications) && res.notifications.length > 0) {
+          setNotifications(res.notifications);
+        }
+      } catch (err) {
+        console.warn("Backend notifications API fetch error, falling back to local/Firestore", err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
 
-  // Create complete combined list
-  const combinedNotifications = [
-    ...parsedDbNotifications.filter(n => !deletedIds.has(n.id)),
-    ...localNotifs.filter(n => !deletedIds.has(n.id) && !parsedDbNotifications.some(dbN => dbN.id === n.id))
-  ].map(n => ({
-    ...n,
-    isRead: readIds.has(n.id) ? true : n.isRead
-  }));
+    loadNotifications();
 
-  const unreadCount = combinedNotifications.filter(n => !n.isRead).length;
+    if (auth?.currentUser) {
+      try {
+        const q = query(
+          collection(db, "notifications"),
+          where("userId", "==", auth.currentUser.uid),
+          orderBy("createdAt", "desc")
+        );
 
-  const handleMarkAllRead = () => {
-    const updatedReadIds = new Set(readIds);
-    combinedNotifications.forEach(n => updatedReadIds.add(n.id));
-    setReadIds(updatedReadIds);
-    setLocalNotifs(prev => prev.map(n => ({ ...n, isRead: true })));
-    toast.success("সবগুলো নোটিফিকেশন পড়া হয়েছে বলে চিহ্নিত করা হয়েছে!");
-  };
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          if (isMounted && !snapshot.empty) {
+            const docs = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            })) as NotificationItem[];
+            setNotifications(docs);
+          }
+          if (isMounted) setIsLoading(false);
+        }, (error) => {
+          console.warn("Firestore Notifications listener info:", error);
+        });
 
-  const handleClearAll = () => {
-    const allIds = combinedNotifications.map(n => n.id);
-    setDeletedIds(new Set([...Array.from(deletedIds), ...allIds]));
-    setLocalNotifs([]);
-    toast.success("সব নোটিফিকেশন মুছে ফেলা হয়েছে!");
-  };
+        return () => {
+          isMounted = false;
+          unsubscribe();
+        };
+      } catch (err) {
+        console.warn("Firestore listener init failed", err);
+      }
+    }
+    return () => { isMounted = false; };
+  }, []);
 
-  const handleItemClick = (item: NotificationItem) => {
-    setReadIds(prev => {
-      const next = new Set(prev);
-      next.add(item.id);
-      return next;
-    });
-    setLocalNotifs(prev => prev.map(n => n.id === item.id ? { ...n, isRead: true } : n));
-    if (item.actionUrl) {
-      navigate(item.actionUrl);
+  const handleMarkAllRead = async () => {
+    setNotifications(prev => prev.map(n => n.category === activeTab ? { ...n, read: true } : n));
+    try {
+      await api.patch('/notifications/read-all', { category: activeTab }).catch(() => {});
+      if (auth?.currentUser) {
+        const batch = writeBatch(db);
+        const unreadNotifs = notifications.filter(n => !n.read && n.category === activeTab);
+        unreadNotifs.forEach(n => {
+          const ref = doc(db, "notifications", n.id);
+          batch.update(ref, { read: true });
+        });
+        await batch.commit().catch(() => {});
+      }
+      toast.success("সবগুলো পড়া হয়েছে বলে চিহ্নিত করা হয়েছে!");
+    } catch (error) {
+      toast.error("ত্রুটি ঘটেছে। আবার চেষ্টা করুন।");
     }
   };
 
-  const handleDeleteItem = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    setDeletedIds(prev => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
-    setLocalNotifs(prev => prev.filter(n => n.id !== id));
-    toast.success("নোটিফিকেশনটি মুছে ফেলা হয়েছে।");
+  const handleClearAll = async () => {
+    setNotifications(prev => prev.filter(n => n.category !== activeTab));
+    try {
+      await api.delete('/notifications/clear-all').catch(() => {});
+      if (auth?.currentUser) {
+        const batch = writeBatch(db);
+        const tabNotifs = notifications.filter(n => n.category === activeTab);
+        tabNotifs.forEach(n => {
+          const ref = doc(db, "notifications", n.id);
+          batch.delete(ref);
+        });
+        await batch.commit().catch(() => {});
+      }
+      toast.success("এই ক্যাটাগরির সব নোটিফিকেশন মুছে ফেলা হয়েছে!");
+    } catch (error) {
+      toast.error("মুছে ফেলতে সমস্যা হয়েছে।");
+    }
   };
 
-  const filteredNotifications = combinedNotifications.filter(n => {
-    if (activeTab === "all") return true;
-    return n.type === activeTab;
-  });
+  const handleItemClick = async (item: NotificationItem) => {
+    if (!item.read) {
+      setNotifications(prev => prev.map(n => n.id === item.id ? { ...n, read: true } : n));
+      try {
+        await api.patch(`/notifications/${item.id}/read`).catch(() => {});
+        if (auth?.currentUser) {
+          await updateDoc(doc(db, "notifications", item.id), { read: true }).catch(() => {});
+        }
+      } catch (error) {
+        console.error("Update read status failed:", error);
+      }
+    }
+    
+    if (item.link) {
+      navigate(item.link);
+    }
+  };
 
-  const getIcon = (type: NotificationItem["type"]) => {
+  const handleDeleteItem = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    try {
+      await api.delete(`/notifications/${id}`).catch(() => {});
+      if (auth?.currentUser) {
+        await deleteDoc(doc(db, "notifications", id)).catch(() => {});
+      }
+      toast.success("মুছে ফেলা হয়েছে।");
+    } catch (error) {
+      toast.error("মুছে ফেলতে ব্যর্থ হয়েছে।");
+    }
+  };
+
+  const filteredNotifications = notifications.filter(n => n.category === activeTab);
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const getIcon = (type: string) => {
     switch (type) {
+      case "order_update":
       case "order":
         return <ShoppingBag className="w-5 h-5 text-cyan-500" />;
-      case "b2b":
+      case "new_bid":
+      case "bid":
         return <Cpu className="w-5 h-5 text-amber-500" />;
       case "promo":
+      case "offer":
         return <Tag className="w-5 h-5 text-rose-500" />;
       case "security":
         return <ShieldAlert className="w-5 h-5 text-red-500" />;
       case "chat":
+      case "message":
         return <MessageCircle className="w-5 h-5 text-sky-500" />;
+      case "wallet":
+      case "payment":
+        return <CreditCard className="w-5 h-5 text-emerald-500" />;
       default:
         return <Bell className="w-5 h-5 text-white/70" />;
     }
   };
 
-  const getBgClass = (type: NotificationItem["type"], isRead: boolean) => {
-    if (!isRead) {
-      return "bg-white/[0.05] border-l-[3.5px] border-[var(--pm-accent)]";
-    }
-    return "bg-white/[0.01] border-l-[3.5px] border-transparent hover:bg-white/[0.02]";
+  const formatNotificationTime = (createdAt: any) => {
+    if (!createdAt) return "সম্প্রতি";
+    const date = typeof createdAt.toDate === 'function' ? createdAt.toDate() : new Date(createdAt);
+    return formatDistanceToNow(date, { addSuffix: true });
   };
 
   return (
-    <div id="notifications-page-container" className="bg-[var(--pm-bg)] min-h-screen pb-32 pt-4">
-      {/* 1. Header Card */}
-      <div className="max-w-[480px] mx-auto px-4 mb-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 12 }} 
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden pb-4 pt-5 px-4 rounded-none border-b border-[var(--pm-border)] bg-[var(--pm-bg)] border-b border-[var(--pm-border)] shadow-sm"
-        >
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button 
-                id="btn-back-to-home"
-                onClick={() => safeBack(navigate, '/')} 
-                className="p-2 -ml-2 rounded-full hover:bg-white/[0.06] active:scale-95 transition-all text-white/80 cursor-pointer"
-                title="ফিরে যান"
-              >
-                <ArrowLeft className="w-5 h-5" strokeWidth={2} />
-              </button>
-              <div>
-                <h1 id="title-notifications" className="text-base font-black text-white tracking-tight flex items-center gap-2">
-                  নোটিফিকেশন
-                  {unreadCount > 0 && (
-                    <span id="badge-unread-count" className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-black animate-pulse">
-                      {unreadCount} নতুন
-                    </span>
-                  )}
-                </h1>
-                <p className="text-[10px] text-[var(--pm-accent)]/90 font-bold uppercase tracking-wider">Super App Info Hub</p>
-              </div>
+    <div className="bg-[var(--pm-bg)] min-h-screen pb-32 pt-4 select-none">
+      <div className="max-w-[480px] mx-auto px-4 mb-4 pt-2">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => safeBack(navigate, '/')} 
+              className="w-10 h-10 flex items-center justify-center rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] hover:bg-[var(--pm-surface-hover)] active:scale-95 transition-all text-white/80 cursor-pointer"
+            >
+              <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+            </button>
+            <div>
+              <h1 className="text-xl font-black text-white tracking-tight">নোটিফিকেশন</h1>
+              <p className="text-[10px] text-[var(--pm-accent)] font-bold uppercase tracking-widest">Update Center</p>
             </div>
-
-              <div className="flex items-center gap-1">
-                {combinedNotifications.length > 0 && (
-                  <>
-                    <button
-                      id="btn-mark-all-read"
-                      onClick={handleMarkAllRead}
-                      title="সব পড়ুন"
-                      className="px-2.5 py-1.5 rounded-lg text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 hover:bg-[var(--pm-accent)]/20 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      সব পড়ুন
-                    </button>
-                    <button
-                      id="btn-clear-all"
-                      onClick={handleClearAll}
-                      title="সব মুছুন"
-                      className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/[0.06] transition-all cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
-                <button
-                  id="btn-notification-settings"
-                  onClick={() => navigate('/settings/notifications')}
-                  title="নোটিফিকেশন সেটিংস (Push, Email, In-App)"
-                  className="p-1.5 rounded-lg text-white/60 hover:text-[var(--pm-accent)] hover:bg-white/[0.06] transition-all cursor-pointer flex items-center justify-center"
-                >
-                  <Settings className="w-4 h-4" />
-                </button>
-              </div>
           </div>
-        </motion.div>
+
+          <div className="flex items-center gap-2">
+            {filteredNotifications.length > 0 && (
+              <>
+                <button
+                  onClick={handleMarkAllRead}
+                  className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--pm-accent)] bg-[var(--pm-accent)]/10 border border-[var(--pm-accent)]/20 hover:bg-[var(--pm-accent)]/20 transition-all cursor-pointer"
+                  title="সব পড়ুন"
+                >
+                  <Check className="w-4 h-4" strokeWidth={3} />
+                </button>
+                <button
+                  onClick={handleClearAll}
+                  className="w-9 h-9 flex items-center justify-center rounded-xl text-white/40 border border-white/10 hover:text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
+                  title="সব মুছুন"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </>
+            )}
+            <button
+              onClick={() => navigate('/settings/notifications')}
+              className="w-9 h-9 flex items-center justify-center rounded-xl text-white/60 border border-white/10 hover:text-[var(--pm-accent)] hover:bg-white/10 transition-all cursor-pointer"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="max-w-[480px] mx-auto px-4">
-        {/* 2. Categorization Tabs Bar */}
-        <div 
-          id="notifications-category-tabs" 
-          className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none"
-        >
+        {/* Role-Based Tabs with Counts */}
+        <div className="flex items-center gap-2 p-1 bg-[var(--pm-surface)] border border-[var(--pm-border)] rounded-2xl mb-4 shadow-inner">
           {[
-            { id: "all", label: "All / সব" },
-            { id: "order", label: "Orders / অর্ডার" },
-            { id: "b2b", label: "B2B / বিটুবি" },
-            { id: "promo", label: "Offers / অফার" },
-            { id: "security", label: "Alerts / অ্যালার্ট" },
+            { id: "buying", label: "ক্রয় (Buying)" },
+            { id: "selling", label: "বিক্রয় (Selling)" },
+            { id: "system", label: "সিস্টেম (System)" },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
+            const count = notifications.filter(n => n.category === tab.id && !n.read).length;
+            
             return (
               <button
                 key={tab.id}
-                id={`tab-btn-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`py-1.5 px-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer border ${
+                className={cn(
+                  "flex-1 py-2.5 rounded-xl text-[10px] font-black transition-all relative flex items-center justify-center gap-1.5",
                   isActive 
-                    ? "bg-[var(--pm-accent)]/15 border-[var(--pm-accent)]/40 text-[var(--pm-accent)]" 
-                    : "bg-white/[0.02] text-white/60 border-white/[0.05] hover:bg-white/[0.04]"
-                }`}
+                    ? "bg-[var(--pm-accent)] text-white shadow-lg" 
+                    : "text-white/50 hover:text-white hover:bg-white/5"
+                )}
               >
-                {tab.label}
+                <span>{tab.label}</span>
+                {count > 0 && (
+                  <span className={cn(
+                    "flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[8px] font-black",
+                    isActive ? "bg-white text-[var(--pm-accent)]" : "bg-rose-500 text-white"
+                  )}>
+                    {count}
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* 3. Notifications List */}
-        <div id="notifications-list-wrapper" className="space-y-2">
-          {isDbLoading ? (
-            <div className="space-y-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-16 bg-white/[0.02] rounded-2xl animate-pulse" />
+        {/* List */}
+        <div className="space-y-2.5">
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-20 bg-white/5 rounded-2xl animate-pulse" />
               ))}
             </div>
           ) : (
@@ -321,74 +301,67 @@ export default function Notifications() {
                 filteredNotifications.map((item) => (
                   <motion.div
                     key={item.id}
-                    id={`notif-card-${item.id}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     onClick={() => handleItemClick(item)}
                     className={cn(
-                      "group p-3.5 rounded-2xl border border-[var(--pm-border)] transition-all flex gap-3 cursor-pointer relative shadow-none",
-                      getBgClass(item.type, item.isRead)
+                      "group p-4 rounded-2xl border transition-all flex gap-3.5 cursor-pointer relative",
+                      item.read 
+                        ? "bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.04]" 
+                        : "bg-white/[0.05] border-[var(--pm-accent)]/30 shadow-lg shadow-[var(--pm-accent)]/5"
                     )}
                   >
-                    {/* Unread Indicator Glow Dot */}
-                    {!item.isRead && (
-                      <span 
-                        id={`unread-dot-${item.id}`}
-                        className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-[var(--pm-accent)]" 
-                      />
+                    {!item.read && (
+                      <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[var(--pm-accent)] animate-pulse shadow-[0_0_8px_var(--pm-accent)]" />
                     )}
 
-                    {/* Icon Section with Dark Glass style */}
-                    <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-[var(--pm-card)] border border-[var(--pm-border)] flex items-center justify-center">
+                    <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-[var(--pm-surface)] border border-white/10 flex items-center justify-center shadow-inner">
                       {getIcon(item.type)}
                     </div>
 
-                    {/* Content Section */}
-                    <div className="flex-1 min-w-0 pr-1">
+                    <div className="flex-1 min-w-0">
                       <h3 className={cn(
-                        "text-xs leading-tight mb-0.5",
-                        item.isRead ? "font-semibold text-white/80" : "font-extrabold text-white"
+                        "text-sm leading-tight mb-1",
+                        item.read ? "font-bold text-white/80" : "font-black text-white"
                       )}>
                         {item.title}
                       </h3>
-                      <p className="text-[10px] text-white/50 leading-relaxed font-semibold">
-                        {item.description}
+                      <p className="text-[11px] text-white/50 leading-relaxed font-semibold line-clamp-2">
+                        {item.body}
                       </p>
-                      <span className="text-[8px] text-[var(--pm-accent)]/70 font-black block mt-1 uppercase tracking-wider">
-                        {formatNotificationTime(item.timestamp)}
-                      </span>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-[9px] text-[var(--pm-accent)] font-black uppercase tracking-wider">
+                          {formatNotificationTime(item.createdAt)}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Right Button/Action Delete Control */}
                     <div className="flex flex-col items-end justify-between flex-shrink-0 self-stretch">
                       <button
-                        id={`btn-delete-${item.id}`}
                         onClick={(e) => handleDeleteItem(e, item.id)}
-                        className="p-1 rounded-lg text-white/30 hover:text-red-400 hover:bg-white/[0.06] transition-all cursor-pointer opacity-80 group-hover:opacity-100"
-                        title="মুছুন"
+                        className="p-1.5 rounded-lg text-white/20 hover:text-rose-400 hover:bg-rose-500/10 transition-all opacity-0 group-hover:opacity-100"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
-                      {item.actionUrl && (
-                        <ChevronRight className="w-4 h-4 text-white/30 mt-auto group-hover:text-[var(--pm-accent)] transition-colors" />
+                      {item.link && (
+                        <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-[var(--pm-accent)] transition-colors" />
                       )}
                     </div>
                   </motion.div>
                 ))
               ) : (
                 <motion.div
-                  id="no-notifications-placeholder"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="py-16 text-center"
+                  className="py-20 text-center"
                 >
-                  <div className="w-14 h-14 rounded-full bg-[var(--pm-card)] border border-[var(--pm-border)] flex items-center justify-center mx-auto mb-4">
-                    <BellOff className="w-6 h-6 text-[var(--pm-accent)]" strokeWidth={1.5} />
+                  <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-5">
+                    <BellOff className="w-7 h-7 text-white/20" strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-xs font-extrabold text-white">No Notifications / কোন নোটিফিকেশন নেই</h3>
-                  <p className="text-[10px] text-white/40 max-w-[200px] mx-auto mt-1 leading-relaxed font-semibold">
-                    Major alerts and updates will appear here.
+                  <h3 className="text-sm font-black text-white">কোনো নোটিফিকেশন নেই</h3>
+                  <p className="text-[11px] text-white/40 max-w-[220px] mx-auto mt-2 leading-relaxed font-bold">
+                    আপনার {activeTab === 'buying' ? 'ক্রয়' : activeTab === 'selling' ? 'বিক্রয়' : 'সিস্টেম'} সংক্রান্ত সকল আপডেট এখানে দেখা যাবে।
                   </p>
                 </motion.div>
               )}

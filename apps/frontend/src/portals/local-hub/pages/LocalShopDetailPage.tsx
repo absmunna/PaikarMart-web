@@ -12,6 +12,7 @@ import { ChatModal } from '@/modules/chat';
 import { useLanguage } from '@/modules/language';
 import { toast } from 'sonner';
 import { safeBack } from '@/lib/navigation';
+import { buildApiUrl } from '@/core/config/api';
 
 interface ShopProduct {
   id: string;
@@ -70,7 +71,7 @@ export const LocalShopDetailPage: React.FC = () => {
     async function fetchShop() {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/v1/nearby/shops/${id}`);
+        const res = await fetch(buildApiUrl(`/nearby/shops/${id}`));
         if (res.ok) {
           const json = await res.json();
           const shopData = json.data || json;
@@ -82,7 +83,7 @@ export const LocalShopDetailPage: React.FC = () => {
           }
         } else {
           // Fallback if not found on /shops/:id, try /:id
-          const fallbackRes = await fetch(`/api/v1/nearby/${id}`);
+          const fallbackRes = await fetch(buildApiUrl(`/nearby/${id}`));
           if (fallbackRes.ok) {
             const fallbackJson = await fallbackRes.json();
             if (isMounted) setShop(fallbackJson.data || fallbackJson);

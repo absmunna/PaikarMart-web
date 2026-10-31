@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { API_BASE_URL } from '@/core/config/api';
 
-// Get API URL from env variables
-const API_BASE = '/api/v1/compliance';
+// Get API URL from central config
+const API_BASE = `${API_BASE_URL}/compliance`;
 
 export interface CategoryConfig {
   id: string;

@@ -85,7 +85,7 @@ export const getOrders = async (req: Request, res: Response) => {
 
     const orders = await prisma.order.findMany({
       include: {
-        product: true
+        orderItems: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -107,7 +107,7 @@ export const getOrderById = async (req: Request, res: Response) => {
 
     const order = await prisma.order.findUnique({
       where: { id },
-      include: { product: true }
+      include: { orderItems: true }
     });
 
     if (!order) {
@@ -289,6 +289,13 @@ export const addOrder = async (req: Request, res: Response) => {
       }
     });
 
+    // Emit event for notification
+    const { eventBus } = require('../../services/eventBus');
+    eventBus.emitEvent('ORDER_CREATED', {
+      order: order,
+      vendorUserId: user.id // In this demo logic, the vendor and user are mixed, but we use the linked user
+    });
+
     res.status(201).json({
       ...order,
       ...newOrder
@@ -322,6 +329,15 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     if (!db.isConnected()) {
       const match = mockOrders.find(o => o.id === id);
       if (match) match.status = status;
+
+      // Emit event in mock mode
+      const { eventBus } = require('../../services/eventBus');
+      eventBus.emitEvent('ORDER_STATUS_UPDATED', {
+        orderId: id,
+        userId: 'usr-demo',
+        status
+      });
+
       return res.json({ message: 'Order updated in dev mode', id, status });
     }
 
@@ -329,6 +345,15 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       where: { id },
       data: { status }
     });
+
+    // Emit event for notification
+    const { eventBus } = require('../../services/eventBus');
+    eventBus.emitEvent('ORDER_STATUS_UPDATED', {
+      orderId: order.id,
+      userId: order.buyerId,
+      status: order.status
+    });
+
     res.json(order);
   } catch (error) {
     console.error('Update Order Error:', error);

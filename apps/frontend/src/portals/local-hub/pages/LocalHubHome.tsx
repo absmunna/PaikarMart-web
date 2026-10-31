@@ -17,6 +17,7 @@ import { useLanguage } from '@/modules/language';
 import { useLocationStore, useGeolocation } from '@/modules/location';
 import { ChatModal } from '@/modules/chat';
 import { toast } from 'sonner';
+import { buildApiUrl } from '@/core/config/api';
 
 interface NearbyStore {
   id: string;
@@ -162,7 +163,7 @@ export const LocalHubHome: React.FC = () => {
           queryParams.append('category', selectedCategory);
         }
 
-        const response = await fetch(`/api/v1/nearby?${queryParams.toString()}`);
+        const response = await fetch(buildApiUrl(`/nearby?${queryParams.toString()}`));
         if (response.ok) {
           const json = await response.json();
           const list = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : []);
@@ -202,9 +203,6 @@ export const LocalHubHome: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--pm-bg)] text-[var(--pm-text)] pb-24 p-4 space-y-6">
-      <HomeHeader />
-      <PortalIconBar />
-
       <main className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Header & Hyperlocal GPS Geofence Terminal */}

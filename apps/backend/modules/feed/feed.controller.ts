@@ -1213,8 +1213,22 @@ export const createPostBid = async (req: Request, res: Response) => {
           proposalNote,
           deliveryDays: deliveryDays ? parseInt(deliveryDays, 10) : undefined,
           status: 'pending'
+        },
+        include: {
+          post: true,
+          bidder: true
         }
       });
+
+      // Emit event for notification
+      const { eventBus } = require('../../services/eventBus');
+      eventBus.emitEvent('NEW_BID_RECEIVED', {
+        demandId: id,
+        buyerId: created.post.authorId,
+        bidderName: created.bidder.fullName || bidderName || 'একজন বিক্রেতা',
+        amount: created.amount
+      });
+
       return res.status(201).json({ success: true, bid: created });
     } catch {
       const newBid: InMemBid = {
@@ -1231,6 +1245,16 @@ export const createPostBid = async (req: Request, res: Response) => {
         createdAt: new Date().toISOString()
       };
       inMemoryBids.unshift(newBid);
+
+      // Emit event for notification in mock mode
+      const { eventBus } = require('../../services/eventBus');
+      eventBus.emitEvent('NEW_BID_RECEIVED', {
+        demandId: id,
+        buyerId: 'usr-demo', // Mock buyer
+        bidderName: newBid.bidderName,
+        amount: newBid.amount
+      });
+
       return res.status(201).json({ success: true, bid: newBid });
     }
   } catch (error: any) {

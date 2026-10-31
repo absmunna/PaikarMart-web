@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { onRequest, onResponse, onError } from './interceptors';
+import { API_BASE_URL } from '@/core/config/api';
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

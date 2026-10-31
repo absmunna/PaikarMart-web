@@ -14,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/modules/language";
 import { useOrderTrackingStore } from "@/modules/orders";
 import { safeBack } from "@/lib/navigation";
+import { buildApiUrl } from "@/core/config/api";
 
 const formatSafeTime = (dateStr: string) => {
   if (!dateStr) return "";
@@ -98,7 +99,7 @@ export default function OrderHistoryPage() {
     async function fetchOrders() {
       try {
         setLoading(true);
-        const res = await fetch("/api/v1/orders");
+        const res = await fetch(buildApiUrl("/orders"));
         if (res.ok) {
           const data = await res.json();
           setOrders(data);

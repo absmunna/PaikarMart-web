@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { LocalEvent } from '../types';
 import { cn } from '@/lib/utils';
+import { buildApiUrl } from '@/core/config/api';
 
 const EVENT_CATEGORIES = [
   { id: 'sports', name: 'Sports', icon: Trophy, color: 'text-amber-400' },
@@ -24,7 +25,7 @@ export const LocalEvents: React.FC = () => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/local/events');
+        const response = await fetch(buildApiUrl('/local/events'));
         const result = await response.json();
         if (result.status === 'success') {
           setEvents(result.data);

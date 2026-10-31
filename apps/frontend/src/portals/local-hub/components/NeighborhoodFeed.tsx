@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { LocalPost } from '../types';
 import { cn } from '@/lib/utils';
+import { buildApiUrl } from '@/core/config/api';
 
 export const NeighborhoodFeed: React.FC = () => {
   const [posts, setPosts] = useState<LocalPost[]>([]);
@@ -21,7 +22,7 @@ export const NeighborhoodFeed: React.FC = () => {
     const fetchFeed = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/local/feed');
+        const response = await fetch(buildApiUrl('/local/feed'));
         const result = await response.json();
         if (result.status === 'success') {
           setPosts(result.data);

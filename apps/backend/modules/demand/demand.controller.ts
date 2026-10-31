@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import crypto from 'node:crypto';
 import { prisma, db } from '../../config/database';
 
 export const getDemands = async (req: Request, res: Response) => {
@@ -39,9 +40,9 @@ export const getDemands = async (req: Request, res: Response) => {
       include: {
         author: {
           select: {
-            name: true,
+            fullName: true,
             role: true
-          }
+          } as any
         }
       },
       orderBy: {
@@ -80,7 +81,7 @@ export const getDemandById = async (req: Request, res: Response) => {
       include: {
         author: {
           select: {
-            name: true,
+            fullName: true,
             role: true
           }
         }
@@ -124,9 +125,9 @@ export const createDemand = async (req: Request, res: Response) => {
     if (!user) {
       user = await prisma.user.create({
         data: {
+          id: crypto.randomUUID(),
           email: 'demo-buyer@paikarmart.com',
-          name: 'Demo Buyer',
-          password: 'hashedpassword',
+          fullName: 'Demo Buyer',
           role: 'buyer'
         }
       });

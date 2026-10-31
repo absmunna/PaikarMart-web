@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx server.ts",
     "start": "node --no-deprecation dist/server.js",
-    "build": "npx esbuild server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js"
+    "build": "npx esbuild server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

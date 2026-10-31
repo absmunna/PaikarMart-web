@@ -4,10 +4,7 @@ export class WalletService {
   static async getOrCreateWallet(userId: string, type: string = 'main') {
     let wallet = await prisma.wallet.findUnique({
       where: {
-        userId_type: {
-          userId,
-          type
-        }
+        userId
       },
       include: { transactions: { orderBy: { createdAt: 'desc' }, take: 10 } }
     });
@@ -16,7 +13,6 @@ export class WalletService {
       wallet = await prisma.wallet.create({
         data: {
           userId,
-          type,
           balance: 0.00,
           coins: 0
         },

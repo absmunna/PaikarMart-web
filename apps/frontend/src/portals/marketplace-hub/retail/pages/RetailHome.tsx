@@ -16,6 +16,7 @@ import { Button } from '@ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { HeroSpotlight } from "@shared/HeroSpotlight";
+import { buildApiUrl } from "@/core/config/api";
 
 /* ═══════════════════════════════════════════════
    Bangladeshi Localized B2C Retail Mock Dataset
@@ -236,7 +237,7 @@ export const RetailHome = () => {
   // Live Products Query
   const { data: serverProducts, isLoading: isQueryLoading } = useQuery({
     queryKey: ['products', 'retail'],
-    queryFn: () => fetch('/api/v1/products?type=retail').then(res => res.json())
+    queryFn: () => fetch(buildApiUrl('/products?type=retail')).then(res => res.json())
   });
 
   // Normalize full B2C products (merging live server products + localized mocks gracefully)

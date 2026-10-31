@@ -21,8 +21,8 @@ export class GeminiService {
     const ai = getAI();
 
     try {
-      const interaction = await ai.interactions.create({
-        model: "gemini-3.5-flash",
+      const interaction: any = await ai.interactions.create({
+        model: "gemini-2.5-flash",
         system_instruction: "You are a market analyst for Paikar Mart. Verify the provided product details or wholesale pricing by fetching real-time market data from the web. Provide a concise summary and comparison.",
         tools: [{ type: 'google_search' }],
         input: query
@@ -32,20 +32,19 @@ export class GeminiService {
       let fullOutput = "";
       let sources: any[] = [];
 
-      for (const step of interaction.steps) {
-        if (step.type === 'model_output') {
-          const textContent = step.content?.find(c => c.type === 'text');
-          if (textContent && textContent.text) {
-            fullOutput += textContent.text;
+      if (interaction.steps) {
+        for (const step of interaction.steps) {
+          if (step.type === 'model_output') {
+            const textContent = step.content?.find((c: any) => c.type === 'text');
+            if (textContent && textContent.text) {
+              fullOutput += textContent.text;
+            }
           }
-        }
-        if (step.type === 'google_search_result') {
-           // Grounding sources extraction logic if needed
         }
       }
 
       return {
-        text: fullOutput || interaction.output_text,
+        text: fullOutput || interaction.output_text || "",
         sources
       };
     } catch (error) {
@@ -58,17 +57,15 @@ export class GeminiService {
     const ai = getAI();
 
     try {
-      // In Interactions API, we can use previous_interaction_id or just send the prompt.
-      // For a simple chat, we'll just send the last message but provide history if possible.
       const lastMessage = messages[messages.length - 1];
       
-      const interaction = await ai.interactions.create({
-        model: "gemini-3.5-flash",
+      const interaction: any = await ai.interactions.create({
+        model: "gemini-2.5-flash",
         system_instruction: systemInstruction || "You are a helpful assistant for Paikar Mart, a social commerce super app in Bangladesh. Help users with product questions, order tracking, and business advice.",
         input: lastMessage.content
       });
 
-      return interaction.output_text;
+      return interaction.output_text || "";
     } catch (error) {
       console.error("[Gemini Service] Error:", error);
       throw error;

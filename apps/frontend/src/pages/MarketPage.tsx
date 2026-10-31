@@ -19,6 +19,7 @@ import { useLocationStore } from "@/modules/location";
 import { useCategoryStore } from "@/store/categoryStore";
 import { useDomainViewMode } from "@/core/hooks/useDomainViewMode";
 import { useNavSettingsStore } from "@/app/AppShell/useNavSettingsStore";
+import { buildApiUrl } from "@/core/config/api";
 
 const MOBILE_SUPER_HUBS = [
   { id: 'video', name: 'ভিডিও কমার্স', path: '/video', icon: PlayCircle, gradient: 'from-rose-500 to-red-600' },
@@ -28,7 +29,7 @@ const MOBILE_SUPER_HUBS = [
   { id: 'services', name: 'সার্ভিস হাব', path: '/services', icon: Wrench, gradient: 'from-purple-500 to-pink-600' },
   { id: 'digital', name: 'ডিজিটাল গুডস', path: '/digital', icon: Monitor, gradient: 'from-cyan-500 to-blue-600' },
   { id: 'pk-shop', name: 'পিকে স্টোর', path: '/pk-shop', icon: Star, gradient: 'from-yellow-500 to-amber-600' },
-  { id: 'feed', name: 'হোম ফিড', path: '/', icon: Newspaper, gradient: 'from-rose-500 to-pink-600' },
+  { id: 'feed', name: 'সোশ্যাল ফিড', path: '/', icon: Newspaper, gradient: 'from-rose-500 to-pink-600' },
   { id: 'demand', name: 'ডিমান্ড বোর্ড', path: '/demand', icon: Flame, gradient: 'from-red-500 to-orange-600' },
   { id: 'wallet', name: 'সুপার ওয়ালেট', path: '/wallet', icon: Wallet, gradient: 'from-violet-500 to-purple-700' },
   { id: 'orders', name: 'অর্ডার ট্র্যাকিং', path: '/orders', icon: Package, gradient: 'from-emerald-600 to-teal-800' },
@@ -38,13 +39,13 @@ const COMMERCE_CATEGORIES = [
   { id: 'all', name: 'সকল পণ্য' },
   { id: 'wholesale', name: 'পাইকারি আড়ত' },
   { id: 'retail', name: 'খুচরা মার্কেট' },
-  { id: 'pk-shop', name: 'পিকে স্টোর' },
   { id: 'nearby', name: 'লোকাল শপ' },
+  { id: 'pk-shop', name: 'পিকে স্টোর' },
+  { id: 'digital', name: 'ডিজিটাল পণ্য' },
   { id: 'fashion', name: 'ফ্যাশন' },
   { id: 'electronics', name: 'ইলেকট্রনিক্স' },
   { id: 'grocery', name: 'গ্রোসারি' },
   { id: 'pharmacy', name: 'ফার্মেসি' },
-  { id: 'digital', name: 'ডিজিটাল গুডস' },
 ];
 
 export default function MarketPage() {
@@ -72,7 +73,7 @@ export default function MarketPage() {
     let isMounted = true;
     async function fetchProducts() {
       try {
-        const res = await fetch('/api/v1/products');
+        const res = await fetch(buildApiUrl('/products'));
         if (res.ok) {
           const data = await res.json();
           if (isMounted && Array.isArray(data) && data.length > 0) {
@@ -80,7 +81,7 @@ export default function MarketPage() {
               id: p.id,
               name: p.name,
               title: p.name,
-              category: p.category === 'wholesale' ? 'wholesale' : 'retail',
+              category: p.category as any,
               price: Number(p.price),
               originalPrice: p.originalPrice ? Number(p.originalPrice) : undefined,
               discount: p.originalPrice ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : 0,
@@ -129,11 +130,11 @@ export default function MarketPage() {
     return productsList.filter((product) => {
       // Category Filter
       if (effectiveCategory !== "all") {
-        if (effectiveCategory === "wholesale" && product.category !== "wholesale") return false;
-        if (effectiveCategory !== "wholesale") {
-          const matchCat = product.category === effectiveCategory || product.name.toLowerCase().includes(effectiveCategory.toLowerCase());
-          if (!matchCat) return false;
-        }
+        const matchesCategory = product.category === effectiveCategory;
+        const matchesNameOrDesc = product.name.toLowerCase().includes(effectiveCategory.toLowerCase()) || 
+                                (product.description && product.description.toLowerCase().includes(effectiveCategory.toLowerCase()));
+        
+        if (!matchesCategory && !matchesNameOrDesc) return false;
       }
 
       // Subcategory Filter

@@ -6,7 +6,6 @@ import { Users } from 'lucide-react';
 export default function CommunityHubPortal() {
   return (
     <div className="min-h-screen pb-20">
-      <PortalIconBar context="community-hub" />
       <main className="p-4 space-y-4">
         <GlassCard className="p-6 flex items-center gap-4">
           <Users className="w-8 h-8 text-[var(--pm-accent)]" />

@@ -1,4 +1,5 @@
 import { FeedPost, ProductCardItem } from "../types";
+import { buildApiUrl } from "@/core/config/api";
 
 export interface FeedResponse<T> {
   status: string;
@@ -28,7 +29,7 @@ export const feedApi = {
       limit: String(params.limit || 10)
     });
 
-    const response = await fetch(`/api/v1/feed/social?${query.toString()}`);
+    const response = await fetch(buildApiUrl(`/feed/social?${query.toString()}`));
     if (!response.ok) {
       throw new Error('Failed to fetch social feed');
     }
@@ -52,7 +53,7 @@ export const feedApi = {
       limit: String(params.limit || 20)
     });
 
-    const response = await fetch(`/api/v1/feed/commerce?${query.toString()}`);
+    const response = await fetch(buildApiUrl(`/feed/commerce?${query.toString()}`));
     if (!response.ok) {
       throw new Error('Failed to fetch commerce feed');
     }
@@ -64,7 +65,7 @@ export const feedApi = {
    * POST /api/v1/feed/posts/:postId/wishlist
    */
   async toggleWishlist(postId: string): Promise<{ success: boolean; isWishlisted: boolean }> {
-    const response = await fetch(`/api/v1/feed/posts/${postId}/wishlist`, {
+    const response = await fetch(buildApiUrl(`/feed/posts/${postId}/wishlist`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
@@ -84,7 +85,7 @@ export const feedApi = {
     isReview?: boolean;
     mediaUrls?: string[];
   }): Promise<{ success: boolean; commentId: string }> {
-    const response = await fetch(`/api/v1/feed/posts/${postId}/comments`, {
+    const response = await fetch(buildApiUrl(`/feed/posts/${postId}/comments`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(comment)

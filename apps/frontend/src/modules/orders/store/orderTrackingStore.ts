@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { listOrders, listSellerOrders } from '../services/order.api';
+import { buildApiUrl } from '@/core/config/api';
 
 export type OrderState = 
   | 'ORDER_CREATED'
@@ -110,7 +111,7 @@ export const useOrderTrackingStore = create<OrderTrackingState>()(
 
       releaseEscrow: async (orderId: string) => {
         // Call backend escrow release endpoint
-        fetch(`/api/v1/escrow/release/${orderId}`, {
+        fetch(buildApiUrl(`/escrow/release/${orderId}`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: 1500 })
@@ -143,7 +144,7 @@ export const useOrderTrackingStore = create<OrderTrackingState>()(
 
       raiseDispute: async (orderId: string, reason: string) => {
         // Call backend dispute endpoint
-        fetch(`/api/v1/escrow/dispute/${orderId}`, {
+        fetch(buildApiUrl(`/escrow/dispute/${orderId}`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reason })

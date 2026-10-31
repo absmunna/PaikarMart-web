@@ -5,12 +5,11 @@ import {
 import { db, auth } from "@/lib/firebase";
 import { toast } from "sonner";
 import { SellerProduct, SellerOrder, SellerVerificationPayload, ServiceBooking, DeliveryTask, ReturnRequest } from "../types";
-
-const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL ?? '/api/v1';
+import { buildApiUrl } from "@/core/config/api";
 
 async function apiFetch(path: string, opts?: RequestInit) {
   try {
-    const res = await fetch(`${BASE_URL}/seller${path}`, {
+    const res = await fetch(buildApiUrl(`/seller${path}`), {
       headers: { 'Content-Type': 'application/json' },
       ...opts,
     });
