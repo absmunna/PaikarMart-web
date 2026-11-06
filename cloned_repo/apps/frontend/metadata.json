@@ -1,8 +1,0 @@
-{
-  "name": "Paikar Mart",
-  "description": "Multi-vendor scalable marketplace platform for Bangladesh, supporting wholesale, retail, nearby shops, and services.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}
