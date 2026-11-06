@@ -1,0 +1,21 @@
+.midnight,
+[data-theme="midnight"] {
+  --pm-bg: #020617;
+  --pm-surface: #0a0f29;
+  --pm-card: #0f1738;
+  --pm-text: #f8fafc;
+  --pm-muted: #818cf8;
+  --pm-border: rgba(99, 102, 241, 0.15);
+  --pm-glass: rgba(10, 15, 41, 0.85);
+  --pm-accent: #6366f1;
+  --pm-accent-hover: #818cf8;
+  --pm-card-hover: var(--pm-card);
+  --pm-accent-soft: color-mix(in oklab, var(--pm-accent) 14%, transparent);
+  --pm-accent-2: #22d3ee;
+  --pm-accent-2-soft: color-mix(in oklab, var(--pm-accent-2) 12%, transparent);
+  --pm-success: #34d399;
+  --pm-danger: #f87171;
+  --pm-text-secondary: var(--pm-muted);
+  --pm-text-muted: var(--pm-muted);
+  --pm-surface-hover: var(--pm-card-hover);
+}

@@ -1,0 +1,12 @@
+.light,
+[data-theme="light"] {
+  --pm-bg: #f8fafc;
+  --pm-surface: #ffffff;
+  --pm-card: #ffffff;
+  --pm-text: #0f172a;
+  --pm-muted: #64748b;
+  --pm-border: rgba(15, 23, 42, 0.08);
+  --pm-glass: rgba(255, 255, 255, 0.85);
+  --pm-accent: #ff7a00;
+  --pm-accent-hover: #ea580c;
+}

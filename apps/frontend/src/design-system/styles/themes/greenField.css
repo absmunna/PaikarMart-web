@@ -1,0 +1,21 @@
+.greenField,
+[data-theme="greenField"] {
+  --pm-bg: #021a12;
+  --pm-surface: #052e22;
+  --pm-card: #0a3a2b;
+  --pm-text: #ecfdf5;
+  --pm-muted: #86efac;
+  --pm-border: rgba(52, 211, 153, 0.12);
+  --pm-glass: rgba(5, 46, 34, 0.85);
+  --pm-accent: #10b981;
+  --pm-accent-hover: #34d399;
+  --pm-card-hover: var(--pm-card);
+  --pm-accent-soft: color-mix(in oklab, var(--pm-accent) 14%, transparent);
+  --pm-accent-2: #22d3ee;
+  --pm-accent-2-soft: color-mix(in oklab, var(--pm-accent-2) 12%, transparent);
+  --pm-success: #34d399;
+  --pm-danger: #f87171;
+  --pm-text-secondary: var(--pm-muted);
+  --pm-text-muted: var(--pm-muted);
+  --pm-surface-hover: var(--pm-card-hover);
+}

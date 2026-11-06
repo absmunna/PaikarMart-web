@@ -1,0 +1,100 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "fullName" TEXT,
+ADD COLUMN IF NOT EXISTS "avatarUrl" TEXT,
+ALTER COLUMN "name" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "category" TEXT,
+ADD COLUMN IF NOT EXISTS "vendorId" TEXT,
+ADD COLUMN IF NOT EXISTS "moq" INTEGER NOT NULL DEFAULT 1,
+ADD COLUMN IF NOT EXISTS "tieredPrices" JSONB,
+ALTER COLUMN "sellerId" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "buyerId" TEXT,
+ADD COLUMN IF NOT EXISTS "vendorId" TEXT,
+ADD COLUMN IF NOT EXISTS "paymentStatus" TEXT DEFAULT 'pending',
+ADD COLUMN IF NOT EXISTS "deliveryType" TEXT DEFAULT 'standard',
+ADD COLUMN IF NOT EXISTS "scheduledSlot" TIMESTAMP(3),
+ADD COLUMN IF NOT EXISTS "totalAmount" DOUBLE PRECISION,
+ADD COLUMN IF NOT EXISTS "platformProfit" DOUBLE PRECISION DEFAULT 0,
+ALTER COLUMN "userId" DROP NOT NULL,
+ALTER COLUMN "sellerId" DROP NOT NULL,
+ALTER COLUMN "total" SET DEFAULT 0,
+ALTER COLUMN "price" SET DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Notification" ADD COLUMN IF NOT EXISTS "type" TEXT,
+ADD COLUMN IF NOT EXISTS "actorAvatarUrl" TEXT;
+
+-- AlterTable
+ALTER TABLE "Wallet" ADD COLUMN IF NOT EXISTS "coins" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Transaction" ADD COLUMN IF NOT EXISTS "title" TEXT,
+ADD COLUMN IF NOT EXISTS "subtitle" TEXT;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "VendorProfile" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "shopName" TEXT NOT NULL,
+    "location" TEXT,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "VendorProfile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "OrderItem" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "productId" TEXT,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
+    "price" DOUBLE PRECISION NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS "Escrow" (
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'held',
+    "releaseAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Escrow_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "VendorProfile_userId_key" ON "VendorProfile"("userId");
+
+-- AddForeignKey
+ALTER TABLE "VendorProfile" ADD CONSTRAINT "VendorProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Product" ADD CONSTRAINT "Product_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "VendorProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_buyerId_fkey" FOREIGN KEY ("buyerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "VendorProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Escrow" ADD CONSTRAINT "Escrow_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;

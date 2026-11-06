@@ -1,0 +1,147 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Default-deny catch-all (Global Safety Net)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // ========================================================================
+    // BACKEND MANAGED COLLECTIONS (Deny All Client Writes)
+    // ========================================================================
+
+    // Users Collection: Handled by Backend API. Client can only read own profile.
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      allow write: if false; // Deny all client writes.
+    }
+
+    // Products Collection: Catalog is public read; management via API only.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Deny all client writes.
+    }
+
+    // Orders Collection: State and logic managed via Backend API.
+    match /orders/{orderId} {
+      allow get: if isValidId(orderId) && (
+        isAdmin() || (isSignedIn() && (existing().userId == request.auth.uid || existing().sellerId == request.auth.uid))
+      );
+      allow list: if isSignedIn() && (
+        isAdmin() || resource.data.userId == request.auth.uid || resource.data.sellerId == request.auth.uid
+      );
+      allow write: if false; // Deny all client writes.
+    }
+
+    // Sellers Collection: Public profiles; management via API only.
+    match /sellers/{sellerId} {
+      allow read: if true;
+      allow write: if false; // Deny all client writes.
+    }
+
+    // Wallets Collection: Financial data managed by Backend API.
+    match /wallets/{userId} {
+      allow read: if isSignedIn() && (isAdmin() || request.auth.uid == userId);
+      allow write: if false; // Deny all client writes.
+
+      match /transactions/{transactionId} {
+        allow read: if isSignedIn() && (isAdmin() || request.auth.uid == userId);
+        allow write: if false;
+      }
+    }
+
+    // Categories Collection: Managed via Admin API.
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Demands Collection: Managed via API.
+    match /demands/{demandId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ========================================================================
+    // CLIENT COLLABORATIVE COLLECTIONS (Restricted Client Writes)
+    // ========================================================================
+
+    // Chats Collection: Participant-only communication.
+    match /chats/{chatId} {
+      allow get: if isValidId(chatId) && (isAdmin() || (isSignedIn() && request.auth.uid in existing().participants));
+      allow list: if isSignedIn() && (isAdmin() || request.auth.uid in resource.data.participants);
+      allow create: if isValidId(chatId) && isSignedIn() && request.auth.uid in incoming().participants;
+      allow update: if isValidId(chatId) && isSignedIn() && request.auth.uid in existing().participants;
+      allow delete: if isAdmin();
+
+      match /messages/{messageId} {
+        allow get, list: if isSignedIn() && (isAdmin() || request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants);
+        allow create: if isValidId(messageId) && isSignedIn() && request.auth.uid == incoming().senderId;
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // Notifications: Read and mark-as-read allowed for the owner.
+    match /notifications/{notificationId} {
+      allow get, list: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow update: if isSignedIn() && existing().userId == request.auth.uid && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow create, delete: if isAdmin();
+    }
+
+    // Posts, Comments, and Likes: Collaborative feed with ownership checks.
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().authorId == request.auth.uid;
+      allow update: if (isAdmin() || (isSignedIn() && existing().authorId == request.auth.uid)) ||
+        (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount', 'likedBy']));
+      allow delete: if isAdmin() || (isSignedIn() && existing().authorId == request.auth.uid);
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn() && incoming().authorId == request.auth.uid;
+        allow update, delete: if isAdmin() || (isSignedIn() && existing().authorId == request.auth.uid);
+      }
+    }
+
+    // Explicitly allow likes if stored as a separate collection
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    // Client Vault: Internal secure storage.
+    match /client_vault_files/{fileId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

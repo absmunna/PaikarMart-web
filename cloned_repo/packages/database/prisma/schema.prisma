@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String?  @unique
+  phone     String?  @unique
+  name      String?
+  fullName  String?
+  avatarUrl String?
+  handle    String?  @unique
+  role      String   @default("buyer")
+  isSeller  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products      Product[]
+  orders        Order[]       @relation("UserOrders")
+  buyerOrders   Order[]       @relation("BuyerOrders")
+  vendorOrders  Order[]       @relation("VendorOrders")
+  wallet        Wallet?
+  notifications Notification[]
+  fileAssets    FileAsset[]
+  vendorProfile VendorProfile?
+}
+
+model VendorProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  shopName    String
+  location    String?
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+  orders   Order[]
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  price         Float
+  originalPrice Float?
+  categoryId    String?
+  category      String?
+  sellerId      String?
+  vendorId      String?
+  stock         Int      @default(0)
+  moq           Int      @default(1)
+  images        String[]
+  tieredPrices  Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  seller     User?          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  vendor     VendorProfile? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  orderItems OrderItem[]
+}
+
+model Order {
+  id             String    @id @default(uuid())
+  userId         String?
+  buyerId        String?
+  sellerId       String?
+  vendorId       String?
+  status         String    @default("pending")
+  paymentStatus  String?   @default("pending")
+  deliveryType   String?   @default("standard")
+  scheduledSlot  DateTime?
+  total          Float     @default(0)
+  totalAmount    Float?
+  price          Float     @default(0)
+  platformProfit Float?    @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user       User?          @relation("UserOrders", fields: [userId], references: [id], onDelete: Cascade)
+  buyer      User?          @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: SetNull)
+  vendorUser User?          @relation("VendorOrders", fields: [sellerId], references: [id], onDelete: SetNull)
+  vendor     VendorProfile? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  orderItems OrderItem[]
+  escrows    Escrow[]
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  productId String?
+  quantity  Int      @default(1)
+  price     Float
+  createdAt DateTime @default(now())
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+}
+
+model Escrow {
+  id        String    @id @default(uuid())
+  orderId   String
+  amount    Float
+  status    String    @default("held")
+  releaseAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String
+  title          String
+  body           String
+  type           String?
+  actorAvatarUrl String?
+  read           Boolean  @default(false)
+  category       String?
+  link           String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Wallet {
+  id        String        @id @default(uuid())
+  userId    String        @unique
+  balance   Float         @default(0.0)
+  coins     Int           @default(0)
+  updatedAt DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  walletId  String
+  title     String?
+  subtitle  String?
+  amount    Float
+  type      String
+  status    String   @default("completed")
+  createdAt DateTime @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+}
+
+model FileAsset {
+  id           String   @id @default(uuid())
+  ownerId      String
+  purpose      String   @default("general")
+  bucket       String
+  path         String
+  url          String?
+  isPrivate    Boolean  @default(false)
+  mimeType     String
+  size         Int
+  originalName String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([purpose])
+  @@index([bucket])
+}

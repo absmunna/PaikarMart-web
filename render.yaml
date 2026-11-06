@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: paikarmart-backend
+    env: node
+    plan: free
+    buildCommand: npm run db:migrate:deploy && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: NODE_VERSION
+        value: 20.12.0
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: BKASH_APP_KEY
+        sync: false
+      - key: BKASH_APP_SECRET
+        sync: false
+      - key: BKASH_PASSWORD
+        sync: false
+      - key: BKASH_USERNAME
+        sync: false
+      - key: NAGAD_MERCHANT_ID
+        sync: false
+      - key: NAGAD_PRIVATE_KEY
+        sync: false
+      - key: NAGAD_PUBLIC_KEY
+        sync: false

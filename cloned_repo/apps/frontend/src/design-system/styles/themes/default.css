@@ -1,0 +1,11 @@
+:root {
+  --pm-bg: #090a10;
+  --pm-surface: #121420;
+  --pm-card: #141624;
+  --pm-text: #f8fafc;
+  --pm-muted: #94a3b8;
+  --pm-border: rgba(255, 255, 255, 0.08);
+  --pm-glass: rgba(18, 20, 32, 0.75);
+  --pm-accent: #ff7a00;
+  --pm-accent-hover: #ff9124;
+}

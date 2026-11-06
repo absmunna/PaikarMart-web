@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="pwa-bg-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+    <linearGradient id="pwa-accent-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9100" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <!-- Squircle Rounded App Icon Background -->
+  <rect width="192" height="192" rx="42" fill="url(#pwa-bg-192)" />
+  <rect width="188" height="188" x="2" y="2" rx="40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4" />
+  
+  <!-- Modern Shopping Bag / Paikar Mart Emblem -->
+  <g transform="translate(40, 36)">
+    <!-- Bag Handle -->
+    <path d="M28 52 C28 18, 84 18, 84 52" fill="none" stroke="url(#pwa-accent-192)" stroke-width="10" stroke-linecap="round" />
+    
+    <!-- Bag Body -->
+    <path d="M9 52 L103 52 L95 116 C94 124, 88 130, 80 130 L32 130 C24 130, 18 124, 17 116 Z" fill="url(#pwa-accent-192)" />
+    
+    <!-- Accent Stitch / Diamond Motif -->
+    <path d="M56 71 L67 86 L56 101 L45 86 Z" fill="#ffffff" opacity="0.95" />
+    <circle cx="56" cy="86" r="5" fill="#18181b" />
+  </g>
+</svg>

@@ -1,0 +1,15 @@
+{
+  "name": "@paikarmart/database",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "prisma generate --schema=prisma/schema.prisma",
+    "generate": "prisma generate --schema=prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "paikarmart-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/backend",
+    "build": "npm run build --workspace=apps/backend",
+    "build:backend": "npm run build --workspace=apps/backend",
+    "db:migrate:deploy": "prisma migrate deploy --schema=packages/database/prisma/schema.prisma",
+    "generate:pwa-icons": "node apps/frontend/scripts/generate-pwa-icons.js",
+    "lint": "npm run typecheck --workspace=apps/frontend && npm run typecheck --workspace=apps/backend"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.118.0",
+    "multer": "^2.5.0",
+    "prisma": "^5.22.0",
+    "react-player": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.1.0",
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/multer": "^2.3.0"
+  }
+}

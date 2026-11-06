@@ -1,0 +1,12 @@
+.deepDark,
+[data-theme="deepDark"] {
+  --pm-bg: #040406;
+  --pm-surface: #0a0a0f;
+  --pm-card: #111116;
+  --pm-text: #ffffff;
+  --pm-muted: #a1a1aa;
+  --pm-border: rgba(255, 255, 255, 0.06);
+  --pm-glass: rgba(10, 10, 15, 0.85);
+  --pm-accent: #ff7a00;
+  --pm-accent-hover: #ff9124;
+}
