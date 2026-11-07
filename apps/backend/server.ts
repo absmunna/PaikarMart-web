@@ -109,13 +109,16 @@ async function startServer() {
   // Dedicated lightweight health check handler for Cloud Run, Nginx, and Container probes
   const healthCheckHandler = (req: express.Request, res: express.Response) => {
     res.setHeader('Content-Type', 'application/json');
-    return res.status(200).json({
-      status: "ok",
+    const isDbConnected = db.isConnected();
+    const statusCode = isDbConnected ? 200 : 503;
+    return res.status(statusCode).json({
+      status: isDbConnected ? "ok" : "degraded",
+      ready: isDbConnected,
       service: "paikarmart",
       timestamp: new Date().toISOString(),
       database: {
-        connected: db.isConnected(),
-        status: db.isConnected() ? "connected" : "mock_resilient_mode"
+        connected: isDbConnected,
+        status: isDbConnected ? "connected" : "disconnected"
       }
     });
   };
@@ -187,12 +190,15 @@ async function startServer() {
   app.use('/api/v1', meRouter);
 
   app.get("/api/v1/health", (req, res) => {
-    res.json({
-      status: "ok",
+    const isDbConnected = db.isConnected();
+    const statusCode = isDbConnected ? 200 : 503;
+    res.status(statusCode).json({
+      status: isDbConnected ? "ok" : "degraded",
+      ready: isDbConnected,
       message: "Paikar Mart API running",
       database: {
-        connected: db.isConnected(),
-        status: db.isConnected() ? "connected" : "mock_resilient_mode",
+        connected: isDbConnected,
+        status: isDbConnected ? "connected" : "disconnected",
         lastError: db.getConnectionError() ? String(db.getConnectionError()?.message || db.getConnectionError()) : null
       }
     });
