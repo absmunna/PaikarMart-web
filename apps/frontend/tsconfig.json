@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": ["node", "vite/client"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/core/*": ["./src/core/*"],
+      "@/design-system/*": ["./src/design-system/*"],
+      "@/modules/*": ["./src/modules/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/portals/*": ["./src/portals/*"],
+      "@/components/*": ["./src/design-system/components/*"],
+      "@/components/ui/*": ["./src/design-system/components/ui/*"],
+      "@/hooks/*": ["./src/shared/hooks/*"],
+      "@/types/*": ["./src/shared/types/*"],
+      "@/constants/*": ["./src/shared/constants/*"],
+      "@/guards/*": ["./src/core/auth/guards/*"],
+      "@/permissions/*": ["./src/core/auth/permissions/*"],
+      "@/providers/*": ["./src/app/providers/*"],
+      "@/router/*": ["./src/app/router/*"],
+      "@/services/*": ["./src/core/services/*"],
+      "@/store/*": ["./src/app/store/*"],
+      "@/context/*": ["./src/app/context/*"],
+      "@/lib/*": ["./src/core/lib/*"],
+      "@/api/*": ["./src/core/api/*"],
+      "@/config/*": ["./src/core/config/*"],
+      "@backend/*": ["../backend/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@lib/*": ["./src/core/lib/*"],
+      "@ui/*": ["./src/design-system/components/ui/*"],
+      "@config/*": ["./*"],
+      "shared/*": ["../../packages/shared/*"]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src", "vite.config.ts"],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
