@@ -29,7 +29,8 @@ export const getWallet = async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * 💳 POST /api/v1/wallet/add-money
- * Requires verified payment settlement. Prevents arbitrary client-side balance incrementing.
+ * SECURITY: Never credit from client-supplied paymentRef.
+ * Credits only via verified payment-provider webhooks (not implemented yet).
  */
 export const addMoney = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -38,43 +39,19 @@ export const addMoney = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized: Authenticated session required' });
     }
 
-    const { amount, paymentRef, gatewayTransactionId } = req.body;
+    const { amount } = req.body;
     const amt = parseFloat(amount);
 
     if (isNaN(amt) || amt <= 0 || amt > 500000) {
       return res.status(400).json({ error: 'Invalid add-money amount' });
     }
 
-    // Direct client balance addition is disabled in production without payment settlement verification
-    const isGatewayConfigured = Boolean(process.env.BKASH_APP_KEY || process.env.SSLCOMMERZ_STORE_ID || process.env.PAYMENT_WEBHOOK_SECRET);
-    
-    if (!isGatewayConfigured && !paymentRef && !gatewayTransactionId) {
-      return res.status(501).json({
-        error: 'Direct unverified add-money is disabled. Verified payment gateway settlement (bKash/Nagad/SSLCommerz) is required.',
-        code: 'PAYMENT_GATEWAY_REQUIRED'
-      });
-    }
-
-    if (!db.isConnected()) {
-      return res.status(503).json({ error: 'Database service offline. Payment processing disabled.' });
-    }
-
-    // Process credit only if verified settlement reference is provided
-    const idempotencyKey = (req.headers['x-idempotency-key'] || req.body.idempotencyKey || paymentRef || gatewayTransactionId) as string | undefined;
-
-    const result = await WalletService.creditWallet({
-      userId,
-      amount: amt,
-      title: 'অ্যাড মানি (Add Money)',
-      subtitle: paymentRef ? `Ref: ${paymentRef}` : 'Verified Payment Gateway Settlement',
-      idempotencyKey
-    });
-
-    return res.json({
-      success: true,
-      wallet: result.wallet,
-      transaction: result.transaction,
-      isDuplicate: result.isDuplicate
+    // SECURITY: Never credit wallet from client-supplied paymentRef / gatewayTransactionId.
+    // Credits must only happen from verified payment-provider webhooks / server-to-server settlement.
+    return res.status(501).json({
+      error: 'Wallet top-up requires verified payment gateway settlement. Client-initiated credit is disabled.',
+      code: 'PAYMENT_SETTLEMENT_REQUIRED',
+      hint: 'Complete payment via bKash/Nagad/SSLCommerz checkout. Balance updates only after server-side webhook verification.'
     });
   } catch (error: any) {
     console.error('Add Money Error:', error);
@@ -84,7 +61,6 @@ export const addMoney = async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * 💸 POST /api/v1/wallet/send-money
- * Enforces atomic balance check & debit inside a single DB transaction with idempotency protection.
  */
 export const sendMoney = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -145,7 +121,6 @@ export const sendMoney = async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * 📱 POST /api/v1/wallet/recharge
- * Enforces atomic balance check, operator validation, and idempotency protection.
  */
 export const rechargeMobile = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -173,7 +148,6 @@ export const rechargeMobile = async (req: AuthenticatedRequest, res: Response) =
       return res.status(400).json({ error: 'সঠিক মোবাইল অপারেটর নির্বাচন করুন (GP, Robi, Banglalink, Teletalk, Airtel)' });
     }
 
-    // Telecom API gateway requirement check in production
     const isTopupGatewayConfigured = Boolean(process.env.TOPUP_API_KEY || process.env.TELECOM_GATEWAY_URL);
     if (process.env.NODE_ENV === 'production' && !isTopupGatewayConfigured) {
       return res.status(501).json({
@@ -217,7 +191,6 @@ export const rechargeMobile = async (req: AuthenticatedRequest, res: Response) =
 
 /**
  * 🏧 POST /api/v1/wallet/withdraw
- * Debit wallet for cashout request.
  */
 export const withdrawMoney = async (req: AuthenticatedRequest, res: Response) => {
   try {
