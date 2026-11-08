@@ -11,7 +11,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "cd apps/backend && PORT=3000 npx tsx server.ts",
+    "dev": "npm --prefix apps/backend run dev",
+    "db:migrate:deploy": "npm --prefix apps/backend run db:migrate:deploy",
     "build": "npm run build:all",
     "build:frontend": "cd packages/database && npx prisma generate && cd ../../apps/frontend && npm run build",
     "build:backend": "cd packages/database && npx prisma generate && cd ../../apps/backend && npm run build",
