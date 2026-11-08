@@ -1,47 +1,17 @@
 import { Request, Response } from 'express';
+import { AuthenticatedRequest } from '../../middleware/auth';
 import { prisma, db } from '../../config/database';
-
-// In-memory sessions storage for dev mode without DB
-let devSessionCart: any[] = [
-  {
-    id: "cart-mock-1",
-    quantity: 1,
-    product: {
-      id: "p2",
-      title: "Premium Cotton Panjabi for Men (Regular Fit)",
-      price: 1450,
-      images: ["https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?fit=crop&w=400&h=400&q=80"],
-      vendor: { name: "Chittagong Fashion House" }
-    }
-  }
-];
 
 export const getCart = async (req: Request, res: Response) => {
   try {
     if (!db.isConnected()) {
-      const subtotal = devSessionCart.reduce((acc: number, item: any) => acc + (item.product.price * item.quantity), 0);
-      const itemCount = devSessionCart.reduce((acc: number, item: any) => acc + item.quantity, 0);
-      return res.json({
-        items: devSessionCart,
-        subtotal,
-        itemCount,
-        currency: 'BDT'
-      });
+      return res.status(503).json({ error: 'Cart service is temporarily unavailable because the database is offline.' });
     }
 
-    const userId = req.headers['x-user-id'] as string || 'dev-user-id';
+    const userId = (req as AuthenticatedRequest).user!.id;
     
-    // Find or create user to safeguard profile matches
-    let user = await prisma.user.findFirst({ where: { id: userId } });
-    if (!user) {
-      user = await prisma.user.findFirst();
-    }
-    if (!user) {
-      return res.json({ items: [], subtotal: 0, itemCount: 0, currency: 'BDT' });
-    }
-
     const cartItems = await prisma.cartItem.findMany({
-      where: { userId: user.id },
+      where: { userId },
       include: {
         product: {
           include: {
@@ -86,49 +56,28 @@ export const getCart = async (req: Request, res: Response) => {
 export const addCartItem = async (req: Request, res: Response) => {
   try {
     const { productId, qty } = req.body;
-    const quantity = qty ? Number(qty) : 1;
+    const quantity = qty === undefined ? 1 : Number(qty);
+    if (typeof productId !== 'string' || !productId.trim() || !Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      return res.status(400).json({ error: 'A valid productId and quantity from 1 to 99 are required.' });
+    }
 
     if (!db.isConnected()) {
-      const existing = devSessionCart.find((item: any) => item.product.id === productId);
-      if (existing) {
-        existing.quantity += quantity;
-      } else {
-        devSessionCart.push({
-          id: `cart-mock-${Date.now()}`,
-          quantity: quantity,
-          product: {
-            id: productId || "unknown",
-            title: "Dynamic Selected Product",
-            price: 850,
-            images: ["https://images.unsplash.com/photo-1581655353564-df123a1eb820?fit=crop&w=400&h=400&q=80"],
-            vendor: { name: "PK Store Exclusive" }
-          }
-        });
-      }
-      return res.status(201).json({ message: 'Added to cart in dev mode' });
+      return res.status(503).json({ error: 'Cart service is temporarily unavailable because the database is offline.' });
     }
 
-    const userId = req.headers['x-user-id'] as string || 'dev-user-id';
+    const userId = (req as AuthenticatedRequest).user!.id;
     
-    let user = await prisma.user.findFirst({ where: { id: userId } });
-    if (!user) {
-      user = await prisma.user.findFirst();
-    }
-    if (!user) {
-      return res.status(401).json({ error: 'Authorized user context required to modify cart' });
-    }
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: 'Authenticated user profile was not found.' });
 
-    // Upsert Cart Item
-    const existingDbItem = await prisma.cartItem.findUnique({
-      where: {
-        userId_productId: {
-          userId: user.id,
-          productId: productId
-        }
-      }
+    const existingDbItem = await prisma.cartItem.findFirst({
+      where: { userId, productId }
     });
 
     if (existingDbItem) {
+      if (existingDbItem.qty + quantity > 99) {
+        return res.status(400).json({ error: 'A cart item cannot exceed a quantity of 99.' });
+      }
       await prisma.cartItem.update({
         where: { id: existingDbItem.id },
         data: { qty: existingDbItem.qty + quantity }
@@ -136,8 +85,8 @@ export const addCartItem = async (req: Request, res: Response) => {
     } else {
       await prisma.cartItem.create({
         data: {
-          userId: user.id,
-          productId: productId,
+          userId,
+          productId,
           qty: quantity
         }
       });
@@ -155,19 +104,20 @@ export const updateCartItemQty = async (req: Request, res: Response) => {
     const id = req.params.id as string;
     const { qty } = req.body;
     const quantity = Number(qty);
-
-    if (!db.isConnected()) {
-      const existing = devSessionCart.find((item: any) => item.id === id);
-      if (existing) {
-        existing.quantity = Math.max(1, quantity);
-      }
-      return res.json({ message: 'Cart items updated' });
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      return res.status(400).json({ error: 'Quantity must be a whole number from 1 to 99.' });
     }
 
-    await prisma.cartItem.update({
-      where: { id },
-      data: { qty: Math.max(1, quantity) }
+    if (!db.isConnected()) {
+      return res.status(503).json({ error: 'Cart service is temporarily unavailable because the database is offline.' });
+    }
+
+    const userId = (req as AuthenticatedRequest).user!.id;
+    const updated = await prisma.cartItem.updateMany({
+      where: { id, userId },
+      data: { qty: quantity }
     });
+    if (!updated.count) return res.status(404).json({ error: 'Cart item not found.' });
 
     res.json({ message: 'Cart updated successfully' });
   } catch (error) {
@@ -181,13 +131,12 @@ export const deleteCartItem = async (req: Request, res: Response) => {
     const id = req.params.id as string;
 
     if (!db.isConnected()) {
-      devSessionCart = devSessionCart.filter((item: any) => item.id !== id);
-      return res.json({ message: 'Cart item removed in dev mode' });
+      return res.status(503).json({ error: 'Cart service is temporarily unavailable because the database is offline.' });
     }
 
-    await prisma.cartItem.delete({
-      where: { id }
-    });
+    const userId = (req as AuthenticatedRequest).user!.id;
+    const deleted = await prisma.cartItem.deleteMany({ where: { id, userId } });
+    if (!deleted.count) return res.status(404).json({ error: 'Cart item not found.' });
 
     res.json({ message: 'Item removed from cart' });
   } catch (error) {
@@ -199,21 +148,12 @@ export const deleteCartItem = async (req: Request, res: Response) => {
 export const clearCart = async (req: Request, res: Response) => {
   try {
     if (!db.isConnected()) {
-      devSessionCart = [];
-      return res.json({ message: 'Cart cleared in dev mode' });
+      return res.status(503).json({ error: 'Cart service is temporarily unavailable because the database is offline.' });
     }
 
-    const userId = req.headers['x-user-id'] as string || 'dev-user-id';
+    const userId = (req as AuthenticatedRequest).user!.id;
     
-    let user = await prisma.user.findFirst({ where: { id: userId } });
-    if (!user) {
-      user = await prisma.user.findFirst();
-    }
-    if (user) {
-      await prisma.cartItem.deleteMany({
-        where: { userId: user.id }
-      });
-    }
+    await prisma.cartItem.deleteMany({ where: { userId } });
 
     res.json({ message: 'Cart cleared' });
   } catch (error) {
