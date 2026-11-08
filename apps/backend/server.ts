@@ -142,9 +142,9 @@ async function startServer() {
   app.use(helmetMiddleware);
   app.use(corsMiddleware);
   app.use(morgan('combined', { skip: (req) => !req.url.startsWith('/api') }));
+  app.use(express.json({ limit: '1mb' }));
   app.use(sanitizeMiddleware);
   app.use(auditMiddleware);
-  app.use(express.json());
 
   // Apply targeted rate limiters
   app.use('/api/v1/auth', authRateLimiter, authRoutes);
