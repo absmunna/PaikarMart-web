@@ -1,7 +1,6 @@
 /**
  * Paikar Mart - Unified API Client & Configuration
  * Single source of truth for backend API connectivity.
- * Merged from legacy core/lib/api and core/config/api.
  */
 
 import axios from 'axios';
@@ -13,7 +12,7 @@ const rawBase = import.meta.env.VITE_API_BASE_URL;
 if (import.meta.env.PROD && !rawBase) {
   console.error(
     '❌ CRITICAL: VITE_API_BASE_URL is missing in production build. ' +
-    'API calls will default to "" which may cause routing issues if not proxied.'
+      'Set it in Vercel Environment Variables (e.g. https://paikarmart-web-api.onrender.com/api/v1).'
   );
 }
 
@@ -21,26 +20,25 @@ export const API_BASE_URL: string = (rawBase || '').replace(/\/+$/, '');
 
 /**
  * Builds a clean, fully-qualified URL for any API endpoint.
- * Prevents duplicate  segments.
+ * Prevents duplicate /api/v1 segments when base already includes the prefix.
  */
 export function buildApiUrl(endpoint: string): string {
   if (!endpoint) return API_BASE_URL;
   if (/^https?:\/\//i.test(endpoint)) return endpoint;
 
   let path = endpoint.trim();
+  if (!path.startsWith('/')) path = `/${path}`;
 
-  // Strip duplicate  or /api if API_BASE_URL already contains it
-  if (API_BASE_URL.endsWith('') && path.startsWith('')) {
-    path = path.slice(''.length);
-  } else if (API_BASE_URL.endsWith('/api') && path.startsWith('/api')) {
-    path = path.slice('/api'.length);
+  const base = API_BASE_URL;
+
+  // Strip duplicate /api/v1 when base already ends with it
+  if (base.endsWith('/api/v1') && (path === '/api/v1' || path.startsWith('/api/v1/'))) {
+    path = path.slice('/api/v1'.length) || '/';
+  } else if (base.endsWith('/api') && (path === '/api' || path.startsWith('/api/'))) {
+    path = path.slice('/api'.length) || '/';
   }
 
-  if (!path.startsWith('/')) {
-    path = '/' + path;
-  }
-
-  return `${API_BASE_URL}${path}`;
+  return `${base}${path}`;
 }
 
 // 2. Axios Instance (Core Client)
@@ -51,18 +49,29 @@ export const apiClient = axios.create({
   },
 });
 
-// Interceptors for token management
 apiClient.interceptors.request.use(requestInterceptor);
 apiClient.interceptors.response.use(responseInterceptor, responseErrorInterceptor);
 
-
-// 3. Lightweight "api" helper (legacy compatibility)
+/**
+ * Normalize path relative to axios baseURL.
+ * Callers may pass '/auth/login' or '/api/v1/auth/login' — both must work.
+ */
 function normalizeUrl(url: string): string {
   if (!url || /^https?:\/\//i.test(url)) return url;
-  if (url.startsWith('/')) return url.slice(''.length);
-  if (url === '') return '/';
-  if (url.startsWith('/api/')) return url.slice('/api'.length);
-  return url;
+
+  let path = url.trim();
+  if (!path.startsWith('/')) path = `/${path}`;
+
+  if (path === '/api/v1' || path.startsWith('/api/v1/')) {
+    path = path.slice('/api/v1'.length) || '/';
+  } else if (path === '/api' || path.startsWith('/api/')) {
+    // Only strip /api when base already encodes the API root
+    if (API_BASE_URL.endsWith('/api') || API_BASE_URL.includes('/api/')) {
+      path = path.slice('/api'.length) || '/';
+    }
+  }
+
+  return path;
 }
 
 export const api = {
@@ -70,26 +79,26 @@ export const api = {
     const response = await apiClient.get<T>(normalizeUrl(url), config);
     return response.data;
   },
-  post: async <T>(url: string, data?: any): Promise<T> => {
-    const response = await apiClient.post<T>(normalizeUrl(url), data);
+  post: async <T>(url: string, data?: any, config?: any): Promise<T> => {
+    const response = await apiClient.post<T>(normalizeUrl(url), data, config);
     return response.data;
   },
-  put: async <T>(url: string, data?: any): Promise<T> => {
-    const response = await apiClient.put<T>(normalizeUrl(url), data);
+  put: async <T>(url: string, data?: any, config?: any): Promise<T> => {
+    const response = await apiClient.put<T>(normalizeUrl(url), data, config);
     return response.data;
   },
-  patch: async <T>(url: string, data?: any): Promise<T> => {
-    const response = await apiClient.patch<T>(normalizeUrl(url), data);
+  patch: async <T>(url: string, data?: any, config?: any): Promise<T> => {
+    const response = await apiClient.patch<T>(normalizeUrl(url), data, config);
     return response.data;
   },
-  delete: async <T>(url: string): Promise<T> => {
-    const response = await apiClient.delete<T>(normalizeUrl(url));
+  delete: async <T>(url: string, config?: any): Promise<T> => {
+    const response = await apiClient.delete<T>(normalizeUrl(url), config);
     return response.data;
   },
-  del: async <T>(url: string): Promise<T> => {
-    const response = await apiClient.delete<T>(normalizeUrl(url));
+  del: async <T>(url: string, config?: any): Promise<T> => {
+    const response = await apiClient.delete<T>(normalizeUrl(url), config);
     return response.data;
-  }
+  },
 };
 
 // 4. Fetch-based helper (legacy compatibility)
@@ -101,10 +110,13 @@ export async function apiFetch<T = any>(endpoint: string, init?: RequestInit): P
     headers.set('Content-Type', 'application/json');
   }
 
-  const token = typeof window !== 'undefined' 
-    ? localStorage.getItem('pm_token') || localStorage.getItem('accessToken') || localStorage.getItem('token') 
-    : null;
-    
+  const token =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('pm_token') ||
+        localStorage.getItem('accessToken') ||
+        localStorage.getItem('token')
+      : null;
+
   if (token && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${token}`);
   }
@@ -118,9 +130,13 @@ export async function apiFetch<T = any>(endpoint: string, init?: RequestInit): P
     } catch {
       errorData = { message: response.statusText || 'Network request failed' };
     }
-    throw new Error(errorData?.message || errorData?.error || `Request failed with status ${response.status}`);
+    throw new Error(
+      errorData?.message || errorData?.error || `Request failed with status ${response.status}`
+    );
   }
 
+  // 204 No Content
+  if (response.status === 204) return undefined as T;
   return response.json();
 }
 
