@@ -14,9 +14,6 @@ interface OtpEntry {
 }
 const otpStore = new Map<string, OtpEntry>();
 
-/**
- * 🔒 Generate distinct access & refresh tokens
- */
 function generateTokens(user: { id: string; email?: string | null; name?: string | null; role: string }) {
   const accessToken = jwt.sign(
     {
@@ -43,10 +40,6 @@ function generateTokens(user: { id: string; email?: string | null; name?: string
   return { accessToken, refreshToken };
 }
 
-/**
- * 📝 User Registration
- * Enforces role assignment via server-side policy only. Ignores client-injected role claims.
- */
 export const register = async (req: Request, res: Response) => {
   try {
     const isProd = process.env.NODE_ENV === 'production';
@@ -137,10 +130,6 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * 🔐 User Login
- * Requires Firebase ID token. Does not trust client-supplied uid/email without verification.
- */
 export const login = async (req: Request, res: Response) => {
   try {
     const isProd = process.env.NODE_ENV === 'production';
@@ -273,7 +262,6 @@ export const sendOtp = async (req: Request, res: Response) => {
       requestCount: (existing?.requestCount || 0) + 1,
       firstRequestAt: existing?.firstRequestAt || now
     });
-    // In production, integrate SMS provider here. Never return OTP in production responses.
     const isProd = process.env.NODE_ENV === 'production';
     return res.json({
       success: true,
@@ -369,7 +357,7 @@ export const syncProfile = async (req: Request, res: Response) => {
           email: email || user.email,
           fullName: effectiveFullName || user.fullName,
           phone: phone || user.phone,
-          avatarUrl: effectiveAvatar || user.avatarUrl
+          avatarUrl: effectiveAvatar || (user as any).avatarUrl
         }
       });
     }
@@ -381,7 +369,7 @@ export const syncProfile = async (req: Request, res: Response) => {
         email: user.email,
         fullName: user.fullName,
         role: user.role,
-        isSeller: user.isSeller
+        isSeller: (user as any).isSeller
       }
     });
   } catch (error) {
@@ -397,3 +385,47 @@ export const getDbStatus = async (req: Request, res: Response) => {
     timestamp: new Date().toISOString()
   });
 };
+
+/** GET /me — current user from JWT */
+export const getCurrentUser = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'Unauthorized: Token required' });
+    }
+
+    const token = authHeader.replace('Bearer ', '').trim();
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+
+    if (db.isConnected() && decoded.id) {
+      const dbUser = await prisma.user.findUnique({ where: { id: decoded.id } });
+      if (dbUser) {
+        return res.json({
+          id: dbUser.id,
+          name: dbUser.fullName,
+          fullName: dbUser.fullName,
+          email: dbUser.email,
+          phone: dbUser.phone,
+          avatarUrl: (dbUser as any).avatarUrl,
+          role: dbUser.role,
+          isSeller: (dbUser as any).isSeller ?? false
+        });
+      }
+    }
+
+    return res.json({
+      id: decoded.id,
+      name: decoded.name || 'Paikar Mart User',
+      fullName: decoded.name || 'Paikar Mart User',
+      email: decoded.email,
+      phone: decoded.phone,
+      role: decoded.role || 'buyer',
+      isSeller: false
+    });
+  } catch (error) {
+    return res.status(401).json({ error: 'Unauthorized or token expired' });
+  }
+};
+
+/** Alias expected by auth.routes — Firebase profile sync */
+export const syncUser = syncProfile;
