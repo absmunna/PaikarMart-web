@@ -1,10 +1,44 @@
 import { Request, Response } from 'express';
 import { prisma, db } from '../../config/database';
 
+function sessionUserId(req: Request): string | undefined {
+  return (req as any).user?.id;
+}
+
+function isAdmin(req: Request): boolean {
+  const role = (req as any).user?.role;
+  return role === 'admin' || role === 'super_admin';
+}
+
+const PRODUCT_FIELDS = [
+  'title',
+  'description',
+  'price',
+  'originalPrice',
+  'categoryId',
+  'category',
+  'stock',
+  'moq',
+  'images',
+  'tieredPrices',
+  'vendorId',
+] as const;
+
+function pickProductInput(body: Record<string, unknown>) {
+  const data: Record<string, unknown> = {};
+  for (const key of PRODUCT_FIELDS) {
+    if (body[key] !== undefined) data[key] = body[key];
+  }
+  return data;
+}
+
 // ── Products ──────────────────────────────────────────────────────────
 export const listSellerProducts = async (req: Request, res: Response) => {
   try {
-    const sellerId = (req as any).user?.id || req.headers['x-user-id'] as string || 'dev-seller';
+    const sellerId = sessionUserId(req);
+    if (!sellerId) {
+      return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+    }
     if (!db.isConnected()) {
       return res.json([]);
     }
@@ -14,57 +48,84 @@ export const listSellerProducts = async (req: Request, res: Response) => {
     });
     res.json(products);
   } catch (e) {
-    console.warn('listSellerProducts error, falling back to empty list:', e);
-    res.json([]);
+    console.warn('listSellerProducts error:', e);
+    res.status(500).json({ error: 'Failed to list seller products' });
   }
 };
 
 export const createSellerProduct = async (req: Request, res: Response) => {
   try {
-    const sellerId = (req as any).user?.id || req.headers['x-user-id'] as string || 'dev-seller';
+    const sellerId = sessionUserId(req);
+    if (!sellerId) {
+      return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+    }
+    const input = pickProductInput(req.body || {});
+    if (!input.title || input.price === undefined) {
+      return res.status(400).json({ error: 'title and price are required' });
+    }
     if (!db.isConnected()) {
-      return res.status(201).json({ id: `dev-${Date.now()}`, ...req.body, sellerId });
+      return res.status(503).json({ error: 'Database service offline. Product was not created.' });
     }
     const product = await (prisma as any).product.create({
-      data: { ...req.body, sellerId },
+      data: { ...input, sellerId },
     });
     res.status(201).json(product);
   } catch (e) {
-    console.warn('createSellerProduct fallback in dev mode:', e);
-    const sellerId = (req as any).user?.id || req.headers['x-user-id'] as string || 'dev-seller';
-    res.status(201).json({ id: `dev-${Date.now()}`, ...req.body, sellerId });
+    console.warn('createSellerProduct error:', e);
+    res.status(500).json({ error: 'Failed to create product' });
   }
 };
 
 export const updateSellerProduct = async (req: Request, res: Response) => {
   try {
+    const sellerId = sessionUserId(req);
+    if (!sellerId) {
+      return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+    }
     const { id } = req.params;
     if (!db.isConnected()) {
-      return res.json({ id, ...req.body, message: 'Updated (dev mode)' });
+      return res.status(503).json({ error: 'Database service offline. Product was not updated.' });
+    }
+    const existing = await (prisma as any).product.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    if (!isAdmin(req) && existing.sellerId !== sellerId) {
+      return res.status(403).json({ error: 'Forbidden: You do not own this product' });
     }
     const updated = await (prisma as any).product.update({
       where: { id },
-      data: req.body,
+      data: pickProductInput(req.body || {}),
     });
     res.json(updated);
   } catch (e) {
-    console.warn('updateSellerProduct fallback:', e);
-    const { id } = req.params;
-    res.json({ id, ...req.body, message: 'Updated (dev mode)' });
+    console.warn('updateSellerProduct error:', e);
+    res.status(500).json({ error: 'Failed to update product' });
   }
 };
 
 export const deleteSellerProduct = async (req: Request, res: Response) => {
   try {
+    const sellerId = sessionUserId(req);
+    if (!sellerId) {
+      return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+    }
     const { id } = req.params;
     if (!db.isConnected()) {
-      return res.json({ message: 'Deleted (dev mode)' });
+      return res.status(503).json({ error: 'Database service offline. Product was not deleted.' });
+    }
+    const existing = await (prisma as any).product.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    if (!isAdmin(req) && existing.sellerId !== sellerId) {
+      return res.status(403).json({ error: 'Forbidden: You do not own this product' });
     }
     await (prisma as any).product.delete({ where: { id } });
     res.status(204).send();
   } catch (e) {
-    console.warn('deleteSellerProduct fallback:', e);
-    res.status(204).send();
+    console.warn('deleteSellerProduct error:', e);
+    res.status(500).json({ error: 'Failed to delete product' });
   }
 };
 
@@ -161,18 +222,21 @@ const createAuditLog = async (adminId: string, action: string, vendorId: string,
 
 export const submitSellerVerification = async (req: Request, res: Response) => {
   try {
-    const sellerId = (req as any).user?.id || req.headers['x-user-id'] as string || 'dev-seller';
-    if (!db.isConnected()) {
-      return res.json({ message: 'Verification submitted (dev mode)', sellerId });
+    const sellerId = sessionUserId(req);
+    if (!sellerId) {
+      return res.status(401).json({ error: 'Unauthorized: Authentication required' });
     }
+    if (!db.isConnected()) {
+      return res.status(503).json({ error: 'Database service offline. Verification was not submitted.' });
+    }
+    const { documents, businessName, tradeLicense, nid } = req.body || {};
     const result = await (prisma as any).sellerVerification?.create({
-      data: { ...req.body, sellerId, status: 'pending' },
+      data: { documents, businessName, tradeLicense, nid, sellerId, status: 'pending' },
     });
     res.status(201).json(result || { message: 'Submitted', sellerId });
   } catch (e) {
-    console.warn('submitSellerVerification fallback:', e);
-    const sellerId = (req as any).user?.id || req.headers['x-user-id'] as string || 'dev-seller';
-    res.status(201).json({ message: 'Submitted (dev fallback)', sellerId });
+    console.warn('submitSellerVerification error:', e);
+    res.status(500).json({ error: 'Failed to submit verification' });
   }
 };
 

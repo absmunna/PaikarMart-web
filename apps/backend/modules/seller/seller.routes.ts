@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAuth } from '../../middleware/auth';
 import { requireRole } from '../../middleware/permission';
 import {
   listSellerProducts,
@@ -14,6 +15,9 @@ import {
 } from './seller.controller';
 
 const router = Router();
+
+// Every seller mutation must use the verified session, never a client-supplied user id.
+router.use(requireAuth);
 
 // Product endpoints
 router.get('/products', listSellerProducts);

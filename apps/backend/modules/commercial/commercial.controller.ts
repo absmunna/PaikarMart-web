@@ -194,7 +194,10 @@ export class CommercialController {
 
   static async bookService(req: Request, res: Response) {
     try {
-      const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-user-01';
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+      }
       const {
         serviceType,
         dispatchType,
@@ -279,30 +282,15 @@ export class CommercialController {
   // ----------------------------------------------------
   static async verifyAndDeliverDigital(req: Request, res: Response) {
     try {
-      const userId = req.headers['x-user-id'] as string || (req as any).user?.id || 'dev-buyer-01';
-      const { orderId, productId, quantity, transactionId, amount, provider } = req.body;
-
-      if (!orderId || !productId) {
-        return res.status(400).json({ error: 'orderId and productId are required' });
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized: Authentication required' });
       }
 
-      const delivery = await DigitalEngineService.verifyPaymentAndDeliver({
-        orderId,
-        userId,
-        productId,
-        quantity: quantity ? parseInt(quantity, 10) : 1,
-        paymentConfirmation: {
-          provider: provider || 'bKash Escrow',
-          transactionId: transactionId || `TXN-${Date.now().toString().slice(-8)}`,
-          amount: amount || 1450,
-          status: 'paid'
-        }
-      });
-
-      res.status(200).json({
-        status: 'success',
-        message: 'পেমেন্ট সফলভাবে ভেরিফায়েড হয়েছে। ডিজিটাল লাইসেন্স কী ও ডাউনলোড অ্যাক্সেস সাথে সাথে আনলক করা হয়েছে।',
-        data: delivery
+      // Client-supplied transactionId/amount must never mark an order paid or release license keys.
+      return res.status(501).json({
+        error: 'Digital goods unlock only after a verified payment-provider webhook. Client-supplied payment proof is not accepted.',
+        code: 'PAYMENT_SETTLEMENT_REQUIRED'
       });
     } catch (error: any) {
       console.error('Digital delivery error:', error);
@@ -312,24 +300,15 @@ export class CommercialController {
 
   static async getDigitalDelivery(req: Request, res: Response) {
     try {
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized: Authentication required' });
+      }
       const { orderId } = req.params;
       const delivery = DigitalEngineService.getDigitalDelivery(orderId);
 
       if (!delivery) {
-        // Fallback demo delivery for instant preview
-        const demoDelivery = await DigitalEngineService.verifyPaymentAndDeliver({
-          orderId,
-          userId: 'dev-buyer-01',
-          productId: 'prod-digital-01',
-          quantity: 1,
-          paymentConfirmation: {
-            provider: 'bKash',
-            transactionId: 'TXN-DEMO-PAID',
-            amount: 1450,
-            status: 'paid'
-          }
-        });
-        return res.json({ status: 'success', data: demoDelivery });
+        return res.status(404).json({ error: 'No unlocked digital delivery for this order' });
       }
 
       res.json({

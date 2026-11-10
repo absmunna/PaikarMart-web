@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { prisma, db } from '../../config/database';
+import { requireAuth } from '../../middleware/auth';
+import { requireRoleGroup } from '../../middleware/permission';
 
 const router = Router();
 
@@ -340,8 +342,8 @@ router.get('/:id', async (req, res, next) => {
   res.status(404).json({ status: 'error', message: 'Shop not found' });
 });
 
-// 3. Store Status Toggle (Open / Closed)
-router.patch('/stores/:id/status', async (req, res) => {
+// 3. Store Status Toggle (Open / Closed) — vendors and admins only
+router.patch('/stores/:id/status', requireAuth, requireRoleGroup(['vendor', 'admin']), async (req, res) => {
   try {
     const { id } = req.params;
     const { isOpen } = req.body;
