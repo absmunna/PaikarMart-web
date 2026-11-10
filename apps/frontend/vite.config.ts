@@ -11,7 +11,8 @@ export default defineConfig(({mode}) => {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
     resolve: {
-      dedupe: ['react', 'react-dom'],
+      // Prevent multiple React copies (createContext undefined / invalid hook call)
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'scheduler'],
       alias: [
         { find: '@/app', replacement: path.resolve(__dirname, './src/app') },
         { find: '@/core', replacement: path.resolve(__dirname, './src/core') },
@@ -45,28 +46,34 @@ export default defineConfig(({mode}) => {
       ],
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-player'],
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'scheduler'],
     },
     build: {
       target: 'esnext',
       chunkSizeWarningLimit: 1200,
       rollupOptions: {
         output: {
+          // IMPORTANT: Do not put every path containing "react" into a vendor chunk.
+          // That splits React away from framer-motion / radix and causes:
+          //   TypeError: Cannot read properties of undefined (reading 'createContext')
           manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-                return 'react-vendor';
-              }
-              if (id.includes('firebase')) {
-                return 'firebase-vendor';
-              }
-              if (id.includes('framer-motion') || id.includes('lucide-react')) {
-                return 'ui-vendor';
-              }
-              if (id.includes('react-player')) {
-                return 'media-vendor';
-              }
+            if (!id.includes('node_modules')) return;
+
+            // Keep the real React runtime in one shared chunk only
+            if (
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react/') ||
+              id.includes('node_modules/scheduler')
+            ) {
+              return 'react-vendor';
             }
+
+            if (id.includes('firebase')) {
+              return 'firebase-vendor';
+            }
+
+            // Leave framer-motion, lucide-react, radix, etc. to automatic chunking
+            // so they share the same React instance as the app.
           },
         },
       },
