@@ -44,11 +44,13 @@ const mapOrderForResponse = (order: any) => {
     items: itemsList,
     orderItems: itemsList,
     createdAt: order.createdAt,
-    updatedAt: order.updatedAt
+    updatedAt: order.updatedAt,
+    buyerId: order.buyerId,
+    sellerId: order.sellerId
   };
 };
 
-export const listOrders = async (req: AuthenticatedRequest, res: Response) => {
+export const getOrders = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
@@ -62,12 +64,32 @@ export const listOrders = async (req: AuthenticatedRequest, res: Response) => {
     });
     return res.json(orders.map(mapOrderForResponse));
   } catch (error: any) {
-    console.error('[Order] listOrders', error);
+    console.error('[Order] getOrders', error);
     return res.status(500).json({ error: 'Failed to list orders' });
   }
 };
 
-export const getOrder = async (req: AuthenticatedRequest, res: Response) => {
+export const getOrderById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    if (!db.isConnected()) return res.status(503).json({ error: 'Database offline' });
+
+    const order = await prisma.order.findFirst({
+      where: {
+        id: req.params.id,
+        OR: [{ buyerId: userId }, { userId }, { sellerId: userId }]
+      },
+      include: { orderItems: { include: { product: true } } }
+    });
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    return res.json(mapOrderForResponse(order));
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to get order' });
+  }
+};
+
+export const trackOrder = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
@@ -81,13 +103,21 @@ export const getOrder = async (req: AuthenticatedRequest, res: Response) => {
       include: { orderItems: { include: { product: true } } }
     });
     if (!order) return res.status(404).json({ error: 'Order not found' });
-    return res.json(mapOrderForResponse(order));
+
+    return res.json({
+      ...mapOrderForResponse(order),
+      tracking: {
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        updatedAt: order.updatedAt
+      }
+    });
   } catch (error: any) {
-    return res.status(500).json({ error: 'Failed to get order' });
+    return res.status(500).json({ error: 'Failed to track order' });
   }
 };
 
-export const createOrder = async (req: AuthenticatedRequest, res: Response) => {
+export const addOrder = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
@@ -157,7 +187,6 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response) => {
     const primaryVendorId = validatedOrderItems[0]?.vendorId || null;
     const primarySellerId = validatedOrderItems[0]?.sellerId || null;
 
-    // Wallet payment: debit BEFORE order creation (fail closed on insufficient balance)
     if (paymentMethod === 'wallet') {
       try {
         await WalletService.debitWallet({
@@ -227,7 +256,6 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response) => {
         }
 
         await tx.cartItem.deleteMany({ where: { userId } });
-        // Escrow create skipped until ownership + settlement ready
         return newOrder;
       });
     } catch (err: any) {
@@ -254,6 +282,126 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response) => {
   } catch (error: any) {
     console.error('[Order Controller] Add Order Error:', error);
     return res.status(500).json({ error: 'Failed to place order', details: error.message });
+  }
+};
+
+export const guestCheckout = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!db.isConnected()) return res.status(503).json({ error: 'Database offline' });
+
+    const { items, deliveryAddress, deliveryDistrict, guestEmail, guestPhone, guestName } = req.body;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Order items required' });
+    }
+    if (!deliveryAddress || !guestPhone) {
+      return res.status(400).json({ error: 'Delivery address and phone required for guest checkout' });
+    }
+
+    const validatedOrderItems: any[] = [];
+    let subtotalSum = 0;
+    for (const item of items) {
+      const dbProduct = await prisma.product.findUnique({ where: { id: item.productId } });
+      if (!dbProduct) return res.status(400).json({ error: `Product not found: ${item.productId}` });
+      if ((dbProduct.stock ?? 0) < (item.quantity || 1)) {
+        return res.status(400).json({ error: `Insufficient stock for ${dbProduct.title}` });
+      }
+      const qty = item.quantity || 1;
+      const unitPrice = Number(dbProduct.price);
+      subtotalSum += unitPrice * qty;
+      validatedOrderItems.push({
+        productId: dbProduct.id,
+        title: dbProduct.title,
+        productImage: dbProduct.images?.[0] || '',
+        unitPrice,
+        quantity: qty,
+        sellerId: dbProduct.sellerId
+      });
+    }
+
+    const isInsideDhaka = String(deliveryDistrict || deliveryAddress).toLowerCase().includes('dhaka');
+    const shippingFee = isInsideDhaka ? 60 : 120;
+    const vatAmount = Math.round(subtotalSum * 0.05);
+    const grandTotal = subtotalSum + vatAmount + shippingFee;
+    const orderNo = `PKM-G-${Date.now().toString(36).toUpperCase()}`;
+
+    const createdOrder = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.order.create({
+        data: {
+          orderNo,
+          status: 'pending',
+          paymentStatus: 'unpaid',
+          paymentMethod: 'cod',
+          deliveryAddress: String(deliveryAddress).trim(),
+          deliveryDistrict: String(deliveryDistrict || 'Dhaka').trim(),
+          notes: `Guest: ${guestName || ''} | ${guestEmail || ''} | ${guestPhone}`,
+          subtotal: subtotalSum,
+          vatAmount,
+          shippingFee,
+          total: grandTotal,
+          totalAmount: grandTotal,
+          price: grandTotal,
+          sellerId: validatedOrderItems[0]?.sellerId || null,
+          orderItems: {
+            create: validatedOrderItems.map(it => ({
+              productId: it.productId,
+              title: it.title,
+              productTitle: it.title,
+              productImage: it.productImage,
+              unitPrice: it.unitPrice,
+              price: it.unitPrice,
+              quantity: it.quantity,
+              qty: it.quantity
+            }))
+          }
+        },
+        include: { orderItems: { include: { product: true } } }
+      });
+
+      for (const item of validatedOrderItems) {
+        await tx.product.updateMany({
+          where: { id: item.productId, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } }
+        });
+      }
+      return newOrder;
+    });
+
+    return res.status(201).json(mapOrderForResponse(createdOrder));
+  } catch (error: any) {
+    console.error('[Order] guestCheckout', error);
+    return res.status(500).json({ error: 'Guest checkout failed', details: error.message });
+  }
+};
+
+export const reorder = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    if (!db.isConnected()) return res.status(503).json({ error: 'Database offline' });
+
+    const previous = await prisma.order.findFirst({
+      where: { id: req.params.id, OR: [{ buyerId: userId }, { userId }] },
+      include: { orderItems: true }
+    });
+    if (!previous) return res.status(404).json({ error: 'Original order not found' });
+
+    const items = (previous.orderItems || []).map((it: any) => ({
+      productId: it.productId,
+      quantity: it.quantity || it.qty || 1
+    }));
+
+    req.body = {
+      items,
+      deliveryAddress: previous.deliveryAddress,
+      deliveryDistrict: previous.deliveryDistrict,
+      deliveryType: previous.deliveryType || 'standard',
+      paymentMethod: 'cod',
+      notes: `Reorder of ${previous.orderNo}`
+    };
+    return addOrder(req, res);
+  } catch (error: any) {
+    console.error('[Order] reorder', error);
+    return res.status(500).json({ error: 'Reorder failed' });
   }
 };
 
