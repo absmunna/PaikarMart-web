@@ -43,19 +43,13 @@ export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
-// 5. Providers with Scopes
+// 5. Google provider — basic login only (profile + email)
+// Workspace scopes (Drive/Sheets/Docs/Calendar) removed: they break simple login,
+// trigger sensitive Google verification, and are not needed for PaikarMart auth.
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
-
-// Add Workspace scopes for deep integration
-const WORKSPACE_SCOPES = [
-  'https://www.googleapis.com/auth/drive.readonly',
-  'https://www.googleapis.com/auth/spreadsheets.readonly',
-  'https://www.googleapis.com/auth/documents.readonly',
-  'https://www.googleapis.com/auth/forms.responses.readonly',
-  'https://www.googleapis.com/auth/calendar.readonly'
-];
-WORKSPACE_SCOPES.forEach(scope => googleProvider.addScope(scope));
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
 
 export const facebookProvider = new FacebookAuthProvider();
 
@@ -78,12 +72,10 @@ export {
 };
 export type { User };
 
-// 7. Session Helpers
+// 7. Token helpers
 let cachedAccessToken: string | null = null;
 
 export const getAccessToken = async (forceRefresh = false): Promise<string | null> => {
-  if (cachedAccessToken && !forceRefresh) return cachedAccessToken;
-  
   const user = auth.currentUser;
   if (!user) return null;
   
@@ -176,4 +168,3 @@ async function testConnection() {
   }
 }
 testConnection();
-
