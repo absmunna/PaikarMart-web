@@ -21,6 +21,8 @@ import { safeStorage } from "@/modules/app";
 import { AppRole, RoleGroup, getRoleGroup, getPermissionsForRole } from "@/config/roles.config";
 import { toast } from "sonner";
 import { buildApiUrl } from "@/core/api";
+import type { ConfirmationResult } from "firebase/auth";
+import { firebaseAuthService } from "@/modules/auth/services/firebaseAuthService";
 
 export type { AppRole, RoleGroup };
 
@@ -96,7 +98,10 @@ export interface AuthContextValue {
   isVendor: boolean;
   isAdmin: boolean;
   isSeller: boolean;
-  loginWithPhone: (phone: string, password: string) => Promise<AppUser>;
+  /** Phone OTP: prefer sendPhoneOtp then verifyPhoneOtp */
+  loginWithPhone: (phone: string, otpCode: string) => Promise<AppUser>;
+  sendPhoneOtp: (phone: string, recaptchaContainerId?: string) => Promise<{ success: boolean; phone: string }>;
+  verifyPhoneOtp: (code: string) => Promise<AppUser>;
   login: (email: string, password: string) => Promise<AppUser>;
   loginWithGoogle: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -195,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [user, setUser] = useState<AppUser | null>(() => readStoredUser());
   const lastSyncedUid = React.useRef<string | null>(null);
+  const phoneConfirmationRef = React.useRef<ConfirmationResult | null>(null);
 
   useEffect(() => { persistUser(user); }, [user]);
 
@@ -263,7 +269,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setSyncStatus('synced');
             lastSyncedUid.current = currentUser.uid;
             if (syncResult.user) {
-              setUser(prev => prev ? ({ ...prev, role: syncResult.user.role as AppRole, isSeller: syncResult.user.isSeller } as any) : null);
+              setUser(prev => prev ? ({ ...prev, role: syncResult.user.role as AppRole } as AppUser) : null);
             }
           } else {
             setSyncStatus('failed');
@@ -288,47 +294,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
         const u = result.user;
-        const userRef = doc(db, "users", u.uid);
-        const snap = await getDoc(userRef);
-        let role: AppRole = "buyer";
-        let userData: any = null;
-        if (snap.exists()) {
-          userData = snap.data();
-          role = (userData.role as AppRole) || "buyer";
-        } else {
-          userData = {
-            id: u.uid,
-            name: u.displayName || "Google User",
-            email: u.email || "",
-            phone: u.phoneNumber || "",
-            role: "buyer",
-            roles: ["buyer"],
-            avatarUrl: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
-            createdAt: new Date().toISOString(),
-          };
-          await setDoc(userRef, userData);
-        }
-        const next: AppUser = {
-          id: u.uid,
-          fullName: userData.name || u.displayName || "Google User",
-          name: userData.name || u.displayName || "Google User",
-          email: u.email || "",
-          phone: u.phoneNumber || "",
-          avatarUrl: u.photoURL || userData.avatarUrl,
-          avatar: u.photoURL || userData.avatarUrl,
-          role,
-          roles: Array.isArray(userData.roles) ? userData.roles : [role],
-          roleGroup: getRoleGroup(role),
-          permissions: getPermissionsForRole(role, true),
-          emailVerified: u.emailVerified,
-          verification: userData.verification || { status: "verified" },
-          seller: userData.seller,
-          createdAt: userData.createdAt || new Date().toISOString(),
-        };
-        setUser(next);
         const token = await u.getIdToken();
         persistToken(token);
-        syncUserWithBackend({ fullName: next.fullName, phone: next.phone, avatarUrl: next.avatarUrl });
+        syncUserWithBackend({
+          fullName: u.displayName || 'Google User',
+          phone: u.phoneNumber || '',
+          avatarUrl: u.photoURL || undefined
+        });
         toast.success("Successfully logged in with Google!");
       }
     } catch (error) {
@@ -372,7 +344,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const cred = await signInWithEmailAndPassword(auth, email, password);
     const u = cred.user;
 
-    // Enforce email verification for email/password accounts
     if (!u.emailVerified) {
       try { await sendEmailVerification(u); } catch (e) { console.warn('sendEmailVerification on login failed', e); }
       try { await firebaseLogout(); } catch {}
@@ -425,16 +396,110 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return appUser;
   }, []);
 
-  const loginWithPhone = useCallback(async (phone: string, password: string): Promise<AppUser> => {
-    const mappedEmail = `${phone.trim()}@paikarmart.com`;
-    return login(mappedEmail, password);
-  }, [login]);
+  const sendPhoneOtp = useCallback(async (phone: string, _recaptchaContainerId = 'recaptcha-container') => {
+    try {
+      const e164 = firebaseAuthService.normalizePhoneE164(phone);
+      const confirmation = await firebaseAuthService.sendOtp(e164);
+      phoneConfirmationRef.current = confirmation;
+      toast.success('OTP পাঠানো হয়েছে');
+      return { success: true, phone: e164 };
+    } catch (err: any) {
+      console.error('sendPhoneOtp', err);
+      phoneConfirmationRef.current = null;
+      const code = String(err?.code || err?.message || '');
+      if (code.includes('invalid-phone') || err?.message === 'INVALID_PHONE') {
+        toast.error('সঠিক মোবাইল নম্বর দিন (01XXXXXXXXX)');
+      } else if (code.includes('too-many-requests')) {
+        toast.error('অনেকবার চেষ্টা হয়েছে — কিছুক্ষণ পর আবার চেষ্টা করুন');
+      } else {
+        toast.error('OTP পাঠানো যায়নি। Firebase Phone Auth ও domain চেক করুন।');
+      }
+      throw err;
+    }
+  }, []);
+
+  const verifyPhoneOtp = useCallback(async (code: string): Promise<AppUser> => {
+    const confirmation = phoneConfirmationRef.current;
+    if (!confirmation) {
+      toast.error('আগে OTP পাঠান');
+      throw new Error('OTP_SESSION_EXPIRED');
+    }
+    try {
+      await firebaseAuthService.verifyOtp(confirmation, code);
+      const u = auth.currentUser;
+      if (!u) throw new Error('PHONE_AUTH_FAILED');
+
+      const token = await u.getIdToken(true);
+      persistToken(token);
+
+      const phone = u.phoneNumber || '';
+      const userRef = doc(db, 'users', u.uid);
+      const snap = await getDoc(userRef);
+      let userData: any = snap.exists() ? snap.data() : null;
+      if (!userData) {
+        userData = {
+          id: u.uid,
+          name: phone || 'PaikarMart User',
+          email: u.email || '',
+          phone,
+          role: 'buyer',
+          roles: ['buyer'],
+          createdAt: new Date().toISOString(),
+        };
+        await setDoc(userRef, userData);
+      }
+
+      const primaryRole: AppRole = (userData.role as AppRole) || 'buyer';
+      const appUser: AppUser = {
+        id: u.uid,
+        fullName: userData.name || phone || 'PaikarMart User',
+        name: userData.name || phone || 'PaikarMart User',
+        email: userData.email || u.email || '',
+        phone: userData.phone || phone,
+        avatarUrl: u.photoURL || userData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
+        avatar: u.photoURL || userData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
+        role: primaryRole,
+        roles: Array.isArray(userData.roles) ? userData.roles : [primaryRole],
+        roleGroup: getRoleGroup(primaryRole),
+        permissions: getPermissionsForRole(primaryRole, userData.verification?.status === 'verified'),
+        emailVerified: u.emailVerified,
+        verification: userData.verification || { status: 'unverified' },
+        seller: userData.seller,
+        createdAt: userData.createdAt || new Date().toISOString(),
+      };
+      setUser(appUser);
+      setFirebaseUser(u);
+      phoneConfirmationRef.current = null;
+      syncUserWithBackend({ fullName: appUser.fullName, phone: appUser.phone, avatarUrl: appUser.avatarUrl });
+      toast.success('মোবাইল OTP দিয়ে লগইন সফল');
+      return appUser;
+    } catch (err: any) {
+      console.error('verifyPhoneOtp', err);
+      if (String(err?.code || '').includes('invalid-verification-code') || err?.message === 'INVALID_OTP') {
+        toast.error('ভুল OTP কোড');
+      } else if (String(err?.code || '').includes('code-expired')) {
+        toast.error('OTP মেয়াদ শেষ — আবার পাঠান');
+        phoneConfirmationRef.current = null;
+      } else {
+        toast.error('OTP যাচাই ব্যর্থ');
+      }
+      throw err;
+    }
+  }, []);
+
+  const loginWithPhone = useCallback(async (phone: string, otpCode: string): Promise<AppUser> => {
+    if (!phoneConfirmationRef.current) {
+      await sendPhoneOtp(phone);
+    }
+    return verifyPhoneOtp(otpCode);
+  }, [sendPhoneOtp, verifyPhoneOtp]);
 
   const logout = useCallback(async () => {
     try { await firebaseLogout(); } catch {}
     setUser(null);
     setFirebaseUser(null);
     persistToken(null);
+    phoneConfirmationRef.current = null;
     toast.info("Logged out successfully");
   }, []);
 
@@ -476,67 +541,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const sendVerification = useCallback(async (identifier: string) => {
+    const id = String(identifier || '').trim();
+    if (!id.includes('@')) {
+      return sendPhoneOtp(id);
+    }
     const endpoint = buildApiUrl('/auth/send-otp');
-    const body = identifier.includes('@') ? { email: identifier, purpose: 'register' } : { phone: identifier, purpose: 'register' };
-    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: id, purpose: 'register' }),
+    });
     if (!res.ok) throw new Error('কোড পাঠানো সম্ভব হয়নি');
     return res.json();
-  }, []);
+  }, [sendPhoneOtp]);
 
   const verifyVerification = useCallback(async (identifier: string, code: string) => {
+    const id = String(identifier || '').trim();
+    if (!id.includes('@')) {
+      return verifyPhoneOtp(code);
+    }
     const endpoint = buildApiUrl('/auth/verify-otp');
-    const body = identifier.includes('@') ? { email: identifier, otp: code } : { phone: identifier, otp: code };
-    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: id, otp: code }),
+    });
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       throw new Error(errorData.message || 'ভুল ওটিপি কোড');
     }
     return res.json();
-  }, []);
+  }, [verifyPhoneOtp]);
 
   const registerUser = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string }): Promise<AppUser> => {
     const cleanEmail = input.email && input.email.includes('@') ? input.email.trim().toLowerCase() : '';
     const cleanPhone = input.phone ? input.phone.trim().replace(/[^0-9]/g, '') : '';
-    const userEmail = cleanEmail || `${cleanPhone || Date.now()}@paikarmart.com`;
+    if (!cleanEmail) {
+      toast.error('ইমেইল প্রয়োজন — অথবা মোবাইল OTP দিয়ে sendPhoneOtp/verifyPhoneOtp ব্যবহার করুন');
+      throw new Error('EMAIL_REQUIRED_FOR_PASSWORD_REGISTER');
+    }
     const password = input.password || 'Paikar123456!';
-    const cred = await createUserWithEmailAndPassword(auth, userEmail, password);
+    const cred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
     const u = cred.user;
     try {
       await sendEmailVerification(u);
       toast.message('ইমেইল ভেরিফিকেশন লিংক পাঠানো হয়েছে — ইনবক্স চেক করুন');
     } catch {}
-    const userRef = doc(db, 'users', u.uid);
-    const name = input.fullName || input.name || userEmail.split('@')[0];
-    const docData = {
+    try { await firebaseLogout(); } catch {}
+    persistToken(null);
+    setUser(null);
+    toast.success('রেজিস্ট্রেশন সম্পন্ন! ইমেইল ভেরিফাই করে তারপর লগইন করুন।');
+    return {
       id: u.uid,
-      name,
-      email: userEmail,
-      phone: cleanPhone,
-      role: 'buyer',
-      roles: ['buyer'],
-      createdAt: new Date().toISOString(),
-    };
-    await setDoc(userRef, docData);
-    const appUser: AppUser = {
-      id: u.uid,
-      fullName: name,
-      name,
-      email: userEmail,
+      fullName: input.fullName || input.name || cleanEmail.split('@')[0],
+      email: cleanEmail,
       phone: cleanPhone,
       role: 'buyer',
       roles: ['buyer'],
       roleGroup: getRoleGroup('buyer'),
       permissions: getPermissionsForRole('buyer', false),
-      emailVerified: u.emailVerified,
+      emailVerified: false,
       verification: { status: 'unverified' },
-      createdAt: docData.createdAt,
+      createdAt: new Date().toISOString(),
     };
-    // Do not fully unlock session until email verified — sign out after register
-    try { await firebaseLogout(); } catch {}
-    persistToken(null);
-    setUser(null);
-    toast.success('রেজিস্ট্রেশন সম্পন্ন! ইমেইল ভেরিফাই করে তারপর লগইন করুন।');
-    return appUser;
   }, []);
 
   const registerSeller = useCallback(async (input: any): Promise<AppUser> => {
@@ -588,9 +655,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return list.includes(user.roleGroup);
   }, [user]);
 
-  const hasPermission = useCallback((permission: string) => {
-    return !!user?.permissions?.includes(permission);
-  }, [user]);
+  const hasPermission = useCallback((permission: string) => !!user?.permissions?.includes(permission), [user]);
 
   const switchPersonaRole = useCallback((targetRole: AppRole) => {
     if (!user) return;
@@ -627,6 +692,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin: user?.role === 'admin',
     isSeller: !!user?.seller || user?.role === 'seller',
     loginWithPhone,
+    sendPhoneOtp,
+    verifyPhoneOtp,
     login,
     loginWithGoogle,
     signInWithGoogle: loginWithGoogle,
@@ -650,7 +717,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     promoteToSeller,
     promoteToCreator,
     syncStatus,
-  }), [user, firebaseUser, loading, syncStatus, loginWithPhone, login, loginWithGoogle, loginWithFacebook, loginAsGuest, logout, sendPasswordReset, sendVerification, verifyVerification, reloadUser, resendEmailVerification, submitVerification, registerUser, registerSeller, registerFactory, hasRole, hasRoleGroup, hasPermission, switchPersonaRole, promoteToSeller, promoteToCreator]);
+  }), [user, firebaseUser, loading, syncStatus, loginWithPhone, sendPhoneOtp, verifyPhoneOtp, login, loginWithGoogle, loginWithFacebook, loginAsGuest, logout, sendPasswordReset, sendVerification, verifyVerification, reloadUser, resendEmailVerification, submitVerification, registerUser, registerSeller, registerFactory, hasRole, hasRoleGroup, hasPermission, switchPersonaRole, promoteToSeller, promoteToCreator]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
