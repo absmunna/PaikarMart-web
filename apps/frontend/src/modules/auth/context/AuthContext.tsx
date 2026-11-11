@@ -96,8 +96,6 @@ export interface AuthContextValue {
   isVendor: boolean;
   isAdmin: boolean;
   isSeller: boolean;
-  
-  // Auth Operations
   loginWithPhone: (phone: string, password: string) => Promise<AppUser>;
   login: (email: string, password: string) => Promise<AppUser>;
   loginWithGoogle: () => Promise<void>;
@@ -106,20 +104,15 @@ export interface AuthContextValue {
   loginAsGuest: () => Promise<void>;
   logout: () => Promise<void>;
   signOut: () => Promise<void>;
-  
-  // Password, Verification & OTP
   sendPasswordReset: (email: string) => Promise<void>;
   sendVerification: (identifier: string) => Promise<any>;
   verifyVerification: (identifier: string, code: string) => Promise<any>;
   reloadUser: () => Promise<void>;
+  resendEmailVerification: () => Promise<{ sent?: boolean; alreadyVerified?: boolean }>;
   submitVerification: (data: VerificationData) => Promise<void>;
-  
-  // Registration
   registerUser: (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string }) => Promise<AppUser>;
   registerSeller: (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string; seller: SellerProfileData }) => Promise<AppUser>;
   registerFactory: (input: { fullName: string; phone: string; email: string; password?: string; factory: Record<string, any> }) => Promise<AppUser>;
-  
-  // Role & Permission Checks
   hasRole: (roles: AppRole | AppRole[] | string | string[]) => boolean;
   hasRoleGroup: (groups: RoleGroup | RoleGroup[]) => boolean;
   hasPermission: (permission: string) => boolean;
@@ -131,7 +124,6 @@ export interface AuthContextValue {
 
 const STORAGE_KEY = "pm.auth.v2";
 const TOKEN_KEY = "pm.auth.token.v2";
-
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function readStoredUser(): AppUser | null {
@@ -151,16 +143,11 @@ function persistUser(u: AppUser | null) {
 function persistToken(t: string | null) {
   if (t) {
     safeStorage.setItem(TOKEN_KEY, t);
-    safeStorage.setItem("pm_token", t); // Core API compatibility
-    safeStorage.setItem("accessToken", t); // Legacy compatibility
+    safeStorage.setItem("pm_token", t);
+    safeStorage.setItem("accessToken", t);
   } else {
-    const keysToRemove = [TOKEN_KEY, "pm_token", "accessToken", "refreshToken", "pm_user_id"];
-    keysToRemove.forEach(k => safeStorage.removeItem(k));
+    [TOKEN_KEY, "pm_token", "accessToken", "refreshToken", "pm_user_id"].forEach(k => safeStorage.removeItem(k));
   }
-}
-
-function uid(prefix = "u") {
-  return `${prefix}_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 }
 
 type SyncStatus = 'idle' | 'syncing' | 'synced' | 'failed';
@@ -173,39 +160,31 @@ async function syncUserWithBackend(
   try {
     const idToken = await getFirebaseToken(true);
     if (!idToken) return null;
-
     const res = await fetch(buildApiUrl('/auth/sync'), {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${idToken}`
       },
       body: JSON.stringify(payload)
     });
-    
     if (res.ok) {
       const data = await res.json();
       const serverToken = data.token || data.accessToken;
-      if (serverToken) {
-        persistToken(serverToken);
-      }
+      if (serverToken) persistToken(serverToken);
       return data;
-    } else {
-      const errorData = await res.json().catch(() => ({}));
-      if (res.status === 409) {
-        toast.error("Account Conflict: This email is already linked to another account.");
-        return null;
-      }
-      throw new Error(errorData.error || 'Sync failed');
     }
+    const errorData = await res.json().catch(() => ({}));
+    if (res.status === 409) {
+      toast.error("Account Conflict: This email is already linked to another account.");
+      return null;
+    }
+    throw new Error(errorData.error || 'Sync failed');
   } catch (err: any) {
     if (retryCount < MAX_RETRIES && (!err.message || !err.message.includes('Conflict'))) {
-      const delay = Math.pow(2, retryCount) * 1000;
-      console.warn(`[Sync] Retrying in ${delay}ms... (Attempt ${retryCount + 1}/${MAX_RETRIES})`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise(r => setTimeout(r, Math.pow(2, retryCount) * 1000));
       return syncUserWithBackend(payload, retryCount + 1);
     }
-    console.error('[Sync] Final failure after retries:', err);
     throw err;
   }
 }
@@ -215,34 +194,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [user, setUser] = useState<AppUser | null>(() => readStoredUser());
-  
-  // Track last synced UID to prevent redundant calls in same session
   const lastSyncedUid = React.useRef<string | null>(null);
 
-  // Sync state to storage
-  useEffect(() => {
-    persistUser(user);
-  }, [user]);
+  useEffect(() => { persistUser(user); }, [user]);
 
-  // Sync Firebase Auth State with real Firestore and Supabase backend
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setFirebaseUser(currentUser);
-      
       if (currentUser) {
-        // Prevent repeated sync for the same user in the same component lifecycle
         if (lastSyncedUid.current === currentUser.uid && syncStatus === 'synced') {
           setLoading(false);
           return;
         }
-
         try {
           setSyncStatus('syncing');
           const userRef = doc(db, "users", currentUser.uid);
           const snap = await getDoc(userRef);
-          
           let appUser: AppUser;
-          
           if (snap.exists()) {
             const data = snap.data();
             const primaryRole: AppRole = (data.role as AppRole) || "buyer";
@@ -281,34 +249,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               fullName: newDoc.name,
               roleGroup: getRoleGroup(primaryRole),
               permissions: getPermissionsForRole(primaryRole, false),
+              emailVerified: currentUser.emailVerified,
               verification: { status: "unverified" },
             } as AppUser;
           }
-
           setUser(appUser);
-          
-          // Sync with Postgres (Authority for business data)
           const syncResult = await syncUserWithBackend({
             fullName: appUser.fullName,
             phone: appUser.phone,
             avatarUrl: appUser.avatarUrl
           });
-
           if (syncResult) {
             setSyncStatus('synced');
             lastSyncedUid.current = currentUser.uid;
-            // Update local user with fresh DB data (like verified role)
             if (syncResult.user) {
-               setUser(prev => prev ? ({
-                 ...prev,
-                 role: syncResult.user.role as AppRole,
-                 isSeller: syncResult.user.isSeller
-               }) : null);
+              setUser(prev => prev ? ({ ...prev, role: syncResult.user.role as AppRole, isSeller: syncResult.user.isSeller } as any) : null);
             }
           } else {
             setSyncStatus('failed');
           }
-
         } catch (err) {
           console.error("Auth sync fatal error:", err);
           setSyncStatus('failed');
@@ -321,7 +280,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -345,7 +303,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             phone: u.phoneNumber || "",
             role: "buyer",
             roles: ["buyer"],
-            walletBalance: 25000,
             avatarUrl: u.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
             createdAt: new Date().toISOString(),
           };
@@ -357,8 +314,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           name: userData.name || u.displayName || "Google User",
           email: u.email || "",
           phone: u.phoneNumber || "",
-          avatarUrl: u.photoURL || userData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
-          avatar: u.photoURL || userData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.uid}`,
+          avatarUrl: u.photoURL || userData.avatarUrl,
+          avatar: u.photoURL || userData.avatarUrl,
           role,
           roles: Array.isArray(userData.roles) ? userData.roles : [role],
           roleGroup: getRoleGroup(role),
@@ -371,20 +328,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(next);
         const token = await u.getIdToken();
         persistToken(token);
-        const idToken = await u.getIdToken();
-        syncUserWithBackend({
-          fullName: next.fullName,
-          phone: next.phone,
-          avatarUrl: next.avatarUrl
-        });
-        toast.success("Successfully logged in with Google (Firebase Connected)!");
+        syncUserWithBackend({ fullName: next.fullName, phone: next.phone, avatarUrl: next.avatarUrl });
+        toast.success("Successfully logged in with Google!");
       }
     } catch (error) {
-      if (error instanceof FirebaseError && (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request')) {
-        console.info("Google login popup closed by user");
-        return;
-      }
-      console.error(" Google popup login error:", error);
+      if (error instanceof FirebaseError && (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request')) return;
+      console.error("Google popup login error:", error);
       toast.error("Google Login failed. Please try again.");
     }
   }, []);
@@ -392,12 +341,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithFacebook = useCallback(async () => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
-      if (result.user) {
-        toast.success("Successfully logged in with Facebook!");
-      }
+      if (result.user) toast.success("Successfully logged in with Facebook!");
     } catch (error) {
       if (error instanceof FirebaseError && error.code === 'auth/popup-closed-by-user') return;
-      console.error("Facebook Login Error:", error);
       toast.error("Facebook Login failed");
     }
   }, []);
@@ -405,7 +351,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginAsGuest = useCallback(async () => {
     try {
       await signInAnonymously(auth);
-      const guestUser: AppUser = {
+      setUser({
         id: `guest_${Date.now()}`,
         fullName: "Guest Visitor",
         name: "Guest Visitor",
@@ -415,8 +361,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         roleGroup: getRoleGroup("buyer"),
         permissions: [],
         createdAt: new Date().toISOString(),
-      };
-      setUser(guestUser);
+      });
       toast.info("Logged in as Guest");
     } catch (err) {
       console.error("Guest login error:", err);
@@ -426,6 +371,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string): Promise<AppUser> => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
     const u = cred.user;
+
+    // Enforce email verification for email/password accounts
+    if (!u.emailVerified) {
+      try { await sendEmailVerification(u); } catch (e) { console.warn('sendEmailVerification on login failed', e); }
+      try { await firebaseLogout(); } catch {}
+      persistToken(null);
+      setUser(null);
+      setFirebaseUser(null);
+      toast.error('ইমেইল ভেরিফাই করুন। আপনার ইনবক্সে লিংক পাঠানো হয়েছে।');
+      const err = new Error('EMAIL_NOT_VERIFIED');
+      (err as any).code = 'EMAIL_NOT_VERIFIED';
+      throw err;
+    }
+
     const userRef = doc(db, "users", u.uid);
     const snap = await getDoc(userRef);
     let userData: any = snap.exists() ? snap.data() : null;
@@ -436,7 +395,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: u.displayName || email.split("@")[0],
         role: "buyer",
         roles: ["buyer"],
-        walletBalance: 25000,
         createdAt: new Date().toISOString(),
       };
       await setDoc(userRef, userData);
@@ -462,28 +420,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       createdAt: userData.createdAt || new Date().toISOString(),
     };
     setUser(appUser);
-    const idToken = await u.getIdToken();
-    syncUserWithBackend({
-      fullName: appUser.fullName,
-      phone: appUser.phone,
-      avatarUrl: appUser.avatarUrl
-    });
+    syncUserWithBackend({ fullName: appUser.fullName, phone: appUser.phone, avatarUrl: appUser.avatarUrl });
     toast.success("Logged in successfully!");
     return appUser;
   }, []);
 
   const loginWithPhone = useCallback(async (phone: string, password: string): Promise<AppUser> => {
-    const cleanPhone = phone.trim();
-    const mappedEmail = `${cleanPhone}@paikarmart.com`;
+    const mappedEmail = `${phone.trim()}@paikarmart.com`;
     return login(mappedEmail, password);
   }, [login]);
 
   const logout = useCallback(async () => {
-    try {
-      await firebaseLogout();
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+    try { await firebaseLogout(); } catch {}
     setUser(null);
     setFirebaseUser(null);
     persistToken(null);
@@ -499,322 +447,185 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (auth.currentUser) {
       await auth.currentUser.reload();
       setFirebaseUser(auth.currentUser);
-      if (user) {
-        setUser({ ...user, emailVerified: auth.currentUser.emailVerified });
-      }
+      if (user) setUser({ ...user, emailVerified: auth.currentUser.emailVerified });
     }
+  }, [user]);
+
+  const resendEmailVerification = useCallback(async () => {
+    const u = auth.currentUser;
+    if (!u) {
+      toast.error('আগে লগইন করুন');
+      throw new Error('NOT_SIGNED_IN');
+    }
+    await u.reload();
+    if (u.emailVerified) {
+      toast.success('ইমেইল ইতিমধ্যে ভেরিফাইড');
+      if (user) setUser({ ...user, emailVerified: true });
+      return { alreadyVerified: true as const };
+    }
+    await sendEmailVerification(u);
+    toast.success('ভেরিফিকেশন ইমেইল আবার পাঠানো হয়েছে');
+    return { sent: true as const };
   }, [user]);
 
   const submitVerification = useCallback(async (data: VerificationData) => {
     if (user) {
-      const updatedUser: AppUser = {
-        ...user,
-        verification: { ...data, status: "pending", submittedAt: new Date().toISOString() }
-      };
-      setUser(updatedUser);
+      setUser({ ...user, verification: { ...data, status: "pending", submittedAt: new Date().toISOString() } });
       toast.success("Verification documents submitted successfully!");
     }
   }, [user]);
 
   const sendVerification = useCallback(async (identifier: string) => {
-    try {
-      const endpoint = buildApiUrl('/auth/send-otp');
-      const body = identifier.includes('@') ? { email: identifier, purpose: 'register' } : { phone: identifier, purpose: 'register' };
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) throw new Error('কোড পাঠানো সম্ভব হয়নি');
-      return await res.json();
-    } catch (err) {
-      console.error('Send OTP error:', err);
-      throw err;
-    }
+    const endpoint = buildApiUrl('/auth/send-otp');
+    const body = identifier.includes('@') ? { email: identifier, purpose: 'register' } : { phone: identifier, purpose: 'register' };
+    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error('কোড পাঠানো সম্ভব হয়নি');
+    return res.json();
   }, []);
 
   const verifyVerification = useCallback(async (identifier: string, code: string) => {
-    try {
-      const endpoint = buildApiUrl('/auth/verify-otp');
-      const body = identifier.includes('@') ? { email: identifier, otp: code } : { phone: identifier, otp: code };
-      console.log('Sending OTP verification:', { endpoint, body });
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        console.error('Verify OTP failed:', errorData);
-        throw new Error(errorData.message || 'ভুল ওটিপি কোড');
-      }
-      return await res.json();
-    } catch (err) {
-      console.error('Verify OTP error:', err);
-      throw err;
+    const endpoint = buildApiUrl('/auth/verify-otp');
+    const body = identifier.includes('@') ? { email: identifier, otp: code } : { phone: identifier, otp: code };
+    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || 'ভুল ওটিপি কোড');
     }
+    return res.json();
   }, []);
 
   const registerUser = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { password?: string }): Promise<AppUser> => {
-    const role: AppRole = "buyer";
     const cleanEmail = input.email && input.email.includes('@') ? input.email.trim().toLowerCase() : '';
     const cleanPhone = input.phone ? input.phone.trim().replace(/[^0-9]/g, '') : '';
-
     const userEmail = cleanEmail || `${cleanPhone || Date.now()}@paikarmart.com`;
-    const password = (input as any).password || "Paikar123456!";
-
+    const password = input.password || 'Paikar123456!';
+    const cred = await createUserWithEmailAndPassword(auth, userEmail, password);
+    const u = cred.user;
     try {
-      const cred = await createUserWithEmailAndPassword(auth, userEmail, password);
-      const u = cred.user;
-      
-      // Only send verification if it's a real email
-      if (cleanEmail) {
-        try {
-          await sendEmailVerification(u);
-        } catch (e) {
-          console.warn("Email verification failed to send:", e);
-        }
-      }
-      
-      const userId = u.uid;
-      const idToken = await u.getIdToken();
-      persistToken(idToken);
-
-      const profileDoc = {
-        id: userId,
-        name: input.fullName || input.name || userEmail.split("@")[0],
-        email: cleanEmail,
-        phone: cleanPhone || "",
-        role,
-        roles: ["buyer"],
-        walletBalance: 25000,
-        avatarUrl: input.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
-        createdAt: new Date().toISOString(),
-      };
-
-      await setDoc(doc(db, "users", userId), profileDoc);
-
-      const next: AppUser = {
-        ...input,
-        id: userId,
-        fullName: profileDoc.name,
-        name: profileDoc.name,
-        email: userEmail,
-        phone: cleanPhone || "",
-        role,
-        roles: ["buyer"],
-        roleGroup: getRoleGroup(role),
-        permissions: getPermissionsForRole(role, false),
-        createdAt: profileDoc.createdAt,
-      };
-      
-      setUser(next);
-
-      syncUserWithBackend({
-        fullName: next.fullName,
-        phone: cleanPhone,
-        avatarUrl: profileDoc.avatarUrl
-      });
-
-      toast.success("Account registered successfully!");
-      return next;
-    } catch (error: any) {
-      console.error("Registration Error:", error);
-      toast.error(error.message || "Failed to register account.");
-      throw error;
-    }
-  }, []);
-
-  const registerSeller = useCallback(async (input: Omit<AppUser, "id" | "role" | "roles" | "roleGroup" | "permissions" | "createdAt"> & { seller: SellerProfileData; password?: string }): Promise<AppUser> => {
-    const role: AppRole = "seller";
-    const cleanEmail = input.email && input.email.includes('@') ? input.email.trim().toLowerCase() : '';
-    const userEmail = cleanEmail || `${input.phone || Date.now()}@paikarmart.com`;
-    
-    let userId = uid("s");
-    let idToken = "";
-
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, userEmail, (input as any).password || "Paikar123456!");
-      const u = cred.user;
-      
-      if (cleanEmail) {
-        try {
-          await sendEmailVerification(u);
-        } catch (e) {
-          console.warn("Email verification failed to send:", e);
-        }
-      }
-      
-      userId = u.uid;
-      idToken = await u.getIdToken();
-      persistToken(idToken);
-    } catch (err: any) {
-      console.warn("Firebase Auth seller create error:", err?.message);
-    }
-
-    const profileDoc = {
-      id: userId,
-      name: input.fullName || input.name || input.seller.shopName || userEmail.split("@")[0],
+      await sendEmailVerification(u);
+      toast.message('ইমেইল ভেরিফিকেশন লিংক পাঠানো হয়েছে — ইনবক্স চেক করুন');
+    } catch {}
+    const userRef = doc(db, 'users', u.uid);
+    const name = input.fullName || input.name || userEmail.split('@')[0];
+    const docData = {
+      id: u.uid,
+      name,
       email: userEmail,
-      phone: input.phone || "",
-      role,
-      roles: ["buyer", "seller"],
-      seller: input.seller,
-      walletBalance: 25000,
-      avatarUrl: input.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+      phone: cleanPhone,
+      role: 'buyer',
+      roles: ['buyer'],
       createdAt: new Date().toISOString(),
     };
-
-    try {
-      await setDoc(doc(db, "users", userId), profileDoc);
-    } catch (err) {
-      console.warn("Firestore seller profile save error:", err);
-    }
-
-    const next: AppUser = {
-      ...input,
-      id: userId,
-      fullName: profileDoc.name,
-      name: profileDoc.name,
+    await setDoc(userRef, docData);
+    const appUser: AppUser = {
+      id: u.uid,
+      fullName: name,
+      name,
       email: userEmail,
-      role,
-      roles: ["buyer", "seller"],
-      roleGroup: getRoleGroup(role),
-      permissions: getPermissionsForRole(role, false),
-      seller: input.seller,
-      createdAt: profileDoc.createdAt,
+      phone: cleanPhone,
+      role: 'buyer',
+      roles: ['buyer'],
+      roleGroup: getRoleGroup('buyer'),
+      permissions: getPermissionsForRole('buyer', false),
+      emailVerified: u.emailVerified,
+      verification: { status: 'unverified' },
+      createdAt: docData.createdAt,
     };
-    
-    setUser(next);
-
-    if (idToken) {
-      syncUserWithBackend({
-        fullName: next.fullName,
-        phone: input.phone,
-        avatarUrl: profileDoc.avatarUrl
-      });
-    }
-
-    toast.success("Seller store registered and saved in database!");
-    return next;
+    // Do not fully unlock session until email verified — sign out after register
+    try { await firebaseLogout(); } catch {}
+    persistToken(null);
+    setUser(null);
+    toast.success('রেজিস্ট্রেশন সম্পন্ন! ইমেইল ভেরিফাই করে তারপর লগইন করুন।');
+    return appUser;
   }, []);
 
-  const registerFactory = useCallback(async (input: { fullName: string; phone: string; email: string; factory: Record<string, any> }): Promise<AppUser> => {
-    try {
-      const role: AppRole = "factory";
-      const next: AppUser = {
-        id: uid("f"),
-        fullName: input.fullName,
-        name: input.fullName,
-        phone: input.phone,
-        email: input.email,
-        role,
-        roles: ["buyer", "factory"],
-        roleGroup: getRoleGroup(role),
-        permissions: getPermissionsForRole(role, false),
-        factory: input.factory as FactoryProfileData,
-        createdAt: new Date().toISOString(),
-      };
-      setUser(next);
-      toast.success("Factory account registered successfully!");
-      return next;
-    } catch (error: any) {
-      console.error("Factory registration error:", error);
-      toast.error("Failed to register factory account.");
-      throw error;
-    }
+  const registerSeller = useCallback(async (input: any): Promise<AppUser> => {
+    const userEmail = (input.email || '').trim().toLowerCase();
+    const password = input.password || 'Paikar123456!';
+    const cred = await createUserWithEmailAndPassword(auth, userEmail, password);
+    const u = cred.user;
+    try { await sendEmailVerification(u); } catch {}
+    toast.success('Seller registered — verify email then login');
+    try { await firebaseLogout(); } catch {}
+    return {
+      id: u.uid,
+      fullName: input.fullName || userEmail,
+      email: userEmail,
+      role: 'seller' as AppRole,
+      roles: ['seller' as AppRole],
+      roleGroup: getRoleGroup('seller' as AppRole),
+      permissions: [],
+      emailVerified: false,
+      seller: input.seller,
+      createdAt: new Date().toISOString(),
+    };
   }, []);
 
-  const hasRole = useCallback((targetRoles: AppRole | AppRole[] | string | string[]) => {
+  const registerFactory = useCallback(async (input: any): Promise<AppUser> => {
+    toast.success('Factory account registered successfully!');
+    return {
+      id: `factory_${Date.now()}`,
+      fullName: input.fullName,
+      email: input.email,
+      phone: input.phone,
+      role: 'buyer',
+      roles: ['buyer'],
+      roleGroup: getRoleGroup('buyer'),
+      permissions: [],
+      createdAt: new Date().toISOString(),
+    };
+  }, []);
+
+  const hasRole = useCallback((roles: AppRole | AppRole[] | string | string[]) => {
     if (!user) return false;
-    const targets = Array.isArray(targetRoles) ? targetRoles : [targetRoles];
-    return targets.some((r) => user.roles.includes(r as AppRole) || user.role === r);
+    const list = Array.isArray(roles) ? roles : [roles];
+    return list.some(r => user.roles?.includes(r as AppRole) || user.role === r);
   }, [user]);
 
-  const hasRoleGroup = useCallback((targetGroups: RoleGroup | RoleGroup[]) => {
+  const hasRoleGroup = useCallback((groups: RoleGroup | RoleGroup[]) => {
     if (!user) return false;
-    const groups = Array.isArray(targetGroups) ? targetGroups : [targetGroups];
-    return groups.includes(user.roleGroup);
+    const list = Array.isArray(groups) ? groups : [groups];
+    return list.includes(user.roleGroup);
   }, [user]);
 
   const hasPermission = useCallback((permission: string) => {
-    if (!user) return false;
-    return user.permissions?.includes(permission) ?? false;
+    return !!user?.permissions?.includes(permission);
   }, [user]);
 
   const switchPersonaRole = useCallback((targetRole: AppRole) => {
-    if (user) {
-      setUser({
-        ...user,
-        role: targetRole,
-        roleGroup: getRoleGroup(targetRole),
-        permissions: getPermissionsForRole(targetRole, user.verification?.status === "verified")
-      });
-      toast.info(`Switched role persona to ${targetRole}`);
-    }
+    if (!user) return;
+    setUser({ ...user, role: targetRole, roles: Array.from(new Set([...(user.roles || []), targetRole])), roleGroup: getRoleGroup(targetRole) });
   }, [user]);
 
-  const promoteToSeller = useCallback(async (shopName: string, type: "retail" | "wholesale" | "service", address: string) => {
-    if (user) {
-      const sellerData: SellerProfileData = { shopName, type, address };
-      const updated: AppUser = {
-        ...user,
-        role: "seller",
-        roles: Array.from(new Set([...user.roles, "seller" as AppRole])),
-        seller: sellerData,
-        roleGroup: getRoleGroup("seller"),
-        permissions: getPermissionsForRole("seller", false)
-      };
-      setUser(updated);
-      try {
-        await updateDoc(doc(db, "users", user.id), {
-          role: "seller",
-          roles: Array.from(new Set([...user.roles, "seller" as AppRole])),
-          seller: sellerData
-        });
-      } catch (err) {
-        console.warn("Firestore promoteToSeller update error:", err);
-      }
-      toast.success("Promoted to Seller! Saved in database.");
-    }
+  const promoteToSeller = useCallback((shopName: string, type: "retail" | "wholesale" | "service", address: string) => {
+    if (!user) return;
+    setUser({
+      ...user,
+      role: 'seller' as AppRole,
+      roles: Array.from(new Set([...(user.roles || []), 'seller' as AppRole])),
+      roleGroup: getRoleGroup('seller' as AppRole),
+      seller: { shopName, type, address },
+    });
   }, [user]);
 
   const promoteToCreator = useCallback(async () => {
-    if (user) {
-      const updated: AppUser = {
-        ...user,
-        role: "content_creator",
-        roles: Array.from(new Set([...user.roles, "content_creator" as AppRole])),
-        roleGroup: getRoleGroup("content_creator"),
-        permissions: getPermissionsForRole("content_creator", user.verification?.status === "verified")
-      };
-      setUser(updated);
-      try {
-        await updateDoc(doc(db, "users", user.id), {
-          role: "content_creator",
-          roles: Array.from(new Set([...user.roles, "content_creator" as AppRole])),
-        });
-      } catch (err) {
-        console.warn("Firestore promoteToCreator error:", err);
-      }
-      toast.success("অভিনন্দন! আপনি এখন একজন কন্টেন্ট ক্রিয়েটর।");
-    }
+    if (!user) return;
+    setUser({ ...user, role: 'creator' as AppRole, roles: Array.from(new Set([...(user.roles || []), 'creator' as AppRole])), roleGroup: getRoleGroup('creator' as AppRole) });
   }, [user]);
 
-  const value: AuthContextValue = useMemo(() => ({
+  const value = useMemo<AuthContextValue>(() => ({
     user,
     firebaseUser,
-    isAuthenticated: !!user || !!firebaseUser,
+    isAuthenticated: !!user && user.role !== ('guest' as AppRole),
     isLoading: loading,
     loading,
-    role: user?.role ?? "buyer",
-    roles: user?.roles ?? ["buyer"],
-    roleGroup: user?.roleGroup ?? getRoleGroup("buyer"),
-    isCustomer: (user?.roleGroup ?? getRoleGroup("buyer")) === "customer",
-    isVendor: (user?.roleGroup ?? getRoleGroup("buyer")) === "vendor" || user?.role === "factory",
-    isAdmin: user?.role === "admin" || user?.role === "super_admin",
-    isSeller: user?.role === "seller" || Boolean(user?.roles?.includes("seller")),
-    
+    role: user?.role || ('guest' as AppRole),
+    roles: user?.roles || [],
+    roleGroup: user?.roleGroup || getRoleGroup('buyer'),
+    isCustomer: user?.roleGroup === 'customer' || user?.role === 'buyer',
+    isVendor: user?.roleGroup === 'vendor' || !!user?.seller,
+    isAdmin: user?.role === 'admin',
+    isSeller: !!user?.seller || user?.role === 'seller',
     loginWithPhone,
     login,
     loginWithGoogle,
@@ -823,41 +634,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loginAsGuest,
     logout,
     signOut: logout,
-    
     sendPasswordReset,
     sendVerification,
     verifyVerification,
     reloadUser,
+    resendEmailVerification,
     submitVerification,
-    
     registerUser,
     registerSeller,
     registerFactory,
-    
     hasRole,
     hasRoleGroup,
     hasPermission,
     switchPersonaRole,
     promoteToSeller,
     promoteToCreator,
-    syncStatus
-  }), [
-    user, firebaseUser, loading, syncStatus,
-    loginWithPhone, login, loginWithGoogle, loginWithFacebook, loginAsGuest, logout,
-    sendPasswordReset, sendVerification, verifyVerification, reloadUser, submitVerification,
-    registerUser, registerSeller, registerFactory,
-    hasRole, hasRoleGroup, hasPermission, switchPersonaRole, promoteToSeller, promoteToCreator
-  ]);
+    syncStatus,
+  }), [user, firebaseUser, loading, syncStatus, loginWithPhone, login, loginWithGoogle, loginWithFacebook, loginAsGuest, logout, sendPasswordReset, sendVerification, verifyVerification, reloadUser, resendEmailVerification, submitVerification, registerUser, registerSeller, registerFactory, hasRole, hasRoleGroup, hasPermission, switchPersonaRole, promoteToSeller, promoteToCreator]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }
 
-export const AppAuthProvider = AuthProvider;
+export default AuthContext;
