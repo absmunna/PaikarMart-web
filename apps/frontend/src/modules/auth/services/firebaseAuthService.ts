@@ -63,24 +63,66 @@ export const firebaseAuthService = {
     await sendPasswordResetEmail(auth, email);
   },
 
-  // 5. Phone Auth
-  setupRecaptcha: (containerId: string) => {
+  /**
+   * Normalize BD mobile numbers to E.164 (+8801XXXXXXXXX).
+   * Accepts: 017..., 88017..., +88017...
+   */
+  normalizePhoneE164: (phone: string): string => {
+    const digits = String(phone || '').replace(/[^0-9+]/g, '');
+    if (digits.startsWith('+880') && digits.length >= 14) return digits;
+    if (digits.startsWith('880') && digits.length >= 13) return `+${digits}`;
+    if (digits.startsWith('0') && digits.length === 11) return `+880${digits.slice(1)}`;
+    if (digits.startsWith('1') && digits.length === 10) return `+880${digits}`;
+    if (digits.startsWith('+') && digits.length > 8) return digits;
+    throw new Error('INVALID_PHONE');
+  },
+
+  // 5. Phone Auth (Firebase Phone Auth — single standard path)
+  setupRecaptcha: (containerId: string = 'recaptcha-container') => {
     if (typeof window === 'undefined') return null;
-    if ((window as any).recaptchaVerifier) {
-       (window as any).recaptchaVerifier.clear();
+
+    let el = document.getElementById(containerId);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = containerId;
+      el.style.display = 'none';
+      document.body.appendChild(el);
     }
-    (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-      size: 'invisible'
+
+    try {
+      if ((window as any).recaptchaVerifier) {
+        try { (window as any).recaptchaVerifier.clear(); } catch {}
+      }
+    } catch {}
+
+    const verifier = new RecaptchaVerifier(auth, containerId, {
+      size: 'invisible',
+      callback: () => {},
+      'expired-callback': () => {
+        try { (window as any).recaptchaVerifier = null; } catch {}
+      },
     });
-    return (window as any).recaptchaVerifier;
+    (window as any).recaptchaVerifier = verifier;
+    return verifier;
   },
 
-  sendOtp: async (phoneNumber: string, appVerifier: RecaptchaVerifier): Promise<ConfirmationResult> => {
-    return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+  /** Send SMS OTP via Firebase (requires Phone provider + authorized domain) */
+  sendOtp: async (phoneNumber: string, appVerifier?: RecaptchaVerifier | null): Promise<ConfirmationResult> => {
+    const e164 = firebaseAuthService.normalizePhoneE164(phoneNumber);
+    const verifier = appVerifier || firebaseAuthService.setupRecaptcha('recaptcha-container');
+    if (!verifier) throw new Error('RECAPTCHA_UNAVAILABLE');
+    return signInWithPhoneNumber(auth, e164, verifier);
   },
 
+  /** Confirm SMS code and sync user with backend */
   verifyOtp: async (confirmationResult: ConfirmationResult, code: string) => {
-    const result = await confirmationResult.confirm(code);
+    const trimmed = String(code || '').trim();
+    if (!/^[0-9]{4,8}$/.test(trimmed)) {
+      const err = new Error('INVALID_OTP');
+      (err as any).code = 'INVALID_OTP';
+      throw err;
+    }
+    const result = await confirmationResult.confirm(trimmed);
     return firebaseAuthService.syncWithBackend(result.user);
   },
 
