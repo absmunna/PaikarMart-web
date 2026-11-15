@@ -3,7 +3,7 @@ import { MapPin, Plus, Home, Building2, Trash2, Check, Star, Edit3, X } from 'lu
 import { SavedAddress } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/features/auth';
-import { createSavedAddress, deleteSavedAddress, fetchSavedAddresses } from '@/features/auth';
+import { createSavedAddress, deleteSavedAddress, fetchSavedAddresses, setDefaultSavedAddress } from '@/features/auth';
 
 const DEFAULT_ADDRESSES: SavedAddress[] = [
   {
@@ -76,6 +76,7 @@ export const SavedAddressesPage: React.FC = () => {
       ...a,
       isDefault: a.id === id
     })));
+    if (firebaseUser && !id.startsWith('addr_')) void setDefaultSavedAddress(id).catch(() => undefined);
   };
 
   const handleDelete = (id: string) => {

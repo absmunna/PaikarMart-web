@@ -106,3 +106,13 @@ authRouter.delete('/addresses/:id', requireFirebaseAuth, async (req: Request, re
   if (result.error) { res.status(500).json({ error: 'Unable to delete address.' }); return; }
   res.json({ success: true });
 });
+
+authRouter.patch('/addresses/:id/default', requireFirebaseAuth, async (req: Request, res: Response) => {
+  if (!requireAdminDatabase(res)) return;
+  const profileId = await profileIdForUid(res.locals.auth.uid);
+  if (!profileId) { res.status(404).json({ error: 'Profile not found.' }); return; }
+  await supabaseAdmin!.from('saved_addresses').update({ is_default: false }).eq('profile_id', profileId);
+  const result = await supabaseAdmin!.from('saved_addresses').update({ is_default: true }).eq('id', req.params.id).eq('profile_id', profileId).select().single();
+  if (result.error) { res.status(500).json({ error: 'Unable to set the default address.' }); return; }
+  res.json({ success: true, address: result.data });
+});
