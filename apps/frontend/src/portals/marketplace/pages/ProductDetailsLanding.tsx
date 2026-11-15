@@ -172,7 +172,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [tempUserDetails, setTempUserDetails] = useState({
     name: currentUser.name,
-    phone: currentUser.handle,
+    phone: currentUser.phone || '',
     address: currentUser.location
   });
 
@@ -232,7 +232,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
     const activeStoreName = selectedSeller?.sellerName || product.storeName;
     const resolvedAddress = data?.address || tempUserDetails.address || currentUser.location;
     const resolvedBuyerName = data?.name || tempUserDetails.name || currentUser.name;
-    const resolvedBuyerPhone = data?.phone || tempUserDetails.phone || currentUser.handle;
+    const resolvedBuyerPhone = data?.phone || tempUserDetails.phone || '';
 
     const effectiveProduct: CommerceItem = {
       ...product,
@@ -752,7 +752,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                             {tempUserDetails.name || currentUser.name}
                           </p>
                           <p className="text-[10px] font-mono font-bold text-[var(--pm-muted)]">
-                            {tempUserDetails.phone || currentUser.handle}
+                            {tempUserDetails.phone || (isBn ? 'ফোন নম্বর যোগ করুন' : 'Add phone number')}
                           </p>
                         </div>
                       </div>

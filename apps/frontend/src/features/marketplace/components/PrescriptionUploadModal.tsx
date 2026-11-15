@@ -23,7 +23,7 @@ export const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = (
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [orderType, setOrderType] = useState<'pharmacy_rx' | 'grocery_list'>('pharmacy_rx');
-  const [contactPhone, setContactPhone] = useState(currentUser.handle || '');
+  const [contactPhone, setContactPhone] = useState(currentUser.phone || '');
   const [deliveryAddress, setDeliveryAddress] = useState(currentUser.location || '');
   const [notes, setNotes] = useState('');
   const [fileMeta, setFileMeta] = useState<{
@@ -174,17 +174,21 @@ export const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = (
 
   return (
     <div
+      role="presentation"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs"
       onClick={resetAndClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="prescription-upload-title"
         className="w-full max-w-lg rounded-2xl bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-[var(--pm-border)] bg-[var(--pm-surface)] flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-[var(--pm-text)]">
+            <h3 id="prescription-upload-title" className="text-base font-bold text-[var(--pm-text)]">
               {isBn ? 'প্রেসক্রিপশন ও বাজার লিস্ট অর্ডার' : 'Prescription & Grocery List Order'}
             </h3>
             <p className="text-xs text-[var(--pm-muted)]">
@@ -196,6 +200,7 @@ export const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = (
           <button
             type="button"
             onClick={resetAndClose}
+            aria-label={isBn ? 'উইন্ডো বন্ধ করুন' : 'Close upload window'}
             className="p-2 rounded-lg text-[var(--pm-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -273,6 +278,7 @@ export const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = (
               <input
                 ref={fileInputRef}
                 type="file"
+                aria-label={isBn ? 'প্রেসক্রিপশন বা বাজারের তালিকা আপলোড করুন' : 'Upload prescription or grocery list'}
                 accept="image/jpeg,image/png,image/webp,.pdf"
                 onChange={handleFileSelected}
                 className="hidden"
