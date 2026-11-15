@@ -58,6 +58,7 @@ const UserGuidePortal = React.lazy(() => import('@/portals/guide').then(m => ({ 
 const ProductDetailsLanding = React.lazy(() => import('@/portals/marketplace').then(m => ({ default: m.ProductDetailsLanding })));
 
 import { CartCheckoutDrawer, CategoryBar } from '@/features/marketplace';
+import { fetchCatalogProducts } from '@/features/marketplace/services/catalogApiClient';
 import { WalletModal } from '@/portals/wallet';
 import { NotificationsModal } from '@/portals/notifications-center';
 import { MessagingCenterModal } from '@/features/messaging';
@@ -183,6 +184,16 @@ function AppInner() {
   const [commerceItems, setCommerceItems] = useState<CommerceItem[]>(() => 
     loadStoredData('COMMERCE', INITIAL_COMMERCE_ITEMS)
   );
+
+  // Supabase is the production source of truth. Local data remains only as an
+  // offline/dev fallback while a project is not configured or has no listings.
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchCatalogProducts(controller.signal).then((products) => {
+      if (products.length > 0) setCommerceItems(products);
+    });
+    return () => controller.abort();
+  }, []);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   

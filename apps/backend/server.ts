@@ -18,6 +18,7 @@ import { logisticsRouter } from './logistics/logisticsRoutes.js';
 import { vendorRouter } from './vendors/vendorRoutes.js';
 import { retailRouter } from './retail/retailRoutes.js';
 import { authRouter } from './auth/authRoutes.js';
+import { catalogRouter } from './catalog/catalogRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +71,7 @@ app.use('/api/logistics', logisticsRouter);
 app.use('/api/vendors', vendorRouter);
 app.use('/api/retail', retailRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/catalog', catalogRouter);
 
 import { checkDatabaseConnection, getStoredFeedPosts, insertStoredPost } from './services/dbService.js';
 
