@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordReset,
   updateProfile,
   syncUserProfileToFirestore,
   validateFirestoreConnection,
@@ -26,6 +27,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string, selectedRole?: UserRole) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -226,6 +228,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signInWithGoogle,
         signUpWithEmail,
         signInWithEmail,
+        sendPasswordReset,
         signOut,
       }}
     >

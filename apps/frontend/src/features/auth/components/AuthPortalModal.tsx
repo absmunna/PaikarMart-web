@@ -14,6 +14,7 @@ import {
   UserCheck,
   ArrowRight,
   LogOut
+  ,KeyRound
 } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthContext';
 import { UserRole } from '@/types';
@@ -35,11 +36,12 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
     signInWithGoogle, 
     signUpWithEmail, 
     signInWithEmail, 
+    sendPasswordReset,
     signOut, 
     loading 
   } = useAuth();
 
-  const [tab, setTab] = useState<'login' | 'register'>(initialTab);
+  const [tab, setTab] = useState<'login' | 'register' | 'forgot'>(initialTab);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -141,6 +143,25 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
+    if (!email.trim() || !email.includes('@')) {
+      setErrorMessage('সঠিক ইমেইল এড্রেস দিন');
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      await sendPasswordReset(email);
+      setSuccessMessage('পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে।');
+    } catch (err: any) {
+      setErrorMessage(err?.code === 'auth/user-not-found' ? 'এই ইমেইলে কোনো একাউন্ট পাওয়া যায়নি।' : err?.message || 'রিসেট লিংক পাঠানো যায়নি।');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -174,7 +195,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
           </div>
 
           <h2 className="text-3xl font-black tracking-tight leading-tight">
-            {firebaseUser ? 'Account Status' : tab === 'login' ? 'Welcome Back' : 'Get Started'}
+            {firebaseUser ? 'Account Status' : tab === 'login' ? 'Welcome Back' : tab === 'forgot' ? 'Reset Password' : 'Get Started'}
           </h2>
           <p className="text-sm opacity-80 mt-1 font-medium">
             {firebaseUser ? 'You are securely logged in' : 'Access the PaikarMart super-ecosystem'}
@@ -274,7 +295,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
             )}
 
             {/* Form */}
-            <form onSubmit={tab === 'login' ? handleLogin : handleRegister} className="space-y-4">
+            <form onSubmit={tab === 'login' ? handleLogin : tab === 'forgot' ? handlePasswordReset : handleRegister} className="space-y-4">
               {tab === 'register' && (
                 <div className="space-y-1.5">
                   <label className="block text-[10px] font-black text-[var(--pm-muted)] uppercase tracking-widest ml-1">
@@ -309,7 +330,13 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              {tab === 'login' && (
+                <button type="button" onClick={() => { setTab('forgot'); setErrorMessage(''); setSuccessMessage(''); }} className="text-xs font-bold text-[var(--pm-accent)] hover:underline cursor-pointer">
+                  পাসওয়ার্ড ভুলে গেছেন?
+                </button>
+              )}
+
+              {tab !== 'forgot' && <div className="space-y-1.5">
                 <label className="block text-[10px] font-black text-[var(--pm-muted)] uppercase tracking-widest ml-1">
                   Password
                 </label>
@@ -330,7 +357,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                     {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
                   </button>
                 </div>
-              </div>
+              </div>}
 
               {tab === 'register' && (
                 <div className="space-y-3">
@@ -377,21 +404,27 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                   <div className="w-5 h-5 border-3 border-current/30 border-t-current rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>{tab === 'login' ? 'Secure Access' : 'Create Account'}</span>
+                <span>{tab === 'login' ? 'Secure Access' : tab === 'forgot' ? 'Send Reset Link' : 'Create Account'}</span>
                     <ArrowRight className="w-5 h-5" />
                   </>
                 )}
               </button>
             </form>
 
-            <div className="relative flex items-center py-2">
+            {tab === 'forgot' && (
+              <button type="button" onClick={() => { setTab('login'); setErrorMessage(''); setSuccessMessage(''); }} className="w-full text-center text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] cursor-pointer">
+                লগইনে ফিরে যান
+              </button>
+            )}
+
+            {tab !== 'forgot' && <div className="relative flex items-center py-2">
               <div className="flex-grow border-t border-[var(--pm-border)]" />
               <span className="flex-shrink mx-4 text-[9px] font-black text-[var(--pm-muted)] uppercase tracking-widest">Global Auth</span>
               <div className="flex-grow border-t border-[var(--pm-border)]" />
-            </div>
+            </div>}
 
             {/* Google Sign In Button */}
-            <button
+            {tab !== 'forgot' && <button
               onClick={handleGoogleSignIn}
               disabled={isSubmitting}
               className="w-full py-3.5 px-6 text-xs font-black text-[var(--pm-text)] bg-[var(--pm-surface)] border border-[var(--pm-border)] hover:bg-[var(--pm-card-hover)] rounded-2xl shadow-sm active-scale transition-all flex items-center justify-center gap-3 cursor-pointer"
@@ -403,7 +436,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
               </svg>
               <span>Continue with Google</span>
-            </button>
+            </button>}
           </div>
         )}
       </div>

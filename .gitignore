@@ -20,6 +20,7 @@ coverage/
 # Local previews and AI Studio input/cache assets.
 /*-preview.png
 theme-*-mobile.png
+auth-*-mobile.png
 /public/assets/aistudio/
 .aistudio/
 .gmp_cache/

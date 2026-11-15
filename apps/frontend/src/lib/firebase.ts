@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   updateProfile,
   type User as FirebaseUser
 } from 'firebase/auth';
@@ -144,6 +145,10 @@ export const signOutFirebase = async (): Promise<void> => {
     console.error('Firebase Sign-Out Error:', error);
     throw error;
   }
+};
+
+export const sendPasswordReset = async (email: string): Promise<void> => {
+  await sendPasswordResetEmail(auth, email.trim());
 };
 
 function sanitizeFirestoreHandle(rawHandle: string | undefined, email: string, uid: string): string {
