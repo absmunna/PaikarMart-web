@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PaikarMart — Social Commerce Super App</title>
+    <meta name="description" content="PaikarMart: Omnichannel Social Commerce Super App uniting social communities with wholesale-retail, food delivery, nearby services, ride sharing, and creator hubs." />
+    <meta property="og:title" content="PaikarMart — Social Commerce Super App" />
+    <meta property="og:description" content="PaikarMart: Omnichannel Social Commerce Super App uniting social communities with wholesale-retail, food delivery, nearby services, ride sharing, and creator hubs." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      (function () {
+        function isViteWsNoise(text) {
+          return (
+            text.indexOf('@vite/client') !== -1 ||
+            text.indexOf('createWebSocketModuleRunnerTransport') !== -1 ||
+            text.indexOf('WebSocket closed without opened') !== -1
+          );
+        }
+        window.addEventListener(
+          'unhandledrejection',
+          function (event) {
+            var reason = event && event.reason;
+            var text =
+              ((reason && reason.message) || '') +
+              ' ' +
+              ((reason && reason.stack) || '') +
+              ' ' +
+              String(reason || '');
+            if (isViteWsNoise(text)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+            }
+          },
+          true
+        );
+        window.addEventListener(
+          'error',
+          function (event) {
+            var targetIsWs = typeof WebSocket !== 'undefined' && event.target instanceof WebSocket;
+            var text =
+              (event.message || '') +
+              ' ' +
+              (event.filename || '') +
+              ' ' +
+              ((event.error && event.error.stack) || '');
+            if (targetIsWs || isViteWsNoise(text)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+            }
+          },
+          true
+        );
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,6 @@
+{
+  "name": "PaikarMart",
+  "description": "Interactive social commerce marketplace and super app.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,204 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Default-Deny Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Primitive Helpers (Identity, Bounds, Verified Admin Lookup)
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidHandle(handle) {
+      return handle is string && handle.size() >= 2 && handle.size() <= 64 && handle.matches('^[a-z0-9_]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedEmail() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isVerifiedEmail() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // 3. Entity Validation Blueprints (Anti-Update-Gap & Volumetric Size Guards)
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['id', 'email', 'name', 'handle', 'role', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'email', 'name', 'handle', 'role', 'avatar', 'createdAt', 'updatedAt']) &&
+        isValidId(data.id) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 160 &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+        isValidHandle(data.handle) &&
+        data.role in ['consumer', 'vendor', 'moderator', 'admin', 'super_admin'] &&
+        (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 512)) &&
+        data.createdAt is timestamp &&
+        (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidPublicHandleProfile(data) {
+      return data.keys().hasAll(['handle', 'ownerId', 'displayName', 'location', 'verified', 'createdAt']) &&
+        data.keys().hasOnly(['handle', 'ownerId', 'displayName', 'avatar', 'location', 'verified', 'trustLevel', 'createdAt', 'updatedAt']) &&
+        isValidHandle(data.handle) &&
+        isValidId(data.ownerId) &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 100 &&
+        (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 512)) &&
+        data.location is string && data.location.size() >= 1 && data.location.size() <= 120 &&
+        data.verified is bool &&
+        (!('trustLevel' in data) || (data.trustLevel is number && data.trustLevel >= 0 && data.trustLevel <= 7)) &&
+        data.createdAt is timestamp &&
+        (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['id', 'customerId', 'total', 'status', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'customerId', 'total', 'status', 'createdAt', 'updatedAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.customerId) &&
+        data.total is number && data.total >= 0 && data.total <= 100000000 &&
+        data.status in ['confirmed', 'preparing', 'in_transit', 'delivered', 'cancelled'] &&
+        data.createdAt is timestamp &&
+        (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'recipientId', 'title', 'message', 'read', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'recipientId', 'title', 'message', 'read', 'createdAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.recipientId) &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 120 &&
+        data.message is string && data.message.size() >= 1 && data.message.size() <= 500 &&
+        data.read is bool &&
+        data.createdAt is timestamp;
+    }
+
+    // 4. Owner-Isolated User Account Documents (Contains PII -> Strict Owner or Admin Read Only)
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin() || (isSignedIn() && resource.data.id == request.auth.uid);
+      allow create: if isSignedIn() && isValidId(userId) &&
+        isOwner(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().id == userId &&
+        incoming().createdAt == request.time &&
+        (incoming().role == 'consumer' || isAdmin());
+      allow update: if isSignedIn() && isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time) && (
+          isAdmin() ||
+          (
+            isOwner(userId) &&
+            incoming().role == existing().role &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['name', 'handle', 'avatar', 'updatedAt'])
+          )
+        );
+      allow delete: if isAdmin();
+    }
+
+    // 5. Public Zero-PII @handle Profiles (Safe Public Showcase: No email/phone/NID/wallet)
+    match /public_profiles/{handle} {
+      allow get: if isValidHandle(handle);
+      allow list: if isValidHandle(resource.data.handle);
+      allow create: if isVerifiedEmail() && isValidHandle(handle) &&
+        isValidPublicHandleProfile(incoming()) &&
+        incoming().handle == handle &&
+        incoming().ownerId == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        (incoming().verified == false || isAdmin()) &&
+        (!('trustLevel' in incoming()) || incoming().trustLevel <= 2 || isAdmin());
+      allow update: if isVerifiedEmail() && isValidHandle(handle) &&
+        isValidPublicHandleProfile(incoming()) &&
+        incoming().handle == existing().handle &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time) && (
+          isAdmin() ||
+          (
+            existing().ownerId == request.auth.uid &&
+            incoming().verified == existing().verified &&
+            (!('trustLevel' in incoming()) || incoming().trustLevel == existing().trustLevel) &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'avatar', 'location', 'updatedAt'])
+          )
+        );
+      allow delete: if isAdmin();
+    }
+
+    // 6. Customer Orders (Strict Privacy + Terminal State Locking)
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && isValidId(orderId) &&
+        (existing().customerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() &&
+        (resource.data.customerId == request.auth.uid || isAdmin());
+      allow create: if isVerifiedEmail() && isValidId(orderId) &&
+        isValidOrder(incoming()) &&
+        incoming().id == orderId &&
+        incoming().customerId == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().status == 'confirmed';
+      allow update: if isVerifiedEmail() && isValidId(orderId) &&
+        isValidOrder(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().customerId == existing().customerId &&
+        incoming().createdAt == existing().createdAt &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time) && (
+          isAdmin() ||
+          (
+            existing().customerId == request.auth.uid &&
+            !(existing().status in ['delivered', 'cancelled']) &&
+            incoming().status in ['confirmed', 'cancelled'] &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+          )
+        );
+      allow delete: if isAdmin();
+    }
+
+    // 7. User Notifications (Owner-Isolated Read & Mark-Read Only)
+    match /notifications/{notificationId} {
+      allow get: if isSignedIn() && isValidId(notificationId) &&
+        (existing().recipientId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() &&
+        (resource.data.recipientId == request.auth.uid || isAdmin());
+      allow create: if isAdmin() && isValidId(notificationId) &&
+        isValidNotification(incoming()) &&
+        incoming().createdAt == request.time;
+      allow update: if isSignedIn() && isValidId(notificationId) &&
+        isValidNotification(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().recipientId == existing().recipientId &&
+        incoming().createdAt == existing().createdAt && (
+          isAdmin() ||
+          (
+            existing().recipientId == request.auth.uid &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['read'])
+          )
+        );
+      allow delete: if isAdmin();
+    }
+
+    // 8. Verified Platform Admins Collection (Read-only for self check, managed via server/console)
+    match /admins/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list, create, update, delete: if false;
+    }
+  }
+}
