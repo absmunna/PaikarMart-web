@@ -111,6 +111,61 @@ export const INITIAL_MASTER_PRODUCTS: MasterProduct[] = [
 
 // Multiple Seller Listings per Master Product (1:N)
 export const INITIAL_SELLER_LISTINGS: SellerListing[] = [
+  // Offers for Fresh Organic Hass Avocados
+  {
+    id: 'listing_avocado_green_valley',
+    masterProductId: 'master_hass_avocados',
+    sellerId: 'vendor_corner_mart',
+    sellerName: 'Green Valley Local Mart',
+    sellerRating: 4.8,
+    sellerReviewsCount: 85,
+    price: 5.50,
+    originalPrice: 6.00,
+    stockQuantity: 24,
+    tradeMode: 'retail',
+    deliveryEta: '15 min',
+    proximityDistance: '0.4 km',
+    location: 'Dhanmondi, Dhaka',
+    sellerRealPhotos: [],
+    isActive: true,
+    createdAt: '2026-02-10'
+  },
+  {
+    id: 'listing_avocado_fresh_basket',
+    masterProductId: 'master_hass_avocados',
+    sellerId: 'vendor_fresh_basket',
+    sellerName: 'Fresh Basket Organic Shop',
+    sellerRating: 4.7,
+    sellerReviewsCount: 51,
+    price: 5.25,
+    originalPrice: 5.75,
+    stockQuantity: 16,
+    tradeMode: 'retail',
+    deliveryEta: '25 min',
+    proximityDistance: '1.1 km',
+    location: 'Mohammadpur, Dhaka',
+    sellerRealPhotos: [],
+    isActive: true,
+    createdAt: '2026-02-11'
+  },
+  {
+    id: 'listing_avocado_farm_direct',
+    masterProductId: 'master_hass_avocados',
+    sellerId: 'vendor_green_valley_farms',
+    sellerName: 'Green Valley Organic Farms',
+    sellerRating: 4.9,
+    sellerReviewsCount: 39,
+    price: 4.95,
+    originalPrice: 5.50,
+    stockQuantity: 40,
+    tradeMode: 'retail',
+    deliveryEta: 'Same Day',
+    proximityDistance: '4.2 km',
+    location: 'Tejgaon, Dhaka',
+    sellerRealPhotos: [],
+    isActive: true,
+    createdAt: '2026-02-12'
+  },
   // Offers for Apple iPhone 15 Pro Max
   {
     id: 'listing_iphone_gadget_gear',

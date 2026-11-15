@@ -274,6 +274,7 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
   },
   {
     id: 'prod_retail_nearby_01',
+    masterProductId: 'master_hass_avocados',
     storeId: 'vendor_corner_mart',
     storeName: 'Green Valley Local Mart',
     type: 'retail',
