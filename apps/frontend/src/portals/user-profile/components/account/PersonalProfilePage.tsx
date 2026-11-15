@@ -3,6 +3,7 @@ import { User, Camera, Mail, Phone, MapPin, AtSign, Check, Sparkles } from 'luci
 import { User as UserType } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CURRENT_USER } from '@/data/mockData';
+import { syncAuthenticatedProfile } from '@/features/auth';
 
 interface PersonalProfilePageProps {
   currentUser?: UserType;
@@ -16,21 +17,35 @@ export const PersonalProfilePage: React.FC<PersonalProfilePageProps> = ({
   const { language } = useLanguage();
   const [name, setName] = useState(currentUser.name);
   const [handle, setHandle] = useState(currentUser.handle || '@alexrivera');
-  const [email, setEmail] = useState('alex.rivera@example.com');
-  const [phone, setPhone] = useState('+880 1712-345678');
+  const [email] = useState(currentUser.email || '');
+  const [phone, setPhone] = useState(currentUser.phone || '');
   const [bio, setBio] = useState('Product enthusiast, wholesale sourcer, and passionate creator on PaikarMart.');
   const [location, setLocation] = useState(currentUser.location || 'Dhaka, Bangladesh');
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await syncAuthenticatedProfile({ name, handle, location, phone });
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Profile sync failed.');
+      setIsSaving(false);
+      return;
+    }
     onUpdateUser({
       ...currentUser,
       name,
       handle,
       location,
+      phone,
+      bio,
     });
     setSavedSuccess(true);
+    setIsSaving(false);
     setTimeout(() => setSavedSuccess(false), 2500);
   };
 
@@ -55,6 +70,7 @@ export const PersonalProfilePage: React.FC<PersonalProfilePageProps> = ({
           <span>{isBn ? 'প্রোফাইলের তথ্য সফলভাবে সংরক্ষিত হয়েছে!' : 'Personal profile updated successfully!'}</span>
         </div>
       )}
+      {saveError && <div role="alert" className="p-3.5 rounded-2xl bg-[var(--pm-danger-soft)] border border-[var(--pm-danger)]/30 text-[var(--pm-danger)] text-xs font-bold">{saveError}</div>}
 
       {/* Avatar & Cover Photo Preview */}
       <div className="p-5 rounded-3xl bg-[var(--pm-surface)] border border-[var(--pm-border)] flex flex-col sm:flex-row items-center gap-5">
@@ -126,8 +142,8 @@ export const PersonalProfilePage: React.FC<PersonalProfilePageProps> = ({
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              readOnly
+              title={isBn ? 'নিরাপত্তার জন্য Firebase account email পরিবর্তন করা যায় না' : 'Account email is managed by Firebase Authentication'}
               className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--pm-input)] border border-[var(--pm-border)] text-xs font-semibold text-[var(--pm-text)] focus:outline-hidden focus:border-[var(--pm-accent)]"
             />
           </div>
@@ -173,11 +189,12 @@ export const PersonalProfilePage: React.FC<PersonalProfilePageProps> = ({
         </div>
 
         <div className="pt-2 flex justify-end">
-          <button
+            <button
             type="submit"
+              disabled={isSaving}
             className="px-6 py-2.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
           >
-            {isBn ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Profile Changes'}
+            {isSaving ? (isBn ? 'সংরক্ষণ হচ্ছে...' : 'Saving...') : (isBn ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Profile Changes')}
           </button>
         </div>
       </form>

@@ -21,6 +21,9 @@ coverage/
 /*-preview.png
 theme-*-mobile.png
 auth-*-mobile.png
+profile-settings-mobile.png
+address-settings-mobile.png
+settings-menu-mobile.png
 /public/assets/aistudio/
 .aistudio/
 .gmp_cache/

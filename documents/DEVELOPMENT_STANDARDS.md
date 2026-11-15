@@ -34,6 +34,7 @@ All engineers and AI coding agents MUST follow this workflow when auditing, modi
    * Financial balances, escrow holds/releases, order creation, KYC status transitions, and tariff/geofence math MUST execute through `/api/*` Express endpoints—never mutate `role`, `wallet_balance`, or `escrow` directly from client Firestore calls.
 2. **Route Guard Enforcement:**
    * Protected user portals (`/portal/orders`, `/portal/wallet`, `/portal/messages`, `/portal/profile` self-cockpit) MUST require authenticated user context.
+* Consumer profile updates MUST be scoped to the authenticated Firebase UID. Firebase account email/password and Supabase private address records MUST NOT be trusted from caller-supplied identity fields.
    * Merchant & Governance portals (`/portal/seller`, `SuperAdminControlModal`) MUST verify `vendor` (KYC approved) or `admin`/`super_admin` permissions—never leave `/seller/*` wide open like the ZIP's `portal.routes.tsx`.
 3. **Zero Cross-App Boundary Imports:**
    * `apps/backend` and `apps/frontend` MUST communicate strictly over HTTP (`/api/*`) and share static types/role configs via `packages/shared`. Backend files MUST NEVER import from `apps/frontend/src/`.

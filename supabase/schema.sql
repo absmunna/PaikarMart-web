@@ -48,6 +48,23 @@ create table if not exists public.private_user_details (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+create table if not exists public.saved_addresses (
+  id uuid primary key default uuid_generate_v4(),
+  profile_id uuid references public.profiles(id) on delete cascade not null,
+  label text not null,
+  recipient_name text not null,
+  phone text not null,
+  street_address text not null,
+  apartment text,
+  city text not null,
+  postal_code text,
+  tag text not null default 'home' check (tag in ('home', 'office', 'other')),
+  is_default boolean not null default false,
+  notes text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- ==============================================================================
 -- 4. Vendor Stores Table (Multi-Vendor Business Entities & Hyperlocal Geofence)
 -- ==============================================================================
@@ -415,6 +432,7 @@ grant select on public.public_handle_profiles to anon, authenticated;
 
 alter table public.profiles enable row level security;
 alter table public.private_user_details enable row level security;
+alter table public.saved_addresses enable row level security;
 alter table public.stores enable row level security;
 alter table public.vendor_memberships enable row level security;
 alter table public.master_products enable row level security;
@@ -664,6 +682,11 @@ create policy "Private details deletable by account owner or super admin"
     profile_id = public.current_profile_id()
     or public.has_role('super_admin')
   );
+
+create policy "Users manage their saved addresses"
+  on public.saved_addresses for all
+  using (profile_id = public.current_profile_id() or public.has_role('super_admin'))
+  with check (profile_id = public.current_profile_id() or public.has_role('super_admin'));
 
 -- ------------------------------------------------------------------------------
 -- 5. STORES RLS
@@ -1030,6 +1053,7 @@ create index if not exists idx_stores_handle on public.stores(handle);
 create index if not exists idx_vendor_memberships_profile on public.vendor_memberships(profile_id, status);
 create index if not exists idx_vendor_memberships_store on public.vendor_memberships(store_id, status);
 create index if not exists idx_private_details_profile on public.private_user_details(profile_id);
+create index if not exists idx_saved_addresses_profile on public.saved_addresses(profile_id, is_default);
 create index if not exists idx_product_reviews_product on public.product_reviews(product_id);
 create index if not exists idx_product_reviews_master_product on public.product_reviews(master_product_id);
 create index if not exists idx_social_comments_post on public.social_comments(post_id);

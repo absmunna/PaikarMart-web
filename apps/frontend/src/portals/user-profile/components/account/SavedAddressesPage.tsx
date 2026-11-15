@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Plus, Home, Building2, Trash2, Check, Star, Edit3, X } from 'lucide-react';
 import { SavedAddress } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/features/auth';
+import { createSavedAddress, deleteSavedAddress, fetchSavedAddresses } from '@/features/auth';
 
 const DEFAULT_ADDRESSES: SavedAddress[] = [
   {
@@ -34,6 +36,7 @@ const DEFAULT_ADDRESSES: SavedAddress[] = [
 
 export const SavedAddressesPage: React.FC = () => {
   const { language } = useLanguage();
+  const { firebaseUser } = useAuth();
   const [addresses, setAddresses] = useState<SavedAddress[]>(() => {
     try {
       const stored = localStorage.getItem('paikarmart_user_addresses');
@@ -54,6 +57,13 @@ export const SavedAddressesPage: React.FC = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const isBn = language === 'bn';
+
+  useEffect(() => {
+    if (!firebaseUser) return;
+    void fetchSavedAddresses().then((remote) => {
+      if (remote.length > 0) setAddresses(remote);
+    });
+  }, [firebaseUser]);
 
   useEffect(() => {
     try {
@@ -90,6 +100,7 @@ export const SavedAddressesPage: React.FC = () => {
     };
 
     setAddresses(prev => [newAddr, ...prev]);
+    if (firebaseUser) void createSavedAddress(newAddr).catch((error) => console.warn('Address API sync unavailable:', error));
     setShowAddForm(false);
     setStreetAddress('');
     setApartment('');
@@ -296,7 +307,7 @@ export const SavedAddressesPage: React.FC = () => {
                   <>
                     <span className="text-[10px] text-[var(--pm-muted)]">{isBn ? 'মুছে ফেলবেন?' : 'Delete this address?'}</span>
                     <button type="button" onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg text-[10px] font-bold text-[var(--pm-muted)] hover:text-[var(--pm-text)]">{isBn ? 'না' : 'Cancel'}</button>
-                    <button type="button" onClick={() => { setAddresses(prev => prev.filter(a => a.id !== addr.id)); setDeleteConfirmId(null); }} className="px-2 py-1 rounded-lg bg-[var(--pm-danger)] text-white text-[10px] font-bold">{isBn ? 'হ্যাঁ, মুছুন' : 'Delete'}</button>
+                    <button type="button" onClick={() => { setAddresses(prev => prev.filter(a => a.id !== addr.id)); if (firebaseUser && !addr.id.startsWith('addr_')) void deleteSavedAddress(addr.id).catch(() => undefined); setDeleteConfirmId(null); }} className="px-2 py-1 rounded-lg bg-[var(--pm-danger)] text-white text-[10px] font-bold">{isBn ? 'হ্যাঁ, মুছুন' : 'Delete'}</button>
                   </>
                 ) : (
                   <button

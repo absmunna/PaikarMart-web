@@ -82,3 +82,11 @@ When a customer places an order with your store:
 * Always keep store **Stock**, **MOQ**, and **Opening Status** up to date so buyers see accurate availability.
 * Ensure every dispatched parcel has its correct **Tracking ID** and checkpoint notes so buyers do not open unnecessary Escrow disputes.
 * Never ask buyers for their 4-digit Delivery OTP before physical handover at the doorstep.
+# Account access and profile ownership
+
+After Firebase account creation, every user starts as a `consumer`. Consumers can browse marketplace/service hubs, post social content and demands, place orders, book rides/services, manage their own profile, phone number, saved home/work addresses, notifications and order history. Wallet/escrow actions remain authenticated and server-authorized.
+
+Consumers cannot access Seller Central inventory, vendor orders, payouts, KYC approvals, other users' private profile data, or financial ledger mutation. Seller access starts only after backend-approved KYC and an active vendor membership/store. Governance actions require moderator/admin/super-admin authorization.
+
+Account email is owned by Firebase Authentication and is not edited as a normal profile field. Password recovery is performed through Firebase's reset-email flow. Display name, username handle, avatar, phone and location are presentation/contact fields; delivery addresses are private records owned by the authenticated profile.
+
