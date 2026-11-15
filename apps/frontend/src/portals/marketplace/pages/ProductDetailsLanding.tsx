@@ -134,6 +134,8 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
   const isWholesaleItem = product?.tradeMode === 'wholesale';
   const moq = product?.minWholesaleQty || 20;
   const [quantity, setQuantity] = useState(isWholesaleItem ? moq : 1);
+  const variantOptions = product?.variantOptions || [];
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [isRFQModalOpen, setIsRFQModalOpen] = useState(false);
   const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
   const [isMessagingOpen, setIsMessagingOpen] = useState(false);
@@ -142,8 +144,14 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
   React.useEffect(() => {
     if (product) {
       setQuantity(product.tradeMode === 'wholesale' ? (product.minWholesaleQty || 20) : 1);
+      setSelectedVariants(Object.fromEntries((product.variantOptions || []).map((option) => [option.id, option.values[0] || ''])));
     }
   }, [product?.id]);
+
+  const selectedVariantLabel = Object.entries(selectedVariants)
+    .filter(([, value]) => value)
+    .map(([id, value]) => `${variantOptions.find((option) => option.id === id)?.label || id}: ${value}`)
+    .join(' · ');
 
   // Calculate current unit price honoring selected multi-seller offer or wholesale tiers
   const currentUnitPrice = useMemo(() => {
@@ -250,7 +258,8 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
     const cartItem: CartItem = {
       product: effectiveProduct,
       quantity,
-      isWholesale: isWholesaleItem
+      isWholesale: isWholesaleItem,
+      selectedVariant: selectedVariantLabel || undefined,
     };
 
     try {
@@ -676,6 +685,24 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                       minWholesaleQty={moq}
                       onSelectTier={(qty) => setQuantity(qty)}
                     />
+                  </div>
+                )}
+
+                {variantOptions.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {variantOptions.map((option) => (
+                      <label key={option.id} className="space-y-1">
+                        <span className="block px-1 text-[9px] font-black uppercase tracking-wide text-[var(--pm-muted)]">{option.label}</span>
+                        <select
+                          aria-label={`Select ${option.label}`}
+                          value={selectedVariants[option.id] || option.values[0] || ''}
+                          onChange={(event) => setSelectedVariants((current) => ({ ...current, [option.id]: event.target.value }))}
+                          className="w-full rounded-xl border border-[var(--pm-border)] bg-[var(--pm-input)] px-3 py-2.5 text-xs font-bold text-[var(--pm-text)] outline-none focus:border-[var(--pm-accent)]"
+                        >
+                          {option.values.map((value) => <option key={value} value={value}>{value}</option>)}
+                        </select>
+                      </label>
+                    ))}
                   </div>
                 )}
 

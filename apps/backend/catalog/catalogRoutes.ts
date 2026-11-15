@@ -42,6 +42,7 @@ const mapListing = (listing: any) => {
     galleryImages: [...new Set([...images, ...canonicalImages])],
     brand: product.brand || undefined,
     specifications: product.specifications || {},
+    variantOptions: Array.isArray(product.variant_options) ? product.variant_options : [],
     category: product.category || store.category || 'General',
     inStock: Boolean(listing.is_active) && toNumber(listing.stock_quantity) > 0,
     isOpen: store.is_open !== false,

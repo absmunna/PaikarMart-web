@@ -150,6 +150,10 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     galleryImages: ['/src/assets/images/paikarmart_samsung_phone_1794489802379.jpg'],
     brand: 'Apple',
     specifications: { Storage: '256 GB', Display: '6.7-inch OLED', Connectivity: '5G / USB-C' },
+    variantOptions: [
+      { id: 'storage', label: 'Storage', values: ['256 GB', '512 GB'] },
+      { id: 'color', label: 'Color', values: ['Natural Titanium', 'Blue Titanium', 'Black Titanium'] }
+    ],
     highlights: ['Official Apple warranty', 'Pro camera system', 'Titanium design', 'Fast 5G delivery'],
     warrantyLabel: '2-year official warranty',
     category: 'Electronics',
@@ -175,6 +179,9 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     specifications: { Volume: '5 Litre', Type: 'Fortified Soybean Oil', Delivery: '30 minutes nearby' },
     highlights: ['Vitamin A and D enriched', 'Sealed original pack', 'Nearby same-day delivery'],
     category: 'Grocery',
+    variantOptions: [
+      { id: 'volume', label: 'Volume', values: ['1 Litre', '2 Litre', '5 Litre'] }
+    ],
     inStock: true,
     badge: 'Best Seller'
   },
@@ -222,6 +229,10 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     reviewsCount: 85,
     deliveryEta: '3-5 Days',
     imageUrl: '/src/assets/images/paikarmart_formal_shirts_wholesale_1794490125051.jpg',
+    variantOptions: [
+      { id: 'size', label: 'Size mix', values: ['S-M-L-XL', 'M-L-XL-2XL', 'Custom size mix'] },
+      { id: 'color', label: 'Color mix', values: ['Black & White', 'Navy & Grey', 'Custom colors'] }
+    ],
     category: 'Apparel',
     inStock: true,
     badge: 'Top Wholesale'
@@ -247,6 +258,9 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     deliveryEta: '2-4 Days',
     imageUrl: '/src/assets/images/paikarmart_red_lentils_wholesale_1794490151453.jpg',
     category: 'Grocery',
+    variantOptions: [
+      { id: 'pack', label: 'Pack size', values: ['Pack of 3', 'Pack of 6'] }
+    ],
     inStock: true,
     badge: 'Essential'
   },
@@ -268,6 +282,10 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     deliveryEta: 'Same Day',
     proximityDistance: '1.2 km',
     imageUrl: '/src/assets/images/paikarmart_samsung_phone_1794489802379.jpg',
+    variantOptions: [
+      { id: 'storage', label: 'Storage', values: ['256 GB', '512 GB', '1 TB'] },
+      { id: 'color', label: 'Color', values: ['Titanium Gray', 'Titanium Black', 'Titanium Violet'] }
+    ],
     category: 'Electronics',
     inStock: true,
     badge: 'Brand Official'

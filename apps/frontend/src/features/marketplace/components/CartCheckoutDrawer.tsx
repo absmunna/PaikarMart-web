@@ -283,6 +283,9 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
                             <h4 className="text-xs font-bold text-[var(--pm-text)] truncate mt-0.5">
                               {cartItem.product.title}
                             </h4>
+                            {cartItem.selectedVariant && (
+                              <p className="text-[10px] text-[var(--pm-muted)] truncate">{cartItem.selectedVariant}</p>
+                            )}
                             <p className="text-[11px] text-[var(--pm-muted)] font-mono tabular-nums">
                               ৳{unitPrice.toLocaleString()} / unit
                             </p>

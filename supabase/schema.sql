@@ -123,6 +123,7 @@ create table if not exists public.master_products (
   description text,
   canonical_images jsonb not null default '[]'::jsonb,
   specifications jsonb not null default '{}'::jsonb,
+  variant_options jsonb not null default '[]'::jsonb,
   is_verified boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

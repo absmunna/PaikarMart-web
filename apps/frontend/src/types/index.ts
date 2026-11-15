@@ -263,6 +263,7 @@ export interface MasterProduct {
   description: string;
   canonicalImages: string[];
   specifications: Record<string, string>;
+  variantOptions?: ProductVariantOption[];
   isVerified: boolean;
   createdAt: string;
 }
@@ -359,6 +360,7 @@ export interface CommerceItem {
   galleryImages?: string[];
   brand?: string;
   specifications?: Record<string, string>;
+  variantOptions?: ProductVariantOption[];
   highlights?: string[];
   warrantyLabel?: string;
   category: string;
@@ -370,6 +372,12 @@ export interface CommerceItem {
   hourlyRate?: number; // For services
   isDemandRequest?: boolean;
   isUsedItem?: boolean;
+}
+
+export interface ProductVariantOption {
+  id: string;
+  label: string;
+  values: string[];
 }
 
 export interface CartItem {
