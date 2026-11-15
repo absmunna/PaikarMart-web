@@ -55,6 +55,7 @@ export type PortalFilterType =
 interface CommercePortalProps {
   items: CommerceItem[];
   onAddToCart: (item: CommerceItem, quantity: number, isWholesale: boolean) => void;
+  onBuyNow?: (item: CommerceItem, quantity: number, isWholesale: boolean) => void;
   onSelectTab?: (tab: PortalTab) => void;
   currentUser?: User;
   appliedVoucherCode?: string;
@@ -66,6 +67,7 @@ interface CommercePortalProps {
 export const CommercePortal: React.FC<CommercePortalProps> = ({
   items,
   onAddToCart,
+  onBuyNow,
   onSelectTab,
   currentUser,
   appliedVoucherCode,
@@ -222,6 +224,15 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
     setTimeout(() => {
       setAddedNoticeMap(prev => ({ ...prev, [item.id]: false }));
     }, 2000);
+  };
+
+  const handleBuyNow = (item: CommerceItem, isWholesale: boolean) => {
+    const qty = wholesaleQtyMap[item.id] || (isWholesale ? (item.minWholesaleQty || 25) : 1);
+    if (onBuyNow) {
+      onBuyNow(item, qty, isWholesale);
+      return;
+    }
+    onAddToCart(item, qty, isWholesale);
   };
 
   // Synthesize Mock Demand & Used items to populate rich feed
@@ -509,6 +520,7 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
                 isAddedNotice={isAddedNotice}
                 onQtyChange={handleQtyChange}
                 onAddToCart={handleAddWithFeedback}
+                onBuyNow={handleBuyNow}
                 onSelectTab={onSelectTab}
               />
               {showAdAfter && (

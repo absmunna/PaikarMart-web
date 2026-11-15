@@ -13,6 +13,7 @@ interface CommerceProductCardProps {
   isAddedNotice: boolean;
   onQtyChange: (itemId: string, qty: number, minQty: number) => void;
   onAddToCart: (item: CommerceItem, isWholesale: boolean) => void;
+  onBuyNow: (item: CommerceItem, isWholesale: boolean) => void;
   onSelectTab?: (tab: PortalTab) => void;
 }
 
@@ -25,6 +26,7 @@ export const CommerceProductCard: React.FC<CommerceProductCardProps> = ({
   isAddedNotice,
   onQtyChange,
   onAddToCart,
+  onBuyNow,
   onSelectTab
 }) => {
   const navigate = useNavigate();
@@ -245,21 +247,36 @@ export const CommerceProductCard: React.FC<CommerceProductCardProps> = ({
               <span>{isBn ? 'বুকিং দিন' : 'Book Now'}</span>
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToCart(item, isWholesale);
-              }}
-              className={`w-full py-2 rounded-[2rem] font-black text-[9px] uppercase tracking-widest shadow-lg transition-all active-scale flex items-center justify-center gap-1.5 cursor-pointer ${
-                isWholesale
-                  ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-amber-500/30'
-                  : 'bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)]'
-              }`}
-            >
-              <ShoppingBag className="w-3 h-3" />
-              <span>{isWholesale ? (isBn ? 'হোলসেল লট' : 'Get Bulk') : (isBn ? 'কার্টে নিন' : 'Add to Cart')}</span>
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAddToCart(item, isWholesale);
+                }}
+                aria-label={isBn ? 'কার্টে যোগ করুন' : 'Add product to cart'}
+                className="min-h-9 rounded-xl border border-[var(--pm-border-strong)] bg-[var(--pm-surface)] text-[var(--pm-text)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] font-black text-[9px] uppercase tracking-wide transition-all active-scale flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <ShoppingBag className="w-3 h-3" />
+                <span>{isBn ? 'কার্টে নিন' : 'Add to Cart'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onBuyNow(item, isWholesale);
+                }}
+                aria-label={isBn ? 'এখনই কিনুন' : 'Buy product now'}
+                className={`min-h-9 rounded-xl font-black text-[9px] uppercase tracking-wide shadow-lg transition-all active-scale flex items-center justify-center gap-1 cursor-pointer ${
+                  isWholesale
+                    ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-amber-500/30'
+                    : 'bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)]'
+                }`}
+              >
+                <ShoppingBag className="w-3 h-3" />
+                <span>{isBn ? 'এখনই কিনুন' : 'Buy Now'}</span>
+              </button>
+            </div>
           )}
         </div>
       </div>

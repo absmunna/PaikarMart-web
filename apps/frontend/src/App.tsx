@@ -358,6 +358,15 @@ function AppInner() {
       }
       return [...prev, { product, quantity, isWholesale, specialInstructions }];
     });
+  };
+
+  const handleBuyNow = (
+    product: CommerceItem,
+    quantity = 1,
+    isWholesale = false,
+    specialInstructions?: string
+  ) => {
+    handleAddToCart(product, quantity, isWholesale, specialInstructions);
     setIsCartOpen(true);
   };
 
@@ -658,6 +667,7 @@ function AppInner() {
                   // buttons apply the domain-specific filters inside CommercePortal.
                   items={commerceItems}
                   onAddToCart={handleAddToCart}
+                  onBuyNow={handleBuyNow}
                   onSelectTab={setCurrentTab}
                   currentUser={currentUser}
                   appliedVoucherCode={appliedPromoCode}
