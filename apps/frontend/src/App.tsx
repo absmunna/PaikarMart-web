@@ -35,7 +35,7 @@ import { AdMobBanner } from '@/components/shared/AdMobBanner';
 import { DeploymentGuideModal } from '@/components/shared/DeploymentGuideModal';
 import { SidebarDrawer } from '@/components/layout/SidebarDrawer';
 import { LocationPickerModal } from '@/components/shared/LocationPickerModal';
-import { AuthPortalModal, RoleGuard } from '@/features/auth';
+import { AuthGuard, AuthPortalModal, RoleGuard } from '@/features/auth';
 import { ScrollToTop } from '@/components/shared/ScrollToTop';
 
 // Portal Modules (Lazy Loaded)
@@ -814,7 +814,7 @@ function AppInner() {
 
               {/* VIEW 8: User Account Profile Portal */}
               <Route path="/portal/profile" element={
-                <ProfilePortal
+                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><ProfilePortal
                   currentUser={currentUser}
                   onUpdateUser={setCurrentUser}
                   posts={posts}
@@ -831,24 +831,24 @@ function AppInner() {
                   onOpenSettingsPortal={handleOpenSettingsPortal}
                   onOpenSuperAdminModal={() => setIsSuperAdminModalOpen(true)}
                   onOpenAuthModal={handleOpenAuthModal}
-                />
+                /></AuthGuard>
               } />
 
               {/* VIEW 9: Full Notification Center Page */}
               <Route path="/portal/notifications" element={
-                <NotificationsPortal
+                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><NotificationsPortal
                   notifications={notifications}
                   onMarkAsRead={handleMarkNotificationAsRead}
                   onMarkAllAsRead={handleMarkAllNotificationsAsRead}
                   onClearAll={handleClearAllNotifications}
                   onSelectTab={setCurrentTab}
                   onOpenSettingsPortal={handleOpenSettingsPortal}
-                />
+                /></AuthGuard>
               } />
 
               {/* VIEW 10: Unified Orders Portal */}
               <Route path="/portal/orders" element={
-                <OrdersPortal
+                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><OrdersPortal
                   currentUser={currentUser}
                   orders={orders}
                   onUpdateOrder={handleUpdateOrder}
@@ -863,26 +863,26 @@ function AppInner() {
                   }}
                   onSelectTab={setCurrentTab}
                   onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                />
+                /></AuthGuard>
               } />
 
               {/* VIEW 11: Wallet Portal */}
               <Route path="/portal/wallet" element={
-                <WalletPortal
+                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><WalletPortal
                   currentUser={currentUser}
                   onUpdateUser={setCurrentUser}
                   onSelectTab={setCurrentTab}
                   onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                />
+                /></AuthGuard>
               } />
 
               {/* VIEW 12: Full Screen Messaging Portal */}
               <Route path="/portal/messages" element={
-                <MessagingCenterModal
+                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><MessagingCenterModal
                   isOpen={true}
                   onClose={() => navigate('/portal/social')}
                   isFullScreen={true}
-                />
+                /></AuthGuard>
               } />
 
               {/* VIEW 13: User & Vendor Guide */}
