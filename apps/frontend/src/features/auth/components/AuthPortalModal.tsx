@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   X, 
   Mail, 
@@ -50,6 +50,14 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTab(initialTab);
+      setErrorMessage('');
+      setSuccessMessage('');
+    }
+  }, [initialTab, isOpen]);
 
   if (!isOpen) return null;
 
@@ -173,7 +181,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md overflow-hidden bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] rounded-[2.5rem] shadow-2xl animate-scale-in">
+      <div role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" className="relative w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] rounded-[2.5rem] shadow-2xl animate-scale-in">
         {/* Header */}
         <div className="relative p-8 pb-6 bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] overflow-hidden">
           {/* Decorative shapes */}
@@ -181,7 +189,9 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
           <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-black/15 rounded-full blur-xl" />
           
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close authentication dialog"
             className="absolute top-6 right-6 p-2 opacity-80 hover:opacity-100 bg-black/15 hover:bg-black/25 rounded-2xl backdrop-blur-md transition-all active-scale cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -194,7 +204,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
             <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-85">Security Protocol</span>
           </div>
 
-          <h2 className="text-3xl font-black tracking-tight leading-tight">
+          <h2 id="auth-modal-title" className="text-3xl font-black tracking-tight leading-tight">
             {firebaseUser ? 'Account Status' : tab === 'login' ? 'Welcome Back' : tab === 'forgot' ? 'Reset Password' : 'Get Started'}
           </h2>
           <p className="text-sm opacity-80 mt-1 font-medium">
@@ -305,6 +315,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                     <UserIcon className="w-4.5 h-4.5 text-[var(--pm-muted)] absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-[var(--pm-accent)] transition-colors" />
                     <input
                       type="text"
+                      required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="তানভীর আহমেদ"
@@ -322,6 +333,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                   <Mail className="w-4.5 h-4.5 text-[var(--pm-muted)] absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-[var(--pm-accent)] transition-colors" />
                   <input
                     type="email"
+                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="user@paikarmart.com"
@@ -344,6 +356,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                   <Lock className="w-4.5 h-4.5 text-[var(--pm-muted)] absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-[var(--pm-accent)] transition-colors" />
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
@@ -352,6 +365,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--pm-muted)] hover:text-[var(--pm-text)] transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
