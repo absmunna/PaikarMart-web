@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StoriesTray } from '@/portals/social-feed/components/StoriesTray';
 import { PostComposer } from '@/portals/social-feed/components/PostComposer';
 import { FeedPostCard } from '@/portals/social-feed/components/FeedPostCard';
@@ -25,6 +25,23 @@ export const SocialFeedPage: React.FC<SocialFeedPageProps> = ({
   onAddComment,
   onAddToCart
 }) => {
+  const [visibleCount, setVisibleCount] = useState(5);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [posts.length]);
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || visibleCount >= posts.length) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setVisibleCount((count) => Math.min(count + 5, posts.length));
+    }, { rootMargin: '280px 0px' });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [posts.length, visibleCount]);
+
   return (
     <div className="space-y-4 sm:space-y-6 pb-2 animate-fadeIn">
       {/* Facebook Horizontal Stories Carousel */}
@@ -45,7 +62,7 @@ export const SocialFeedPage: React.FC<SocialFeedPageProps> = ({
 
       {/* Feed Posts List */}
       <div className="space-y-4 sm:space-y-6">
-        {posts.map((post) => (
+        {posts.slice(0, visibleCount).map((post) => (
           <FeedPostCard
             key={post.id}
             post={post}
@@ -57,12 +74,11 @@ export const SocialFeedPage: React.FC<SocialFeedPageProps> = ({
           />
         ))}
         
-        {/* Load More Simulation */}
-        <div className="pt-4 text-center">
-          <button className="px-8 py-3 rounded-2xl bg-[var(--pm-card)] border border-[var(--pm-border)] text-xs font-bold text-[var(--pm-muted)] hover:text-[var(--pm-accent)] hover:border-[var(--pm-accent)] transition-colors shadow-sm cursor-pointer">
-            Show Older Posts
-          </button>
-        </div>
+        {visibleCount < posts.length && (
+          <div ref={loadMoreRef} className="h-10 flex items-center justify-center text-xs font-semibold text-[var(--pm-muted)]" aria-live="polite">
+            Loading older posts…
+          </div>
+        )}
       </div>
     </div>
   );

@@ -37,7 +37,7 @@
    ========================================================= */
 :root,
 [data-theme="light"] {
-  --accent-color: #2563eb;
+  --accent-color: #006a4e;
   --pm-bg: #f1f5f9;
   --pm-surface: #f8fafc;
   --pm-card: #ffffff;
@@ -255,6 +255,20 @@
 
   .pm-btn-accent:hover {
     background-color: var(--pm-accent-hover);
+  }
+
+  .pm-action {
+    min-height: 2.5rem;
+    padding-inline: 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    line-height: 1;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .pm-action:active {
+    transform: scale(0.98);
   }
 
   .premium-shadow {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { normalizeHandle, formatDisplayHandle } from '@paikarmart/shared';
 import { 
@@ -92,6 +92,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
   const [guestData, setGuestData] = useState<any>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('Cash on Delivery');
+  const checkoutRef = useRef<HTMLDivElement>(null);
 
   // Master Catalog & Multi-Seller States
   const [selectedSeller, setSelectedSeller] = useState<SellerListing | null>(null);
@@ -328,7 +329,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
       {/* Sleek Sticky Top Nav */}
       <div className="flex items-center justify-between sticky top-14 pm-glass z-30 py-2 -mx-2 px-3 border-b border-[var(--pm-border)]">
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(-1)} className="p-1.5 rounded-full bg-[var(--pm-card)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] cursor-pointer">
+          <button onClick={() => navigate(-1)} aria-label={isBn ? 'পণ্যের তালিকায় ফিরে যান' : 'Back to product list'} className="p-1.5 rounded-full bg-[var(--pm-card)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] cursor-pointer">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="max-w-[140px] xs:max-w-[200px]">
@@ -341,11 +342,12 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
         <div className="flex items-center gap-1.5">
           <button 
             onClick={() => setIsFavorite(!isFavorite)}
+            aria-label={isFavorite ? (isBn ? 'পছন্দের তালিকা থেকে সরান' : 'Remove from saved items') : (isBn ? 'পছন্দের তালিকায় রাখুন' : 'Save product')}
             className={`p-2 rounded-xl border transition-all cursor-pointer ${isFavorite ? 'bg-pink-500/15 border-pink-500/30 text-pink-500 shadow-xs' : 'bg-[var(--pm-card)] border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)]'}`}
           >
             <Heart className={`w-4 h-4 ${isFavorite ? 'fill-pink-500' : ''}`} />
           </button>
-          <button className="p-2 rounded-xl bg-[var(--pm-card)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] cursor-pointer">
+          <button aria-label={isBn ? 'পণ্য শেয়ার করুন' : 'Share product'} className="p-2 rounded-xl bg-[var(--pm-card)] border border-[var(--pm-border)] text-[var(--pm-muted)] hover:text-[var(--pm-text)] cursor-pointer">
             <Share2 className="w-4 h-4" />
           </button>
         </div>
@@ -386,6 +388,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                       key={idx}
                       type="button"
                       onClick={() => setActiveImage(idx)}
+                      aria-label={`${isBn ? 'ছবি দেখুন' : 'View image'} ${idx + 1}`}
                       className={`w-14 h-14 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${activeImage === idx ? 'border-[var(--pm-accent)] scale-95' : 'border-transparent opacity-50'}`}
                     >
                       <img src={img} alt="thumb" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
@@ -619,7 +622,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
             )}
 
             {/* Compact Pricing & Checkout Card */}
-            <div className="bg-[var(--pm-card)] rounded-[2rem] border border-[var(--pm-border)] shadow-xl p-5 sm:p-6 space-y-5">
+            <div ref={checkoutRef} className="scroll-mt-24 bg-[var(--pm-card)] rounded-[2rem] border border-[var(--pm-border)] shadow-xl p-5 sm:p-6 space-y-5">
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-[var(--pm-border)] pb-3">
                   <div className="space-y-0.5">
@@ -658,6 +661,8 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                     <span className="text-[9px] font-bold text-[var(--pm-muted)] uppercase block px-1">Quantity</span>
                     <div className="flex items-center gap-2">
                       <button
+                        type="button"
+                        aria-label={isBn ? 'পরিমাণ কমান' : 'Decrease quantity'}
                         onClick={() => setQuantity(prev => Math.max(isWholesaleItem ? moq : 1, prev - (isWholesaleItem ? 10 : 1)))}
                         className="w-8 h-8 rounded-xl bg-[var(--pm-card)] border border-[var(--pm-border)] flex items-center justify-center text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] disabled:opacity-40 transition-all shadow-xs cursor-pointer"
                       >
@@ -667,6 +672,8 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                         {quantity}
                       </span>
                       <button
+                        type="button"
+                        aria-label={isBn ? 'পরিমাণ বাড়ান' : 'Increase quantity'}
                         onClick={() => setQuantity(prev => prev + (isWholesaleItem ? 10 : 1))}
                         className="w-8 h-8 rounded-xl bg-[var(--pm-card)] border border-[var(--pm-border)] flex items-center justify-center text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all shadow-xs cursor-pointer"
                       >
@@ -794,9 +801,9 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                     <label className="text-[9px] font-black uppercase text-[var(--pm-muted)] tracking-wider px-1">Payment</label>
                     <div className="grid grid-cols-1 gap-1.5">
                       {[
-                        { id: 'Cash', icon: Clock },
-                        { id: 'Wallet', sub: `৳${currentUser.balance.toFixed(0)}`, icon: CreditCard },
-                        { id: 'MFS', sub: 'bKash/Nagad', icon: Smartphone }
+                        { id: 'Cash on Delivery', label: 'Cash on Delivery', icon: Clock },
+                        { id: 'Wallet Balance', label: 'Wallet Balance', sub: `৳${currentUser.balance.toFixed(0)}`, icon: CreditCard },
+                        { id: 'MFS Payment', label: 'bKash / Nagad', sub: 'Mobile wallet', icon: Smartphone }
                       ].map(method => (
                         <button
                           key={method.id}
@@ -806,7 +813,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                           <div className="flex items-center gap-2">
                             <method.icon className={`w-3.5 h-3.5 ${selectedPayment === method.id ? 'text-[var(--pm-accent-fg)]' : 'text-[var(--pm-accent)]'}`} />
                             <div className="text-left">
-                              <p className="text-[10px] font-black uppercase leading-tight">{method.id}</p>
+                              <p className="text-[10px] font-black uppercase leading-tight">{method.label}</p>
                               {method.sub && <p className={`text-[8px] font-bold ${selectedPayment === method.id ? 'opacity-85' : 'text-[var(--pm-muted)]'}`}>{method.sub}</p>}
                             </div>
                           </div>
@@ -866,7 +873,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
 
       {/* Floating Bottom Bar (Mobile) */}
       {!confirmedOrder && (
-        <div className="fixed bottom-20 inset-x-3 lg:hidden z-40 bg-[var(--pm-card)] text-[var(--pm-text)] rounded-2xl shadow-2xl p-3 animate-slideUp flex items-center gap-3 border border-[var(--pm-border)]">
+        <div className="fixed bottom-20 inset-x-3 lg:hidden z-40 bg-[var(--pm-card)] text-[var(--pm-text)] rounded-2xl shadow-2xl p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] animate-slideUp flex items-center gap-3 border border-[var(--pm-border)]">
           <div className="flex-1 min-w-0">
             <p className="text-[9px] font-black uppercase text-[var(--pm-muted)] tracking-tighter">Order Total</p>
             <p className="text-lg font-mono tabular-nums font-black text-[var(--pm-accent)] leading-none">
@@ -876,7 +883,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
           <button 
             disabled={isProcessing || isEditingDetails}
             onClick={() => {
-              window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+              checkoutRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
             className="px-6 py-3 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-black uppercase tracking-widest text-[10px] shadow-lg flex items-center gap-2 active:scale-95 transition-transform cursor-pointer"
           >

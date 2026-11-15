@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { 
   ShoppingBag, 
   Package, 
@@ -83,6 +83,8 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>(externalSearchQuery);
   const [sortBy, setSortBy] = useState<'recommended' | 'price_low' | 'price_high' | 'rating' | 'moq'>('recommended');
   const [activeChildPortalId, setActiveChildPortalId] = useState('c-retail-home');
+  const [visibleCount, setVisibleCount] = useState(12);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const childPortalHome: Record<string, { title: string; subtitle: string; accent: string }> = {
     'c-retail-home': {
@@ -120,6 +122,10 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
   React.useEffect(() => {
     setSearchQuery(externalSearchQuery);
   }, [externalSearchQuery]);
+
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [activePortal, selectedSubCategory, searchQuery, sortBy]);
   
   // Wholesale MOQ quantity state
   const [wholesaleQtyMap, setWholesaleQtyMap] = useState<Record<string, number>>({});
@@ -318,6 +324,18 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
     });
   }, [fullDiscoveryItems, hyperlocalMetaMap, activePortal, selectedSubCategory, searchQuery, sortBy]);
 
+  const visibleFeedItems = feedItems.slice(0, visibleCount);
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || visibleCount >= feedItems.length) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setVisibleCount((count) => Math.min(count + 12, feedItems.length));
+    }, { rootMargin: '360px 0px' });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [feedItems.length, visibleCount]);
+
   // Compute item counts for each portal filter chip dynamically
   const portalCounts = useMemo(() => {
     return {
@@ -456,7 +474,7 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
       {/* 4. FEED COUNT & QUICK SEARCH FILTER */}
       <div className="flex items-center justify-between gap-4 px-1">
         <p className="text-xs font-bold text-[var(--pm-muted)]">
-          {isBn ? `মোট ${feedItems.length} টি পণ্য ও সেবা পাওয়া গেছে` : `Showing ${feedItems.length} items in feed`}
+          {isBn ? `${visibleFeedItems.length}/${feedItems.length} টি পণ্য ও সেবা` : `Showing ${visibleFeedItems.length} of ${feedItems.length} items`}
         </p>
 
         {activePortal !== 'all' && (
@@ -472,7 +490,7 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
 
       {/* 5. INFINITE DISCOVERY PRODUCT FEED GRID */}
       <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        {feedItems.map((item: any, idx: number) => {
+        {visibleFeedItems.map((item: any, idx: number) => {
           const isWholesale = item.tradeMode === 'wholesale';
           const currentQty = wholesaleQtyMap[item.id] || (isWholesale ? (item.minWholesaleQty || 25) : 1);
           const unitPrice = isWholesale ? getDynamicTierPrice(item, currentQty) : item.price;
@@ -504,6 +522,12 @@ export const CommercePortal: React.FC<CommercePortalProps> = ({
           );
         })}
       </div>
+
+      {visibleCount < feedItems.length && (
+        <div ref={loadMoreRef} className="h-10 flex items-center justify-center text-xs font-semibold text-[var(--pm-muted)]" aria-live="polite">
+          Loading more products…
+        </div>
+      )}
 
       <PrescriptionUploadModal
         isOpen={isPrescriptionModalOpen}

@@ -621,28 +621,6 @@ function AppInner() {
               />
             )}
 
-            {/* Active Portal Header indicator if switched away from feed */}
-            {currentTab !== 'feed' && !location.pathname.includes('/product/') && !location.pathname.startsWith('/settings') && (
-              <div className="flex items-center justify-between px-1 animate-fadeIn">
-                <span className="text-xs font-black text-[var(--pm-muted)] uppercase tracking-widest flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--pm-accent)] animate-pulse" />
-                  {currentTab.replace('-', ' ')}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (window.history.length > 1) navigate(-1);
-                    else navigate('/portal/social');
-                  }}
-                  aria-label={isBn ? 'আগের পেজে ফিরে যান' : 'Go back to previous page'}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold text-[var(--pm-accent)] hover:bg-[var(--pm-accent-soft)] transition-colors cursor-pointer"
-                >
-                  <span aria-hidden="true">←</span>
-                  <span>{isBn ? 'ফিরে যান' : 'Back'}</span>
-                </button>
-              </div>
-            )}
-
           <React.Suspense fallback={currentTab === 'feed' ? <FeedSkeleton /> : <PortalSkeleton />}>
             <Routes>
               {/* Redirect root to social feed */}
