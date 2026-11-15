@@ -361,6 +361,7 @@ export interface CommerceItem {
   brand?: string;
   specifications?: Record<string, string>;
   variantOptions?: ProductVariantOption[];
+  variantOffers?: ProductVariantOffer[];
   highlights?: string[];
   warrantyLabel?: string;
   category: string;
@@ -378,6 +379,14 @@ export interface ProductVariantOption {
   id: string;
   label: string;
   values: string[];
+}
+
+export interface ProductVariantOffer {
+  key: string;
+  label: string;
+  sku?: string;
+  price?: number;
+  stockQuantity?: number;
 }
 
 export interface CartItem {

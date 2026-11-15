@@ -154,6 +154,11 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
       { id: 'storage', label: 'Storage', values: ['256 GB', '512 GB'] },
       { id: 'color', label: 'Color', values: ['Natural Titanium', 'Blue Titanium', 'Black Titanium'] }
     ],
+    variantOffers: [
+      { key: '256 GB · Natural Titanium', label: '256 GB · Natural Titanium', sku: 'APL15PM-256-NT', price: 185000, stockQuantity: 8 },
+      { key: '512 GB · Natural Titanium', label: '512 GB · Natural Titanium', sku: 'APL15PM-512-NT', price: 205000, stockQuantity: 4 },
+      { key: '256 GB · Blue Titanium', label: '256 GB · Blue Titanium', sku: 'APL15PM-256-BT', price: 185000, stockQuantity: 0 }
+    ],
     highlights: ['Official Apple warranty', 'Pro camera system', 'Titanium design', 'Fast 5G delivery'],
     warrantyLabel: '2-year official warranty',
     category: 'Electronics',
@@ -181,6 +186,11 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     category: 'Grocery',
     variantOptions: [
       { id: 'volume', label: 'Volume', values: ['1 Litre', '2 Litre', '5 Litre'] }
+    ],
+    variantOffers: [
+      { key: '1 Litre', label: '1 Litre', sku: 'OIL-1L', price: 180, stockQuantity: 40 },
+      { key: '2 Litre', label: '2 Litre', sku: 'OIL-2L', price: 360, stockQuantity: 25 },
+      { key: '5 Litre', label: '5 Litre', sku: 'OIL-5L', price: 840, stockQuantity: 18 }
     ],
     inStock: true,
     badge: 'Best Seller'
@@ -307,6 +317,13 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
     proximityDistance: '0.4 km',
     imageUrl: '/src/assets/images/paikarmart_fresh_grocery_1794489814176.jpg',
     category: 'Grocery',
+    variantOptions: [
+      { id: 'pack', label: 'Pack size', values: ['Pack of 3', 'Pack of 6'] }
+    ],
+    variantOffers: [
+      { key: 'Pack of 3', label: 'Pack of 3', sku: 'AVO-3', price: 5.5, stockQuantity: 24 },
+      { key: 'Pack of 6', label: 'Pack of 6', sku: 'AVO-6', price: 10, stockQuantity: 10 }
+    ],
     inStock: true,
     badge: 'Nearest'
   },

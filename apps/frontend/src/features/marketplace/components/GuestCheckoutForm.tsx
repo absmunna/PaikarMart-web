@@ -11,9 +11,11 @@ interface GuestCheckoutFormProps {
     courier: string;
     paymentMethod: string;
   }) => void;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
-export const GuestCheckoutForm: React.FC<GuestCheckoutFormProps> = ({ onVerify, onComplete }) => {
+export const GuestCheckoutForm: React.FC<GuestCheckoutFormProps> = ({ onVerify, onComplete, disabled = false, disabledMessage }) => {
   const [formData, setFormData] = useState({ 
     name: '', 
     phone: '', 
@@ -117,8 +119,8 @@ export const GuestCheckoutForm: React.FC<GuestCheckoutFormProps> = ({ onVerify, 
         </div>
       )}
 
-      <button type="submit" disabled={isLoading} className="w-full py-3 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-xs shadow-lg cursor-pointer transition-colors">
-        {isLoading ? 'Verifying...' : 'Place Order & Complete'}
+      <button type="submit" disabled={isLoading || disabled} className="w-full py-3 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--pm-accent-fg)] font-bold text-xs shadow-lg cursor-pointer transition-colors">
+        {isLoading ? 'Verifying...' : disabled ? (disabledMessage || 'Variant unavailable') : 'Place Order & Complete'}
       </button>
     </form>
   );

@@ -148,15 +148,21 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
     }
   }, [product?.id]);
 
+  const selectedVariantValues = Object.values(selectedVariants).filter(Boolean);
+  const selectedVariantKey = selectedVariantValues.join(' · ');
   const selectedVariantLabel = Object.entries(selectedVariants)
     .filter(([, value]) => value)
     .map(([id, value]) => `${variantOptions.find((option) => option.id === id)?.label || id}: ${value}`)
     .join(' · ');
+  const selectedVariantOffer = product?.variantOffers?.find((offer) => offer.key === selectedVariantKey);
+  const selectedVariantStock = selectedVariantOffer?.stockQuantity;
+  const hasVariantMatrix = Boolean(product?.variantOffers?.length);
+  const canOrderSelectedVariant = Boolean(product?.inStock) && (!hasVariantMatrix || Boolean(selectedVariantOffer && (selectedVariantStock == null || selectedVariantStock > 0)));
 
   // Calculate current unit price honoring selected multi-seller offer or wholesale tiers
   const currentUnitPrice = useMemo(() => {
     if (!product) return 0;
-    const baseUnit = selectedSeller ? selectedSeller.price : product.price;
+    const baseUnit = selectedSeller ? selectedSeller.price : (selectedVariantOffer?.price ?? product.price);
     if (!isWholesaleItem) return baseUnit;
     const tiers = selectedSeller?.wholesaleTiers || product.wholesaleTiers;
     if (tiers && tiers.length > 0) {
@@ -168,7 +174,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
     if (quantity >= moq * 5) return Math.round(baseUnit * 0.7);
     if (quantity >= moq * 2) return Math.round(baseUnit * 0.8);
     return Math.round(baseUnit * 0.9);
-  }, [product, selectedSeller, quantity, isWholesaleItem, moq]);
+  }, [product, selectedSeller, selectedVariantOffer, quantity, isWholesaleItem, moq]);
 
   const totalLotPrice = currentUnitPrice * quantity;
   const deliveryFee = isWholesaleItem
@@ -229,6 +235,10 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
   ];
 
   const handlePlaceOrder = async (data?: any) => {
+    if (!canOrderSelectedVariant) {
+      setCheckoutError(isBn ? 'এই variant বর্তমানে স্টকে নেই। অন্য variant নির্বাচন করুন।' : 'This variant is out of stock. Select another variant.');
+      return;
+    }
     const subtotal = totalLotPrice;
     const total = finalTotal;
     const paymentMethod = data?.paymentMethod || selectedPayment;
@@ -701,6 +711,13 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                         >
                           {option.values.map((value) => <option key={value} value={value}>{value}</option>)}
                         </select>
+                        {selectedVariantOffer && option.id === variantOptions[variantOptions.length - 1]?.id && (
+                          <span className={`block px-1 text-[9px] font-semibold ${canOrderSelectedVariant ? 'text-[var(--pm-success)]' : 'text-[var(--pm-danger)]'}`}>
+                            {canOrderSelectedVariant
+                              ? `${selectedVariantStock} in stock · ${selectedVariantOffer.sku}`
+                              : (selectedVariantOffer ? 'Out of stock' : 'Combination unavailable')}
+                          </span>
+                        )}
                       </label>
                     ))}
                   </div>
@@ -768,6 +785,8 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                   <GuestCheckoutForm 
                     onVerify={handleVerifyUser} 
                     onComplete={(data) => handlePlaceOrder(data)} 
+                    disabled={!canOrderSelectedVariant}
+                    disabledMessage={selectedVariantOffer ? 'Variant out of stock' : 'Variant unavailable'}
                   />
                 </div>
               ) : (
@@ -901,7 +920,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
 
                     <button 
                       type="button"
-                      disabled={isProcessing || isEditingDetails}
+                      disabled={isProcessing || isEditingDetails || !canOrderSelectedVariant}
                       onClick={() => handlePlaceOrder({ ...tempUserDetails, paymentMethod: selectedPayment })}
                       className="w-full py-3.5 rounded-2xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] disabled:opacity-50 text-[var(--pm-accent-fg)] font-black uppercase tracking-widest text-[11px] shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                     >
@@ -910,7 +929,7 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                       ) : (
                         <>
                           <ShoppingBag className="w-4 h-4" />
-                          <span>Buy Now</span>
+                          <span>{canOrderSelectedVariant ? 'Buy Now' : 'Out of Stock'}</span>
                         </>
                       )}
                     </button>

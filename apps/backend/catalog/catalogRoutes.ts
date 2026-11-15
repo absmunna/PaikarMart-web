@@ -43,6 +43,7 @@ const mapListing = (listing: any) => {
     brand: product.brand || undefined,
     specifications: product.specifications || {},
     variantOptions: Array.isArray(product.variant_options) ? product.variant_options : [],
+    variantOffers: Array.isArray(product.variant_offers) ? product.variant_offers : [],
     category: product.category || store.category || 'General',
     inStock: Boolean(listing.is_active) && toNumber(listing.stock_quantity) > 0,
     isOpen: store.is_open !== false,
