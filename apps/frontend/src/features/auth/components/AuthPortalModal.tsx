@@ -305,7 +305,7 @@ export const AuthPortalModal: React.FC<AuthPortalModalProps> = ({
             )}
 
             {/* Form */}
-            <form onSubmit={tab === 'login' ? handleLogin : tab === 'forgot' ? handlePasswordReset : handleRegister} className="space-y-4">
+            <form noValidate onSubmit={tab === 'login' ? handleLogin : tab === 'forgot' ? handlePasswordReset : handleRegister} className="space-y-4">
               {tab === 'register' && (
                 <div className="space-y-1.5">
                   <label className="block text-[10px] font-black text-[var(--pm-muted)] uppercase tracking-widest ml-1">
