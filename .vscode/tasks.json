@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PaikarMart: local dev server",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "paikarmart-dev",
+        "pattern": {
+          "regexp": ".*",
+          "message": 0
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "PaikarMart Super App Server running on port 3000",
+          "endsPattern": "PaikarMart Super App Server running on port 3000"
+        }
+      }
+    }
+  ]
+}
