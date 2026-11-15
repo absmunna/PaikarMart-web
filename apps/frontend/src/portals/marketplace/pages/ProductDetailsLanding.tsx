@@ -16,7 +16,6 @@ import {
   Sparkles,
   MessageSquare,
   ThumbsUp,
-  ChevronRight,
   Info,
   ChevronLeft,
   Share2,
@@ -73,9 +72,16 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
     return () => clearTimeout(timer);
   }, [id]);
 
-  const product = useMemo(() => 
-    commerceItems.find(item => item.id === id) || INITIAL_COMMERCE_ITEMS.find(item => item.id === id),
-  [id, commerceItems]);
+  const product = useMemo(() => {
+    const cachedProduct = commerceItems.find(item => item.id === id);
+    const canonicalFallback = INITIAL_COMMERCE_ITEMS.find(item => item.id === id);
+    if (!cachedProduct) return canonicalFallback;
+    // Local/offline cache may predate canonical catalog fields. Preserve the
+    // latest user-facing offer while restoring the master-product linkage.
+    return canonicalFallback
+      ? { ...canonicalFallback, ...cachedProduct, masterProductId: cachedProduct.masterProductId || canonicalFallback.masterProductId }
+      : cachedProduct;
+  }, [id, commerceItems]);
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
@@ -561,15 +567,33 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
                     Compare Offers ({sellerListings.length})
                   </button>
                 </div>
-                {selectedSeller ? (
-                  <p className="text-[11px] text-[var(--pm-success)] font-semibold font-mono tabular-nums">
-                    Active Seller: {selectedSeller.sellerName} · ৳{selectedSeller.price.toLocaleString()}
-                  </p>
-                ) : buyBoxWinner ? (
-                  <p className="text-[11px] text-[var(--pm-muted)] font-medium font-mono tabular-nums">
-                    Buy Box Best Value: {buyBoxWinner.sellerName} from ৳{buyBoxWinner.price.toLocaleString()} ({buyBoxWinner.deliveryEta})
-                  </p>
-                ) : null}
+                <div className="space-y-1.5 pt-1">
+                  {(rankedSellers.length > 0 ? rankedSellers : sellerListings).slice(0, 3).map((seller) => {
+                    const isSelected = selectedSeller?.id === seller.id || (!selectedSeller && buyBoxWinner?.id === seller.id);
+                    return (
+                      <div
+                        key={seller.id}
+                        className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 ${isSelected ? 'border-[var(--pm-accent)]/50 bg-[var(--pm-accent-soft)]' : 'border-[var(--pm-border)] bg-[var(--pm-surface)]'}`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[10px] font-bold text-[var(--pm-text)]">{seller.sellerName}</p>
+                          <p className="truncate text-[9px] text-[var(--pm-muted)]">
+                            ★ {seller.sellerRating.toFixed(1)} · {seller.deliveryEta} · {seller.location}
+                          </p>
+                        </div>
+                        <span className="shrink-0 text-[11px] font-black text-[var(--pm-accent)]">৳{seller.price.toLocaleString()}</span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSeller(seller)}
+                          aria-label={`Select ${seller.sellerName}`}
+                          className={`shrink-0 rounded-lg px-2 py-1 text-[9px] font-black ${isSelected ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)]' : 'border border-[var(--pm-border-strong)] text-[var(--pm-muted)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)]'}`}
+                        >
+                          {isSelected ? 'Selected' : 'Select'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -868,28 +892,6 @@ export const ProductDetailsLanding: React.FC<ProductDetailsLandingProps> = ({
               )}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Floating Bottom Bar (Mobile) */}
-      {!confirmedOrder && (
-        <div className="fixed bottom-20 inset-x-3 lg:hidden z-40 bg-[var(--pm-card)] text-[var(--pm-text)] rounded-2xl shadow-2xl p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] animate-slideUp flex items-center gap-3 border border-[var(--pm-border)]">
-          <div className="flex-1 min-w-0">
-            <p className="text-[9px] font-black uppercase text-[var(--pm-muted)] tracking-tighter">Order Total</p>
-            <p className="text-lg font-mono tabular-nums font-black text-[var(--pm-accent)] leading-none">
-              ৳{finalTotal.toLocaleString()}
-            </p>
-          </div>
-          <button 
-            disabled={isProcessing || isEditingDetails}
-            onClick={() => {
-              checkoutRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            className="px-6 py-3 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-black uppercase tracking-widest text-[10px] shadow-lg flex items-center gap-2 active:scale-95 transition-transform cursor-pointer"
-          >
-            <span>Checkout</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
         </div>
       )}
 

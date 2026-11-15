@@ -133,6 +133,7 @@ export const INITIAL_COMMERCE_ITEMS: CommerceItem[] = [
   // --- REAL RETAIL PRODUCTS ---
   {
     id: 'prod_retail_iphone_15',
+    masterProductId: 'master_iphone_15_pro_max',
     storeId: 'vendor_apple_authorized',
     storeName: 'Gadget & Gear Official',
     type: 'retail',

@@ -10,6 +10,22 @@ import {
 // Canonical Master Products Data
 export const INITIAL_MASTER_PRODUCTS: MasterProduct[] = [
   {
+    id: 'master_iphone_15_pro_max',
+    barcode: '019425371001',
+    titleEn: 'Apple iPhone 15 Pro Max (Natural Titanium)',
+    titleBn: 'অ্যাপল আইফোন ১৫ প্রো ম্যাক্স (ন্যাচারাল টাইটানিয়াম)',
+    brand: 'Apple',
+    category: 'Electronics',
+    description: 'A17 Pro powered iPhone with a pro camera system, titanium design, and USB-C connectivity.',
+    canonicalImages: [
+      '/src/assets/images/paikarmart_iphone_15_pro_max_1794490099283.jpg',
+      '/src/assets/images/paikarmart_samsung_phone_1794489802379.jpg'
+    ],
+    specifications: { Storage: '256 GB', Display: '6.7-inch OLED', Connectivity: '5G / USB-C' },
+    isVerified: true,
+    createdAt: '2026-01-12'
+  },
+  {
     id: 'master_samsung_s24_ultra',
     barcode: '880609534001',
     titleEn: 'Samsung Galaxy S24 Ultra (Titanium Series)',
@@ -95,6 +111,61 @@ export const INITIAL_MASTER_PRODUCTS: MasterProduct[] = [
 
 // Multiple Seller Listings per Master Product (1:N)
 export const INITIAL_SELLER_LISTINGS: SellerListing[] = [
+  // Offers for Apple iPhone 15 Pro Max
+  {
+    id: 'listing_iphone_gadget_gear',
+    masterProductId: 'master_iphone_15_pro_max',
+    sellerId: 'vendor_apple_authorized',
+    sellerName: 'Gadget & Gear Official',
+    sellerRating: 4.9,
+    sellerReviewsCount: 150,
+    price: 185000,
+    originalPrice: 194000,
+    stockQuantity: 12,
+    tradeMode: 'retail',
+    deliveryEta: '2-3 Days',
+    proximityDistance: '3.5 km',
+    location: 'Bashundhara City, Dhaka',
+    sellerRealPhotos: ['/src/assets/images/paikarmart_iphone_15_pro_max_1794490099283.jpg'],
+    isActive: true,
+    createdAt: '2026-02-02'
+  },
+  {
+    id: 'listing_iphone_dhaka_telecom',
+    masterProductId: 'master_iphone_15_pro_max',
+    sellerId: 'vendor_dhaka_telecom',
+    sellerName: 'Dhaka Telecom & Gadgets',
+    sellerRating: 4.8,
+    sellerReviewsCount: 115,
+    price: 181500,
+    originalPrice: 189000,
+    stockQuantity: 5,
+    tradeMode: 'retail',
+    deliveryEta: '1-2 Hours',
+    proximityDistance: '0.8 km',
+    location: 'Gulshan 1, Dhaka',
+    sellerRealPhotos: [],
+    isActive: true,
+    createdAt: '2026-02-04'
+  },
+  {
+    id: 'listing_iphone_chittagong',
+    masterProductId: 'master_iphone_15_pro_max',
+    sellerId: 'vendor_ctg_electronics',
+    sellerName: 'Chittagong Electronics Mart',
+    sellerRating: 4.7,
+    sellerReviewsCount: 64,
+    price: 179900,
+    originalPrice: 187000,
+    stockQuantity: 8,
+    tradeMode: 'retail',
+    deliveryEta: '2-3 Days',
+    proximityDistance: '240 km',
+    location: 'GEC Circle, Chittagong',
+    sellerRealPhotos: [],
+    isActive: true,
+    createdAt: '2026-02-06'
+  },
   // Offers for Samsung S24 Ultra
   {
     id: 'listing_samsung_official',
