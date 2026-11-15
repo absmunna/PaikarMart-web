@@ -47,7 +47,7 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
   initialPromoCode,
 }) => {
   const [deliveryAddress, setDeliveryAddress] = useState('House 12, Road 4, Dhanmondi, Dhaka');
-  const [paymentMethod, setPaymentMethod] = useState<'Credit / Debit Card' | 'Mobile Wallet (bKash/Venmo)' | 'Cash on Delivery'>('Mobile Wallet (bKash/Venmo)');
+  const [paymentMethod, setPaymentMethod] = useState<'Credit / Debit Card' | 'Mobile Wallet (bKash/Nagad/Rocket)' | 'Cash on Delivery'>('Cash on Delivery');
   const [promoCode, setPromoCode] = useState('');
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
   const [discount, setDiscount] = useState(0);
@@ -418,7 +418,7 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
                       Payment Gateway Method
                     </label>
                     <div className="grid grid-cols-1 gap-1.5">
-                      {(['Credit / Debit Card', 'Mobile Wallet (bKash/Venmo)', 'Cash on Delivery'] as const).map((method) => (
+                      {(['Credit / Debit Card', 'Mobile Wallet (bKash/Nagad/Rocket)', 'Cash on Delivery'] as const).map((method) => (
                         <button
                           key={method}
                           type="button"
