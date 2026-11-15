@@ -2,9 +2,15 @@ import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 export const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes('xyzcompany'))
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+/** Server-only client for Firebase-verified profile synchronization. Never expose this key to Vite. */
+export const supabaseAdmin = (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && !SUPABASE_URL.includes('xyzcompany'))
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
   : null;
 
 export async function checkDatabaseConnection(): Promise<string> {

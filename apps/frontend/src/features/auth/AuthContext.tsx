@@ -15,6 +15,7 @@ import {
 import { User, UserRole } from '@/types';
 import { CURRENT_USER } from '@/data/mockData';
 import { loadStoredData, saveStoredData } from '@/lib/supabase';
+import { syncAuthenticatedProfile } from '@/features/auth/services/authProfileApi';
 
 interface AuthContextType {
   firebaseUser: FirebaseUser | null;
@@ -68,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setCurrentUser(syncedUser);
         saveStoredData('USER', syncedUser);
+        void syncAuthenticatedProfile({ name: syncedUser.name, handle: syncedUser.handle, avatar: syncedUser.avatar, location: syncedUser.location }).catch((error) => console.warn('Profile API sync unavailable:', error));
 
         // Background sync to Firestore user document + Zero-PII public handle profile
         void syncUserProfileToFirestore({
@@ -104,6 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setCurrentUser(syncedUser);
         saveStoredData('USER', syncedUser);
+        await syncAuthenticatedProfile({ name: syncedUser.name, handle: syncedUser.handle, avatar: syncedUser.avatar, location: syncedUser.location }).catch((error) => console.warn('Profile API sync unavailable:', error));
 
         await syncUserProfileToFirestore({
           id: user.uid,
@@ -143,6 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setCurrentUser(newUser);
         saveStoredData('USER', newUser);
+        await syncAuthenticatedProfile({ name: newUser.name, handle: newUser.handle, avatar: newUser.avatar, location: newUser.location }).catch((error) => console.warn('Profile API sync unavailable:', error));
 
         await syncUserProfileToFirestore({
           id: creds.user.uid,
@@ -180,6 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setCurrentUser(loggedInUser);
         saveStoredData('USER', loggedInUser);
+        await syncAuthenticatedProfile({ name: loggedInUser.name, handle: loggedInUser.handle, avatar: loggedInUser.avatar, location: loggedInUser.location }).catch((error) => console.warn('Profile API sync unavailable:', error));
       }
     } catch (err) {
       console.error('Email Login Failed:', err);
