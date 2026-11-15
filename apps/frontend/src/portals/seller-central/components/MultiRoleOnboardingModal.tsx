@@ -203,7 +203,7 @@ export const MultiRoleOnboardingModal: React.FC<MultiRoleOnboardingModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs animate-fadeIn">
-      <div className="bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div role="dialog" aria-modal="true" aria-labelledby="merchant-onboarding-title" className="bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="p-5 border-b border-[var(--pm-border)] flex items-center justify-between shrink-0 bg-[var(--pm-surface)]">
           <div className="flex items-center gap-3 min-w-0">
@@ -212,7 +212,7 @@ export const MultiRoleOnboardingModal: React.FC<MultiRoleOnboardingModalProps> =
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 text-xs text-[var(--pm-muted)]">
-                <h3 className="text-base font-bold text-[var(--pm-text)] truncate">
+                <h3 id="merchant-onboarding-title" className="text-base font-bold text-[var(--pm-text)] truncate">
                   {isBn ? 'মার্চেন্ট কেওয়াইসি (KYC) অনবোর্ডিং' : '5-Step Merchant KYC Onboarding'}
                 </h3>
                 <span aria-hidden="true">·</span>
@@ -229,6 +229,7 @@ export const MultiRoleOnboardingModal: React.FC<MultiRoleOnboardingModalProps> =
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close merchant onboarding"
             className="p-2 rounded-full text-[var(--pm-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] cursor-pointer transition-colors"
           >
             <X className="w-5 h-5" />

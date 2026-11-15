@@ -895,13 +895,15 @@ function AppInner() {
 
               {/* Unified Settings Portal */}
               <Route path="/settings" element={
-                <UnifiedSettingsPortal
-                  initialSection={initialSettingsSection}
-                  onSelectTab={setCurrentTab}
-                  currentUser={currentUser}
-                  onUpdateUser={setCurrentUser}
-                  onClose={() => navigate('/')}
-                />
+                <AuthGuard onOpenAuthModal={handleOpenAuthModal}>
+                  <UnifiedSettingsPortal
+                    initialSection={initialSettingsSection}
+                    onSelectTab={setCurrentTab}
+                    currentUser={currentUser}
+                    onUpdateUser={setCurrentUser}
+                    onClose={() => navigate('/')}
+                  />
+                </AuthGuard>
               } />
             </Routes>
           </React.Suspense>

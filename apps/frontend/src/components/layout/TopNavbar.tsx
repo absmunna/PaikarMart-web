@@ -8,11 +8,8 @@ import {
   Sun, 
   Moon, 
   UtensilsCrossed, 
-  Wrench, 
   Car, 
   Sparkles, 
-  Newspaper, 
-  Package, 
   ShieldCheck, 
   ShieldAlert,
   CheckCircle2,
@@ -585,38 +582,6 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             )}
           </div>
         </div>
-
-        {/* Center Zone: Clean Navigation Tabs (Hidden on mobile, visible md+) */}
-        <nav className="hidden md:flex items-center justify-center flex-1 max-w-md h-full px-2 gap-1.5">
-          {[
-            { id: 'feed', icon: Newspaper, label: 'Feed', title: 'Social Feed' },
-            { id: 'commerce', icon: ShoppingBag, label: 'Retail', title: 'Retail Marketplace' },
-            { id: 'wholesale', icon: Package, label: 'Wholesale', title: 'Wholesale B2B Hub' },
-            { id: 'services', icon: Wrench, label: 'Services', title: 'Services & Repairs' },
-          ].filter((tab) => !(currentTab === 'commerce' && tab.id === 'commerce')).map((tab) => {
-            const isActive = currentTab === tab.id;
-            const Icon = tab.icon;
-            
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onSelectTab(tab.id as PortalTab)}
-                className={`h-full px-4 flex items-center justify-center gap-2 border-b-[3px] text-sm font-bold transition-all duration-200 relative group cursor-pointer ${
-                  isActive
-                    ? 'border-[var(--pm-accent)] text-[var(--pm-accent)]'
-                    : 'border-transparent text-[var(--pm-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface)]'
-                }`}
-                title={tab.title}
-              >
-                <Icon className={`w-4.5 h-4.5 transition-transform group-hover:scale-110 ${isActive ? 'scale-110' : ''}`} />
-                <span className="hidden lg:inline">{tab.label}</span>
-                {!isActive && (
-                  <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--pm-border-strong)] scale-x-0 group-hover:scale-x-100 transition-transform origin-center" />
-                )}
-              </button>
-            );
-          })}
-        </nav>
 
         {/* Right Zone: Location, Messages, Notifications, Cart, Profile */}
         <div className="flex items-center gap-2 shrink-0">

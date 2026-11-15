@@ -64,7 +64,7 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [tempUserDetails, setTempUserDetails] = useState({
     name: currentUser?.name || '',
-    phone: currentUser?.handle || '',
+    phone: currentUser?.phone || '',
     address: currentUser?.location || ''
   });
 
@@ -72,7 +72,7 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
     if (currentUser) {
       setTempUserDetails({
         name: currentUser.name,
-        phone: currentUser.handle,
+        phone: currentUser.phone || '',
         address: currentUser.location
       });
     }
@@ -208,13 +208,13 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-[var(--pm-card)] text-[var(--pm-text)] border-l border-[var(--pm-border)] shadow-2xl h-full flex flex-col justify-between overflow-y-auto">
+      <div role="dialog" aria-modal="true" aria-labelledby="bag-title" className="relative w-full max-w-lg bg-[var(--pm-card)] text-[var(--pm-text)] border-l border-[var(--pm-border)] shadow-2xl h-full flex flex-col justify-between overflow-y-auto">
 
         {/* Header */}
         <div className="p-5 border-b border-[var(--pm-border)] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-[var(--pm-accent)]" />
-            <h2 className="text-lg font-bold text-[var(--pm-text)]">
+            <h2 id="bag-title" className="text-lg font-bold text-[var(--pm-text)]">
               Your Unified Bag ({items.reduce((a, b) => a + b.quantity, 0)})
             </h2>
           </div>
@@ -225,6 +225,7 @@ export const CartCheckoutDrawer: React.FC<CartCheckoutDrawerProps> = ({
               setCheckoutError(null);
               onClose();
             }}
+            aria-label="Close bag"
             className="p-1.5 rounded-full text-[var(--pm-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface)] cursor-pointer"
           >
             <X className="w-5 h-5" />
