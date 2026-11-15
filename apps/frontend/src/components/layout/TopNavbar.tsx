@@ -653,11 +653,11 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           {!firebaseUser && onOpenAuthModal && (
             <button
               onClick={() => onOpenAuthModal('login')}
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-sm shadow-md active-scale transition-all cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-sm shadow-md active-scale transition-all cursor-pointer"
               title="Sign In or Register"
             >
               <LogIn className="w-4 h-4" />
-              <span>লগইন</span>
+              <span className="hidden sm:inline">লগইন</span>
             </button>
           )}
 
