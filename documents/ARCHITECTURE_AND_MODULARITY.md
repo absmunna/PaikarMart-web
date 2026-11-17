@@ -2,7 +2,7 @@
 
 PaikarMart is organized as a **Feature-First Modular Monorepo** enforcing strict boundaries between **Root Configurations**, **Backend Domain Services**, **Shared Workspace Packages**, and **Frontend Features/Portals**. This architecture directly resolves the duplicate folders, route collisions, client-side DB bypasses, and cross-app import leaks identified in legacy ZIP prototypes (`PaikarMart-web-main`).
 
-> **Current target:** Hub-first composition. Route-level portal folders remain compatibility boundaries during migration, but new product/service experiences MUST be created under a hub and registered as a child portal.
+> **Current target:** Hub-first composition. Each hub owns one unified home/feed and its child-portal navigation. New commerce, service, social, creator, and logistics experiences MUST live under their owning hub; `portals/` is reserved for cross-hub account/workspace pages and legacy compatibility adapters.
 
 ---
 
@@ -74,18 +74,19 @@ PaikarMart is organized as a **Feature-First Modular Monorepo** enforcing strict
 │           │   ├── settings/           # Settings adapters & radar bindings
 │           │   └── wallet/             # useWalletStore, EscrowLedgerPanel, Wallet top-up/payout clients
 │           │
-│           └── portals/                # Isolated Route-Level Portal Views ONLY (1 Folder = 1 Canonical Route Group)
-│               ├── social-feed/        # `/` & `/portal/social` (StoriesTray, PostComposer, FeedPostCard)
-│               ├── explore/            # `/portal/explore`
-│               ├── marketplace/        # `/portal/marketplace` & `/product/:id` (ProductDetailsLanding)
-│               ├── wholesale-hub/      # `/portal/wholesale`
-│               ├── services-hub/       # `/portal/services` (Nearby Geofence + Service Booking)
-│               ├── transit-logistics/  # `/portal/transit` (4-Sub-Portal Hub: Ride, Courier, Cargo/Rental, Fleet Console)
+│           ├── hubs/                   # Business and discovery hub modules
+│           │   ├── shared/             # Hub navigation, feed cards, and hub contracts
+│           │   ├── social/             # Social feed, stories, composer, and social cards
+│           │   ├── marketplace/        # Mixed product feed, catalog portals, product details, wholesale child portal
+│           │   ├── services/           # Mixed service feed and local-service child portal
+│           │   ├── creator/            # Creator/content hub and paid/free content surfaces
+│           │   └── logistics/          # Ride, parcel, cargo/rental, fleet portal views and config
+│           └── portals/                # Cross-hub account/workspace pages + compatibility adapters
+│               ├── explore/            # `/portal/explore` (directory/search across hubs)
 │               ├── orders-hub/         # `/portal/orders` (Purchases, Sales, Live Tracking, GuestOrderTracker)
 │               ├── wallet/             # `/portal/wallet` & `WalletModal`
 │               ├── messages-hub/       # `/portal/messages`
 │               ├── seller-central/     # `/portal/seller` (KYC Onboarding, Inventory, Analytics, Dispatch)
-│               ├── creator-studio/     # `/portal/creator`
 │               ├── user-profile/       # `/portal/profile` & public `/store/:id`
 │               ├── notifications-center/ # `/portal/notifications` & `NotificationsModal`
 │               ├── settings-center/    # `/settings` & `SettingsModal`
@@ -102,20 +103,23 @@ PaikarMart is organized as a **Feature-First Modular Monorepo** enforcing strict
 ```text
 apps/frontend/src/
 ├── hubs/
-│   ├── marketplace-hub/
+│   ├── marketplace/
 │   │   ├── MarketplaceHub.tsx
+│   │   ├── pages/MarketplaceHubPage.tsx
+│   │   ├── pages/product-details/ProductDetailsPage.tsx
 │   │   ├── config/marketplacePortals.ts
-│   │   ├── components/MarketplacePortalBar.tsx
-│   │   └── portals/{retail,wholesale,grocery,pharmacy,brand-shops,digital}/
-│   ├── services-hub/
+│   │   └── portals/wholesale/{pages,components}/
+│   ├── services/
 │   │   ├── ServicesHub.tsx
 │   │   ├── config/servicePortals.ts
-│   │   ├── components/ServicesPortalBar.tsx
-│   │   └── portals/{local-services,food-delivery,travel,logistics}/
-│   └── shared/{hubTypes.ts,portalRegistry.ts,HubFeedCard.tsx}
+│   │   └── portals/local-services/{pages,components}/
+│   ├── social/{pages,components}/
+│   ├── creator/{pages,components}/
+│   ├── logistics/{pages,components,config}/
+│   └── shared/{hubTypes.ts,HubPortalNavigation.tsx,HubFeedCard.tsx}
 ├── features/                 # headless business logic and API clients
 ├── components/               # global shell and primitives
-└── portals/                  # route compatibility wrappers only during migration
+└── portals/                  # cross-hub pages and compatibility adapters
 ```
 
 Hub rules:
@@ -124,29 +128,31 @@ Hub rules:
 2. Child portals own only their home view, domain cards, filters, and actions; they do not create a second app shell or route tree.
 3. Portal definitions are data (`id`, `hubId`, labels, icon, component, feed types, enabled state, sort order), not scattered `if/else` navigation branches.
 4. Bottom Navigation opens hubs. Explore opens the full portal directory. Child portal buttons stay inside the current hub.
-5. Marketplace and Services use one polymorphic feed-card contract so product, service, demand, offer, provider, ride, and logistics cards can coexist safely.
+5. Marketplace and Services own their respective mixed feeds; shared visual primitives/contracts belong in `hubs/shared`, while business logic and API clients stay in `features/`.
+6. Child-portal selection stays inside its owning hub and is reflected in the query string (`?portal=...&category=...`) so direct links and browser back/forward restore the selected view.
+7. Social posts and creator content may be surfaced in multiple hubs, but must reference a single content entity rather than duplicating its underlying record/media.
 
 ## 3. Canonical Route Registry & Anti-Shadowing Rules
 
 To prevent the ZIP's route collision bug (where `AppRoutes.tsx` exported two competing routers and `portal.routes.tsx` shadowed `/portal/:portalId` multiple times):
 1. **Single Router Source of Truth:** All React Router routes MUST be defined cleanly inside `apps/frontend/src/App.tsx` (or one single route manifest imported by `App.tsx`). Never maintain two parallel route trees.
 2. **Exact Path Ownership:**
-   * `/` and `/portal/social` → `SocialPortal`
+   * `/` → redirect to `/hub/social`; `/hub/social` → `SocialPortal`; `/portal/social` is a compatibility redirect
    * `/portal/explore` → `ExplorePortal`
-   * `/portal/marketplace` and `/product/:id` → `MarketplacePortal` / `ProductDetailsLanding`
-   * `/portal/wholesale` → `WholesalePortal`
-   * `/portal/services` → `ServicesPortal`
-   * `/portal/transit` → `TransitPortal` (with internal sub-tabs: `ride`, `courier`, `cargo`, `fleet`)
+   * `/hub/marketplace` → one Marketplace Hub feed; `?portal=wholesale` selects the B2B child-home; `/hub/marketplace/product/:id` → product detail
+   * `/portal/marketplace` and `/portal/wholesale` → compatibility redirects into Marketplace Hub
+   * `/hub/services` → one mixed Services Hub feed; child portal/category selection stays in the same hub; `/portal/services` redirects
+   * `/hub/logistics` → Logistics Hub (internal portal IDs: `ride`, `courier`, `cargo`, `fleet`); `/portal/transit` redirects
    * `/portal/orders` and `/orders/track/:id` → `OrdersPortal` (`GuestOrderTracker` when unauthenticated)
    * `/portal/wallet` → `WalletPortal`
    * `/portal/messages` → `MessagesPortal` / `MessagingCenterModal`
    * `/portal/seller` → `SellerCentralPortal` (**MUST enforce Auth + Approved Vendor/Admin role guard**)
-   * `/portal/creator` → `CreatorPortal`
+   * `/hub/creator` → `CreatorPortal`; `/portal/creator` redirects
    * `/portal/profile` and `/store/:slug` → `ProfilePortal` (Private Buyer Cockpit when `isMe`, Dynamic Public Storefront when viewing a vendor)
    * `/portal/notifications` → `NotificationsPortal`
    * `/portal/guide` → `UserGuidePortal`
    * `/settings` → `UnifiedSettingsPortal`
-   * `*` → Safe `<Navigate to="/portal/social" replace />` or dedicated `NotFound` page inside the shell.
+   * `*` → Safe `<Navigate to="/hub/social" replace />` or dedicated `NotFound` page inside the shell.
 
 ---
 

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { PortalTab, User } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { HUB_PILLARS, SUPER_PORTALS, HubPillarId, SuperPortalEntry } from '@/data/portalsData';
+import { HUB_PILLARS, PORTAL_DIRECTORY_GROUPS, WORKSPACE_TOOLS_PILLAR, SUPER_PORTALS, HubPillarId, SuperPortalEntry } from '@/data/portalsData';
 
 interface ExplorePortalProps {
   onSelectTab: (tab: PortalTab) => void;
@@ -62,8 +62,8 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
   };
 
   const pillarsToRender = useMemo(() => {
-    if (selectedPillar === 'all') return HUB_PILLARS;
-    return HUB_PILLARS.filter((h) => h.id === selectedPillar);
+    if (selectedPillar === 'all') return PORTAL_DIRECTORY_GROUPS;
+    return PORTAL_DIRECTORY_GROUPS.filter((hub) => hub.id === selectedPillar);
   }, [selectedPillar]);
 
   return (
@@ -75,15 +75,15 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
             <div className="space-y-1.5 sm:space-y-2">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-bold tracking-wider uppercase">
                 <Compass className="w-3.5 h-3.5" />
-                <span>{isBn ? '৪-পিলার সুপার হাব (২৮+ পোর্টাল)' : '4-Pillar Super App Hub (28+ Portals)'}</span>
+                <span>{isBn ? `৫টি বিজনেস হাব · ${SUPER_PORTALS.length}+ পোর্টাল` : `5 Business Hubs · ${SUPER_PORTALS.length}+ Portals`}</span>
               </div>
               <h1 className="text-xl sm:text-3xl font-black tracking-tight">
                 {isBn ? 'পাইকারমার্ট সুপার অ্যাপ কমান্ড সেন্টার' : 'PaikarMart Super App Command Center'}
               </h1>
               <p className="text-xs sm:text-sm text-[var(--pm-muted)] font-medium max-w-xl line-clamp-2">
                 {isBn
-                  ? 'কমার্স, পাইকারি মোকাম, লোকাল সার্ভিস, রাইড শেয়ার, কমিউনিটি এবং ওয়ালেট — এক গ্রিড থেকে সব নিয়ন্ত্রণ করুন।'
-                  : 'Navigate retail, factory wholesale, hyperlocal services, logistics, community feeds, and utility tools in one place.'}
+                  ? 'মার্কেটপ্লেস, সার্ভিস, ক্রিয়েটর, সোশ্যাল ও লজিস্টিকস—প্রতিটি হাব থেকে তার নিজস্ব পোর্টালে যান।'
+                  : 'Open Marketplace, Services, Creator, Social, and Logistics hubs; account tools remain in their own workspace.'}
               </p>
             </div>
 
@@ -96,7 +96,7 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] text-blue-200 uppercase font-black">
-                  {isBn ? 'পিলার' : 'Pillars'}
+                  {isBn ? 'বিজনেস হাব' : 'Business Hubs'}
                 </span>
                 <span className="text-lg font-mono font-bold">{HUB_PILLARS.length}</span>
               </div>
@@ -137,7 +137,7 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
           </section>
         )}
 
-        {/* Toolbar: Portal Search & 4-Pillar Tabs */}
+        {/* Toolbar: portal search, five business hubs, and separate workspace tools */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--pm-muted)]" />
@@ -147,8 +147,8 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={
                 isBn
-                  ? '২৮+ পোর্টাল খুঁজুন (যেমন: ফার্মেসি, হোলসেল, রাইড, ফুড)...'
-                  : 'Search 28+ portals (e.g. Pharmacy, Wholesale, Rides, Food)...'
+                  ? `${SUPER_PORTALS.length}+ পোর্টাল খুঁজুন (যেমন: ফার্মেসি, হোলসেল, রাইড, ফুড)...`
+                  : `Search ${SUPER_PORTALS.length}+ portals (e.g. Pharmacy, Wholesale, Rides, Food)...`
               }
                     className="w-full pl-10 pr-4 py-2.5 bg-[var(--pm-card)] border border-[var(--pm-border)] rounded-xl text-sm text-[var(--pm-text)] placeholder:text-[var(--pm-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--pm-accent)]/50 shadow-xs"
             />
@@ -165,7 +165,7 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
               }`}
             >
               <Grid className="w-3.5 h-3.5" />
-              <span>{isBn ? 'সব পিলার (৪)' : 'All Pillars (4)'}</span>
+              <span>{isBn ? 'সব হাব (৫)' : 'All Hubs (5)'}</span>
             </button>
             {HUB_PILLARS.map((hub) => {
               const Icon = hub.icon;
@@ -186,10 +186,25 @@ export const ExplorePortal: React.FC<ExplorePortalProps> = ({
                 </button>
               );
             })}
+            {(() => {
+              const Icon = WORKSPACE_TOOLS_PILLAR.icon;
+              const isSelected = selectedPillar === WORKSPACE_TOOLS_PILLAR.id;
+              return (
+                <button
+                  key={WORKSPACE_TOOLS_PILLAR.id}
+                  type="button"
+                  onClick={() => setSelectedPillar(WORKSPACE_TOOLS_PILLAR.id)}
+                  className={`px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border cursor-pointer flex items-center gap-1.5 ${isSelected ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] border-transparent shadow-sm' : 'bg-[var(--pm-card)] text-[var(--pm-muted)] border-[var(--pm-border)] hover:text-[var(--pm-text)]'}`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{isBn ? WORKSPACE_TOOLS_PILLAR.nameBn : WORKSPACE_TOOLS_PILLAR.nameEn}</span>
+                </button>
+              );
+            })()}
           </div>
         </div>
 
-        {/* 4-Pillar Grouped Hub Grid (28+ Portals) */}
+        {/* Five business hubs plus a separate account/workspace tools group. */}
         {filteredPortals.length > 0 ? (
           <div className="space-y-4 sm:space-y-6">
             {pillarsToRender.map((pillar) => {

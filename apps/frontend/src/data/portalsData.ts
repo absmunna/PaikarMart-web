@@ -43,9 +43,11 @@ import {
 import type { PortalTab } from '@/types';
 
 export type HubPillarId =
-  | 'commerce-hub'
-  | 'services-logistics-hub'
-  | 'community-content-hub'
+  | 'marketplace-hub'
+  | 'services-hub'
+  | 'creator-hub'
+  | 'social-hub'
+  | 'logistics-hub'
   | 'utility-pro-hub';
 
 export interface PortalHubPillar {
@@ -73,48 +75,72 @@ export interface SuperPortalEntry {
 
 export const HUB_PILLARS: PortalHubPillar[] = [
   {
-    id: 'commerce-hub',
-    nameEn: 'Commerce',
-    nameBn: 'কমার্স ও শপিং',
-    descriptionEn: 'Everything to buy or sell — Retail (B2C) & Wholesale (B2B)',
-    descriptionBn: 'কেনা-বেচার সবকিছু — রিটেইল ও পাইকারি মোকাম',
+    id: 'marketplace-hub',
+    nameEn: 'Marketplace Hub',
+    nameBn: 'মার্কেটপ্লেস হাব',
+    descriptionEn: 'Retail, wholesale, stores, grocery, pharmacy, resale and buyer demand',
+    descriptionBn: 'রিটেইল, পাইকারি, দোকান, গ্রোসারি, ফার্মেসি, ব্যবহৃত পণ্য ও ক্রেতার চাহিদা',
     color: 'from-blue-600 to-indigo-700',
     icon: ShoppingBag,
   },
   {
-    id: 'services-logistics-hub',
-    nameEn: 'Services & Logistics',
-    nameBn: 'সেবা ও লজিস্টিকস',
-    descriptionEn: 'On-demand repairs, rides, food & instant parcel transit',
-    descriptionBn: 'অন-ডিমান্ড সার্ভিস, রাইড, ফুড ও কুরিয়ার',
-    color: 'from-amber-500 to-orange-600',
+    id: 'services-hub',
+    nameEn: 'Services Hub',
+    nameBn: 'সার্ভিস হাব',
+    descriptionEn: 'Physical and digital providers, bookings, food, travel and service requests',
+    descriptionBn: 'ফিজিক্যাল ও ডিজিটাল প্রোভাইডার, বুকিং, খাবার, ভ্রমণ ও সার্ভিস রিকোয়েস্ট',
+    color: 'from-violet-600 to-purple-700',
     icon: Wrench,
   },
   {
-    id: 'community-content-hub',
-    nameEn: 'Community & Feed',
-    nameBn: 'কমিউনিটি ও ফিড',
-    descriptionEn: 'Social commerce feed, buyer demands, shorts & live deals',
-    descriptionBn: 'সোশ্যাল ফিড, ডিমান্ড বোর্ড, রিলস ও লাইভ',
-    color: 'from-purple-600 to-pink-600',
+    id: 'creator-hub',
+    nameEn: 'Creator Hub',
+    nameBn: 'ক্রিয়েটর হাব',
+    descriptionEn: 'Free, ad-supported and paid creator content with video unlocks',
+    descriptionBn: 'ফ্রি, বিজ্ঞাপন-সমর্থিত ও পেইড ক্রিয়েটর কনটেন্ট এবং ভিডিও আনলক',
+    color: 'from-fuchsia-600 to-pink-700',
+    icon: Video,
+  },
+  {
+    id: 'social-hub',
+    nameEn: 'Social Hub',
+    nameBn: 'সোশ্যাল হাব',
+    descriptionEn: 'Follow people and businesses; discover posts and shoppable content',
+    descriptionBn: 'মানুষ ও ব্যবসা ফলো করুন; পোস্ট ও কেনাকাটাযোগ্য কনটেন্ট দেখুন',
+    color: 'from-purple-600 to-indigo-700',
     icon: PlayCircle,
   },
   {
-    id: 'utility-pro-hub',
-    nameEn: 'Utility & Tools',
-    nameBn: 'ইউটিলিটি ও টুলস',
-    descriptionEn: 'Escrow wallet, merchant portal, healthcare, agro & bookings',
-    descriptionBn: 'ওয়ালেট, মার্চেন্ট সেন্টার, হেলথ ও অন্যান্য সেবা',
-    color: 'from-emerald-600 to-teal-700',
-    icon: Layout,
+    id: 'logistics-hub',
+    nameEn: 'Logistics Hub',
+    nameBn: 'লজিস্টিকস হাব',
+    descriptionEn: 'Ride, parcel, transport, rental, emergency and fleet services',
+    descriptionBn: 'রাইড, পার্সেল, ট্রান্সপোর্ট, রেন্টাল, জরুরি সহায়তা ও ফ্লিট',
+    color: 'from-amber-500 to-orange-600',
+    icon: Truck,
   },
 ];
 
+export const WORKSPACE_TOOLS_PILLAR: PortalHubPillar = {
+  id: 'utility-pro-hub',
+  nameEn: 'Workspace Tools',
+  nameBn: 'অ্যাকাউন্ট ও ওয়ার্কস্পেস টুলস',
+  descriptionEn: 'Orders, wallet, seller workspace, guides and settings',
+  descriptionBn: 'অর্ডার, ওয়ালেট, সেলার ওয়ার্কস্পেস, গাইড ও সেটিংস',
+  color: 'from-emerald-600 to-teal-700',
+  icon: Layout,
+};
+
+export const PORTAL_DIRECTORY_GROUPS: PortalHubPillar[] = [
+  ...HUB_PILLARS,
+  WORKSPACE_TOOLS_PILLAR,
+];
+
 export const SUPER_PORTALS: SuperPortalEntry[] = [
-  // --- 1. COMMERCE HUB (9 portals) ---
+  // Marketplace, retail and wholesale portal entries.
   {
     id: 'pk-shop',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'PK Verified Store',
     nameBn: 'পিকে স্টোর',
     realWorldModel: 'Verified Mall',
@@ -126,7 +152,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'marketplace',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Retail Marketplace',
     nameBn: 'মার্কেটপ্লেস (B2C)',
     realWorldModel: 'Daraz / Retail',
@@ -137,7 +163,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'wholesale-main',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Wholesale Market',
     nameBn: 'হোলসেল মার্কেট',
     realWorldModel: 'Chawkbazar B2B',
@@ -148,7 +174,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'b2b',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'B2B Bulk Trade',
     nameBn: 'পাইকার ট্রেড',
     realWorldModel: 'Alibaba / MOQ',
@@ -158,7 +184,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'factory',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Factory Direct',
     nameBn: 'ফ্যাক্টরি ডাইরেক্ট',
     realWorldModel: 'Direct Mill',
@@ -169,7 +195,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'fashion',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Fashion & Textile',
     nameBn: 'ফ্যাশন ও পোশাক',
     realWorldModel: 'Islampur / Garments',
@@ -180,7 +206,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'brand-shops',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Brand Shops',
     nameBn: 'ব্র্যান্ড শপ',
     realWorldModel: 'Official Flagship',
@@ -191,7 +217,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'export',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Export & Import',
     nameBn: 'এক্সপোর্ট হাব',
     realWorldModel: 'Global Sourcing',
@@ -201,7 +227,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'digital',
-    hubId: 'commerce-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Digital Goods',
     nameBn: 'ডিজিটাল পণ্য',
     realWorldModel: 'Tech & Gadgets',
@@ -211,10 +237,10 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
     icon: Monitor,
   },
 
-  // --- 2. SERVICES & LOGISTICS HUB (9 portals) ---
+  // Local discovery, service and logistics channels, assigned individually by hub.
   {
     id: 'nearby',
-    hubId: 'services-logistics-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Nearby Radar Shops',
     nameBn: 'লোকাল শপ রাডার',
     realWorldModel: 'Hyperlocal GPS',
@@ -226,7 +252,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'food',
-    hubId: 'services-logistics-hub',
+    hubId: 'services-hub',
     nameEn: 'Food Delivery',
     nameBn: 'ফুড ডেলিভারি',
     realWorldModel: 'Kitchens & Cafes',
@@ -237,7 +263,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'grocery',
-    hubId: 'services-logistics-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Daily Grocery',
     nameBn: 'নিত্যপণ্য ও গ্রোসারি',
     realWorldModel: 'Chaldal / Bazar',
@@ -249,7 +275,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'pharmacy',
-    hubId: 'services-logistics-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Pharmacy & Rx',
     nameBn: 'ফার্মেসি ও ওষুধ',
     realWorldModel: '24/7 Healthcare',
@@ -260,7 +286,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'services',
-    hubId: 'services-logistics-hub',
+    hubId: 'services-hub',
     nameEn: 'Expert Services',
     nameBn: 'লোকাল সার্ভিসেস',
     realWorldModel: 'Sheba.xyz',
@@ -271,7 +297,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'ride',
-    hubId: 'services-logistics-hub',
+    hubId: 'logistics-hub',
     nameEn: 'Ride Share',
     nameBn: 'রাইড শেয়ার',
     realWorldModel: 'Pathao / Bike & Car',
@@ -282,7 +308,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'logistics',
-    hubId: 'services-logistics-hub',
+    hubId: 'logistics-hub',
     nameEn: 'Parcel & Courier',
     nameBn: 'পার্সেল ও কুরিয়ার',
     realWorldModel: 'Cargo & Tracking',
@@ -292,7 +318,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'transport',
-    hubId: 'services-logistics-hub',
+    hubId: 'logistics-hub',
     nameEn: 'Intercity Transit',
     nameBn: 'ইন্টারসিটি ট্রান্সপোর্ট',
     realWorldModel: 'Pickup & Vans',
@@ -302,7 +328,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'emergency',
-    hubId: 'services-logistics-hub',
+    hubId: 'logistics-hub',
     nameEn: 'Urgent Dispatch',
     nameBn: 'জরুরি সহায়তা',
     realWorldModel: 'Same-Day Express',
@@ -311,10 +337,10 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
     icon: AlertTriangle,
   },
 
-  // --- 3. COMMUNITY & CONTENT HUB (7 portals) ---
+  // Social and creator channel entries.
   {
     id: 'feed',
-    hubId: 'community-content-hub',
+    hubId: 'social-hub',
     nameEn: 'Social Feed',
     nameBn: 'সোশ্যাল ফিড',
     realWorldModel: 'Community Stream',
@@ -325,7 +351,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'demand',
-    hubId: 'community-content-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Demand Board (RFQ)',
     nameBn: 'ডিমান্ড বোর্ড',
     realWorldModel: 'Buyer Requests',
@@ -336,7 +362,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'reels',
-    hubId: 'community-content-hub',
+    hubId: 'creator-hub',
     nameEn: 'Creator Shorts',
     nameBn: 'শর্টস ও রিলস',
     realWorldModel: 'Creator Studio',
@@ -346,7 +372,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'video',
-    hubId: 'community-content-hub',
+    hubId: 'creator-hub',
     nameEn: 'Video OTT Hub',
     nameBn: 'ভিডিও লাইব্রেরি',
     realWorldModel: 'Creator OTT',
@@ -356,7 +382,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'offer',
-    hubId: 'community-content-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Voucher & Deals',
     nameBn: 'অফার ও ভাউচার',
     realWorldModel: 'Promo Discounts',
@@ -366,7 +392,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'live',
-    hubId: 'community-content-hub',
+    hubId: 'creator-hub',
     nameEn: 'Live Commerce',
     nameBn: 'লাইভ শপিং',
     realWorldModel: 'Live Streams',
@@ -376,7 +402,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'messages',
-    hubId: 'community-content-hub',
+    hubId: 'social-hub',
     nameEn: 'B2B Chat & Quotes',
     nameBn: 'মেসেজ ও কোটেশন',
     realWorldModel: 'Direct Seller Chat',
@@ -385,7 +411,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
     icon: Store,
   },
 
-  // --- 4. UTILITY & TOOLS HUB (9 portals) ---
+  // Account/workspace tools and additional marketplace/service channels.
   {
     id: 'finance',
     hubId: 'utility-pro-hub',
@@ -419,7 +445,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'healthcare',
-    hubId: 'utility-pro-hub',
+    hubId: 'services-hub',
     nameEn: 'Healthcare & Care',
     nameBn: 'হেলথকেয়ার',
     realWorldModel: 'Medical Services',
@@ -439,7 +465,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'dropship',
-    hubId: 'utility-pro-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Dropship Supply',
     nameBn: 'ড্রপশিপিং হাব',
     realWorldModel: 'Reseller Network',
@@ -450,7 +476,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'jobs',
-    hubId: 'utility-pro-hub',
+    hubId: 'services-hub',
     nameEn: 'Technician & Gigs',
     nameBn: 'সার্ভিস ও গিগস',
     realWorldModel: 'Verified Pros',
@@ -460,7 +486,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'agriculture',
-    hubId: 'utility-pro-hub',
+    hubId: 'marketplace-hub',
     nameEn: 'Agro & Harvest',
     nameBn: 'কৃষি ও মোকাম',
     realWorldModel: 'Farm Direct Bulk',
@@ -470,7 +496,7 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
   },
   {
     id: 'hotel',
-    hubId: 'utility-pro-hub',
+    hubId: 'services-hub',
     nameEn: 'Stays & Venues',
     nameBn: 'হোটেল ও বুকিং',
     realWorldModel: 'Local Stays',
@@ -489,364 +515,3 @@ export const SUPER_PORTALS: SuperPortalEntry[] = [
     icon: Wifi,
   },
 ];
-
-// 3-Tier Category Bar Data
-export type CategoryPillarScope =
-  | 'all'
-  | 'commerce-hub'
-  | 'wholesale-hub'
-  | 'services-logistics-hub'
-  | 'services-hub'
-  | 'community-content-hub';
-
-export interface SubCategoryChip {
-  id: string;
-  labelEn: string;
-  labelBn: string;
-  filterKey: string;
-}
-
-export interface MainCategoryTile {
-  id: string;
-  labelEn: string;
-  labelBn: string;
-  icon: React.ComponentType<{ className?: string }>;
-  tintClass: string;
-  portalFilter?: 'all' | 'retail' | 'wholesale' | 'nearby' | 'services' | 'demand' | 'used';
-  searchFilter?: string;
-  subcategories?: SubCategoryChip[];
-}
-
-export const CATEGORY_BAR_DATA: Record<CategoryPillarScope, MainCategoryTile[]> = {
-  all: [
-    {
-      id: 'all-discovery',
-      labelEn: 'All Feed',
-      labelBn: 'সব ফিড',
-      icon: ShoppingBag,
-      tintClass: 'from-blue-500/20 to-indigo-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30',
-      portalFilter: 'all',
-    },
-    {
-      id: 'retail-b2c',
-      labelEn: 'Retail (B2C)',
-      labelBn: 'রিটেইল শপিং',
-      icon: Store,
-      tintClass: 'from-sky-500/20 to-blue-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30',
-      portalFilter: 'retail',
-      subcategories: [
-        { id: 'brand', labelEn: 'Brand Shops', labelBn: 'ব্র্যান্ড শপ', filterKey: 'brand' },
-        { id: 'homemade', labelEn: 'Homemade', labelBn: 'হোম মেইড', filterKey: 'homemade' },
-        { id: 'online', labelEn: 'Online Boutique', labelBn: 'অনলাইন বুটিক', filterKey: 'online' },
-        { id: 'dropshipping', labelEn: 'Dropshipping', labelBn: 'ড্রপশিপিং', filterKey: 'dropshipping' },
-      ],
-    },
-    {
-      id: 'wholesale-b2b',
-      labelEn: 'Wholesale',
-      labelBn: 'পাইকারি মোকাম',
-      icon: Boxes,
-      tintClass: 'from-amber-500/20 to-orange-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
-      portalFilter: 'wholesale',
-      subcategories: [
-        { id: 'factory', labelEn: 'Factory Direct', labelBn: 'ফ্যাক্টরি ডাইরেক্ট', filterKey: 'factory' },
-        { id: 'importer', labelEn: 'Importers', labelBn: 'ইম্পোর্টার', filterKey: 'importer' },
-        { id: 'exporter', labelEn: 'Exporters', labelBn: 'এক্সপোর্টার', filterKey: 'exporter' },
-        { id: 'dealer', labelEn: 'Dealers', labelBn: 'ডিলার ও এজেন্ট', filterKey: 'dealer' },
-      ],
-    },
-    {
-      id: 'fashion',
-      labelEn: 'Fashion',
-      labelBn: 'ফ্যাশন ও বস্ত্র',
-      icon: Shirt,
-      tintClass: 'from-pink-500/20 to-rose-500/15 text-pink-600 dark:text-pink-400 border-pink-500/30',
-      portalFilter: 'all',
-      searchFilter: 'fashion',
-      subcategories: [
-        { id: 'f-all', labelEn: 'All Apparel', labelBn: 'সকল পোশাক', filterKey: 'fashion' },
-        { id: 'panjabi', labelEn: 'Jamidari / Saree', labelBn: 'শাড়ি ও জামদানি', filterKey: 'Saree' },
-        { id: 'cotton', labelEn: 'Cotton Lots', labelBn: 'সুতি কাপড়', filterKey: 'Cotton' },
-      ],
-    },
-    {
-      id: 'electronics',
-      labelEn: 'Electronics',
-      labelBn: 'ইলেকট্রনিক্স',
-      icon: Smartphone,
-      tintClass: 'from-cyan-500/20 to-blue-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/30',
-      portalFilter: 'all',
-      searchFilter: 'electronics',
-      subcategories: [
-        { id: 'e-all', labelEn: 'All Tech', labelBn: 'সব গ্যাজেট', filterKey: 'electronics' },
-        { id: 'used-phone', labelEn: 'Used Phones', labelBn: 'ইউজড ফোন', filterKey: 'iPhone' },
-      ],
-    },
-    {
-      id: 'nearby-gps',
-      labelEn: 'Nearby Radar',
-      labelBn: 'নিকটস্থ দোকান',
-      icon: MapPin,
-      tintClass: 'from-emerald-500/20 to-teal-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
-      portalFilter: 'nearby',
-      subcategories: [
-        { id: '0.5km', labelEn: 'Within 500m', labelBn: '৫০০ মিটার', filterKey: '0.5km' },
-        { id: '2km', labelEn: 'Within 2km', labelBn: '২ কিমি', filterKey: '2km' },
-        { id: 'express', labelEn: '30m Express', labelBn: '৩০ মি. ডেলিভারি', filterKey: 'express' },
-      ],
-    },
-    {
-      id: 'pharmacy-health',
-      labelEn: 'Pharmacy',
-      labelBn: 'ফার্মেসি',
-      icon: Pill,
-      tintClass: 'from-teal-500/20 to-emerald-500/15 text-teal-600 dark:text-teal-400 border-teal-500/30',
-      portalFilter: 'retail',
-      searchFilter: 'pharmacy',
-    },
-    {
-      id: 'demand-rfq',
-      labelEn: 'Demand Board',
-      labelBn: 'ডিমান্ড (RFQ)',
-      icon: Layers,
-      tintClass: 'from-orange-500/20 to-amber-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
-      portalFilter: 'demand',
-    },
-  ],
-  'commerce-hub': [
-    {
-      id: 'c-retail-home',
-      labelEn: 'Retail Marketplace',
-      labelBn: 'রিটেইল মার্কেট',
-      icon: ShoppingBag,
-      tintClass: 'from-blue-500/20 to-indigo-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30',
-      portalFilter: 'retail',
-      subcategories: [
-        { id: 'retail-all', labelEn: 'All Products', labelBn: 'সব পণ্য', filterKey: 'all' },
-        { id: 'retail-fashion', labelEn: 'Fashion', labelBn: 'ফ্যাশন', filterKey: 'fashion' },
-        { id: 'retail-electronics', labelEn: 'Electronics', labelBn: 'ইলেকট্রনিক্স', filterKey: 'electronics' },
-        { id: 'retail-home', labelEn: 'Home & Living', labelBn: 'হোম ও লিভিং', filterKey: 'home' },
-      ],
-    },
-    {
-      id: 'c-wholesale-home',
-      labelEn: 'Wholesale / B2B',
-      labelBn: 'হোলসেল / B2B',
-      icon: Boxes,
-      tintClass: 'from-amber-500/20 to-orange-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
-      portalFilter: 'wholesale',
-      subcategories: [
-        { id: 'wholesale-all', labelEn: 'All Bulk Lots', labelBn: 'সব হোলসেল লট', filterKey: 'all' },
-        { id: 'wholesale-factory', labelEn: 'Factory Direct', labelBn: 'সরাসরি ফ্যাক্টরি', filterKey: 'factory' },
-        { id: 'wholesale-importer', labelEn: 'Importers', labelBn: 'ইম্পোর্টার', filterKey: 'importer' },
-        { id: 'wholesale-exporter', labelEn: 'Exporters', labelBn: 'এক্সপোর্টার', filterKey: 'exporter' },
-      ],
-    },
-    {
-      id: 'c-grocery-home',
-      labelEn: 'Grocery Market',
-      labelBn: 'গ্রোসারি মার্কেট',
-      icon: Egg,
-      tintClass: 'from-green-500/20 to-emerald-500/15 text-green-600 dark:text-green-400 border-green-500/30',
-      portalFilter: 'retail',
-      searchFilter: 'grocery',
-      subcategories: [
-        { id: 'grocery-all', labelEn: 'All Grocery', labelBn: 'সব গ্রোসারি', filterKey: 'grocery' },
-        { id: 'grocery-grains', labelEn: 'Rice & Grains', labelBn: 'চাল ও শস্য', filterKey: 'rice' },
-        { id: 'grocery-produce', labelEn: 'Fresh Produce', labelBn: 'ফ্রেশ পণ্য', filterKey: 'fresh' },
-        { id: 'grocery-oil', labelEn: 'Oil & Spices', labelBn: 'তেল ও মসলা', filterKey: 'oil' },
-      ],
-    },
-    {
-      id: 'c-pharmacy-home',
-      labelEn: 'Pharmacy & Rx',
-      labelBn: 'ফার্মেসি ও Rx',
-      icon: Pill,
-      tintClass: 'from-teal-500/20 to-cyan-500/15 text-teal-600 dark:text-teal-400 border-teal-500/30',
-      portalFilter: 'retail',
-      searchFilter: 'pharmacy',
-      subcategories: [
-        { id: 'pharmacy-all', labelEn: 'All Pharmacy', labelBn: 'সব ফার্মেসি', filterKey: 'pharmacy' },
-        { id: 'pharmacy-medicine', labelEn: 'Medicines', labelBn: 'ওষুধ', filterKey: 'medicine' },
-        { id: 'pharmacy-first-aid', labelEn: 'First Aid', labelBn: 'ফার্স্ট এইড', filterKey: 'first aid' },
-        { id: 'pharmacy-care', labelEn: 'Personal Care', labelBn: 'পার্সোনাল কেয়ার', filterKey: 'care' },
-      ],
-    },
-    {
-      id: 'c-brand-shops-home',
-      labelEn: 'Brand Shops',
-      labelBn: 'ব্র্যান্ড শপ',
-      icon: Award,
-      tintClass: 'from-amber-500/20 to-red-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
-      portalFilter: 'retail',
-      searchFilter: 'brand',
-      subcategories: [
-        { id: 'brand-all', labelEn: 'All Brands', labelBn: 'সব ব্র্যান্ড', filterKey: 'brand' },
-        { id: 'brand-samsung', labelEn: 'Samsung', labelBn: 'স্যামসাং', filterKey: 'Samsung' },
-        { id: 'brand-apple', labelEn: 'Apple', labelBn: 'অ্যাপল', filterKey: 'Apple' },
-        { id: 'brand-vision', labelEn: 'Vision', labelBn: 'ভিশন', filterKey: 'Vision' },
-      ],
-    },
-    {
-      id: 'c-digital-home',
-      labelEn: 'Digital Goods',
-      labelBn: 'ডিজিটাল পণ্য',
-      icon: Monitor,
-      tintClass: 'from-cyan-500/20 to-blue-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/30',
-      portalFilter: 'retail',
-      searchFilter: 'electronics',
-      subcategories: [
-        { id: 'digital-all', labelEn: 'All Digital Goods', labelBn: 'সব ডিজিটাল পণ্য', filterKey: 'electronics' },
-        { id: 'digital-mobile', labelEn: 'Mobile & Tablets', labelBn: 'মোবাইল ও ট্যাব', filterKey: 'mobile' },
-        { id: 'digital-computer', labelEn: 'Computers', labelBn: 'কম্পিউটার', filterKey: 'computer' },
-        { id: 'digital-accessories', labelEn: 'Accessories', labelBn: 'অ্যাক্সেসরিজ', filterKey: 'accessories' },
-      ],
-    },
-  ],
-  'wholesale-hub': [
-    {
-      id: 'w-factory',
-      labelEn: 'Factory Direct',
-      labelBn: 'সরাসরি ফ্যাক্টরি',
-      icon: Landmark,
-      tintClass: 'from-amber-500/20 to-orange-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
-      portalFilter: 'wholesale',
-      searchFilter: 'factory',
-    },
-    {
-      id: 'w-lots',
-      labelEn: 'Bulk MOQ Lots',
-      labelBn: 'হোলসেল লট',
-      icon: Boxes,
-      tintClass: 'from-blue-500/20 to-indigo-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30',
-      portalFilter: 'wholesale',
-    },
-    {
-      id: 'w-demand',
-      labelEn: 'Buyer RFQs',
-      labelBn: 'ক্রেতার ডিমান্ড',
-      icon: ClipboardList,
-      tintClass: 'from-orange-500/20 to-red-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
-      portalFilter: 'demand',
-    },
-  ],
-  'services-logistics-hub': [
-    {
-      id: 's-ride-home',
-      labelEn: 'Ride Home',
-      labelBn: 'রাইড হোম',
-      icon: Car,
-      tintClass: 'from-yellow-500/20 to-amber-500/15 text-yellow-600 dark:text-amber-400 border-yellow-500/30',
-    },
-    {
-      id: 's-transport-home',
-      labelEn: 'Transport Home',
-      labelBn: 'ট্রান্সপোর্ট',
-      icon: Bus,
-      tintClass: 'from-sky-500/20 to-blue-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30',
-    },
-    {
-      id: 's-rent-home',
-      labelEn: 'Rent Home',
-      labelBn: 'রেন্ট ও কার্গো',
-      icon: Truck,
-      tintClass: 'from-orange-500/20 to-red-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
-    },
-    {
-      id: 's-emergency-home',
-      labelEn: 'Emergency Home',
-      labelBn: 'জরুরি সহায়তা',
-      icon: AlertTriangle,
-      tintClass: 'from-red-500/20 to-rose-500/15 text-red-600 dark:text-red-400 border-red-500/30',
-    },
-  ],
-  'services-hub': [
-    {
-      id: 'service-nearby-home',
-      labelEn: 'Nearby Services',
-      labelBn: 'কাছাকাছি সেবা',
-      icon: MapPin,
-      tintClass: 'from-emerald-500/20 to-teal-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
-      portalFilter: 'nearby',
-    },
-    {
-      id: 'service-pro-home',
-      labelEn: 'Pro Services',
-      labelBn: 'প্রো সার্ভিস',
-      icon: Wrench,
-      tintClass: 'from-purple-500/20 to-violet-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
-      portalFilter: 'services',
-    },
-    {
-      id: 'service-food-home',
-      labelEn: 'Food Delivery',
-      labelBn: 'ফুড ডেলিভারি',
-      icon: Utensils,
-      tintClass: 'from-rose-500/20 to-red-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30',
-      portalFilter: 'services',
-      searchFilter: 'food',
-    },
-    {
-      id: 'service-travel-home',
-      labelEn: 'Travel & Stays',
-      labelBn: 'ট্রাভেল ও স্টে',
-      icon: Hotel,
-      tintClass: 'from-indigo-500/20 to-blue-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30',
-      portalFilter: 'services',
-      searchFilter: 'travel',
-    },
-    {
-      id: 'service-ride-home',
-      labelEn: 'Ride Home',
-      labelBn: 'রাইড হোম',
-      icon: Car,
-      tintClass: 'from-yellow-500/20 to-amber-500/15 text-yellow-600 dark:text-amber-400 border-yellow-500/30',
-    },
-    {
-      id: 'service-transport-home',
-      labelEn: 'Transport Home',
-      labelBn: 'ট্রান্সপোর্ট',
-      icon: Bus,
-      tintClass: 'from-sky-500/20 to-blue-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30',
-    },
-    {
-      id: 'service-rent-home',
-      labelEn: 'Rent & Cargo',
-      labelBn: 'রেন্ট ও কার্গো',
-      icon: Truck,
-      tintClass: 'from-orange-500/20 to-red-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
-    },
-    {
-      id: 'service-emergency-home',
-      labelEn: 'Emergency Home',
-      labelBn: 'জরুরি সহায়তা',
-      icon: AlertTriangle,
-      tintClass: 'from-red-500/20 to-rose-500/15 text-red-600 dark:text-red-400 border-red-500/30',
-    },
-  ],
-  'community-content-hub': [
-    {
-      id: 'm-used',
-      labelEn: 'Used P2P Market',
-      labelBn: 'ইউজড মার্কেট',
-      icon: Tag,
-      tintClass: 'from-teal-500/20 to-cyan-500/15 text-teal-600 dark:text-teal-400 border-teal-500/30',
-      portalFilter: 'used',
-    },
-    {
-      id: 'm-demand',
-      labelEn: 'Demand Requests',
-      labelBn: 'কেনার রিকোয়েস্ট',
-      icon: Users,
-      tintClass: 'from-amber-500/20 to-orange-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
-      portalFilter: 'demand',
-    },
-    {
-      id: 'm-creator',
-      labelEn: 'Creator OTT',
-      labelBn: 'ক্রিয়েটর হাব',
-      icon: Zap,
-      tintClass: 'from-pink-500/20 to-rose-500/15 text-pink-600 dark:text-pink-400 border-pink-500/30',
-    },
-  ],
-};

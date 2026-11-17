@@ -23,9 +23,9 @@ import {
 } from 'lucide-react';
 import { CommerceItem, ReactionType, ServiceBooking, SocialPost, User } from '@/types';
 import { vendorApiClient } from '@/features/vendors';
-import { FeedPostCard } from '@/portals/social-feed/components/FeedPostCard';
-import { ServiceCard } from '@/portals/services-hub/components/ServiceCard';
-import { ServiceBookingModal } from '@/portals/services-hub/components/ServiceBookingModal';
+import { FeedPostCard } from '@/hubs/social/components/FeedPostCard';
+import { ServiceCard } from '@/hubs/services/portals/local-services/components/ServiceCard';
+import { ServiceBookingModal } from '@/hubs/services/portals/local-services/components/ServiceBookingModal';
 
 interface PublicStorefrontPageProps {
   commerceItems: CommerceItem[];

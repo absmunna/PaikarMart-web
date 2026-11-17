@@ -12,31 +12,32 @@
 PaikarMart is a unified **Omnichannel Social Commerce Super App** engineered to connect social discovery with every layer of trade in Bangladesh—from neighborhood local shops and B2C retail to B2B factory-direct wholesale, on-demand home/travel services, multi-modal courier & freight logistics, creator OTT monetization, and escrow-protected BDT payments—inside **one single user identity, wallet, and unified account**.
 
 ### Five Core Product Pillars
-1. **Social + Commerce Convergence:** Users browse location-ranked social posts, reels, and buyer **Open Demand** requests on a Facebook-style feed (`social-feed`) and convert directly into Retail Cart checkout, B2B RFQ quotes, or Service slot bookings without leaving the app. Auto-synced catalog events (`PRODUCT_ADDED`) can publish shoppable items straight into the social stream.
-2. **Master Catalog (PMIN) + Buy-Box + B2B Wholesale:** Uses a `1:N` Master Product (`PMIN`) architecture where multiple verified sellers attach competing offers (`seller_listings`). Retail defaults to the winning Buy-Box offer (lowest verified price + SLA), while Wholesale supports MOQ tiered price slabs, factory-direct tiers, and interactive RFQ bidding (`wholesale-hub`).
-3. **Hyperlocal Store Geofencing (`5km` Default / `1–20km` Radar):** Connects GPS coordinates (`LocationContext`) to nearby grocery, pharmacy, electronics, food, and neighborhood service providers (`services-hub` & `marketplace`) with real-time store Open/Close state and `prepTime + transitTime` ETA.
-4. **4-Sub-Portal Logistics & Last-Mile Ecosystem:** Unifies instant Ride-Sharing (`Bike`/`CNG`/`Car`/`Ambulance`), Multi-Stop Parcel & External Courier Waybills (`PaikarForce`, `Steadfast`, `Pathao`, `RedX`), B2B Heavy Freight & Rentals, and a role-gated Fleet/Rider Console (`transit-logistics`) tied to every checkout order (`orders-hub`).
+1. **Social + Commerce Convergence:** Users browse location-ranked social posts, stories and shared creator/business content in the Social Hub (`hubs/social`), then follow references into Marketplace checkout, B2B RFQs or service bookings. Content records/media remain single-source even when surfaced in multiple hubs.
+2. **Master Catalog (PMIN) + Buy-Box + B2B Wholesale:** Uses a `1:N` Master Product (`PMIN`) architecture where multiple verified sellers attach competing offers (`seller_listings`). Retail defaults to the winning Buy-Box offer (lowest verified price + SLA), while Wholesale supports MOQ tiered price slabs, factory-direct tiers and interactive RFQ bidding (`hubs/marketplace/portals/wholesale`).
+3. **Hyperlocal Store Geofencing (`5km` Default / `1–20km` Radar):** Connects GPS coordinates (`LocationContext`) to nearby grocery, pharmacy, electronics, food and neighborhood service providers (`hubs/marketplace` & `hubs/services`) with real-time store Open/Close state and `prepTime + transitTime` ETA. Local/Nearby discovery remains a cross-cutting surface for later design.
+4. **Logistics & Last-Mile Ecosystem:** The Logistics Hub (`hubs/logistics`) separates instant rides (`Bike`/`CNG`/`Car`/`Ambulance`), multi-stop parcel/courier waybills (`PaikarForce`, `Steadfast`, `Pathao`, `RedX`), B2B freight/rentals, emergency dispatch and a role-gated fleet/rider console from the Services Hub.
 5. **Zero-Trust Escrow Wallet, RBAC & AI Assistance:** Combines BDT (`৳`) Wallet balance, PK Coins loyalty rewards, Escrow holds released strictly on 4-digit OTP / Proof-of-Delivery (POD), Server-side Gemini AI (`@google/genai`) assistance, and a unified 0–7 Trust Level & Role hierarchy.
 
 ---
 
-## 2. Canonical Portal & Sub-Portal Architecture (Zero Route Collisions)
+## 2. Canonical Hub & Workspace Architecture (Zero Route Collisions)
 
-All UI views reside cleanly in `apps/frontend/src/portals/<portal-name>/` and register under `PortalTab` in `apps/frontend/src/types/index.ts`. **Never create duplicate portal folders or overlapping wildcard route shadows.**
+Business/discovery surfaces live under their owning folder in `apps/frontend/src/hubs/<hub>/`. Cross-hub account, order, wallet and governance workspaces live under `portals/`; legacy routes redirect to the canonical hub. **Never create duplicate portal folders or overlapping wildcard route shadows.**
 
-| Portal ID (`PortalTab`) | Canonical Route | Guard | Portal Folder | Sub-Portals & Core Responsibilities |
+| Hub / Portal ID | Canonical Route | Guard | Owning Folder | Core Responsibilities |
 | :--- | :--- | :--- | :--- | :--- |
-| `feed` | `/` , `/portal/social` | Public (Auth for write) | `portals/social-feed` | Stories tray, polymorphic post composer, location-ranked feed (`All`, `Following`, `Wholesale`, `Retail`, `Demand`), reactions & shoppable product tags |
-| `explore` / `hub` | `/portal/explore` | Public | `portals/explore` | Super App module launcher & categorized directory |
-| `commerce` | `/hub/marketplace` (`/portal/marketplace` compatibility) | Public | `hubs/marketplace-hub` | Mixed product/feed surface, child portals (Retail, Wholesale/B2B, Grocery, Pharmacy, Brand Shops, Digital Goods), PMIN Buy-Box comparison, Flash Deals, category chips, Product Details, Cart Drawer |
-| `wholesale` | `/portal/wholesale` | Public (RFQ requires Auth) | `portals/wholesale-hub` | B2B Wholesale catalog, Factory Direct tier, Export Hub, Tiered MOQ Price Slabs, Reverse RFQ request & supplier quote comparison |
-| `services` | `/hub/services` (`/portal/services` compatibility) | Public (Booking requires Auth) | `hubs/services-hub` | Mixed service/provider/demand/offer/logistics feed, child portal rail, Hyperlocal Nearby (`1–20km` geofence radar), Repairs/Technicians, Beauty/Clinics, Travel/Hotels, Service slot booking (`5%` advance wallet discount) |
-| `rides` | `/portal/transit` | Public Quote / Auth Book / Role-Gated Fleet | `portals/transit-logistics` | **4 Logistics Sub-Portals**: (1) Instant Ride (`Bike/Car/Emergency`), (2) Parcel & Multi-Stop Courier, (3) B2B Cargo Truck & Hourly Rentals, (4) Role-Gated Driver/Fleet Console |
-| `orders` | `/portal/orders` | Auth (or Guest Tracker token) | `portals/orders-hub` | Purchases tab, Store Sales tab, Live Courier Waybill tracking (`LogisticsLivePanel`), 4-digit Delivery OTP, Confirm Delivery (Escrow Release), Reorder, Guest Order Tracker |
-| `wallet` | `/portal/wallet` | Auth | `portals/wallet` | Available BDT (`৳`) Balance, Escrow On-Hold balance, Top-Up (bKash/Nagad/Card), Withdraw, PK Coins, Transaction Ledger (`EscrowLedgerPanel`) |
-| `messages` | `/portal/messages` | Auth | `portals/messages-hub` + `features/messaging` | Buyer–Vendor–Rider threaded chat, Storekeeper quick chat, Gemini AI Bilingual Shopping Assistant bridge |
-| `vendor-dash` | `/portal/seller` | **Auth + Vendor/Admin Guard** | `portals/seller-central` | Multi-Step KYC Onboarding (`MultiRoleOnboardingModal`), Storefront Preview, Inventory/PMIN Offers, B2B Tier Pricing, Dispatch Sync, Revenue Analytics |
-| `creator` | `/portal/creator` | Public (Creator Studio Auth) | `portals/creator-studio` | Short Video / Reels stream, Live Commerce previews, Gated creator content & tipping |
+| `social` | `/hub/social` (`/portal/social` compatibility) | Public (Auth for write) | `hubs/social` | Mixed social feed, stories, composer, reactions and shoppable post references |
+| `explore` | `/portal/explore` | Public | `portals/explore` | Directory for the five business hubs and separate account/workspace tools |
+| `commerce` | `/hub/marketplace` (`/portal/marketplace` compatibility) | Public | `hubs/marketplace` | Mixed product feed and registered child homes: Retail, Wholesale/B2B, Grocery, Pharmacy, Brand Shops, Digital, Demand and Used |
+| `product-details` | `/hub/marketplace/product/:id` | Public (checkout policy applies) | `hubs/marketplace/portals/product-details` | Product detail, seller comparison, variant selection and order actions |
+| `wholesale` | `/hub/marketplace?portal=wholesale` (`/portal/wholesale` compatibility) | Public (RFQ requires Auth) | `hubs/marketplace/portals/wholesale` | B2B catalog, factory tiers, MOQ pricing, RFQs and sample requests inside Marketplace Hub |
+| `services` | `/hub/services` (`/portal/services` compatibility) | Public (Booking requires Auth) | `hubs/services` | Mixed service/provider/demand feed and local services, food and travel child homes |
+| `logistics` | `/hub/logistics` (`/portal/transit` compatibility) | Public Quote / Auth Book / Role-Gated Fleet | `hubs/logistics` | Ride, parcel/waybill, cargo/rental, emergency and fleet/rider experiences |
+| `creator` | `/hub/creator` (`/portal/creator` compatibility) | Public (Creator actions require Auth) | `hubs/creator` | Free/ad-supported and paid creator content, video unlocks and creator posts |
+| `orders` | `/portal/orders` | Auth (or Guest Tracker token) | `portals/orders-hub` | Purchases, Store Sales, shipment tracking, delivery OTP, escrow release, reorder, guest tracking |
+| `wallet` | `/portal/wallet` | Auth | `portals/wallet` | BDT balance, escrow holds, top-up, withdraw, rewards and transaction ledger |
+| `messages` | `/portal/messages` | Auth | `features/messaging` + shared workspace entry | Buyer–Vendor–Rider chat and bilingual shopping assistant |
+| `vendor-dash` | `/portal/seller` | **Auth + Vendor/Admin Guard** | `portals/seller-central` | Multi-step KYC, business switching, inventory, pricing, dispatch and revenue analytics |
 | `profile` | `/portal/profile` | Auth (Public Store view via `/store/:id`) | `portals/user-profile` | Unified Consumer Cockpit (`Orders`, `Saved Addresses`, `Trust Badge`, `Timeline`) + Verified Public Storefront link |
 | `notifications` | `/portal/notifications` | Auth | `portals/notifications-center` | Categorized real-time alerts (`Orders`, `Logistics`, `Escrow`, `Bids`, `Social`) |
 | `settings` | `/settings` | Public Preferences / Auth Security | `portals/settings-center` | Dark/Light Theme toggle, `EN / বাংলা` language switch, GPS Radar (`1–20km`), Privacy & Security |
@@ -46,7 +47,7 @@ All UI views reside cleanly in `apps/frontend/src/portals/<portal-name>/` and re
 
 ---
 
-## 3. Hub-First Navigation & Portal Composition
+## 3. Five-Hub Navigation & Portal Composition
 
 PaikarMart is organized around persistent product hubs. A hub owns the mixed feed, portal entry rail, child portal state, and hub-level filters. A child portal owns its domain-specific home surface, cards, categories, and actions.
 
@@ -54,38 +55,44 @@ PaikarMart is organized around persistent product hubs. A hub owns the mixed fee
 
 | Hub | Entry | Mixed feed | Child portal examples |
 | :--- | :--- | :--- | :--- |
-| **Marketplace Hub** | Bottom Navigation → Market | Retail product, wholesale lot, offer, seller and demand cards | Retail, Wholesale/B2B, Grocery, Pharmacy, Brand Shops, Digital Goods |
-| **Services Hub** | Bottom Navigation → Services | Service, provider, demand, offer, nearby and logistics cards | Local Services, Food Delivery, Travel & Stays, Ride, Transport, Rent & Cargo, Emergency |
-| **Community Hub** | Explore/Portal Hub | Posts, demands, live commerce and creator cards | Social Feed, Demand Board, Shorts, Live Commerce, Offers |
-| **Utility Hub** | Explore/Portal Hub | Account, wallet, order and seller utilities | Wallet, Orders, Seller Central, Guide, Settings |
+| **Marketplace Hub** | Bottom Navigation → Market | Mixed physical and digital product, shop, offer, demand and resale feed | Retail, Wholesale/B2B, Grocery, Pharmacy, Brand Shops, Digital Goods, Demand, Used |
+| **Services Hub** | Bottom Navigation → Services | Mixed service, provider, service demand and offer feed | Local Services, Food Delivery, Travel & Stays |
+| **Creator Hub** | Bottom Navigation → Creator | Free, ad-supported and paid creator content | Video, Shorts, paid unlocks, creator posts |
+| **Social Hub** | Bottom Navigation → Feed | Following-based social and shoppable mixed feed | Posts, stories, business/creator content references |
+| **Logistics Hub** | Explore / Logistics entry | Ride, parcel, transport, rental and emergency dispatch | Ride, Parcel & Waybill, Cargo & Rentals, Fleet Console |
+| **Workspace Tools** | Explore / Account Navigation | Account, wallet, order and seller utilities; not counted as a business hub | Wallet, Orders, Seller Central, Guide, Settings |
 
 ### Hub interaction contract
 
 1. Entering a hub from Bottom Navigation opens the hub mixed feed; it must not open a child portal directly.
 2. The hub's portal entry rail is rendered above the feed and contains only child portals belonging to that hub.
 3. Selecting a child portal keeps the user inside the same hub surface. It changes the active portal home, feed query, and product/service category chips; it does not replace the hub shell with a competing route.
-4. Hub entry buttons (`Marketplace Hub`, `Services Hub`, `Community Hub`, etc.) MUST NOT be repeated inside the child portal category rail. Hub switching belongs to Bottom Navigation or the Explore portal directory.
-5. A new child portal must be registered through a typed portal registry; the hub shell must not be edited with one-off conditional branches for every new portal.
-6. Marketplace and Services feeds use a shared polymorphic `HubFeedCard` contract: `product`, `service`, `demand`, `offer`, `seller`, `provider`, `ride`, and `logistics`.
+4. Hub entry buttons MUST NOT be repeated inside the child portal category rail. Hub switching belongs to Bottom Navigation or Explore.
+5. Child portal selection stays on the same hub screen and syncs to query state (`?portal=...&category=...`) for direct linking and browser back/forward.
+6. A new child portal must be registered through the owning hub's typed portal config; business logic must not be copied across hubs to reuse a portal.
+7. `HubPortalNavigation` is the shared portal/category rail. Marketplace and Services may keep domain-specific card layouts, but domain cards must not be duplicated between feeds.
 
 ### Target frontend composition
 
 ```text
 apps/frontend/src/hubs/
-├── marketplace-hub/
+├── shared/{HubPortalNavigation.tsx,HubFeedCard.tsx,hubTypes.ts}
+├── marketplace/
 │   ├── MarketplaceHub.tsx
+│   ├── pages/MarketplaceHubPage.tsx
+│   ├── pages/product-details/ProductDetailsPage.tsx
 │   ├── config/marketplacePortals.ts
-│   ├── components/MarketplacePortalBar.tsx
-│   └── portals/{retail,wholesale,grocery,pharmacy,brand-shops,digital}/
-├── services-hub/
+│   └── portals/wholesale/{pages,components}/
+├── services/
 │   ├── ServicesHub.tsx
 │   ├── config/servicePortals.ts
-│   ├── components/ServicesPortalBar.tsx
-│   └── portals/{local-services,food-delivery,travel,logistics}/
-└── shared/{HubFeedCard.tsx,hubTypes.ts,portalRegistry.ts}
+│   └── portals/local-services/{pages,components}/
+├── social/{pages,components}/
+├── creator/{pages,components}/
+└── logistics/{pages,components,config}/
 ```
 
-The existing `/portal/marketplace`, `/portal/services`, and `/portal/transit` URLs remain compatibility entry points while the internal implementation migrates to hub shells.
+The existing `/portal/social`, `/portal/marketplace`, `/portal/wholesale`, `/portal/services`, `/portal/transit`, and `/portal/creator` URLs remain compatibility redirects. Product/service data and backend domains have not been merged or duplicated by this frontend folder move.
 
 ## 4. Unified Role Hierarchy, Seller Tiers & Trust Levels (0–7)
 
@@ -135,7 +142,7 @@ A single user upgrades smoothly without creating duplicate accounts:
 3. **B2B RFQ → Quote → Bulk Order:**
    * Buyer submits RFQ (`/api/wholesale/rfq`) → Verified Wholesale Supplier responds with tiered BDT quote (`/api/wholesale/quotes`) → Accepted quote converts into Escrow-protected Bulk Order with B2B Freight dispatch.
 4. **Hyperlocal Geofence Engine (`Haversine`):**
-   * User selects location/radar radius (`1–20 km`, default `5 km`) in `LocationContext` → `services-hub` and `marketplace` filter nearby stores/technicians by distance, `isOpen` status, and `prepTime + transitTime` ETA.
+   * User selects location/radar radius (`1–20 km`, default `5 km`) in `LocationContext` → `hubs/services` and `hubs/marketplace` filter nearby providers/stores by distance, `isOpen` status, and `prepTime + transitTime` ETA.
 
 ---
 

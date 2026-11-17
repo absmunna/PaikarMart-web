@@ -4,8 +4,6 @@ export * from './components/OtherSellersModal';
 export * from './components/AccountConversionPopup';
 export * from './components/GuestCheckoutForm';
 export * from './components/CheckoutSuccessSummary';
-export * from './components/MarketplaceFilters';
-export * from './components/CategoryBar';
 export * from './components/VoucherDealsStrip';
 export * from './components/PrescriptionUploadModal';
 export * from './components/ProductEngagementSection';

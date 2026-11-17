@@ -1,0 +1,55 @@
+import type { HubPortalDefinition } from '@/hubs/shared/hubTypes';
+
+export const servicePortals: HubPortalDefinition[] = [
+  {
+    id: 'local-services',
+    hubId: 'services',
+    labelEn: 'Local Services',
+    labelBn: 'লোকাল সার্ভিস',
+    entryRoute: '/hub/services',
+    iconName: 'wrench',
+    feedKinds: ['service', 'provider', 'demand', 'offer'],
+    categories: [
+      { id: 'all', labelEn: 'All Services', labelBn: 'সব সেবা', filterKey: 'all' },
+      { id: 'repair', labelEn: 'Repair & Tech', labelBn: 'রিপেয়ার ও টেক', filterKey: 'repair' },
+      { id: 'salon', labelEn: 'Salon & Beauty', labelBn: 'সেলুন ও বিউটি', filterKey: 'salon' },
+      { id: 'clinic', labelEn: 'Clinic & Care', labelBn: 'ক্লিনিক ও কেয়ার', filterKey: 'clinic' },
+    ],
+    enabled: true,
+    order: 1,
+  },
+  {
+    id: 'food-delivery',
+    hubId: 'services',
+    labelEn: 'Food Delivery',
+    labelBn: 'ফুড ডেলিভারি',
+    entryRoute: '/hub/services',
+    iconName: 'utensils',
+    feedKinds: ['service', 'product', 'offer', 'provider'],
+    categories: [
+      { id: 'all', labelEn: 'All Food', labelBn: 'সব খাবার', filterKey: 'all' },
+      { id: 'restaurant', labelEn: 'Restaurants', labelBn: 'রেস্টুরেন্ট', filterKey: 'restaurant' },
+      { id: 'homemade', labelEn: 'Homemade', labelBn: 'হোমমেড', filterKey: 'homemade' },
+      { id: 'bakery', labelEn: 'Bakery', labelBn: 'বেকারি', filterKey: 'bakery' },
+    ],
+    enabled: true,
+    order: 2,
+  },
+  {
+    id: 'travel',
+    hubId: 'services',
+    labelEn: 'Travel & Stays',
+    labelBn: 'ট্রাভেল ও স্টে',
+    entryRoute: '/hub/services',
+    iconName: 'hotel',
+    feedKinds: ['service', 'provider', 'offer', 'demand'],
+    categories: [
+      { id: 'all', labelEn: 'All Travel', labelBn: 'সব ট্রাভেল', filterKey: 'all' },
+      { id: 'hotel', labelEn: 'Hotels & Stays', labelBn: 'হোটেল ও স্টে', filterKey: 'hotel' },
+      { id: 'tour', labelEn: 'Tours', labelBn: 'ট্যুর', filterKey: 'tour' },
+      { id: 'venue', labelEn: 'Venues', labelBn: 'ভেন্যু', filterKey: 'venue' },
+    ],
+    enabled: true,
+    order: 3,
+  },
+];

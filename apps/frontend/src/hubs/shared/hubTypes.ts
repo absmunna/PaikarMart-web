@@ -1,4 +1,4 @@
-export type HubId = 'marketplace' | 'services' | 'community' | 'utility';
+export type HubId = 'marketplace' | 'services' | 'social' | 'creator' | 'logistics' | 'utility';
 
 export type HubFeedCardKind =
   | 'product'

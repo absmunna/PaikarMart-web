@@ -33,7 +33,7 @@ import {
   ShieldAlert,
   UserCheck
 } from 'lucide-react';
-import { FeedPostCard } from '@/portals/social-feed/components/FeedPostCard';
+import { FeedPostCard } from '@/hubs/social/components/FeedPostCard';
 import { OrderTrackingStepper } from '@/portals/user-profile/components/OrderTrackingStepper';
 import { OrderReviewModal } from '@/portals/user-profile/components/OrderReviewModal';
 import { SpendingAnalyticsDashboard } from '@/portals/user-profile/components/SpendingAnalyticsDashboard';

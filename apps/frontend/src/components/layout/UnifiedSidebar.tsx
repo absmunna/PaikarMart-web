@@ -169,14 +169,13 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
     badgeBn?: string;
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
-    { id: 'feed', labelEn: 'News Feed', labelBn: 'সোশ্যাল ফিড', badgeEn: 'Live', badgeBn: 'লাইভ', icon: Newspaper },
-    { id: 'explore', labelEn: 'Explore 25+ Hub', labelBn: 'সুপার হাব (২৫+)', badgeEn: 'All', badgeBn: 'সব', icon: Grid },
-    { id: 'commerce', labelEn: 'Retail Marketplace', labelBn: 'রিটেইল মার্কেট', badgeEn: 'B2C', badgeBn: 'খুচরা', icon: ShoppingBag },
-    { id: 'wholesale', labelEn: 'B2B Wholesale Mokam', labelBn: 'পাইকারি মোকাম', badgeEn: 'MOQ', badgeBn: 'পাইকারি', icon: Package },
-    { id: 'services', labelEn: 'Nearby Services', labelBn: 'লোকাল সার্ভিস', badgeEn: 'Sheba', badgeBn: 'সেবা', icon: Wrench },
-    { id: 'rides', labelEn: 'Rides & Express Transit', labelBn: 'রাইড ও কুরিয়ার', badgeEn: 'Express', badgeBn: 'পার্সেল', icon: Car },
-    { id: 'creator', labelEn: 'Creator Studio & Video', labelBn: 'ক্রিয়েটর স্টুডিও', badgeEn: 'Shorts', badgeBn: 'রিলস', icon: Sparkles },
-    { id: 'messages', labelEn: 'Messages & RFQ Quotes', labelBn: 'মেসেজ ও কোটেশন', badgeEn: 'Chat', badgeBn: 'চ্যাট', icon: MessageSquare },
+    { id: 'feed', labelEn: 'Social Hub', labelBn: 'সোশ্যাল হাব', badgeEn: 'Feed', badgeBn: 'ফিড', icon: Newspaper },
+    { id: 'commerce', labelEn: 'Marketplace Hub', labelBn: 'মার্কেটপ্লেস হাব', badgeEn: 'Market', badgeBn: 'বাজার', icon: ShoppingBag },
+    { id: 'services', labelEn: 'Services Hub', labelBn: 'সার্ভিস হাব', badgeEn: 'Book', badgeBn: 'সেবা', icon: Wrench },
+    { id: 'creator', labelEn: 'Creator Hub', labelBn: 'ক্রিয়েটর হাব', badgeEn: 'Video', badgeBn: 'ভিডিও', icon: Sparkles },
+    { id: 'rides', labelEn: 'Logistics Hub', labelBn: 'লজিস্টিকস হাব', badgeEn: 'Ride', badgeBn: 'রাইড', icon: Car },
+    { id: 'explore', labelEn: 'Hub Directory', labelBn: 'হাব ডিরেক্টরি', badgeEn: 'All', badgeBn: 'সব', icon: Grid },
+    { id: 'messages', labelEn: 'Messages', labelBn: 'মেসেজ', badgeEn: 'Chat', badgeBn: 'চ্যাট', icon: MessageSquare },
   ];
 
   const commercialMokams: {

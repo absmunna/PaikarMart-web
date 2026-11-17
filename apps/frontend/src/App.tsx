@@ -39,13 +39,12 @@ import { AuthGuard, AuthPortalModal, RoleGuard } from '@/features/auth';
 import { ScrollToTop } from '@/components/shared/ScrollToTop';
 
 // Portal Modules (Lazy Loaded)
-const SocialPortal = React.lazy(() => import('@/portals/social-feed').then(m => ({ default: m.SocialPortal })));
+const SocialHub = React.lazy(() => import('@/hubs/social').then(m => ({ default: m.SocialHub })));
 const ExplorePortal = React.lazy(() => import('@/portals/explore').then(m => ({ default: m.ExplorePortal })));
-const MarketplaceHub = React.lazy(() => import('@/hubs/marketplace-hub').then(m => ({ default: m.MarketplaceHub })));
-const WholesalePortal = React.lazy(() => import('@/portals/wholesale-hub').then(m => ({ default: m.WholesalePortal })));
-const ServicesHub = React.lazy(() => import('@/hubs/services-hub').then(m => ({ default: m.ServicesHub })));
-const TransitPortal = React.lazy(() => import('@/portals/transit-logistics').then(m => ({ default: m.TransitPortal })));
-const CreatorPortal = React.lazy(() => import('@/portals/creator-studio').then(m => ({ default: m.CreatorPortal })));
+const MarketplaceHub = React.lazy(() => import('@/hubs/marketplace').then(m => ({ default: m.MarketplaceHub })));
+const ServicesHub = React.lazy(() => import('@/hubs/services').then(m => ({ default: m.ServicesHub })));
+const LogisticsHub = React.lazy(() => import('@/hubs/logistics').then(m => ({ default: m.LogisticsHub })));
+const CreatorHub = React.lazy(() => import('@/hubs/creator').then(m => ({ default: m.CreatorHub })));
 const SellerCentralPortal = React.lazy(() => import('@/portals/seller-central').then(m => ({ default: m.SellerCentralPortal })));
 const SellerInventoryPage = React.lazy(() => import('@/portals/seller-central').then(m => ({ default: m.SellerInventoryPage })));
 const ProfilePortal = React.lazy(() => import('@/portals/user-profile').then(m => ({ default: m.ProfilePortal })));
@@ -55,9 +54,9 @@ const OrdersPortal = React.lazy(() => import('@/portals/orders-hub').then(m => (
 const WalletPortal = React.lazy(() => import('@/portals/wallet').then(m => ({ default: m.WalletPortal })));
 const UserGuidePortal = React.lazy(() => import('@/portals/guide').then(m => ({ default: m.UserGuidePortal })));
 
-const ProductDetailsLanding = React.lazy(() => import('@/portals/marketplace').then(m => ({ default: m.ProductDetailsLanding })));
+const ProductDetailsLanding = React.lazy(() => import('@/hubs/marketplace/pages/product-details/ProductDetailsPage').then(m => ({ default: m.ProductDetailsLanding })));
 
-import { CartCheckoutDrawer, CategoryBar } from '@/features/marketplace';
+import { CartCheckoutDrawer } from '@/features/marketplace';
 import { fetchCatalogProducts } from '@/features/marketplace/services/catalogApiClient';
 import { WalletModal } from '@/portals/wallet';
 import { NotificationsModal } from '@/portals/notifications-center';
@@ -87,13 +86,13 @@ function AppInner() {
 
   const currentTab = React.useMemo(() => {
     const path = location.pathname;
-    if (path === '/' || path.startsWith('/portal/social')) return 'feed';
+    if (path === '/' || path.startsWith('/portal/social') || path.startsWith('/hub/social')) return 'feed';
     if (path.startsWith('/portal/explore')) return 'explore';
     if (path.startsWith('/portal/marketplace') || path.startsWith('/hub/marketplace')) return 'commerce';
     if (path.startsWith('/portal/wholesale')) return 'wholesale';
     if (path.startsWith('/portal/services') || path.startsWith('/hub/services')) return 'services';
-    if (path.startsWith('/portal/transit')) return 'rides';
-    if (path.startsWith('/portal/creator')) return 'creator';
+    if (path.startsWith('/portal/transit') || path.startsWith('/hub/logistics')) return 'rides';
+    if (path.startsWith('/portal/creator') || path.startsWith('/hub/creator')) return 'creator';
     if (path.startsWith('/portal/seller')) return 'vendor-dash';
     if (path.startsWith('/portal/profile')) return 'profile';
     if (path.startsWith('/portal/notifications')) return 'notifications';
@@ -107,14 +106,14 @@ function AppInner() {
 
   const setCurrentTab = (tab: PortalTab) => {
     const routeMap: Record<PortalTab, string> = {
-      'feed': '/portal/social',
+      'feed': '/hub/social',
       'explore': '/portal/explore',
       'hub': '/portal/explore',
       'commerce': '/hub/marketplace',
-      'wholesale': '/portal/wholesale',
+      'wholesale': '/hub/marketplace?portal=wholesale',
       'services': '/hub/services',
-      'rides': '/portal/transit',
-      'creator': '/portal/creator',
+      'rides': '/hub/logistics',
+      'creator': '/hub/creator',
       'vendor-dash': '/portal/seller',
       'profile': '/portal/profile',
       'notifications': '/portal/notifications',
@@ -124,7 +123,7 @@ function AppInner() {
       'messages': '/portal/messages',
       'guide': '/portal/guide',
     };
-    navigate(routeMap[tab] || '/portal/social');
+    navigate(routeMap[tab] || '/hub/social');
   };
 
   const [initialSettingsSection, setInitialSettingsSection] = useState<SettingsSectionId>('account_profile');
@@ -142,24 +141,6 @@ function AppInner() {
   const [quotaExceeded, setQuotaExceeded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState('');
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
-  const [activePortalFilter, setActivePortalFilter] = useState<'all' | 'retail' | 'wholesale' | 'nearby' | 'services' | 'demand' | 'used'>('all');
-  const [activeLogisticsSubPortal, setActiveLogisticsSubPortal] = useState<'ride' | 'courier' | 'cargo' | 'fleet'>('ride');
-  const [activeServicePortalId, setActiveServicePortalId] = useState('all');
-
-  const handleCategoryBarPortalSwitch = (portal: 'all' | 'retail' | 'wholesale' | 'nearby' | 'services' | 'demand' | 'used') => {
-    setActivePortalFilter(portal);
-    if (portal === 'wholesale') {
-      setCurrentTab('wholesale');
-    } else if (portal === 'retail' || portal === 'demand' || portal === 'used') {
-      setCurrentTab('commerce');
-    } else if (portal === 'nearby' || portal === 'services') {
-      setCurrentTab('services');
-    } else if (portal === 'all') {
-      setCurrentTab('commerce');
-    }
-  };
-
   const handleOpenAuthModal = (tab: 'login' | 'register' = 'login') => {
     setAuthModalTab(tab);
     setIsAuthModalOpen(true);
@@ -597,43 +578,11 @@ function AppInner() {
 
           {/* Center Primary Feed / Portal Viewport */}
           <main className="w-full max-w-2xl flex-1 space-y-6 pb-12">
-            
-            {/* Master 3-Tier Category Bar available across core portals */}
-            {['wholesale', 'services', 'rides'].includes(currentTab) && (
-              <CategoryBar
-                isBn={isBn}
-                activePortal={activePortalFilter}
-                selectedSubCategory={selectedSubCategory}
-                initialPillar={
-                  currentTab === 'rides'
-                    ? 'services-logistics-hub'
-                    : currentTab === 'services'
-                    ? 'services-hub'
-                    : 'all'
-                }
-                onPortalSwitch={handleCategoryBarPortalSwitch}
-                onSubCategorySelect={setSelectedSubCategory}
-                onSearchFilter={(kw) => setSearchQuery(kw)}
-                onSelectTab={setCurrentTab}
-                onMainTileSelect={(tile) => {
-                  if (currentTab === 'services' && tile.id.startsWith('service-')) {
-                    setActiveServicePortalId(tile.id.replace(/^service-/, '').replace(/-home$/, ''));
-                  }
-                  if (tile.id === 's-ride-home' || tile.id === 's-emergency-home') {
-                    setActiveLogisticsSubPortal('ride');
-                  } else if (tile.id === 's-transport-home') {
-                    setActiveLogisticsSubPortal('courier');
-                  } else if (tile.id === 's-rent-home') {
-                    setActiveLogisticsSubPortal('cargo');
-                  }
-                }}
-              />
-            )}
 
           <React.Suspense fallback={currentTab === 'feed' ? <FeedSkeleton /> : <PortalSkeleton />}>
             <Routes>
-              {/* Redirect root to social feed */}
-              <Route path="/" element={<Navigate to="/portal/social" replace />} />
+              {/* Canonical hub routes; old portal URLs remain redirects below. */}
+              <Route path="/" element={<Navigate to="/hub/social" replace />} />
 
               {/* EXPLORE PORTAL (Super Hub Center Point) */}
               <Route path="/portal/explore" element={
@@ -647,9 +596,9 @@ function AppInner() {
                 />
               } />
 
-              {/* VIEW 1: Facebook Social Community Feed */}
-              <Route path="/portal/social" element={
-                <SocialPortal
+              {/* Social Hub */}
+              <Route path="/hub/social" element={
+                <SocialHub
                   currentUser={currentUser}
                   posts={filteredPosts}
                   commerceItems={commerceItems}
@@ -659,6 +608,7 @@ function AppInner() {
                   onAddToCart={(item) => handleAddToCart(item, 1, item.type === 'wholesale')}
                 />
               } />
+              <Route path="/portal/social" element={<Navigate to="/hub/social" replace />} />
 
               {/* VIEW 2: Retail Marketplace Portal (B2C) */}
               <Route path="/hub/marketplace" element={
@@ -692,14 +642,8 @@ function AppInner() {
               {/* Legacy marketplace URL remains supported while Hub is canonical. */}
               <Route path="/portal/marketplace" element={<Navigate to="/hub/marketplace" replace />} />
 
-              {/* VIEW 2.1: Wholesale Hub Portal (B2B) */}
-              <Route path="/portal/wholesale" element={
-                <WholesalePortal
-                  items={commerceItems}
-                  onAddToCart={handleAddToCart}
-                  onSelectTab={setCurrentTab}
-                />
-              } />
+              {/* Wholesale remains a child portal in the Marketplace Hub. */}
+              <Route path="/portal/wholesale" element={<Navigate to="/hub/marketplace?portal=wholesale" replace />} />
 
               <Route path="/hub/marketplace/product/:id" element={
                 <ProductDetailsLanding
@@ -712,11 +656,10 @@ function AppInner() {
 
               <Route path="/portal/marketplace/product/:id" element={<Navigate to="/hub/marketplace/product/:id" replace />} />
 
-              {/* VIEW 4: Nearby Services & Technician Bookings (Flat Proximity) */}
+              {/* Services Hub mixed feed + child portal homes */}
               <Route path="/hub/services" element={
                 <ServicesHub
                   items={commerceItems}
-                  activePortalId={activeServicePortalId}
                   onBookService={handleBookService}
                   bookings={bookings}
                   currentUser={currentUser}
@@ -726,22 +669,23 @@ function AppInner() {
 
               <Route path="/portal/services" element={<Navigate to="/hub/services" replace />} />
 
-              {/* VIEW 5: Ride Sharing & Express Transit (Logistics Hub) */}
-              <Route path="/portal/transit" element={
-                <TransitPortal 
+              {/* Logistics Hub */}
+              <Route path="/hub/logistics" element={
+                <LogisticsHub
                   rideItems={commerceItems.filter(i => i.type === 'rides')}
                   currentUser={currentUser}
-                  initialSubPortal={activeLogisticsSubPortal}
                 />
               } />
+              <Route path="/portal/transit" element={<Navigate to="/hub/logistics" replace />} />
 
-              {/* VIEW 6: Content Creator Hub & Google AdMob (OTT Mode Ready) */}
-              <Route path="/portal/creator" element={
-                <CreatorPortal
+              {/* Creator Hub */}
+              <Route path="/hub/creator" element={
+                <CreatorHub
                   currentUser={currentUser}
                   onDeductBalance={handleDeductBalance}
                 />
               } />
+              <Route path="/portal/creator" element={<Navigate to="/hub/creator" replace />} />
 
               {/* VIEW 7: Seller Central & Multi-Role Business Portal (Role & KYC Guarded) */}
               <Route path="/portal/seller/inventory" element={
@@ -749,7 +693,7 @@ function AppInner() {
                   currentUser={currentUser}
                   requiredMode="seller"
                   onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  onNavigateHome={() => navigate('/portal/social')}
+                  onNavigateHome={() => navigate('/hub/social')}
                 >
                   {currentUser.vendorProfile && (
                     <SellerInventoryPage
@@ -768,7 +712,7 @@ function AppInner() {
                   currentUser={currentUser}
                   requiredMode="seller"
                   onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  onNavigateHome={() => navigate('/portal/social')}
+                  onNavigateHome={() => navigate('/hub/social')}
                 >
                   {currentUser.vendorProfile && (
                     <SellerCentralPortal
@@ -879,7 +823,7 @@ function AppInner() {
               <Route path="/portal/messages" element={
                 <AuthGuard onOpenAuthModal={handleOpenAuthModal}><MessagingCenterModal
                   isOpen={true}
-                  onClose={() => navigate('/portal/social')}
+                  onClose={() => navigate('/hub/social')}
                   isFullScreen={true}
                 /></AuthGuard>
               } />

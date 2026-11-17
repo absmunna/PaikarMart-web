@@ -7,6 +7,7 @@ interface VoucherDealsStripProps {
   appliedVoucherCode?: string;
   onSelectVoucher: (code: string) => void;
   onOpenPrescriptionModal: () => void;
+  showPrescriptionShortcut?: boolean;
 }
 
 export const VoucherDealsStrip: React.FC<VoucherDealsStripProps> = ({
@@ -14,6 +15,7 @@ export const VoucherDealsStrip: React.FC<VoucherDealsStripProps> = ({
   appliedVoucherCode,
   onSelectVoucher,
   onOpenPrescriptionModal,
+  showPrescriptionShortcut = true,
 }) => {
   const [vouchers, setVouchers] = useState<RetailVoucher[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -88,14 +90,16 @@ export const VoucherDealsStrip: React.FC<VoucherDealsStripProps> = ({
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <button
-          type="button"
-          onClick={onOpenPrescriptionModal}
-          className="px-3 py-1.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] text-xs font-semibold whitespace-nowrap shrink-0 flex items-center gap-1.5 transition-colors cursor-pointer"
-        >
-          <FileText className="w-3.5 h-3.5" />
-          <span>{isBn ? 'প্রেসক্রিপশন / বাজার লিস্ট' : 'Upload Rx / Bazar List'}</span>
-        </button>
+        {showPrescriptionShortcut && (
+          <button
+            type="button"
+            onClick={onOpenPrescriptionModal}
+            className="px-3 py-1.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] text-xs font-semibold whitespace-nowrap shrink-0 flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>{isBn ? 'প্রেসক্রিপশন / বাজার লিস্ট' : 'Upload Rx / Bazar List'}</span>
+          </button>
+        )}
 
         <button
           type="button"
