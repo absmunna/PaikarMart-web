@@ -5,7 +5,7 @@
 
 ## 1. Product goal ও architecture decision
 
-PaikarMart-এর কেন্দ্রীয় goal হলো এক Firebase identity-তে social discovery, retail/B2B commerce, local service, logistics, seller/fleet work, account ও governance capability এক করা। Marketplace ও Services হলো mixed-feed hub; portal হলো সেই hub বা অন্য navigation entry থেকে খোলা পূর্ণ page; feature হলো UI-independent business/data logic; role হলো permission boundary—আলাদা user copy বা আলাদা codebase নয়।
+PaikarMart-এর কেন্দ্রীয় goal হলো এক Firebase identity-তে social discovery, retail/B2B commerce, local service, logistics, seller/fleet work, account ও governance capability এক করা। Marketplace Home feed=mixed all physical products portals products feed ও Services Home feed=mixed all service portals products mixed feed; every single portal হলো সেই hub বা অন্য navigation entry থেকে খোলা পূর্ণ page; feature হলো UI-independent business/data logic; role হলো permission boundary—আলাদা user copy বা আলাদা codebase নয়।
 
 ### একাধিক document-এ যে boundary আলাদা লেখা ছিল, এই প্রস্তাবে সেটি এক করা হয়েছে
 
