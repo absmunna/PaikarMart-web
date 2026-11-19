@@ -2,9 +2,7 @@ export type PortalFilterType =
   | 'all'
   | 'retail'
   | 'wholesale'
-  | 'grocery'
-  | 'pharmacy'
-  | 'brand-shops'
-  | 'digital'
+  | 'nearby'
+  | 'services'
   | 'demand'
   | 'used';

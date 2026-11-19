@@ -1,0 +1,1 @@
+export { PharmacyPortal } from './PharmacyPortal';

@@ -1,3 +1,5 @@
+import { auth } from '@/lib/firebase';
+
 export interface RetailVoucher {
   code: string;
   titleBn: string;
@@ -221,5 +223,4 @@ export const retailApiClient = {
     });
   },
 };
-import { auth } from '@/lib/firebase';
 

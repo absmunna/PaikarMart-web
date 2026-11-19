@@ -11,6 +11,7 @@ export default defineConfig(() => {
       alias: {
         '@': path.resolve(import.meta.dirname, 'src'),
         '@paikarmart/shared': path.resolve(import.meta.dirname, '../../packages/shared/src/index.ts'),
+        '@firebase-config': path.resolve(import.meta.dirname, '../../firebase-applet-config.json'),
       },
     },
     server: {

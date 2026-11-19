@@ -1,0 +1,52 @@
+# ==============================================================================
+# PAIKAR MART - BACKEND WORKSPACE GITIGNORE
+# ==============================================================================
+
+# 1. Environment files & Credentials (NEVER commit live keys)
+.env
+.env.*
+*.env
+*.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!**/.env.example
+
+# Service accounts & Private keys
+*.pem
+*.key
+*.cert
+*serviceAccountKey*.json
+*service-account*.json
+firebase-adminsdk*.json
+
+# 2. Dependencies
+node_modules/
+
+# 3. Build & Compilation Outputs
+dist/
+build/
+*.tsbuildinfo
+
+# 4. Local DB & Prisma Local Cache
+*.db
+*.sqlite
+prisma/*.db
+prisma/*.sqlite
+
+# 5. Logs & Debug
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 6. OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/

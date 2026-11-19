@@ -12,9 +12,12 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  Users,
+  Layers
 } from 'lucide-react';
 import { PortalTab } from '@/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SuperAppHubModalProps {
   isOpen: boolean;
@@ -33,58 +36,95 @@ export const SuperAppHubModal: React.FC<SuperAppHubModalProps> = ({
   onOpenCloudGuide,
   isVendor,
 }) => {
+  const { language } = useLanguage();
+  const isBn = language === 'bn';
+
   if (!isOpen) return null;
 
   const modules = [
     {
       id: 'commerce',
       tab: 'commerce' as PortalTab,
-      title: 'Retail Marketplace (B2C)',
-      tagline: 'Hyperlocal & brand shopping with flash deals, instant cart, and fast home delivery.',
+      title: isBn ? 'মার্কেটপ্লেস হাব' : 'Marketplace Hub',
+      tagline: isBn
+        ? 'রিটেইল, গ্রোসারি, ফার্মেসি, ব্র্যান্ড শপ ও ডিজিটাল পণ্যের সমন্বিত মার্কেট।'
+        : 'Mixed feed of retail shopping, grocery, pharmacy, brand shops, and flash deals.',
       icon: ShoppingBag,
-      badge: 'Retail Direct',
+      badge: isBn ? 'রিটেইল ও হাব' : 'Hub & B2C',
       accentColor: 'from-blue-600/20 to-indigo-600/10 text-blue-600 dark:text-blue-400',
-      actionLabel: 'Shop Retail'
+      actionLabel: isBn ? 'মার্কেটপ্লেস খুলুন' : 'Open Marketplace'
     },
     {
       id: 'wholesale',
       tab: 'wholesale' as PortalTab,
-      title: 'B2B Wholesale Hub (পাইকারি)',
-      tagline: 'Direct factory rates, MOQ volume slabs, custom RFQ negotiation, and pallet freight.',
+      title: isBn ? 'হোলসেল হাব (B2B)' : 'Wholesale Hub (B2B)',
+      tagline: isBn
+        ? 'সরাসরি ফ্যাক্টরি রেট, MOQ ভলিউম স্ল্যাব, RFQ দরপত্র ও বাল্ক ফ্রেইট।'
+        : 'Direct factory rates, MOQ volume slabs, custom RFQ negotiation, and pallet freight.',
       icon: Package,
-      badge: 'Factory Direct',
+      badge: isBn ? 'ফ্যাক্টরি ও MOQ' : 'Factory Direct',
       accentColor: 'from-emerald-600/20 to-teal-600/10 text-emerald-600 dark:text-emerald-400',
-      actionLabel: 'Enter Wholesale'
+      actionLabel: isBn ? 'হোলসেল হাবে যান' : 'Enter Wholesale'
     },
     {
       id: 'services',
       tab: 'services' as PortalTab,
-      title: 'Nearby Services & Repairs',
-      tagline: 'Book AC repair, plumbers, electricians, salons, and hotels in your area.',
+      title: isBn ? 'সার্ভিসেস হাব' : 'Services Hub',
+      tagline: isBn
+        ? 'লোকাল টেকনিশিয়ান, ফুড ডেলিভারি, হোটেল বুকিং ও হাইপারলোকাল সেবা।'
+        : 'Book AC repair, plumbers, electricians, salons, food delivery, and stays near you.',
       icon: Wrench,
-      badge: 'Nearest First',
+      badge: isBn ? 'লোকাল সেবা' : 'Nearest First',
       accentColor: 'from-emerald-500/20 to-teal-500/10 text-emerald-600 dark:text-emerald-400',
-      actionLabel: 'Book Service'
+      actionLabel: isBn ? 'সার্ভিস বুক করুন' : 'Explore Services'
     },
     {
       id: 'rides',
       tab: 'rides' as PortalTab,
-      title: 'Logistics & Ride Share',
-      tagline: 'Instant Bike riders, Rent-a-car, Truck hire, and Inter-city Couriers.',
+      title: isBn ? 'ট্রানজিট ও লজিস্টিকস' : 'Transit & Logistics',
+      tagline: isBn
+        ? 'ইনস্ট্যান্ট বাইক রাইড, পার্সেল কুরিয়ার ওয়েবিল, কার্গো ট্রাক ও রেন্টাল।'
+        : 'Instant Bike riders, Rent-a-car, Truck hire, and Inter-city Couriers.',
       icon: Car,
-      badge: 'Transit & Cargo',
+      badge: isBn ? 'রাইড ও কুরিয়ার' : 'Transit & Cargo',
       accentColor: 'from-sky-500/20 to-blue-500/10 text-sky-600 dark:text-sky-400',
-      actionLabel: 'Request Logistics'
+      actionLabel: isBn ? 'লজিস্টিকস খুলুন' : 'Open Transit'
     },
     {
       id: 'creator',
       tab: 'creator' as PortalTab,
-      title: 'Creator OTT Hub',
-      tagline: 'Paid premium video content, tutorials, and ad-supported blog network.',
+      title: isBn ? 'ক্রিয়েটর স্টুডিও' : 'Creator Studio',
+      tagline: isBn
+        ? 'শর্ট ভিডিও, লাইভ কমার্স, টিউটোরিয়াল ও প্রিমিয়াম ক্রিয়েটর কনটেন্ট।'
+        : 'Paid premium video content, tutorials, live commerce, and ad-supported streams.',
       icon: Sparkles,
-      badge: 'Video & OTT',
+      badge: isBn ? 'ভিডিও ও স্টুডিও' : 'Video & OTT',
       accentColor: 'from-purple-500/20 to-pink-500/10 text-purple-600 dark:text-purple-400',
-      actionLabel: 'Explore Content'
+      actionLabel: isBn ? 'স্টুডিও দেখুন' : 'Explore Studio'
+    },
+    {
+      id: 'community-hub',
+      tab: 'community-hub' as PortalTab,
+      title: isBn ? 'কমিউনিটি হাব' : 'Community Hub',
+      tagline: isBn
+        ? 'সোশ্যাল ফিড, ডিমান্ড বোর্ড (RFQ), ক্রিয়েটর রিলস ও ট্রেড চ্যাট একসাথে।'
+        : 'Social feed, buyer RFQ demands, creator reels, and direct trade chats together.',
+      icon: Users,
+      badge: isBn ? 'সোশ্যাল ও ডিমান্ড' : 'Hub & Social',
+      accentColor: 'from-pink-500/20 to-rose-500/10 text-pink-600 dark:text-pink-400',
+      actionLabel: isBn ? 'কমিউনিটি খুলুন' : 'Open Community'
+    },
+    {
+      id: 'utility-hub',
+      tab: 'utility-hub' as PortalTab,
+      title: isBn ? 'ইউটিলিটি হাব' : 'Utility Hub',
+      tagline: isBn
+        ? 'অর্ডার, এসক্রো ওয়ালেট, সেলার সেন্ট্রাল, প্রোফাইল ও সেটিংস ককপিট।'
+        : 'Orders cockpit, BDT escrow wallet, Seller Central, notifications, and settings.',
+      icon: Layers,
+      badge: isBn ? 'টুলস ও অ্যাকাউন্ট' : 'Cockpit Hub',
+      accentColor: 'from-slate-500/20 to-indigo-500/10 text-slate-700 dark:text-slate-300',
+      actionLabel: isBn ? 'ইউটিলিটি খুলুন' : 'Open Utility'
     }
   ];
 
@@ -97,13 +137,15 @@ export const SuperAppHubModal: React.FC<SuperAppHubModalProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--pm-accent)] uppercase tracking-wider mb-1">
               <Zap className="w-3.5 h-3.5" />
-              <span>Omnichannel Super App</span>
+              <span>{isBn ? 'অমনিচ্যানেল সুপার অ্যাপ' : 'Omnichannel Super App'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--pm-text)]">
-              One-Stop Commercial Portals
+              {isBn ? 'সুপার অ্যাপ পোর্টালসমূহ' : 'Super App Hub Portals'}
             </h2>
             <p className="text-xs sm:text-sm text-[var(--pm-muted)] mt-1">
-              Switch seamlessly across social commerce, wholesale B2B, food delivery, and gig services.
+              {isBn
+                ? 'সোশ্যাল কমার্স, হোলসেল B2B, সার্ভিস হাব ও ট্রানজিট লজিস্টিকসে এক ক্লিকে সুইচ করুন।'
+                : 'Switch seamlessly across marketplace, wholesale B2B, services hub, creator studio, and logistics.'}
             </p>
           </div>
 
@@ -155,10 +197,10 @@ export const SuperAppHubModal: React.FC<SuperAppHubModalProps> = ({
           })}
         </div>
 
-        {/* Bottom Banner Actions: Vendor Registration & Cloud Infrastructure */}
+        {/* Bottom Banner Actions: Seller Central & Cloud Infrastructure */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-4 border-t border-[var(--pm-border)]">
           
-          {/* Vendor Portal */}
+          {/* Seller Central */}
           <div className="p-4 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-[var(--pm-success-soft)] text-[var(--pm-success)]">
@@ -166,11 +208,13 @@ export const SuperAppHubModal: React.FC<SuperAppHubModalProps> = ({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-[var(--pm-text)] flex items-center gap-1.5">
-                  <span>Merchant & Vendor Central</span>
+                  <span>{isBn ? 'সেলার সেন্ট্রাল' : 'Seller Central'}</span>
                   {isVendor && <CheckCircle2 className="w-3.5 h-3.5 text-[var(--pm-success)]" />}
                 </h4>
                 <p className="text-xs text-[var(--pm-muted)]">
-                  {isVendor ? 'Manage your live inventory & orders' : '4-step compliance registration & tax verification'}
+                  {isVendor
+                    ? isBn ? 'লাইভ ইনভেন্টরি ও অর্ডার পরিচালনা করুন' : 'Manage your live inventory & orders'
+                    : isBn ? '৪-ধাপের KYC ভেরিফিকেশন ও স্টোর চালু করুন' : '4-step compliance registration & KYC verification'}
                 </p>
               </div>
             </div>
@@ -186,7 +230,7 @@ export const SuperAppHubModal: React.FC<SuperAppHubModalProps> = ({
               }}
               className="px-3.5 py-1.5 rounded-lg bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] text-xs font-semibold shrink-0 transition-colors cursor-pointer"
             >
-              {isVendor ? 'Dashboard' : 'Register Store'}
+              {isVendor ? (isBn ? 'ড্যাশবোর্ড' : 'Open Console') : (isBn ? 'স্টোর খুলুন' : 'Register Store')}
             </button>
           </div>
 

@@ -8,6 +8,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordReset,
   updateProfile,
+  sendEmailVerification,
   syncUserProfileToFirestore,
   validateFirestoreConnection,
   isFirebaseConfigured,
@@ -28,6 +29,8 @@ interface AuthContextType {
   signUpWithEmail: (email: string, pass: string, name: string, selectedRole?: UserRole) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
+  sendEmailVerificationSignal: () => Promise<void>;
+  reloadUser: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -196,6 +199,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const sendEmailVerificationSignal = async () => {
+    if (auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
+  const reloadUser = async () => {
+    if (auth.currentUser) {
+      await auth.currentUser.reload();
+      setFirebaseUser({ ...auth.currentUser });
+    }
+  };
+
   const signOut = async () => {
     try {
       setLoading(true);
@@ -229,6 +245,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signUpWithEmail,
         signInWithEmail,
         sendPasswordReset,
+        sendEmailVerificationSignal,
+        reloadUser,
         signOut,
       }}
     >

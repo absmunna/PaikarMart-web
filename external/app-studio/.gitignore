@@ -1,0 +1,29 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Local/legacy project references are not part of the current application.
+/PaikarMart-web-main/
+/src/
+
+# Generated runtime/build artifacts.
+/server.js
+/apps/frontend/dist/
+/apps/backend/dist/
+*.tsbuildinfo
+
+# Local previews and AI Studio input/cache assets.
+/*-preview.png
+theme-*-mobile.png
+auth-*-mobile.png
+profile-settings-mobile.png
+address-settings-mobile.png
+settings-menu-mobile.png
+/public/assets/aistudio/
+.aistudio/
+.gmp_cache/

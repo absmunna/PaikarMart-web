@@ -9,6 +9,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile,
+  sendEmailVerification,
   type User as FirebaseUser
 } from 'firebase/auth';
 import {
@@ -21,7 +22,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { normalizeHandle } from '@paikarmart/shared';
-import rawFirebaseConfig from '../../../../firebase-applet-config.json';
+import rawFirebaseConfig from '@firebase-config';
 
 export interface FirebaseAuthConfig {
   apiKey: string;
@@ -179,8 +180,7 @@ export const syncUserProfileToFirestore = async (user: {
   const safeHandle = sanitizeFirestoreHandle(user.handle, safeEmail, safeId);
   const safeAvatar = (user.avatar || '').slice(0, 512);
   const safeLocation = (user.location || 'Dhaka, Bangladesh').slice(0, 120);
-  const isVerifiedAdmin = Boolean(user.emailVerified && safeEmail === 'abs.munna1@gmail.com');
-  const safeRole = isVerifiedAdmin && user.role === 'super_admin' ? 'super_admin' : 'consumer';
+  const safeRole = 'consumer';
 
   const userPath = `users/${safeId}`;
   try {
@@ -292,5 +292,6 @@ export {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  sendEmailVerification,
 };
 export type { FirebaseUser };

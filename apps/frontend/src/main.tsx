@@ -5,6 +5,11 @@ import '@/index.css';
 (window as any).gm_authFailure = () => {
   window.dispatchEvent(new CustomEvent('gmp-quota-exceeded'));
 };
+// Avoid window.alert blocking the iframe
+window.alert = (msg?: unknown) => {
+  console.warn('[PaikarMart Notice]:', msg);
+};
+
 const origError = console.error;
 console.error = (...args: unknown[]) => {
   origError.apply(console, args);

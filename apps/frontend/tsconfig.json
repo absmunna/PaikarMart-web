@@ -23,6 +23,9 @@
       ],
       "@paikarmart/shared": [
         "../../packages/shared/src/index.ts"
+      ],
+      "@firebase-config": [
+        "../../firebase-applet-config.json"
       ]
     },
     "allowImportingTsExtensions": true,

@@ -1,0 +1,67 @@
+import type { HubPortalDefinition } from '@/hubs/shared/hubTypes';
+
+export const communityPortals: HubPortalDefinition[] = [
+  {
+    id: 'social-feed',
+    hubId: 'community',
+    labelEn: 'Social Feed',
+    labelBn: 'সোশ্যাল ফিড',
+    entryRoute: '/portal/social',
+    iconName: 'newspaper',
+    feedKinds: ['post', 'demand', 'product', 'offer'],
+    categories: [
+      { id: 'all', labelEn: 'All Posts', labelBn: 'সব পোস্ট', filterKey: 'all' },
+      { id: 'following', labelEn: 'Following', labelBn: 'ফলোয়িং', filterKey: 'following' },
+      { id: 'wholesale', labelEn: 'Wholesale', labelBn: 'হোলসেল', filterKey: 'wholesale' },
+      { id: 'retail', labelEn: 'Retail', labelBn: 'রিটেইল', filterKey: 'retail' },
+    ],
+    enabled: true,
+    order: 1,
+  },
+  {
+    id: 'demand-board',
+    hubId: 'community',
+    labelEn: 'Demand Board (RFQ)',
+    labelBn: 'ডিমান্ড বোর্ড',
+    entryRoute: '/portal/demand',
+    iconName: 'clipboard',
+    feedKinds: ['demand', 'offer', 'seller'],
+    categories: [
+      { id: 'demand', labelEn: 'Buyer Requests', labelBn: 'ক্রেতার ডিমান্ড', filterKey: 'demand' },
+      { id: 'wholesale', labelEn: 'Bulk RFQs', labelBn: 'বাল্ক RFQ', filterKey: 'wholesale' },
+    ],
+    enabled: true,
+    order: 2,
+  },
+  {
+    id: 'creator-studio',
+    hubId: 'community',
+    labelEn: 'Creator Studio',
+    labelBn: 'ক্রিয়েটর স্টুডিও',
+    entryRoute: '/portal/creator',
+    iconName: 'video',
+    feedKinds: ['creator', 'product', 'offer'],
+    categories: [
+      { id: 'all', labelEn: 'All Reels & OTT', labelBn: 'সব ভিডিও ও রিলস', filterKey: 'all' },
+      { id: 'video', labelEn: 'Shorts & Live', labelBn: 'শর্টস ও লাইভ', filterKey: 'video' },
+      { id: 'news', labelEn: 'Articles', labelBn: 'আর্টিকেল', filterKey: 'news' },
+    ],
+    enabled: true,
+    order: 3,
+  },
+  {
+    id: 'messages',
+    hubId: 'community',
+    labelEn: 'Messages & Quotes',
+    labelBn: 'মেসেজ ও কোটেশন',
+    entryRoute: '/portal/messages',
+    iconName: 'message-square',
+    feedKinds: ['offer', 'seller', 'provider'],
+    categories: [
+      { id: 'all', labelEn: 'All Chats', labelBn: 'সব চ্যাট', filterKey: 'all' },
+      { id: 'quotes', labelEn: 'Price Quotes', labelBn: 'প্রাইস কোট', filterKey: 'quotes' },
+    ],
+    enabled: true,
+    order: 4,
+  },
+];

@@ -11,12 +11,12 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { CartItem, Order, User } from '@/types';
-import { GuestCheckoutForm } from './GuestCheckoutForm';
-import { CheckoutSuccessSummary } from './CheckoutSuccessSummary';
-import { AccountConversionPopup } from './AccountConversionPopup';
+import { GuestCheckoutForm } from '@/features/marketplace/components/GuestCheckoutForm';
+import { CheckoutSuccessSummary } from '@/features/marketplace/components/CheckoutSuccessSummary';
+import { AccountConversionPopup } from '@/features/marketplace/components/AccountConversionPopup';
 
-import { verifyUniqueUser } from '@/lib/userVerification';
-import { getEffectiveUnitPrice } from '@/lib/commerceUtils';
+import { verifyUniqueUser } from '@/features/auth';
+import { getEffectiveUnitPrice } from '@/features/marketplace/utils/commerceUtils';
 import { retailApiClient } from '@/features/marketplace/services/retailApiClient';
 
 const handleVerifyUser = async (data: any) => {

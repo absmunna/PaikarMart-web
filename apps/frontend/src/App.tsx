@@ -23,60 +23,47 @@ import {
 } from '@/data/mockData';
 import { loadStoredData, saveStoredData } from '@/lib/supabase';
 
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-// Layout & Shared Components
-import { TopNavbar } from '@/components/layout/TopNavbar';
-import { BottomNav } from '@/components/layout/BottomNav';
-import { DesktopLeftNav } from '@/components/layout/DesktopLeftNav';
-import { DesktopRightSidebar } from '@/components/layout/DesktopRightSidebar';
-import { SuperAppHubModal } from '@/components/layout/SuperAppHubModal';
-import { AdMobBanner } from '@/components/shared/AdMobBanner';
-import { DeploymentGuideModal } from '@/components/shared/DeploymentGuideModal';
-import { SidebarDrawer } from '@/components/layout/SidebarDrawer';
-import { LocationPickerModal } from '@/components/shared/LocationPickerModal';
-import { AuthGuard, AuthPortalModal, RoleGuard } from '@/features/auth';
-import { ScrollToTop } from '@/components/shared/ScrollToTop';
+// Layout & Shared Chrome via Design System
+import {
+  TopNavbar,
+  BottomNav,
+  DesktopLeftNav,
+  DesktopRightSidebar,
+  SuperAppHubModal,
+  SidebarDrawer,
+} from '@/design-system/layouts';
+import {
+  DeploymentGuideModal,
+  LocationPickerModal,
+  ScrollToTop,
+} from '@/design-system/components';
+import { AuthPortalModal } from '@/features/auth';
 
-// Portal Modules (Lazy Loaded)
-const SocialHub = React.lazy(() => import('@/hubs/social').then(m => ({ default: m.SocialHub })));
-const ExplorePortal = React.lazy(() => import('@/portals/explore').then(m => ({ default: m.ExplorePortal })));
-const MarketplaceHub = React.lazy(() => import('@/hubs/marketplace').then(m => ({ default: m.MarketplaceHub })));
-const ServicesHub = React.lazy(() => import('@/hubs/services').then(m => ({ default: m.ServicesHub })));
-const LogisticsHub = React.lazy(() => import('@/hubs/logistics').then(m => ({ default: m.LogisticsHub })));
-const CreatorHub = React.lazy(() => import('@/hubs/creator').then(m => ({ default: m.CreatorHub })));
-const SellerCentralPortal = React.lazy(() => import('@/portals/seller-central').then(m => ({ default: m.SellerCentralPortal })));
-const SellerInventoryPage = React.lazy(() => import('@/portals/seller-central').then(m => ({ default: m.SellerInventoryPage })));
-const ProfilePortal = React.lazy(() => import('@/portals/user-profile').then(m => ({ default: m.ProfilePortal })));
-const PublicStorefrontPage = React.lazy(() => import('@/portals/user-profile').then(m => ({ default: m.PublicStorefrontPage })));
-const NotificationsPortal = React.lazy(() => import('@/portals/notifications-center').then(m => ({ default: m.NotificationsPortal })));
-const OrdersPortal = React.lazy(() => import('@/portals/orders-hub').then(m => ({ default: m.OrdersPortal })));
-const WalletPortal = React.lazy(() => import('@/portals/wallet').then(m => ({ default: m.WalletPortal })));
-const UserGuidePortal = React.lazy(() => import('@/portals/guide').then(m => ({ default: m.UserGuidePortal })));
-
-const ProductDetailsLanding = React.lazy(() => import('@/hubs/marketplace/pages/product-details/ProductDetailsPage').then(m => ({ default: m.ProductDetailsLanding })));
-
-import { CartCheckoutDrawer } from '@/features/marketplace';
-import { fetchCatalogProducts } from '@/features/marketplace/services/catalogApiClient';
-import { WalletModal } from '@/portals/wallet';
-import { NotificationsModal } from '@/portals/notifications-center';
+import { CartCheckoutDrawer, CategoryBar, fetchCatalogResult, type PortalFilterType } from '@/features/marketplace';
+import { WalletModal } from '@/portals/utilities/wallet';
+import { NotificationsModal } from '@/portals/utilities/notifications-center';
 import { MessagingCenterModal } from '@/features/messaging';
-import { SuperAdminControlModal } from '@/portals/super-admin';
+import { SuperAdminControlModal } from '@/features/governance';
+import { MultiRoleOnboardingModal } from '@/features/vendors';
 
-import { MultiRoleOnboardingModal } from '@/portals/seller-central/components/MultiRoleOnboardingModal';
-import { PortalSkeleton, FeedSkeleton } from '@/components/shared/SkeletonLoaders';
-
-// Centralized Settings & Contexts (Themes, Language, Location Radar)
-import { AppProviders, useTheme, useLanguage, useLocationSettings, useSettings, useAuth } from '@/contexts';
-import { SettingsModal, SettingsPortal as UnifiedSettingsPortal, SettingsSectionId } from '@/portals/settings-center';
+// Application Bootstrap, Routing, Contexts & Shared Hooks
+import { AppProviders } from '@/app/providers/AppProviders';
+import { PORTAL_TAB_ROUTES, resolveTabFromPath, ROUTE_PATHS } from '@/app/router/routeIds';
+import { AppRouteManifest } from '@/app/router/routeManifest';
+import { useTheme, useLanguage, useLocationSettings, useAuth } from '@/contexts';
+import { SettingsModal, SettingsSectionId } from '@/portals/utilities/settings-center';
+import { useGlobalOverlayScrollLock } from '@/shared/hooks/useBodyScrollLock';
 
 function AppInner() {
+  useGlobalOverlayScrollLock();
   const { isDark, toggleTheme } = useTheme();
-  const { openSettings } = useSettings();
   const { activeLocation, setManualLocation } = useLocationSettings();
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const isBn = language === 'bn';
-  const { currentUser, setCurrentUser } = useAuth();
+  const { firebaseUser, currentUser, setCurrentUser } = useAuth();
+  const isGuestUser = !firebaseUser;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -84,46 +71,18 @@ function AppInner() {
   // Navigation & Modal States derived from Route
   const [isMessagingOpen, setIsMessagingOpen] = useState(false);
 
-  const currentTab = React.useMemo(() => {
-    const path = location.pathname;
-    if (path === '/' || path.startsWith('/portal/social') || path.startsWith('/hub/social')) return 'feed';
-    if (path.startsWith('/portal/explore')) return 'explore';
-    if (path.startsWith('/portal/marketplace') || path.startsWith('/hub/marketplace')) return 'commerce';
-    if (path.startsWith('/portal/wholesale')) return 'wholesale';
-    if (path.startsWith('/portal/services') || path.startsWith('/hub/services')) return 'services';
-    if (path.startsWith('/portal/transit') || path.startsWith('/hub/logistics')) return 'rides';
-    if (path.startsWith('/portal/creator') || path.startsWith('/hub/creator')) return 'creator';
-    if (path.startsWith('/portal/seller')) return 'vendor-dash';
-    if (path.startsWith('/portal/profile')) return 'profile';
-    if (path.startsWith('/portal/notifications')) return 'notifications';
-    if (path.startsWith('/portal/orders')) return 'orders';
-    if (path.startsWith('/portal/wallet')) return 'wallet';
-    if (path.startsWith('/portal/messages')) return 'messages';
-    if (path.startsWith('/portal/guide')) return 'guide';
-    if (path.startsWith('/settings')) return 'settings';
-    return 'feed';
-  }, [location.pathname]);
+  const currentTab = React.useMemo(() => resolveTabFromPath(location.pathname), [location.pathname]);
 
   const setCurrentTab = (tab: PortalTab) => {
-    const routeMap: Record<PortalTab, string> = {
-      'feed': '/hub/social',
-      'explore': '/portal/explore',
-      'hub': '/portal/explore',
-      'commerce': '/hub/marketplace',
-      'wholesale': '/hub/marketplace?portal=wholesale',
-      'services': '/hub/services',
-      'rides': '/hub/logistics',
-      'creator': '/hub/creator',
-      'vendor-dash': '/portal/seller',
-      'profile': '/portal/profile',
-      'notifications': '/portal/notifications',
-      'settings': '/settings',
-      'orders': '/portal/orders',
-      'wallet': '/portal/wallet',
-      'messages': '/portal/messages',
-      'guide': '/portal/guide',
-    };
-    navigate(routeMap[tab] || '/hub/social');
+    if (tab === 'commerce') {
+      setActiveCommerceChildPortalId('all');
+      setActivePortalFilter('all');
+      setSelectedSubCategory('all');
+    } else if (tab === 'services') {
+      setActiveServicePortalId('all');
+      setSelectedSubCategory('all');
+    }
+    navigate(PORTAL_TAB_ROUTES[tab] || ROUTE_PATHS.SOCIAL);
   };
 
   const [initialSettingsSection, setInitialSettingsSection] = useState<SettingsSectionId>('account_profile');
@@ -141,6 +100,42 @@ function AppInner() {
   const [quotaExceeded, setQuotaExceeded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
+  const [activePortalFilter, setActivePortalFilter] = useState<PortalFilterType>('all');
+  const [activeLogisticsSubPortal, setActiveLogisticsSubPortal] = useState<'ride' | 'courier' | 'cargo' | 'fleet'>('ride');
+  const [activeServicePortalId, setActiveServicePortalId] = useState('all');
+  const [activeCommerceChildPortalId, setActiveCommerceChildPortalId] = useState('all');
+
+  const handleCategoryBarPortalSwitch = (portal: PortalFilterType) => {
+    const hubQuery =
+      currentTab === 'commerce' || currentTab === 'wholesale'
+        ? '?hub=marketplace'
+        : currentTab === 'services'
+        ? '?hub=services'
+        : currentTab === 'rides'
+        ? '?hub=logistics'
+        : '';
+
+    if (portal === 'demand') {
+      navigate(`${ROUTE_PATHS.DEMAND}${hubQuery}`);
+    } else if (portal === 'nearby') {
+      navigate(`${ROUTE_PATHS.NEARBY}${hubQuery}`);
+    } else if (portal === 'wholesale') {
+      if (currentTab !== 'commerce' && currentTab !== 'wholesale') {
+        setCurrentTab('wholesale');
+      }
+    } else if (portal === 'retail' || portal === 'used' || portal === 'all') {
+      if (currentTab !== 'commerce') {
+        setCurrentTab('commerce');
+      }
+    } else if (portal === 'services') {
+      if (currentTab !== 'services') {
+        setCurrentTab('services');
+      }
+    }
+    setActivePortalFilter(portal);
+  };
+
   const handleOpenAuthModal = (tab: 'login' | 'register' = 'login') => {
     setAuthModalTab(tab);
     setIsAuthModalOpen(true);
@@ -162,16 +157,25 @@ function AppInner() {
     loadStoredData('POSTS', INITIAL_POSTS)
   );
 
-  const [commerceItems, setCommerceItems] = useState<CommerceItem[]>(() => 
-    loadStoredData('COMMERCE', INITIAL_COMMERCE_ITEMS)
-  );
+  const [commerceItems, setCommerceItems] = useState<CommerceItem[]>([]);
 
-  // Supabase is the production source of truth. Local data remains only as an
-  // offline/dev fallback while a project is not configured or has no listings.
+  // Supabase is the authoritative product catalog source.
+  // Offline mock catalog is only used when Supabase is unconfigured.
   useEffect(() => {
     const controller = new AbortController();
-    fetchCatalogProducts(controller.signal).then((products) => {
-      if (products.length > 0) setCommerceItems(products);
+    fetchCatalogResult(controller.signal).then((result) => {
+      if (result.source === 'unconfigured') {
+        setCommerceItems(loadStoredData('COMMERCE', INITIAL_COMMERCE_ITEMS));
+        return;
+      }
+      if (result.products.length === 0) {
+        try {
+          localStorage.removeItem('nexsphere_commerce_v1');
+        } catch {
+          // Ignore storage access errors
+        }
+      }
+      setCommerceItems(result.products);
     });
     return () => controller.abort();
   }, []);
@@ -196,7 +200,9 @@ function AppInner() {
   }, [posts]);
 
   useEffect(() => {
-    saveStoredData('COMMERCE', commerceItems);
+    if (commerceItems.length > 0) {
+      saveStoredData('COMMERCE', commerceItems);
+    }
   }, [commerceItems]);
 
   useEffect(() => {
@@ -215,6 +221,17 @@ function AppInner() {
     saveStoredData('NOTIFICATIONS', notifications);
   }, [notifications]);
 
+  // Scope visible notifications: guests are limited to up to 3 public system notices
+  const visibleNotifications = React.useMemo(() => {
+    if (!isGuestUser) return notifications;
+    return notifications.filter((n) => n.type === 'system').slice(0, 3);
+  }, [notifications, isGuestUser]);
+
+  const unreadNotificationsCount = React.useMemo(
+    () => visibleNotifications.filter((n) => !n.read).length,
+    [visibleNotifications]
+  );
+
   // Notification Handlers & Helpers
   const addNotification = (
     type: AppNotification['type'],
@@ -223,6 +240,10 @@ function AppInner() {
     actionTab?: PortalTab,
     avatar?: string
   ) => {
+    // Guests cannot receive or accumulate private order, booking, wallet, or social notifications
+    if (isGuestUser && type !== 'system') {
+      return;
+    }
     const newNotif: AppNotification = {
       id: `notif_${Date.now()}`,
       type,
@@ -493,7 +514,7 @@ function AppInner() {
       
       {/* Google Maps Quota Exhaustion Warning Banner */}
       {quotaExceeded && (
-        <div className="bg-[var(--pm-warning-soft)] border-b border-[var(--pm-warning)]/30 text-[var(--pm-text)] px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+        <div className="bg-[var(--pm-warning-soft)] border-b border-[var(--pm-warning)]/30 text-[var(--pm-text)] px-4 py-2.5 text-xs md:text-sm text-center relative z-30 shadow-sm">
           <span>
             Google Maps Platform quota reached. If you are the app owner, visit{' '}
             <a
@@ -531,7 +552,7 @@ function AppInner() {
             'feed'
           );
         }}
-        unreadNotificationsCount={notifications.filter(n => !n.read).length}
+        unreadNotificationsCount={unreadNotificationsCount}
         onOpenSidebar={() => setIsSidebarOpen(true)}
         onOpenVendorModal={() => setIsVendorModalOpen(true)}
         onOpenCloudGuide={() => setIsCloudGuideOpen(true)}
@@ -567,7 +588,7 @@ function AppInner() {
             onOpenSuperAdminModal={() => setIsSuperAdminModalOpen(true)}
             onOpenCart={() => setIsCartOpen(true)}
             cartCount={cartItems.reduce((acc, item) => acc + item.quantity, 0)}
-            unreadNotificationsCount={notifications.filter(n => !n.read).length}
+            unreadNotificationsCount={unreadNotificationsCount}
             onOpenLocationModal={() => setIsLocationModalOpen(true)}
             onOpenAuthModal={handleOpenAuthModal}
             onQuickFilter={(query, targetTab) => {
@@ -578,279 +599,134 @@ function AppInner() {
 
           {/* Center Primary Feed / Portal Viewport */}
           <main className="w-full max-w-2xl flex-1 space-y-6 pb-12">
-
-          <React.Suspense fallback={currentTab === 'feed' ? <FeedSkeleton /> : <PortalSkeleton />}>
-            <Routes>
-              {/* Canonical hub routes; old portal URLs remain redirects below. */}
-              <Route path="/" element={<Navigate to="/hub/social" replace />} />
-
-              {/* EXPLORE PORTAL (Super Hub Center Point) */}
-              <Route path="/portal/explore" element={
-                <ExplorePortal
-                  onSelectTab={setCurrentTab}
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  onOpenCloudGuide={() => setIsCloudGuideOpen(true)}
-                  onQuickSearch={(q) => setSearchQuery(q)}
-                  isVendor={Boolean(currentUser.vendorProfile)}
-                  currentUser={currentUser}
-                />
-              } />
-
-              {/* Social Hub */}
-              <Route path="/hub/social" element={
-                <SocialHub
-                  currentUser={currentUser}
-                  posts={filteredPosts}
-                  commerceItems={commerceItems}
-                  onCreatePost={handleCreatePost}
-                  onReactToPost={handleReactToPost}
-                  onAddComment={handleAddComment}
-                  onAddToCart={(item) => handleAddToCart(item, 1, item.type === 'wholesale')}
-                />
-              } />
-              <Route path="/portal/social" element={<Navigate to="/hub/social" replace />} />
-
-              {/* VIEW 2: Retail Marketplace Portal (B2C) */}
-              <Route path="/hub/marketplace" element={
-                <MarketplaceHub
-                  // Marketplace Hub starts with a mixed discovery feed. Child portal
-                  // buttons apply the domain-specific filters inside CommercePortal.
-                  items={commerceItems}
-                  onAddToCart={handleAddToCart}
-                  onBuyNow={handleBuyNow}
-                  onSelectTab={setCurrentTab}
-                  currentUser={currentUser}
-                  appliedVoucherCode={appliedPromoCode}
-                  externalSearchQuery={searchQuery}
-                  onSelectVoucher={(code) => {
-                    setAppliedPromoCode(code);
-                    if (cartItems.length > 0) {
-                      setIsCartOpen(true);
-                    } else {
-                      addNotification(
-                        'system',
-                        'Voucher Applied to Checkout',
-                        `Promo code ${code} copied and saved for your next bag checkout.`,
-                        'commerce'
-                      );
+            
+            {/* Master 3-Tier Category Bar available across core portals (never on Social Feed) */}
+            {['explore', 'commerce', 'wholesale', 'services', 'rides', 'demand', 'nearby'].includes(currentTab) && !location.pathname.includes('/product/') && (
+              <CategoryBar
+                isBn={isBn}
+                activePortal={activePortalFilter}
+                selectedSubCategory={selectedSubCategory}
+                searchQuery={searchQuery}
+                initialPillar={
+                  currentTab === 'commerce'
+                    ? 'commerce-hub'
+                    : currentTab === 'wholesale'
+                    ? 'wholesale-hub'
+                    : currentTab === 'rides'
+                    ? 'services-logistics-hub'
+                    : currentTab === 'services'
+                    ? 'services-hub'
+                    : 'all'
+                }
+                activeChildPortalId={
+                  currentTab === 'commerce'
+                    ? activeCommerceChildPortalId
+                    : currentTab === 'services'
+                    ? activeServicePortalId
+                    : undefined
+                }
+                onPortalSwitch={handleCategoryBarPortalSwitch}
+                onSubCategorySelect={setSelectedSubCategory}
+                onSearchFilter={(kw) => setSearchQuery(kw)}
+                onSelectTab={setCurrentTab}
+                onMainTileSelect={(tile) => {
+                  if (tile.id === 'c-all-home') {
+                    setActiveCommerceChildPortalId('all');
+                  } else if (tile.id.startsWith('c-')) {
+                    setActiveCommerceChildPortalId(tile.id);
+                  }
+                  if (currentTab === 'services') {
+                    if (tile.id === 'service-all-home') {
+                      setActiveServicePortalId('all');
+                    } else if (tile.id.startsWith('service-')) {
+                      setActiveServicePortalId(tile.id.replace(/^service-/, '').replace(/-home$/, ''));
                     }
-                  }}
-                  onOrderPlaced={handleOrderPlaced}
-                />
-              } />
+                  }
+                  if (
+                    tile.id === 's-ride-home' ||
+                    tile.id === 's-emergency-home' ||
+                    tile.id === 'service-ride-home' ||
+                    tile.id === 'service-emergency-home'
+                  ) {
+                    setActiveLogisticsSubPortal('ride');
+                  } else if (
+                    tile.id === 'service-logistics-home' ||
+                    tile.id === 's-transport-home' ||
+                    tile.id === 'service-transport-home'
+                  ) {
+                    setActiveLogisticsSubPortal('courier');
+                  } else if (tile.id === 's-rent-home' || tile.id === 'service-rent-home') {
+                    setActiveLogisticsSubPortal('cargo');
+                  }
+                }}
+              />
+            )}
 
-              {/* Legacy marketplace URL remains supported while Hub is canonical. */}
-              <Route path="/portal/marketplace" element={<Navigate to="/hub/marketplace" replace />} />
-
-              {/* Wholesale remains a child portal in the Marketplace Hub. */}
-              <Route path="/portal/wholesale" element={<Navigate to="/hub/marketplace?portal=wholesale" replace />} />
-
-              <Route path="/hub/marketplace/product/:id" element={
-                <ProductDetailsLanding
-                  currentUser={currentUser}
-                  onUpdateUser={setCurrentUser}
-                  onOrderPlaced={handleOrderPlaced}
-                  commerceItems={commerceItems}
-                />
-              } />
-
-              <Route path="/portal/marketplace/product/:id" element={<Navigate to="/hub/marketplace/product/:id" replace />} />
-
-              {/* Services Hub mixed feed + child portal homes */}
-              <Route path="/hub/services" element={
-                <ServicesHub
-                  items={commerceItems}
-                  onBookService={handleBookService}
-                  bookings={bookings}
-                  currentUser={currentUser}
-                  onDeductBalance={handleDeductBalance}
-                />
-              } />
-
-              <Route path="/portal/services" element={<Navigate to="/hub/services" replace />} />
-
-              {/* Logistics Hub */}
-              <Route path="/hub/logistics" element={
-                <LogisticsHub
-                  rideItems={commerceItems.filter(i => i.type === 'rides')}
-                  currentUser={currentUser}
-                />
-              } />
-              <Route path="/portal/transit" element={<Navigate to="/hub/logistics" replace />} />
-
-              {/* Creator Hub */}
-              <Route path="/hub/creator" element={
-                <CreatorHub
-                  currentUser={currentUser}
-                  onDeductBalance={handleDeductBalance}
-                />
-              } />
-              <Route path="/portal/creator" element={<Navigate to="/hub/creator" replace />} />
-
-              {/* VIEW 7: Seller Central & Multi-Role Business Portal (Role & KYC Guarded) */}
-              <Route path="/portal/seller/inventory" element={
-                <RoleGuard
-                  currentUser={currentUser}
-                  requiredMode="seller"
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  onNavigateHome={() => navigate('/hub/social')}
-                >
-                  {currentUser.vendorProfile && (
-                    <SellerInventoryPage
-                      products={commerceItems}
-                      storeId={currentUser.vendorProfile.id}
-                      storeName={currentUser.vendorProfile.storeName}
-                      onAddNewProduct={handleAddNewProduct}
-                      onCreatePromoPost={handleCreatePromoPost}
-                    />
-                  )}
-                </RoleGuard>
-              } />
-
-              <Route path="/portal/seller" element={
-                <RoleGuard
-                  currentUser={currentUser}
-                  requiredMode="seller"
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  onNavigateHome={() => navigate('/hub/social')}
-                >
-                  {currentUser.vendorProfile && (
-                    <SellerCentralPortal
-                      vendorProfile={currentUser.vendorProfile}
-                      currentUser={currentUser}
-                      products={commerceItems}
-                      bookings={bookings}
-                      onAddNewProduct={handleAddNewProduct}
-                      onCreatePromoPost={handleCreatePromoPost}
-                      onOpenStoreSettings={() => handleOpenSettingsPortal('vendor_store')}
-                      onSelectTab={setCurrentTab}
-                    />
-                  )}
-                </RoleGuard>
-              } />
-
-              {/* Unified Single @handle Public Profile & Storefront View */}
-              <Route path="/u/:handle" element={
-                <PublicStorefrontPage
-                  commerceItems={commerceItems}
-                  posts={posts}
-                  currentUser={currentUser}
-                  onAddToCart={handleAddToCart}
-                  onBookService={handleBookService}
-                  onReact={handleReactToPost}
-                  onAddComment={handleAddComment}
-                  onDeductBalance={handleDeductBalance}
-                />
-              } />
-              <Route path="/store/:storeId" element={
-                <PublicStorefrontPage
-                  commerceItems={commerceItems}
-                  posts={posts}
-                  currentUser={currentUser}
-                  onAddToCart={handleAddToCart}
-                  onBookService={handleBookService}
-                  onReact={handleReactToPost}
-                  onAddComment={handleAddComment}
-                  onDeductBalance={handleDeductBalance}
-                />
-              } />
-
-              {/* VIEW 8: User Account Profile Portal */}
-              <Route path="/portal/profile" element={
-                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><ProfilePortal
-                  currentUser={currentUser}
-                  onUpdateUser={setCurrentUser}
-                  posts={posts}
-                  orders={orders}
-                  bookings={bookings}
-                  onReact={handleReactToPost}
-                  onAddComment={handleAddComment}
-                  onAddToCart={handleAddToCart}
-                  commerceItems={commerceItems}
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  onOpenWallet={() => setIsWalletOpen(true)}
-                  onUpdateOrder={handleUpdateOrder}
-                  onSelectTab={setCurrentTab}
-                  onOpenSettingsPortal={handleOpenSettingsPortal}
-                  onOpenSuperAdminModal={() => setIsSuperAdminModalOpen(true)}
-                  onOpenAuthModal={handleOpenAuthModal}
-                /></AuthGuard>
-              } />
-
-              {/* VIEW 9: Full Notification Center Page */}
-              <Route path="/portal/notifications" element={
-                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><NotificationsPortal
-                  notifications={notifications}
-                  onMarkAsRead={handleMarkNotificationAsRead}
-                  onMarkAllAsRead={handleMarkAllNotificationsAsRead}
-                  onClearAll={handleClearAllNotifications}
-                  onSelectTab={setCurrentTab}
-                  onOpenSettingsPortal={handleOpenSettingsPortal}
-                /></AuthGuard>
-              } />
-
-              {/* VIEW 10: Unified Orders Portal */}
-              <Route path="/portal/orders" element={
-                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><OrdersPortal
-                  currentUser={currentUser}
-                  orders={orders}
-                  onUpdateOrder={handleUpdateOrder}
-                  onReorderOrder={(newOrder) => {
-                    setOrders(prev => [newOrder, ...prev]);
-                    addNotification(
-                      'order',
-                      'Reorder Placed! 📦',
-                      `Order #${newOrder.id} (৳${newOrder.total.toLocaleString()}) queued for dispatch.`,
-                      'orders'
-                    );
-                  }}
-                  onSelectTab={setCurrentTab}
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                /></AuthGuard>
-              } />
-
-              {/* VIEW 11: Wallet Portal */}
-              <Route path="/portal/wallet" element={
-                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><WalletPortal
-                  currentUser={currentUser}
-                  onUpdateUser={setCurrentUser}
-                  onSelectTab={setCurrentTab}
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                /></AuthGuard>
-              } />
-
-              {/* VIEW 12: Full Screen Messaging Portal */}
-              <Route path="/portal/messages" element={
-                <AuthGuard onOpenAuthModal={handleOpenAuthModal}><MessagingCenterModal
-                  isOpen={true}
-                  onClose={() => navigate('/hub/social')}
-                  isFullScreen={true}
-                /></AuthGuard>
-              } />
-
-              {/* VIEW 13: User & Vendor Guide */}
-              <Route path="/portal/guide" element={
-                <UserGuidePortal
-                  onSelectTab={setCurrentTab}
-                  onOpenVendorModal={() => setIsVendorModalOpen(true)}
-                  isVendor={currentUser.isVendor}
-                />
-              } />
-
-              {/* Unified Settings Portal */}
-              <Route path="/settings" element={
-                <AuthGuard onOpenAuthModal={handleOpenAuthModal}>
-                  <UnifiedSettingsPortal
-                    initialSection={initialSettingsSection}
-                    onSelectTab={setCurrentTab}
-                    currentUser={currentUser}
-                    onUpdateUser={setCurrentUser}
-                    onClose={() => navigate('/')}
-                  />
-                </AuthGuard>
-              } />
-            </Routes>
-          </React.Suspense>
+          <AppRouteManifest
+            currentTab={currentTab}
+            currentUser={currentUser}
+            setCurrentUser={setCurrentUser}
+            posts={posts}
+            filteredPosts={filteredPosts}
+            commerceItems={commerceItems}
+            orders={orders}
+            bookings={bookings}
+            notifications={notifications}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            appliedPromoCode={appliedPromoCode}
+            activePortalFilter={activePortalFilter}
+            selectedSubCategory={selectedSubCategory}
+            activeCommerceChildPortalId={activeCommerceChildPortalId}
+            activeServicePortalId={activeServicePortalId}
+            activeLogisticsSubPortal={activeLogisticsSubPortal}
+            initialSettingsSection={initialSettingsSection}
+            setCurrentTab={setCurrentTab}
+            navigate={navigate}
+            onOpenVendorModal={() => setIsVendorModalOpen(true)}
+            onOpenCloudGuide={() => setIsCloudGuideOpen(true)}
+            onOpenWallet={() => setIsWalletOpen(true)}
+            onOpenNotifications={() => setIsNotificationsOpen(true)}
+            onOpenAuthModal={handleOpenAuthModal}
+            onOpenSettingsPortal={handleOpenSettingsPortal}
+            onOpenSuperAdminModal={() => setIsSuperAdminModalOpen(true)}
+            onCreatePost={handleCreatePost}
+            onReactToPost={handleReactToPost}
+            onAddComment={handleAddComment}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+            onSelectVoucher={(code) => {
+              setAppliedPromoCode(code);
+              if (cartItems.length > 0) {
+                setIsCartOpen(true);
+              } else {
+                addNotification(
+                  'system',
+                  'Voucher Applied to Checkout',
+                  `Promo code ${code} copied and saved for your next bag checkout.`,
+                  'commerce'
+                );
+              }
+            }}
+            onOrderPlaced={handleOrderPlaced}
+            onUpdateOrder={handleUpdateOrder}
+            onReorderOrder={(newOrder) => {
+              setOrders((prev) => [newOrder, ...prev]);
+              addNotification(
+                'order',
+                'Reorder Placed! 📦',
+                `Order #${newOrder.id} (৳${newOrder.total.toLocaleString()}) queued for dispatch.`,
+                'orders'
+              );
+            }}
+            onBookService={handleBookService}
+            onDeductBalance={handleDeductBalance}
+            onAddNewProduct={handleAddNewProduct}
+            onCreatePromoPost={handleCreatePromoPost}
+            onMarkNotificationAsRead={handleMarkNotificationAsRead}
+            onMarkAllNotificationsAsRead={handleMarkAllNotificationsAsRead}
+            onClearAllNotifications={handleClearAllNotifications}
+          />
 
         </main>
 
@@ -929,7 +805,7 @@ function AppInner() {
         onOpenSuperAdminModal={() => setIsSuperAdminModalOpen(true)}
         onOpenCart={() => setIsCartOpen(true)}
         cartCount={cartItems.reduce((acc, item) => acc + item.quantity, 0)}
-        unreadNotificationsCount={notifications.filter(n => !n.read).length}
+        unreadNotificationsCount={unreadNotificationsCount}
         onOpenLocationModal={() => setIsLocationModalOpen(true)}
         onOpenAuthModal={handleOpenAuthModal}
         onQuickFilter={(query, targetTab) => {
@@ -944,11 +820,13 @@ function AppInner() {
       <NotificationsModal
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
-        notifications={notifications}
+        notifications={visibleNotifications}
         onMarkAsRead={handleMarkNotificationAsRead}
         onMarkAllAsRead={handleMarkAllNotificationsAsRead}
         onClearAll={handleClearAllNotifications}
         onSelectTab={setCurrentTab}
+        isGuest={isGuestUser}
+        onOpenAuthModal={handleOpenAuthModal}
       />
 
       {/* 11. Google Maps Location Picker Modal */}

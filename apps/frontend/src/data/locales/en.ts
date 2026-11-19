@@ -1,14 +1,14 @@
 export const en = {
   // Navigation & Tabs
   nav: {
-    home: 'Home',
-    shop: 'Shop',
+    home: 'Feed',
+    shop: 'Market',
     wholesale: 'Wholesale',
     services: 'Services',
-    rides: 'Rides',
-    creator: 'Creator',
+    rides: 'Transit',
+    creator: 'Studio',
     profile: 'Profile',
-    superHub: 'Super Hub',
+    superHub: 'Hub',
     nearby: 'Nearby',
     searchPlaceholder: 'Search products, creators, services...',
     settings: 'Settings',

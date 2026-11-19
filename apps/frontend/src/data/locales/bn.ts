@@ -3,14 +3,14 @@ import { TranslationKey } from '@/data/locales/en';
 export const bn: TranslationKey = {
   // Navigation & Tabs
   nav: {
-    home: 'হোম',
-    shop: 'শপ',
+    home: 'ফিড',
+    shop: 'মার্কেট',
     wholesale: 'পাইকারি',
     services: 'সার্ভিসেস',
-    rides: 'রাইড শেয়ার',
-    creator: 'ক্রিয়েটর হাব',
+    rides: 'ট্রানজিট',
+    creator: 'স্টুডিও',
     profile: 'প্রোফাইল',
-    superHub: 'সুপার হাব',
+    superHub: 'হাব',
     nearby: 'আশেপাশে',
     searchPlaceholder: 'পণ্য, ক্রিয়েটর বা সার্ভিস খুঁজুন...',
     settings: 'সেটিংস',

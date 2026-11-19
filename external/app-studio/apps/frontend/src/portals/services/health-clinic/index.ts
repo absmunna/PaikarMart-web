@@ -1,0 +1,1 @@
+export { HealthClinicPortal } from './HealthClinicPortal';

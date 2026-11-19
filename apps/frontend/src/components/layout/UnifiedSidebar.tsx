@@ -40,12 +40,11 @@ import {
   HelpCircle,
   ExternalLink,
 } from 'lucide-react';
-import { PortalTab, User } from '@/types';
+import { PortalTab, SettingsSectionId, User } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
 import { useLocationSettings } from '@/contexts/LocationContext';
 import { useAuth } from '@/features/auth';
-import { SettingsSectionId } from '@/portals/settings-center';
 
 export interface UnifiedSidebarProps {
   mode: 'desktop' | 'drawer';
@@ -128,6 +127,18 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
+  // Close on Escape key when drawer is open
+  React.useEffect(() => {
+    if (mode !== 'drawer' || !isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose?.();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, isOpen, onClose]);
+
   if (mode === 'drawer' && !isOpen) return null;
 
   const navigateAndClose = (tab: PortalTab) => {
@@ -157,9 +168,7 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
 
   const isSuperAdmin =
     currentUser.role === 'super_admin' ||
-    currentUser.role === 'admin' ||
-    currentUser.email === 'abs.munna1@gmail.com' ||
-    firebaseUser?.email === 'abs.munna1@gmail.com';
+    currentUser.role === 'admin';
 
   const primaryPortals: {
     id: PortalTab;
@@ -169,13 +178,16 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
     badgeBn?: string;
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
-    { id: 'feed', labelEn: 'Social Hub', labelBn: 'সোশ্যাল হাব', badgeEn: 'Feed', badgeBn: 'ফিড', icon: Newspaper },
-    { id: 'commerce', labelEn: 'Marketplace Hub', labelBn: 'মার্কেটপ্লেস হাব', badgeEn: 'Market', badgeBn: 'বাজার', icon: ShoppingBag },
-    { id: 'services', labelEn: 'Services Hub', labelBn: 'সার্ভিস হাব', badgeEn: 'Book', badgeBn: 'সেবা', icon: Wrench },
-    { id: 'creator', labelEn: 'Creator Hub', labelBn: 'ক্রিয়েটর হাব', badgeEn: 'Video', badgeBn: 'ভিডিও', icon: Sparkles },
-    { id: 'rides', labelEn: 'Logistics Hub', labelBn: 'লজিস্টিকস হাব', badgeEn: 'Ride', badgeBn: 'রাইড', icon: Car },
-    { id: 'explore', labelEn: 'Hub Directory', labelBn: 'হাব ডিরেক্টরি', badgeEn: 'All', badgeBn: 'সব', icon: Grid },
-    { id: 'messages', labelEn: 'Messages', labelBn: 'মেসেজ', badgeEn: 'Chat', badgeBn: 'চ্যাট', icon: MessageSquare },
+    { id: 'feed', labelEn: 'Social Feed', labelBn: 'সোশ্যাল ফিড', badgeEn: 'Live', badgeBn: 'লাইভ', icon: Newspaper },
+    { id: 'explore', labelEn: 'Super App Hub', labelBn: 'সুপার অ্যাপ হাব', badgeEn: 'All', badgeBn: 'সব', icon: Grid },
+    { id: 'commerce', labelEn: 'Marketplace Hub', labelBn: 'মার্কেটপ্লেস হাব', badgeEn: 'Hub', badgeBn: 'হাব', icon: ShoppingBag },
+    { id: 'wholesale', labelEn: 'Wholesale Hub (B2B)', labelBn: 'হোলসেল হাব (পাইকারি)', badgeEn: 'MOQ', badgeBn: 'পাইকারি', icon: Package },
+    { id: 'services', labelEn: 'Services Hub', labelBn: 'সার্ভিসেস হাব', badgeEn: 'Hub', badgeBn: 'হাব', icon: Wrench },
+    { id: 'community-hub', labelEn: 'Community Hub', labelBn: 'কমিউনিটি হাব', badgeEn: 'Hub', badgeBn: 'হাব', icon: Sparkles },
+    { id: 'utility-hub', labelEn: 'Utility Hub', labelBn: 'ইউটিলিটি হাব', badgeEn: 'Hub', badgeBn: 'হাব', icon: Layers },
+    { id: 'rides', labelEn: 'Transit & Logistics', labelBn: 'ট্রানজিট ও লজিস্টিকস', badgeEn: 'Express', badgeBn: 'পার্সেল', icon: Car },
+    { id: 'creator', labelEn: 'Creator Studio', labelBn: 'ক্রিয়েটর স্টুডিও', badgeEn: 'OTT', badgeBn: 'ভিডিও', icon: Sparkles },
+    { id: 'messages', labelEn: 'Messages & Quotes', labelBn: 'মেসেজ ও কোটেশন', badgeEn: 'Chat', badgeBn: 'চ্যাট', icon: MessageSquare },
   ];
 
   const commercialMokams: {
@@ -287,74 +299,105 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
       )}
 
       {/* 2. Scrollable Navigation Body */}
-      <div className={`flex-1 overflow-y-auto no-scrollbar space-y-4 ${mode === 'drawer' ? 'p-4' : 'pr-2'}`}>
+      <div className={`flex-1 overflow-y-auto no-scrollbar overscroll-contain space-y-4 ${mode === 'drawer' ? 'p-4' : 'pr-2'}`}>
         
-        {/* User Profile Card with Quick Balance & Action Buttons */}
+        {/* User Profile / Guest State Card */}
         <div className="p-3.5 rounded-2xl bg-[var(--pm-card)] border border-[var(--pm-border)] shadow-xs space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="relative shrink-0">
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  referrerPolicy="no-referrer"
-                  className="w-11 h-11 rounded-full object-cover ring-2 ring-[var(--pm-accent)]/30"
-                />
-                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[var(--pm-card)]" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-black text-[var(--pm-text)] truncate">
-                    {currentUser.name}
-                  </span>
-                  {currentUser.isVendor && (
-                    <ShieldCheck className="w-3.5 h-3.5 text-[var(--pm-accent)] shrink-0" />
-                  )}
+          {firebaseUser ? (
+            <>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative shrink-0">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      referrerPolicy="no-referrer"
+                      className="w-11 h-11 rounded-full object-cover ring-2 ring-[var(--pm-accent)]/30"
+                    />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[var(--pm-card)]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-black text-[var(--pm-text)] truncate">
+                        {currentUser.name}
+                      </span>
+                      {currentUser.isVendor && (
+                        <ShieldCheck className="w-3.5 h-3.5 text-[var(--pm-accent)] shrink-0" />
+                      )}
+                    </div>
+                    <span className="text-[10px] text-[var(--pm-muted)] block truncate">
+                      {currentUser.isVendor
+                        ? isBn
+                          ? 'ভেরিফাইড মার্চেন্ট'
+                          : 'Verified Merchant'
+                        : isBn
+                          ? 'রেগুলার মেম্বার'
+                          : 'General Buyer'}
+                    </span>
+                    <span className="text-[11px] text-[var(--pm-accent)] font-mono font-bold block truncate">
+                      ৳{currentUser.balance.toLocaleString()} {isBn ? 'ব্যালেন্স' : 'Balance'}
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] text-[var(--pm-muted)] block truncate">
-                  {currentUser.isVendor
-                    ? isBn
-                      ? 'ভেরিফাইড মার্চেন্ট'
-                      : 'Verified Merchant'
-                    : isBn
-                      ? 'রেগুলার মেম্বার'
-                      : 'General Buyer'}
-                </span>
-                <span className="text-[11px] text-[var(--pm-accent)] font-mono font-bold block truncate">
-                  ৳{currentUser.balance.toLocaleString()} {isBn ? 'ব্যালেন্স' : 'Balance'}
-                </span>
               </div>
+
+              {/* Quick Dual Profile & Orders Buttons */}
+              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[var(--pm-border)]">
+                <button
+                  type="button"
+                  onClick={() => navigateAndClose('profile')}
+                  className={`py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    currentTab === 'profile'
+                      ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)]'
+                      : 'bg-[var(--pm-surface)] hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)] border border-[var(--pm-border)]'
+                  }`}
+                >
+                  <UserIcon className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{isBn ? 'প্রোফাইল' : 'Profile'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigateAndClose('orders')}
+                  className={`py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    currentTab === 'orders'
+                      ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)]'
+                      : 'bg-[var(--pm-surface)] hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)] border border-[var(--pm-border)]'
+                  }`}
+                >
+                  <Package className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">{isBn ? 'অর্ডারস হাব' : 'Orders Hub'}</span>
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[var(--pm-accent-soft)] text-[var(--pm-accent)] flex items-center justify-center font-bold shrink-0">
+                  <UserIcon className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-black text-[var(--pm-text)]">
+                    {isBn ? 'স্বাগতম গেস্ট ইউজার!' : 'Welcome, Guest!'}
+                  </h4>
+                  <p className="text-[10px] text-[var(--pm-muted)]">
+                    {isBn ? 'অর্ডার, ওয়ালেট ও মেসেজ অ্যাক্সেস করতে লগইন করুন' : 'Sign in to access orders, wallet & messaging'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose?.();
+                  onOpenAuthModal?.('login');
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>{isBn ? 'লগইন বা রেজিস্টার করুন' : 'Sign In / Register'}</span>
+              </button>
             </div>
-          </div>
-
-          {/* Quick Dual Profile & Orders Buttons */}
-          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[var(--pm-border)]">
-            <button
-              type="button"
-              onClick={() => navigateAndClose('profile')}
-              className={`py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                currentTab === 'profile'
-                  ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)]'
-                  : 'bg-[var(--pm-surface)] hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)] border border-[var(--pm-border)]'
-              }`}
-            >
-              <UserIcon className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">{isBn ? 'প্রোফাইল' : 'Profile'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigateAndClose('orders')}
-              className={`py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                currentTab === 'orders'
-                  ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)]'
-                  : 'bg-[var(--pm-surface)] hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)] border border-[var(--pm-border)]'
-              }`}
-            >
-              <Package className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span className="truncate">{isBn ? 'অর্ডারসমূহ' : 'My Orders'}</span>
-            </button>
-          </div>
+          )}
         </div>
 
         {/* Hyperlocal Radar Bar (Quick Interactive Location & GPS Trigger) */}
@@ -438,7 +481,14 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
           {/* Orders Hub */}
           <button
             type="button"
-            onClick={() => navigateAndClose('orders')}
+            onClick={() => {
+              if (!firebaseUser) {
+                onClose?.();
+                onOpenAuthModal?.('login');
+                return;
+              }
+              navigateAndClose('orders');
+            }}
             className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between ${
               currentTab === 'orders'
                 ? 'bg-[var(--pm-accent-soft)] border-[var(--pm-accent)]/40 text-[var(--pm-accent)]'
@@ -447,17 +497,26 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
           >
             <div className="flex items-center gap-2 min-w-0">
               <Package className="w-4 h-4 text-amber-500 shrink-0" />
-              <span className="text-[11px] font-bold truncate">{isBn ? 'অর্ডারসমূহ' : 'Orders'}</span>
+              <span className="text-[11px] font-bold truncate">{isBn ? 'অর্ডারস' : 'Orders'}</span>
             </div>
-            <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.2 rounded-md">
-              Live
-            </span>
+            {!firebaseUser ? (
+              <Lock className="w-3 h-3 text-[var(--pm-muted)] shrink-0" />
+            ) : (
+              <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.2 rounded-md">
+                Live
+              </span>
+            )}
           </button>
 
           {/* Wallet & Escrow */}
           <button
             type="button"
             onClick={() => {
+              if (!firebaseUser) {
+                onClose?.();
+                onOpenAuthModal?.('login');
+                return;
+              }
               if (onOpenWallet) {
                 onOpenWallet();
                 onClose?.();
@@ -475,9 +534,13 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
               <Wallet className="w-4 h-4 text-emerald-500 shrink-0" />
               <span className="text-[11px] font-bold truncate">{isBn ? 'ওয়ালেট' : 'Wallet'}</span>
             </div>
-            <span className="text-[10px] font-mono font-bold text-emerald-500">
-              ৳{currentUser.balance > 999 ? `${(currentUser.balance / 1000).toFixed(1)}k` : currentUser.balance}
-            </span>
+            {!firebaseUser ? (
+              <Lock className="w-3 h-3 text-[var(--pm-muted)] shrink-0" />
+            ) : (
+              <span className="text-[10px] font-mono font-bold text-emerald-500">
+                ৳{currentUser.balance > 999 ? `${(currentUser.balance / 1000).toFixed(1)}k` : currentUser.balance}
+              </span>
+            )}
           </button>
 
           {/* Notifications / Alerts */}
@@ -625,81 +688,142 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
           >
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>{isBn ? 'ব্যবসা ও সেলার সেন্ট্রাল' : 'Merchant & Vendor Suite'}</span>
+              <span>{isBn ? 'ব্যক্তিগত ও ব্যবসায়িক সেটিংস' : 'Account & Business Suite'}</span>
             </span>
             <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openSections.merchant ? 'rotate-180' : ''}`} />
           </button>
 
           {openSections.merchant && (
             <div className="space-y-1.5 pt-0.5">
-              {currentUser.isVendor ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => navigateAndClose('vendor-dash')}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold text-left transition-all cursor-pointer ${
-                      currentTab === 'vendor-dash'
-                        ? 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/30'
-                        : 'bg-[var(--pm-card)] hover:bg-[var(--pm-card-hover)] border border-[var(--pm-border)]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="p-1.5 rounded-xl bg-emerald-500/15 text-emerald-500 shrink-0">
-                        <Store className="w-4 h-4" />
-                      </div>
-                      <span className="truncate">{isBn ? 'মার্চেন্ট ড্যাশবোর্ড' : 'Vendor Central'}</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                      Active
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => openSettingsTarget('vendor_store')}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
-                  >
-                    <span className="truncate">{isBn ? '📦 ক্যাটালগ ও স্টোরফ্রন্ট' : '📦 Products & Catalog'}</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => openSettingsTarget('vendor_kyc')}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
-                  >
-                    <span className="truncate">{isBn ? '🛡️ কেওয়াইসি ভল্ট ও লাইসেন্স' : '🛡️ KYC Vault & Trade License'}</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => openSettingsTarget('vendor_payout')}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
-                  >
-                    <span className="truncate">{isBn ? '💳 ব্যাংক ও বিকাশ পে-আউট' : '💳 Bank & MFS Payouts'}</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />
-                  </button>
-                </>
-              ) : (
+              {/* Personal Account Settings (Always available for signed-in users) */}
+              <div className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] space-y-1">
+                <span className="text-[10px] font-bold text-[var(--pm-muted)] uppercase tracking-wider px-1 block">
+                  {isBn ? 'ব্যক্তিগত অ্যাকাউন্ট সেটিংস' : 'Personal Account'}
+                </span>
                 <button
                   type="button"
                   onClick={() => {
-                    onClose?.();
-                    onOpenVendorModal();
+                    if (!firebaseUser) {
+                      onClose?.();
+                      onOpenAuthModal?.('login');
+                      return;
+                    }
+                    openSettingsTarget('account_profile');
                   }}
-                  className="w-full p-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-between shadow-md hover:opacity-95 transition-all cursor-pointer active:scale-[0.98]"
+                  className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="w-5 h-5 text-white" />
-                    <div className="text-left">
-                      <span className="block leading-tight">{isBn ? 'সেলার একাউন্ট খুলুন' : 'Become Verified Seller'}</span>
-                      <span className="text-[10px] text-blue-100 font-normal">{isBn ? 'পাইকারি বা রিটেইল মোকাম' : 'B2B/B2C Free Registration'}</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-white" />
+                  <span className="truncate">{isBn ? '👤 প্রোফাইল ও তথ্য' : '👤 Personal Profile'}</span>
+                  {!firebaseUser ? <Lock className="w-3 h-3 text-[var(--pm-muted)]" /> : <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />}
                 </button>
-              )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!firebaseUser) {
+                      onClose?.();
+                      onOpenAuthModal?.('login');
+                      return;
+                    }
+                    openSettingsTarget('account_security');
+                  }}
+                  className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
+                >
+                  <span className="truncate">{isBn ? '🔒 পাসওয়ার্ড ও নিরাপত্তা' : '🔒 Login & Security'}</span>
+                  {!firebaseUser ? <Lock className="w-3 h-3 text-[var(--pm-muted)]" /> : <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!firebaseUser) {
+                      onClose?.();
+                      onOpenAuthModal?.('login');
+                      return;
+                    }
+                    openSettingsTarget('account_addresses');
+                  }}
+                  className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
+                >
+                  <span className="truncate">{isBn ? '🏠 সংরক্ষিত ঠিকানা' : '🏠 Saved Addresses'}</span>
+                  {!firebaseUser ? <Lock className="w-3 h-3 text-[var(--pm-muted)]" /> : <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />}
+                </button>
+              </div>
+
+              {/* Seller Central & Business Settings */}
+              <div className="p-2 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] space-y-1">
+                <span className="text-[10px] font-bold text-[var(--pm-muted)] uppercase tracking-wider px-1 block">
+                  {isBn ? 'সেলার ও ব্যবসায়িক পোর্টাল' : 'Seller & Business Hub'}
+                </span>
+                {currentUser.isVendor ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => navigateAndClose('vendor-dash')}
+                      className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
+                        currentTab === 'vendor-dash'
+                          ? 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/30'
+                          : 'hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Store className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <span className="truncate">{isBn ? 'সেলার সেন্ট্রাল' : 'Seller Central'}</span>
+                      </div>
+                      <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded-full">
+                        Active
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => openSettingsTarget('vendor_store')}
+                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
+                    >
+                      <span className="truncate">{isBn ? '📦 ক্যাটালগ ও স্টোরফ্রন্ট' : '📦 Products & Catalog'}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => openSettingsTarget('vendor_kyc')}
+                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
+                    >
+                      <span className="truncate">{isBn ? '🛡️ কেওয়াইসি ও লাইসেন্স' : '🛡️ KYC & Trade License'}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => openSettingsTarget('vendor_payout')}
+                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-semibold text-[var(--pm-text)] hover:bg-[var(--pm-card-hover)] transition-all cursor-pointer"
+                    >
+                      <span className="truncate">{isBn ? '💳 পে-আউট ও ব্যাংক অ্যাকাউন্ট' : '💳 Bank & Payouts'}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--pm-muted)]" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!firebaseUser) {
+                        onClose?.();
+                        onOpenAuthModal?.('login');
+                        return;
+                      }
+                      onClose?.();
+                      onOpenVendorModal();
+                    }}
+                    className="w-full p-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-between shadow-xs hover:opacity-95 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-white shrink-0" />
+                      <div className="text-left">
+                        <span className="block leading-tight">{isBn ? 'সেলার অ্যাকাউন্ট খুলুন' : 'Become Verified Seller'}</span>
+                        <span className="text-[9px] text-blue-100 font-normal">{isBn ? 'বিনামূল্যে ব্যবসা শুরু করুন' : 'Free B2B/B2C Registration'}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-white shrink-0" />
+                  </button>
+                )}
+              </div>
 
               {/* Developer & Admin Restricted Console */}
               {isSuperAdmin && onOpenSuperAdminModal && (
@@ -709,7 +833,7 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
                     onClose?.();
                     onOpenSuperAdminModal();
                   }}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold text-purple-600 dark:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 transition-all cursor-pointer"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-purple-600 dark:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <ShieldAlert className="w-4 h-4 text-purple-500 shrink-0" />
@@ -783,7 +907,7 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
                 <div className="p-1.5 rounded-xl bg-violet-500/15 text-violet-500 shrink-0">
                   <SettingsIcon className="w-4 h-4" />
                 </div>
-                <span className="truncate">{isBn ? 'অ্যাপ সেটিংস ও ডিসপ্লে' : 'Settings Center'}</span>
+                <span className="truncate">{isBn ? 'সেটিংস সেন্টার' : 'Settings Center'}</span>
               </button>
 
               <button

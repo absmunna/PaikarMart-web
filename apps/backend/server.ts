@@ -1,53 +1,78 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import type { Request, Response } from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createClient } from '@supabase/supabase-js';
-import { aiRouter } from './ai/aiRoutes.js';
-import { messagingRouter } from './messaging/messagingRoutes.js';
-import { wholesaleRouter } from './wholesale/wholesaleRoutes.js';
-import { walletRouter } from './wallet/walletRoutes.js';
-import { escrowRouter } from './escrow/escrowRoutes.js';
-import { orderRouter } from './orders/orderRoutes.js';
-import { logisticsRouter } from './logistics/logisticsRoutes.js';
-import { vendorRouter } from './vendors/vendorRoutes.js';
-import { retailRouter } from './retail/retailRoutes.js';
-import { authRouter } from './auth/authRoutes.js';
-import { catalogRouter } from './catalog/catalogRoutes.js';
+import {
+  backendEnv,
+  getConfiguredCorsOrigins,
+  isCourierWebhookConfigured,
+  isLiveDatabaseConfigured,
+  isPersistentFinanceEnabled
+} from './config/env.js';
+import { aiRouter } from './modules/ai/aiRoutes.js';
+import { messagingRouter } from './modules/messaging/messagingRoutes.js';
+import { wholesaleRouter } from './modules/wholesale/wholesaleRoutes.js';
+import { walletRouter } from './modules/wallet/walletRoutes.js';
+import { escrowRouter } from './modules/escrow/escrowRoutes.js';
+import { orderRouter } from './modules/orders/orderRoutes.js';
+import { logisticsRouter } from './modules/logistics/logisticsRoutes.js';
+import { vendorRouter } from './modules/vendors/vendorRoutes.js';
+import { retailRouter } from './modules/retail/retailRoutes.js';
+import { authRouter } from './modules/auth/authRoutes.js';
+import { catalogRouter } from './modules/catalog/catalogRoutes.js';
+import { requireFirebaseAuth } from './middleware/requireFirebaseAuth.js';
+import { checkDatabaseConnection, getStoredFeedPosts, insertStoredPost, supabaseAdmin } from './services/dbService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = backendEnv.port;
 
-// Restrict browser API access to configured app origins and local development.
-const configuredOrigins = new Set(
-  (process.env.CORS_ORIGINS || process.env.APP_URL || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean)
-);
+// Restrict browser API access to configured app origins, same-host requests, and local development.
+const configuredOrigins = getConfiguredCorsOrigins();
 
-app.use(cors({
-  origin: (origin, callback) => {
-    const isLocalDevelopment = Boolean(origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin));
-    if (!origin || isLocalDevelopment || configuredOrigins.has(origin)) {
-      callback(null, true);
-      return;
+app.use((req, res, next) => {
+  const reqHost = req.get('host');
+  const corsMiddleware = cors({
+    origin: (origin, callback) => {
+      const isLocalDevelopment = Boolean(origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin));
+      const isSameHost = Boolean(
+        origin &&
+        reqHost &&
+        (origin === `https://${reqHost}` || origin === `http://${reqHost}`)
+      );
+      if (!origin || isLocalDevelopment || isSameHost || configuredOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error('Origin is not allowed by CORS.'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Idempotency-Key',
+      'X-Courier-Signature',
+      'X-Payment-Signature',
+      'X-Webhook-Signature',
+      'X-Courier-Secret',
+      'X-Payment-Secret'
+    ]
+  });
+  corsMiddleware(req, res, next);
+});
+
+app.use(
+  express.json({
+    limit: '10mb',
+    verify: (req, _res, buf) => {
+      (req as Request & { rawBody?: Buffer }).rawBody = buf;
     }
-    callback(new Error('Origin is not allowed by CORS.'));
-  },
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Idempotency-Key']
-}));
-
-app.use(express.json({ limit: '10mb' }));
+  })
+);
 
 // Static serving for frontend assets referenced via /src/assets/
 const assetCandidates = [
@@ -72,8 +97,6 @@ app.use('/api/vendors', vendorRouter);
 app.use('/api/retail', retailRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/catalog', catalogRouter);
-
-import { checkDatabaseConnection, getStoredFeedPosts, insertStoredPost } from './services/dbService.js';
 
 // In-memory fallback data store for offline or pre-configured dev environments
 let serverPosts = [
@@ -101,6 +124,9 @@ app.get('/api/health', async (_req: Request, res: Response) => {
       backend: 'Render / Cloud Run Web Service (Node.js/Express)',
       database: dbStatus,
       prismaConfigured: Boolean(process.env.DATABASE_URL),
+      supabaseAdminConfigured: Boolean(supabaseAdmin) && isLiveDatabaseConfigured(),
+      persistentFinanceReady: isPersistentFinanceEnabled(),
+      courierWebhooksReady: isCourierWebhookConfigured(),
       firebaseProject: process.env.FIREBASE_PROJECT_ID || 'project-233907df-3a7c-4179-9a0',
       auth: 'Firebase Authentication (Spark Free Tier)',
       frontend: 'Firebase Hosting / Vercel / Unified SPA'
@@ -113,14 +139,24 @@ app.get('/api/feed', async (_req: Request, res: Response) => {
   res.json({ posts });
 });
 
-app.post('/api/feed/post', async (req: Request, res: Response) => {
+app.post('/api/feed/post', requireFirebaseAuth, async (req: Request, res: Response) => {
+  const content = String(req.body?.content || '').trim().slice(0, 2000);
+  if (!content && !req.body?.mediaUrl && !req.body?.taggedProduct) {
+    res.status(400).json({ error: 'Post content or media is required.' });
+    return;
+  }
+
   const newPost = {
     id: `post_${Date.now()}`,
+    authorId: res.locals.auth.uid,
+    authorName: String(req.body?.authorName || 'PaikarMart Member').slice(0, 100),
+    authorAvatar: typeof req.body?.authorAvatar === 'string' ? req.body.authorAvatar.slice(0, 512) : undefined,
+    content,
+    mediaUrl: typeof req.body?.mediaUrl === 'string' ? req.body.mediaUrl.slice(0, 512) : undefined,
     timestamp: 'Just now',
     reactionsCount: { like: 0, love: 0, care: 0 },
     sharesCount: 0,
     comments: [],
-    ...req.body
   };
 
   await insertStoredPost(newPost);
@@ -129,8 +165,8 @@ app.post('/api/feed/post', async (req: Request, res: Response) => {
 });
 
 // Gemini AI Master Catalog Verification Endpoint
-app.post('/api/catalog/verify-product', async (req: Request, res: Response) => {
-  const { title, brand, category, description, price } = req.body;
+app.post('/api/catalog/verify-product', requireFirebaseAuth, async (req: Request, res: Response) => {
+  const { title, brand, category, description, price } = req.body || {};
 
   try {
     if (process.env.GEMINI_API_KEY) {
@@ -167,7 +203,7 @@ Respond ONLY in valid JSON format:
 }`;
 
       const aiResponse = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-4-hydrogen',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -226,7 +262,6 @@ async function startServer() {
     ];
     const frontendRoot = frontendCandidates.find((c) => fs.existsSync(c)) || frontendCandidates[0];
     const configFile = path.resolve(frontendRoot, 'vite.config.ts');
-
     const { createServer } = await import('vite');
     const vite = await createServer({
       root: frontendRoot,

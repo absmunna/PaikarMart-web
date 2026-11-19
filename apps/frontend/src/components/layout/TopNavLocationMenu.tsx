@@ -47,18 +47,25 @@ export const TopNavLocationMenu: React.FC<TopNavLocationMenuProps> = ({
   const isLiveTracking = locationCtx?.isLiveTracking ?? false;
   const gpsError = locationCtx?.gpsError ?? null;
 
-  // Close popover on click outside
+  // Close popover on click outside or Escape
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -67,8 +74,11 @@ export const TopNavLocationMenu: React.FC<TopNavLocationMenuProps> = ({
       
       {/* Top Navbar Trigger Chip */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 sm:gap-1.5 px-1.5 py-1 xs:px-2 xs:py-1 sm:px-2.5 sm:py-1.5 rounded-full bg-[var(--pm-surface)] hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)] font-semibold text-xs transition-all shadow-2xs border border-[var(--pm-border)] cursor-pointer max-w-[75px] xs:max-w-[110px] sm:max-w-[210px] shrink-0"
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        className="h-9 sm:h-10 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl bg-[var(--pm-surface)] hover:bg-[var(--pm-card-hover)] text-[var(--pm-text)] font-semibold text-xs transition-all shadow-xs border border-[var(--pm-border)] cursor-pointer max-w-[140px] lg:max-w-[180px] xl:max-w-[210px] shrink-0"
         title="Live Location System & Radar"
       >
         {/* Pulsing Beacon Dot */}
@@ -85,13 +95,13 @@ export const TopNavLocationMenu: React.FC<TopNavLocationMenuProps> = ({
           }`} />
         </div>
 
-        <Navigation className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--pm-accent)] shrink-0" />
+        <Navigation className="w-3.5 h-3.5 text-[var(--pm-accent)] shrink-0" />
         
-        <span className="truncate text-left text-[10px] sm:text-xs font-bold max-w-[30px] xs:max-w-[55px] sm:max-w-[130px]">
+        <span className="truncate text-left text-xs font-bold flex-1 min-w-0">
           {activeLoc}
         </span>
 
-        <ChevronDown className={`w-2.5 h-2.5 sm:w-3 sm:h-3 text-[var(--pm-muted)] shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 text-[var(--pm-muted)] shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Real Live Location Dropdown Popover */}
@@ -122,6 +132,7 @@ export const TopNavLocationMenu: React.FC<TopNavLocationMenuProps> = ({
 
             <div className="flex items-center gap-1">
               <button
+                type="button"
                 onClick={() => {
                   setIsOpen(false);
                   openSettings('location');
@@ -132,6 +143,7 @@ export const TopNavLocationMenu: React.FC<TopNavLocationMenuProps> = ({
                 <Settings className="w-4 h-4" />
               </button>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
                 className="p-1 rounded-full opacity-80 hover:opacity-100 hover:bg-black/10 transition-colors cursor-pointer"
                 aria-label="Close popover"
@@ -141,7 +153,7 @@ export const TopNavLocationMenu: React.FC<TopNavLocationMenuProps> = ({
             </div>
           </div>
 
-          <div className="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto">
+          <div className="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto overscroll-contain">
             
             {/* Live GPS Coordinate Readout Box */}
             <div className="p-3 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] space-y-2">

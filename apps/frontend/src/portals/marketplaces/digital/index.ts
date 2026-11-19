@@ -1,0 +1,1 @@
+export { DigitalGoodsPortal } from './DigitalGoodsPortal';

@@ -1,0 +1,139 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User profile with role-based access information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user ID (matches auth UID)" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "name": { "type": "string", "description": "Full name or shop owner name" },
+        "role": { "type": "string", "enum": ["buyer", "seller", "admin", "rider", "service_provider"], "description": "Platform access role" },
+        "avatarUrl": { "type": "string", "description": "Profile picture URL" },
+        "walletBalance": { "type": "number", "description": "Current wallet balance in BDT" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account registration timestamp" }
+      },
+      "required": ["id", "email", "name", "role"]
+    },
+    "master_products": {
+      "title": "Master Product",
+      "description": "Shared product catalog details identified by PMIN",
+      "type": "object",
+      "properties": {
+        "pmin": { "type": "string", "description": "Unique PMIN (Paikar Mart Identification Number)" },
+        "name": { "type": "string", "description": "Product title" },
+        "description": { "type": "string", "description": "Detailed specs and features" },
+        "category": { "type": "string", "description": "Main category slug" },
+        "brand": { "type": "string", "description": "Manufacturer or brand name" },
+        "images": { "type": "array", "description": "List of high-res image URLs" },
+        "specs": { "type": "object", "description": "Key-value pairs of technical specifications" },
+        "createdBy": { "type": "string", "description": "User ID of the seller who first registered this PMIN" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["pmin", "name", "category"]
+    },
+    "seller_offers": {
+      "title": "Seller Offer",
+      "description": "Specific seller listing for a master product",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique offer ID" },
+        "pmin": { "type": "string", "description": "Reference to master_products.pmin" },
+        "sellerId": { "type": "string", "description": "Merchant user UID" },
+        "sellerName": { "type": "string" },
+        "sellerLocation": { "type": "string" },
+        "price": { "type": "number", "description": "Sale price in BDT" },
+        "originalPrice": { "type": "number", "description": "RRP or crossed-out price" },
+        "discount": { "type": "number", "description": "Percentage discount" },
+        "stock": { "type": "number", "description": "Available inventory" },
+        "moq": { "type": "number", "description": "Minimum Order Quantity" },
+        "unit": { "type": "string", "description": "Measurement unit (pcs, kg, etc.)" },
+        "variants": { "type": "array", "description": "Available size/style variations" },
+        "colors": { "type": "array", "description": "Available color variations" },
+        "isVerified": { "type": "boolean" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "isBuyBoxWinner": { "type": "boolean", "description": "Cached flag for the best offer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "pmin", "sellerId", "price", "stock"]
+    },
+    "orders": {
+      "title": "Order",
+      "description": "Customer purchase transaction and shipment tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique order tracking ID" },
+        "userId": { "type": "string", "description": "Buyer's user UID" },
+        "sellerId": { "type": "string", "description": "Merchant's user UID" },
+        "offerId": { "type": "string", "description": "Reference to seller_offers.id" },
+        "pmin": { "type": "string", "description": "Reference to master_products.pmin" },
+        "total": { "type": "number", "description": "Order total in BDT" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "packing", "in_transit", "delivered", "cancelled"], "description": "Shipment progress status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Order placement timestamp" }
+      },
+      "required": ["id", "userId", "pmin", "total", "status"]
+    },
+    "demands": {
+      "title": "Demand",
+      "description": "Bulk buyer sourcing demand request posted to the community",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Demand post ID" },
+        "authorUserId": { "type": "string", "description": "Requester user UID" },
+        "title": { "type": "string", "description": "Demand headline" },
+        "description": { "type": "string", "description": "Specific requirement or specifications" },
+        "budget": { "type": "number", "description": "Target purchase budget in BDT" },
+        "category": { "type": "string", "description": "Category name" },
+        "status": { "type": "string", "enum": ["open", "fulfilled", "closed"], "description": "Sourcing status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Posting timestamp" }
+      },
+      "required": ["id", "authorUserId", "title"]
+    },
+    "posts": {
+      "title": "Post",
+      "description": "Social commerce post with text, photo, video, file attachments, and tagged products",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique post ID" },
+        "authorId": { "type": "string", "description": "User UID of author" },
+        "authorName": { "type": "string", "description": "Author full or shop name" },
+        "authorAvatar": { "type": "string", "description": "Author profile avatar" },
+        "authorRole": { "type": "string", "description": "Author role on platform" },
+        "content": { "type": "string", "description": "Text body of the post" },
+        "postType": { "type": "string", "enum": ["text", "photo", "video", "file", "product"], "description": "Type of feed post" },
+        "mediaUrls": { "type": "string", "description": "JSON string or primary media URL" },
+        "videoUrl": { "type": "string", "description": "Optional video URL or stream" },
+        "category": { "type": "string", "description": "Post category" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Post creation timestamp" }
+      },
+      "required": ["id", "authorId", "content"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/users" },
+      "description": "Public and private user account profiles"
+    },
+    "/master_products/{pmin}": {
+      "schema": { "$ref": "#/entities/master_products" },
+      "description": "Amazon-style shared product catalog"
+    },
+    "/seller_offers/{offerId}": {
+      "schema": { "$ref": "#/entities/seller_offers" },
+      "description": "Individual merchant listings for master products"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/orders" },
+      "description": "Order fulfillment records between buyers and sellers"
+    },
+    "/demands/{demandId}": {
+      "schema": { "$ref": "#/entities/demands" },
+      "description": "Wholesale sourcing demand board"
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/entities/posts" },
+      "description": "Social feed posts containing text, photo, video, files, and products"
+    }
+  }
+}

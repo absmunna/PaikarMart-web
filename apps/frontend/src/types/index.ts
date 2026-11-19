@@ -14,7 +14,27 @@ export type PortalTab =
   | 'notifications'
   | 'wallet'
   | 'messages'
-  | 'guide';
+  | 'guide'
+  | 'demand'
+  | 'nearby'
+  | 'community-hub'
+  | 'utility-hub';
+
+export type SettingsSectionId =
+  | 'appearance'
+  | 'language'
+  | 'location'
+  | 'about'
+  | 'account_profile'
+  | 'account_security'
+  | 'account_addresses'
+  | 'account_payments'
+  | 'account_notifications'
+  | 'vendor_store'
+  | 'vendor_kyc'
+  | 'vendor_payout'
+  | 'vendor_fulfillment'
+  | 'vendor_hours';
 
 export type UserRole = 'consumer' | 'vendor' | 'moderator' | 'admin' | 'super_admin';
 

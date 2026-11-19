@@ -1,4 +1,4 @@
-export type HubId = 'marketplace' | 'services' | 'social' | 'creator' | 'logistics' | 'utility';
+export type HubId = 'marketplace' | 'services' | 'community' | 'utility';
 
 export type HubFeedCardKind =
   | 'product'
@@ -8,7 +8,9 @@ export type HubFeedCardKind =
   | 'seller'
   | 'provider'
   | 'ride'
-  | 'logistics';
+  | 'logistics'
+  | 'post'
+  | 'creator';
 
 export interface HubPortalDefinition {
   id: string;

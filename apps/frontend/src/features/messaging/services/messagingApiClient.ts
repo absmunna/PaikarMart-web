@@ -1,3 +1,4 @@
+import { auth } from '@/lib/firebase';
 import {
   Conversation,
   MessageItem,
@@ -7,15 +8,25 @@ import {
   CoPilotAdvice
 } from '@/features/messaging/types/messaging';
 
+async function getAuthHeaders(includeJson = false): Promise<Record<string, string>> {
+  const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+  const headers: Record<string, string> = {};
+  if (includeJson) headers['Content-Type'] = 'application/json';
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+}
+
 export async function fetchConversationsApi(): Promise<Conversation[]> {
-  const res = await fetch('/api/messages/conversations');
+  const res = await fetch('/api/messages/conversations', { headers: await getAuthHeaders() });
   if (!res.ok) throw new Error('Failed to load conversations');
   const data = await res.json();
   return data.conversations || [];
 }
 
 export async function fetchThreadMessagesApi(conversationId: string): Promise<MessageItem[]> {
-  const res = await fetch(`/api/messages/thread/${encodeURIComponent(conversationId)}`);
+  const res = await fetch(`/api/messages/thread/${encodeURIComponent(conversationId)}`, {
+    headers: await getAuthHeaders(),
+  });
   if (!res.ok) throw new Error('Failed to load thread messages');
   const data = await res.json();
   return data.messages || [];
@@ -29,7 +40,7 @@ export async function initConversationApi(payload: {
 }): Promise<{ conversation: Conversation; messages: MessageItem[] }> {
   const res = await fetch('/api/messages/conversations/init', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(true),
     body: JSON.stringify(payload)
   });
   if (!res.ok) throw new Error('Failed to initialize conversation');
@@ -49,7 +60,7 @@ export async function sendMessageApi(payload: {
 }) {
   const res = await fetch('/api/messages/send', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(true),
     body: JSON.stringify(payload)
   });
   if (!res.ok) throw new Error('Failed to send message');
@@ -66,7 +77,7 @@ export async function requestAiCoPilotApi(payload: {
 }): Promise<CoPilotAdvice> {
   const res = await fetch('/api/messages/ai-copilot', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(true),
     body: JSON.stringify(payload)
   });
   if (!res.ok) throw new Error('AI Co-Pilot request failed');
@@ -80,7 +91,7 @@ export async function updateQuoteStatusApi(
 ) {
   const res = await fetch(`/api/messages/quote/${encodeURIComponent(messageId)}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(true),
     body: JSON.stringify({ conversationId, status })
   });
   if (!res.ok) throw new Error('Failed to update quote status');

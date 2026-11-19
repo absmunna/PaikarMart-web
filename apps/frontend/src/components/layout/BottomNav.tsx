@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, Grid, ShoppingBag, Sparkles, Wrench } from 'lucide-react';
+import { Home, Grid, ShoppingBag, Wrench, Car } from 'lucide-react';
 import { PortalTab, User } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -68,24 +68,24 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
   return (
     <nav
-      className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pm-glass border-t border-[var(--pm-border)] px-2 flex items-center justify-around h-[4.5rem] pb-safe shadow-2xl transition-transform duration-300 ${
+      className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pm-glass border-t border-[var(--pm-border)] px-1 sm:px-2 flex items-center justify-around h-[4.5rem] pb-safe shadow-2xl transition-transform duration-300 ${
         isHidden ? 'translate-y-full' : 'translate-y-0'
       }`}
     >
-      {/* 1. Home Feed */}
+      {/* 1. Social Feed */}
       {renderTabButton(
         'feed',
         currentTab === 'feed',
-        isBn ? 'ফিড' : t.nav.home,
+        t.nav.home,
         Home,
         () => onSelectTab('feed')
       )}
 
-      {/* 2. Commerce Marketplace */}
+      {/* 2. Marketplace Hub */}
       {renderTabButton(
         'commerce',
         currentTab === 'commerce' || currentTab === 'wholesale',
-        isBn ? 'বাজার' : t.nav.shop,
+        t.nav.shop,
         ShoppingBag,
         () => onSelectTab('commerce')
       )}
@@ -98,37 +98,31 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           className={`absolute -top-5 w-12 h-12 rounded-2xl bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] flex items-center justify-center shadow-xl pointer-events-auto active:scale-95 ring-4 ring-[var(--pm-card)] transition-transform ${
             currentTab === 'explore' ? 'scale-105' : ''
           }`}
-          aria-label="Open Super App Hub"
+          aria-label={isBn ? 'সুপার অ্যাপ হাব খুলুন' : 'Open Super App Hub'}
         >
           <Grid className="w-6 h-6" />
         </button>
         <span className="text-[10px] font-black text-[var(--pm-accent)] tracking-normal whitespace-nowrap leading-none">
-          {isBn ? 'হাব' : t.nav.superHub}
+          {t.nav.superHub}
         </span>
       </div>
 
-      {/* 4. Creator Hub */}
-      {renderTabButton(
-        'creator',
-        currentTab === 'creator',
-        isBn ? 'ভিডিও' : t.nav.creator,
-        Sparkles,
-        () => onSelectTab('creator')
-      )}
-
-      {/* 5. Services & Rides Switcher */}
+      {/* 4. Services Hub */}
       {renderTabButton(
         'services',
-        currentTab === 'services' || currentTab === 'rides',
-        currentTab === 'rides'
-          ? isBn
-            ? 'রাইড'
-            : t.nav.rides
-          : isBn
-            ? 'সেবা'
-            : t.nav.services,
+        currentTab === 'services',
+        t.nav.services,
         Wrench,
-        () => onSelectTab(currentTab === 'services' ? 'rides' : 'services')
+        () => onSelectTab('services')
+      )}
+
+      {/* 5. Transit & Logistics Hub */}
+      {renderTabButton(
+        'rides',
+        currentTab === 'rides',
+        t.nav.rides,
+        Car,
+        () => onSelectTab('rides')
       )}
     </nav>
   );

@@ -1,0 +1,50 @@
+# Git and IDE
+.git
+.gitignore
+.github
+.vscode
+.idea
+*.swp
+*.swo
+
+# Dependencies and caches
+node_modules
+.pnpm-store
+.npm
+.turbo
+.cache
+
+# Build outputs
+dist
+build
+.next
+coverage
+*.tsbuildinfo
+
+# Environment and sensitive credential files (NO secrets in images)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+id_rsa*
+firebase-service-account*.json
+*.secret
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Documentation and markdown
+docs
+*.md

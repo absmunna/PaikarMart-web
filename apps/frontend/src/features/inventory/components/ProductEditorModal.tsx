@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { CommerceItem, ProductVariantOption, TradeMode } from '@/types';
 
+const FASHION_PRESETS: ProductVariantOption[] = [
+  { id: 'size', label: 'Size', values: ['S', 'M', 'L', 'XL'] },
+  { id: 'color', label: 'Color', values: ['Black', 'White', 'Navy'] },
+];
+
 const CATEGORY_VARIANT_PRESETS: Record<string, ProductVariantOption[]> = {
   Electronics: [
     { id: 'storage', label: 'Storage', values: ['128 GB', '256 GB', '512 GB'] },
     { id: 'color', label: 'Color', values: ['Black', 'White', 'Blue'] },
   ],
-  'Fashion & Apparel': [
-    { id: 'size', label: 'Size', values: ['S', 'M', 'L', 'XL'] },
-    { id: 'color', label: 'Color', values: ['Black', 'White', 'Navy'] },
-  ],
+  Fashion: FASHION_PRESETS,
+  'Fashion & Apparel': FASHION_PRESETS,
   'Food & Grocery': [
     { id: 'pack', label: 'Pack size', values: ['1 pack', '2 pack', '5 pack'] },
   ],
@@ -19,6 +22,14 @@ const CATEGORY_VARIANT_PRESETS: Record<string, ProductVariantOption[]> = {
     { id: 'color', label: 'Color', values: ['Black', 'White', 'Natural'] },
   ],
 };
+
+function buildVariantCombinations(options: ProductVariantOption[]): string[] {
+  if (options.length === 0) return [];
+  return options.reduce<string[]>((acc, option) => {
+    if (acc.length === 0) return [...option.values];
+    return acc.flatMap((prefix) => option.values.map((val) => `${prefix} · ${val}`));
+  }, []);
+}
 
 interface ProductEditorModalProps {
   isOpen: boolean;
@@ -47,7 +58,8 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({ isOpen, 
     if (!title.trim() || !price) return;
     const numericPrice = parseFloat(price);
     const numericStock = Math.max(0, parseInt(stockQuantity || '0', 10));
-    const defaultVariantKey = variantOptions.map((option) => option.values[0]).join(' · ');
+    const variantKeys = buildVariantCombinations(variantOptions);
+    const trimmedSku = sku.trim();
 
     onSave({
       storeId,
@@ -62,13 +74,13 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({ isOpen, 
       inStock: numericStock > 0,
       deliveryEta: '1-2 Days',
       variantOptions,
-      variantOffers: variantOptions.length > 0 ? [{
-        key: defaultVariantKey,
-        label: defaultVariantKey,
-        sku: sku.trim() || undefined,
+      variantOffers: variantKeys.map((key, idx) => ({
+        key,
+        label: key,
+        sku: trimmedSku ? (idx === 0 ? trimmedSku : `${trimmedSku}-${idx + 1}`) : undefined,
         price: numericPrice,
         stockQuantity: numericStock,
-      }] : [],
+      })),
     });
     setTitle('');
     setPrice('');
@@ -77,6 +89,7 @@ export const ProductEditorModal: React.FC<ProductEditorModalProps> = ({ isOpen, 
     setStockQuantity('1');
     setSku('');
     setTradeMode('retail');
+    setCategory('Electronics');
     setVariantOptions(CATEGORY_VARIANT_PRESETS.Electronics);
     onClose();
   };

@@ -102,10 +102,9 @@ export const QuickAttachCatalogModal: React.FC<QuickAttachCatalogModalProps> = (
     if (!newTitle || !newDescription || !newPrice) return;
 
     setIsAiVerifying(true);
-    setAiAuditResult(null);
-
     try {
-      const response = await fetch('/api/catalog/verify-product', {
+      const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${API_BASE}/api/catalog/verify-product`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

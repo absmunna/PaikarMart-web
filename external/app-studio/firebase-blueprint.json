@@ -1,0 +1,187 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile (Owner-Isolated)",
+      "description": "Authenticated user account metadata isolated to owner and verified platform admins",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 160,
+          "description": "Private user email address (PII)"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Display name"
+        },
+        "handle": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64,
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Normalized public @handle slug"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["consumer", "vendor", "moderator", "admin", "super_admin"],
+          "description": "Server-governed user access role"
+        },
+        "avatar": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "Avatar image URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp"
+        }
+      },
+      "required": ["id", "email", "name", "handle", "role", "createdAt"]
+    },
+    "PublicHandleProfile": {
+      "title": "Public Handle Profile (Zero-PII)",
+      "description": "Strictly public showcase card keyed by normalized handle without emails, phone numbers, NID, or wallet balances",
+      "type": "object",
+      "properties": {
+        "handle": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64,
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "ownerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "avatar": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "location": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "trustLevel": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["handle", "ownerId", "displayName", "location", "verified", "createdAt"]
+    },
+    "Order": {
+      "title": "Order Record",
+      "description": "Customer purchase transaction record with customer-only privacy",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "customerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "total": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["confirmed", "preparing", "in_transit", "delivered", "cancelled"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "customerId", "total", "status", "createdAt"]
+    },
+    "Notification": {
+      "title": "User Notification",
+      "description": "Owner-isolated notification alert",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "recipientId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "read": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "recipientId", "title", "message", "read", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Owner-isolated private user accounts"
+    },
+    "/public_profiles/{handle}": {
+      "schema": "PublicHandleProfile",
+      "description": "Zero-PII public handle profile showcase documents"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders isolated by customerId"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User notification records isolated by recipientId"
+    }
+  }
+}

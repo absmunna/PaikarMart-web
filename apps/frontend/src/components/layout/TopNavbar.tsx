@@ -185,10 +185,17 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
     }
   };
 
+  const navigateSearchTargetIfNeeded = () => {
+    if (!['feed', 'commerce', 'wholesale', 'services', 'explore'].includes(currentTab)) {
+      onSelectTab('commerce');
+    }
+  };
+
   const handleSelectSearch = (term: string) => {
     onSearchChange(term);
     saveSearchTerm(term);
     setIsSearchFocused(false);
+    navigateSearchTargetIfNeeded();
   };
 
   // Real-time product and category suggestion computation from commerceItems
@@ -278,6 +285,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
     if (e.key === 'Enter') {
       if (searchQuery.trim()) {
         saveSearchTerm(searchQuery);
+        navigateSearchTargetIfNeeded();
       }
       setIsSearchFocused(false);
     } else if (e.key === 'Escape') {
@@ -286,24 +294,31 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full pm-glass border-b border-[var(--pm-border)] shadow-sm transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <>
+    <header className="sticky top-0 z-[45] w-full transition-all duration-300">
+      {/* Separate glass layer so backdrop-filter does not trap position:fixed popovers inside header */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 pm-glass border-b border-[var(--pm-border)] shadow-sm" />
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-4 h-16 flex items-center justify-between gap-2 sm:gap-3">
         
-        {/* Left Zone: Brand Logo, Sidebar Menu Toggle, Search */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        {/* Left Zone: Sidebar Menu Toggle, Brand Logo, Search */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 min-w-0">
           <button
+            type="button"
             onClick={onOpenSidebar}
-            className="p-2.5 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-text)] hover:text-[var(--pm-accent)] active-scale transition-all cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] text-[var(--pm-text)] hover:text-[var(--pm-accent)] active-scale transition-all cursor-pointer shrink-0"
             title="Menu"
+            aria-label={isBn ? 'মেনু খুলুন' : 'Open menu'}
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
           </button>
 
-          <button 
+          <button
+            type="button"
             onClick={() => onSelectTab('feed')}
-            className="hidden sm:flex items-center gap-2.5 group active-scale cursor-pointer"
+            className="hidden sm:flex items-center gap-2.5 group active-scale cursor-pointer shrink-0"
+            aria-label="PaikarMart Home"
           >
-            <div className="w-9 h-9 rounded-xl bg-[var(--pm-accent)] flex items-center justify-center text-[var(--pm-accent-fg)] font-black text-xl shadow-lg group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-[var(--pm-accent)] flex items-center justify-center text-[var(--pm-accent-fg)] font-black text-xl shadow-md group-hover:scale-105 transition-transform">
               P
             </div>
             <span className="hidden lg:inline font-black text-xl tracking-tight text-[var(--pm-text)]">
@@ -312,24 +327,25 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           </button>
 
           {/* Hybrid Search Bar Container with Scope Filter & Cmd+K MegaSearch Trigger */}
-          <div ref={searchContainerRef} className="relative w-36 xs:w-48 sm:w-60 md:w-56 lg:w-72">
-            <Search className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 z-10 transition-colors ${isSearchFocused ? 'text-[var(--pm-accent)]' : 'text-[var(--pm-muted)]'}`} />
+          <div ref={searchContainerRef} className="relative flex-1 min-w-0 max-w-full sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg">
+            <Search className={`w-4 h-4 absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none transition-colors ${isSearchFocused ? 'text-[var(--pm-accent)]' : 'text-[var(--pm-muted)]'}`} />
             <input
               type="text"
               value={searchQuery}
               onFocus={() => setIsSearchFocused(true)}
               onKeyDown={handleKeyDown}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder={isBn ? 'খুঁজুন (পণ্য, পাইকারি, সেবা)...' : t.nav.searchPlaceholder || 'Search products, factories, services...'}
-              className="w-full pl-10 pr-16 py-2 rounded-2xl bg-[var(--pm-surface)] border border-[var(--pm-border)] focus:bg-[var(--pm-card)] focus:border-[var(--pm-accent)] focus:ring-2 focus:ring-[var(--pm-accent)]/20 text-sm text-[var(--pm-text)] placeholder:text-[var(--pm-muted)] transition-all outline-none"
+              placeholder={isBn ? 'পণ্য, সেবা খুঁজুন...' : t.nav.searchPlaceholder || 'Search PaikarMart...'}
+              className="w-full min-w-0 h-9 sm:h-10 pl-8 sm:pl-9 pr-8 sm:pr-16 rounded-xl bg-[var(--pm-surface)] border border-[var(--pm-border)] focus:bg-[var(--pm-card)] focus:border-[var(--pm-accent)] focus:ring-2 focus:ring-[var(--pm-accent)]/20 text-xs sm:text-sm text-[var(--pm-text)] placeholder:text-[var(--pm-muted)] transition-all outline-none"
             />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1">
+            <div className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 z-10 flex items-center gap-1">
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => onSearchChange('')}
                   className="text-[var(--pm-muted)] hover:text-[var(--pm-text)] p-1 rounded-full hover:bg-[var(--pm-card-hover)] transition-colors cursor-pointer"
                   title="Clear input"
+                  aria-label="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -356,7 +372,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                   className="fixed inset-0 bg-black/40 z-40 sm:hidden animate-fadeIn"
                   onClick={() => setIsSearchFocused(false)} 
                 />
-                <div className="fixed left-3 right-3 top-16 max-w-md mx-auto sm:absolute sm:inset-auto sm:left-0 sm:top-full sm:mt-2 sm:w-[400px] sm:max-w-none bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] rounded-2xl shadow-2xl z-50 overflow-hidden animate-fadeIn">
+                <div className="fixed left-3 right-3 top-16 w-auto max-w-[calc(100vw-1.5rem)] sm:max-w-none mx-auto sm:mx-0 sm:absolute sm:inset-auto sm:left-0 sm:top-full sm:mt-2 sm:w-[400px] bg-[var(--pm-card)] text-[var(--pm-text)] border border-[var(--pm-border)] rounded-2xl shadow-2xl z-50 overflow-hidden animate-fadeIn">
                   {/* Inline Scope Filter Bar: All | B2C | B2B + MegaSearch Launch */}
                   <div className="px-3 py-2 bg-[var(--pm-surface)] border-b border-[var(--pm-border)] flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1">
@@ -419,6 +435,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                           {matchingCategories.map((cat) => (
                             <button
                               key={cat.name}
+                              type="button"
                               onClick={() => handleSelectCategory(cat.name, cat.type)}
                               className="px-2.5 py-1 rounded-full bg-[var(--pm-surface)] hover:bg-[var(--pm-accent-soft)] text-[var(--pm-text)] hover:text-[var(--pm-accent)] text-xs font-medium transition-colors flex items-center gap-1.5 border border-[var(--pm-border)] cursor-pointer"
                             >
@@ -434,14 +451,15 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
                     {/* Product / Service / Ride Suggestions */}
                     {matchingProducts.length > 0 ? (
-                      <div className="py-1 max-h-64 overflow-y-auto divide-y divide-[var(--pm-border)]">
+                      <div className="py-1 max-h-64 overflow-y-auto overscroll-contain divide-y divide-[var(--pm-border)]">
                         <div className="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-[var(--pm-muted)] flex items-center gap-1.5">
                           <ShoppingBag className="w-3 h-3 text-[var(--pm-accent)]" />
                           <span>Products & Services</span>
                         </div>
                         {matchingProducts.map((prod) => (
-                          <div
+                          <button
                             key={prod.id}
+                            type="button"
                             onClick={() => handleSelectProduct(prod)}
                             className="w-full px-3 py-2 flex items-center gap-3 hover:bg-[var(--pm-card-hover)] text-left group cursor-pointer transition-colors"
                           >
@@ -478,7 +496,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                                 ৳{prod.price.toLocaleString()}
                               </span>
                             </div>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     ) : matchingCategories.length === 0 ? (
@@ -497,6 +515,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                     <div className="px-3 py-2 bg-[var(--pm-surface)] border-t border-[var(--pm-border)] flex items-center justify-between text-[11px] text-[var(--pm-muted)]">
                       <span>Press Enter to search</span>
                       <button
+                        type="button"
                         onClick={() => handleSelectSearch(searchQuery)}
                         className="font-semibold text-[var(--pm-accent)] hover:underline flex items-center gap-1 cursor-pointer"
                       >
@@ -515,6 +534,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                       </div>
                       {searchHistory.length > 0 && (
                         <button
+                          type="button"
                           onClick={clearAllHistory}
                           className="text-[11px] font-semibold text-[var(--pm-muted)] hover:text-[var(--pm-danger)] transition-colors flex items-center gap-1 cursor-pointer"
                         >
@@ -526,23 +546,28 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
                     {/* Search History List */}
                     {searchHistory.length > 0 ? (
-                      <div className="py-1 max-h-56 overflow-y-auto divide-y divide-[var(--pm-border)]">
+                      <div className="py-1 max-h-56 overflow-y-auto overscroll-contain divide-y divide-[var(--pm-border)]">
                         {searchHistory.map((item, idx) => (
                           <div
                             key={`${item}-${idx}`}
-                            onClick={() => handleSelectSearch(item)}
-                            className="w-full px-4 py-2 flex items-center justify-between hover:bg-[var(--pm-card-hover)] text-left group cursor-pointer transition-colors"
+                            className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-[var(--pm-card-hover)] group transition-colors"
                           >
-                            <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                            <button
+                              type="button"
+                              onClick={() => handleSelectSearch(item)}
+                              className="flex-1 flex items-center gap-2.5 min-w-0 pr-2 py-0.5 text-left cursor-pointer"
+                            >
                               <History className="w-3.5 h-3.5 text-[var(--pm-muted)] shrink-0 group-hover:text-[var(--pm-accent)] transition-colors" />
                               <span className="text-xs sm:text-sm font-medium text-[var(--pm-text)] truncate group-hover:text-[var(--pm-accent)]">
                                 {item}
                               </span>
-                            </div>
+                            </button>
                             <button
+                              type="button"
                               onClick={(e) => removeSearchTerm(item, e)}
                               title="Remove from history"
-                              className="p-1 rounded-full text-[var(--pm-muted)] opacity-0 group-hover:opacity-100 hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface)] transition-all cursor-pointer"
+                              aria-label={`Remove ${item} from search history`}
+                              className="p-1.5 rounded-full text-[var(--pm-muted)] opacity-70 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface)] transition-all cursor-pointer shrink-0"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -565,8 +590,9 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                         {DEFAULT_TRENDING_SEARCHES.map((topic) => (
                           <button
                             key={topic}
+                            type="button"
                             onClick={() => handleSelectSearch(topic)}
-                            className="px-2.5 py-1 rounded-full bg-[var(--pm-card)] border border-[var(--pm-border)] text-[11px] font-medium text-[var(--pm-text)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] flex items-center gap-1 transition-all shadow-2xs cursor-pointer"
+                            className="px-2.5 py-1 rounded-full bg-[var(--pm-card)] border border-[var(--pm-border)] text-[11px] font-medium text-[var(--pm-text)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] flex items-center gap-1 transition-all shadow-xs cursor-pointer"
                           >
                             <span>{topic}</span>
                             <ArrowUpRight className="w-2.5 h-2.5 opacity-60" />
@@ -584,10 +610,10 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         </div>
 
         {/* Right Zone: Location, Messages, Notifications, Cart, Profile */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
 
-          {/* Location Chip - Clean badge on desktop */}
-          <div className="hidden xl:block mr-1">
+          {/* Location Chip - Responsive on Tablet & Desktop */}
+          <div className="hidden md:block shrink-0">
             <TopNavLocationMenu
               currentUser={currentUser}
               onUpdateLocation={onUpdateLocation}
@@ -595,94 +621,118 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             />
           </div>
 
-          {/* Super Admin Control Center Button */}
-          {onOpenSuperAdminModal && (currentUser.role === 'super_admin' || currentUser.role === 'admin' || currentUser.email === 'abs.munna1@gmail.com') && (
+          {/* Super Admin Control Center Button (Authenticated Admins Only) */}
+          {Boolean(firebaseUser) && onOpenSuperAdminModal && (currentUser.role === 'super_admin' || currentUser.role === 'admin') && (
             <button
+              type="button"
               onClick={onOpenSuperAdminModal}
-              className="relative p-2.5 rounded-xl bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 active-scale transition-all border border-purple-500/25"
+              className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 active-scale transition-all border border-purple-500/25 cursor-pointer shrink-0"
               title="Super Admin Center"
+              aria-label="Super Admin Center"
             >
-              <ShieldAlert className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-purple-500 ring-2 ring-[var(--pm-card)] animate-pulse" />
+              <ShieldAlert className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-purple-500 ring-2 ring-[var(--pm-card)] animate-pulse" />
             </button>
           )}
 
-          {/* Messages & Quotes Button */}
-          <button
-            onClick={() => onSelectTab('messages')}
-            className={`relative p-2.5 rounded-xl active-scale transition-all cursor-pointer ${
-              currentTab === 'messages'
-                ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] shadow-md'
-                : 'bg-[var(--pm-surface)] text-[var(--pm-text)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)]'
-            }`}
-            title="Messages"
-          >
-            <MessageSquare className="w-5 h-5" />
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-[var(--pm-success)] ring-2 ring-[var(--pm-card)]" />
-          </button>
+          {/* Messages & Quotes Button (Authenticated Users Only) */}
+          {Boolean(firebaseUser) && (
+            <button
+              type="button"
+              onClick={() => onSelectTab('messages')}
+              className={`relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl active-scale transition-all cursor-pointer shrink-0 ${
+                currentTab === 'messages'
+                  ? 'bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] shadow-md'
+                  : 'bg-[var(--pm-surface)] text-[var(--pm-text)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)]'
+              }`}
+              title={isBn ? 'মেসেজ ও কোটেশন' : 'Messages & Quotes'}
+              aria-label={isBn ? 'মেসেজ ও কোটেশন' : 'Messages & Quotes'}
+            >
+              <MessageSquare className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[var(--pm-success)] ring-2 ring-[var(--pm-card)]" />
+            </button>
+          )}
 
-          {/* Notifications Bell Button */}
+          {/* Notifications Bell Button (Guest users see limited system-only notices) */}
           <button
+            type="button"
             onClick={onOpenNotifications}
-            className="relative p-2.5 rounded-xl bg-[var(--pm-surface)] text-[var(--pm-text)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] active-scale transition-all cursor-pointer"
-            title="Notifications"
+            className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-[var(--pm-surface)] text-[var(--pm-text)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] active-scale transition-all cursor-pointer shrink-0"
+            title={
+              !firebaseUser
+                ? isBn ? 'নোটিফিকেশন (গেস্ট সীমিত)' : 'Notifications (Guest Limited)'
+                : isBn ? 'নোটিফিকেশন' : 'Notifications'
+            }
+            aria-label={
+              !firebaseUser
+                ? isBn ? 'নোটিফিকেশন (গেস্ট সীমিত)' : 'Notifications (Guest Limited)'
+                : isBn ? 'নোটিফিকেশন' : 'Notifications'
+            }
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
             {unreadNotificationsCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-4.5 h-4.5 rounded-full bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] text-[10px] font-black flex items-center justify-center ring-2 ring-[var(--pm-card)] animate-bounce">
-                {unreadNotificationsCount}
+              <span
+                className={`absolute -top-1 -right-1 min-w-[16px] h-4 sm:min-w-[18px] sm:h-[18px] px-1 rounded-full bg-[var(--pm-accent)] text-[var(--pm-accent-fg)] text-[9px] sm:text-[10px] font-black flex items-center justify-center ring-2 ring-[var(--pm-card)] ${
+                  firebaseUser ? 'animate-bounce' : ''
+                }`}
+              >
+                {unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount}
               </span>
             )}
           </button>
 
           {/* Shopping Cart Button */}
           <button
+            type="button"
             onClick={onOpenCart}
-            className="relative p-2.5 rounded-xl bg-[var(--pm-surface)] text-[var(--pm-text)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] active-scale transition-all cursor-pointer"
-            title="Shopping Cart"
+            className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-[var(--pm-surface)] text-[var(--pm-text)] border border-[var(--pm-border)] hover:border-[var(--pm-accent)] hover:text-[var(--pm-accent)] active-scale transition-all cursor-pointer shrink-0"
+            title={isBn ? 'শপিং কার্ট' : 'Shopping Cart'}
+            aria-label={isBn ? 'শপিং কার্ট' : 'Shopping Cart'}
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
             {cartCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-4.5 h-4.5 rounded-full bg-[var(--pm-danger)] text-white text-[10px] font-black flex items-center justify-center ring-2 ring-[var(--pm-card)]">
-                {cartCount}
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-4 sm:min-w-[18px] sm:h-[18px] px-1 rounded-full bg-[var(--pm-danger)] text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center ring-2 ring-[var(--pm-card)]">
+                {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
           </button>
 
-          {/* Login / Auth Button */}
-          {!firebaseUser && onOpenAuthModal && (
+          {/* Login / Auth Button for Guests; Profile Avatar for Signed-in Users */}
+          {!firebaseUser && onOpenAuthModal ? (
             <button
+              type="button"
               onClick={() => onOpenAuthModal('login')}
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-sm shadow-md active-scale transition-all cursor-pointer"
-              title="Sign In or Register"
+              className="h-9 sm:h-10 px-2.5 sm:px-3.5 flex items-center justify-center gap-1.5 rounded-xl bg-[var(--pm-accent)] hover:bg-[var(--pm-accent-hover)] text-[var(--pm-accent-fg)] font-bold text-xs sm:text-sm shadow-md active-scale transition-all cursor-pointer shrink-0 whitespace-nowrap"
+              title={isBn ? 'লগইন বা রেজিস্টার করুন' : 'Sign In or Register'}
+              aria-label={isBn ? 'লগইন' : 'Login'}
             >
-              <LogIn className="w-4 h-4" />
-              <span className="hidden sm:inline">লগইন</span>
+              <LogIn className="w-4 h-4 shrink-0" />
+              <span className="hidden min-[380px]:inline">{isBn ? 'লগইন' : 'Login'}</span>
             </button>
-          )}
-
-          {/* User Profile Avatar */}
-          <button
-            onClick={() => onSelectTab('profile')}
-            className="relative ml-1 active-scale group cursor-pointer"
-            title="Profile"
-          >
-            <div className="relative">
+          ) : (
+            <button
+              type="button"
+              onClick={() => onSelectTab('profile')}
+              className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl active-scale group cursor-pointer shrink-0"
+              title={isBn ? 'প্রোফাইল' : 'Profile'}
+              aria-label={isBn ? 'প্রোফাইল' : 'Profile'}
+            >
               <img
                 src={currentUser.avatar}
                 alt={currentUser.name}
                 referrerPolicy="no-referrer"
-                className="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--pm-border)] group-hover:ring-[var(--pm-accent)] transition-all shadow-md"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover ring-2 ring-[var(--pm-border)] group-hover:ring-[var(--pm-accent)] transition-all shadow-md"
               />
               {firebaseUser && (
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[var(--pm-success)] border-2 border-[var(--pm-card)] rounded-full" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-3.5 sm:h-3.5 bg-[var(--pm-success)] border-2 border-[var(--pm-card)] rounded-full" />
               )}
-            </div>
-          </button>
+            </button>
+          )}
 
         </div>
 
       </div>
+    </header>
 
       {/* Global AI Assistant Chatbot Drawer */}
       <AiAssistantDrawer
@@ -705,6 +755,6 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         searchHistory={searchHistory}
         onSaveSearch={saveSearchTerm}
       />
-    </header>
+    </>
   );
 };

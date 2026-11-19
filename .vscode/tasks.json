@@ -2,9 +2,19 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Install dependencies",
+      "type": "shell",
+      "command": "npm install",
+      "inAgents": true,
+      "runOptions": {
+        "runOn": "worktreeCreated"
+      }
+    },
+    {
       "label": "PaikarMart: local dev server",
       "type": "shell",
       "command": "npm run dev",
+      "inAgents": true,
       "isBackground": true,
       "problemMatcher": {
         "owner": "paikarmart-dev",

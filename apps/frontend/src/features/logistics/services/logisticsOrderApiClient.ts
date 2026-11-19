@@ -1,3 +1,4 @@
+import { auth } from '@/lib/firebase';
 import { Order } from '@/types';
 import {
   CourierPartner,
@@ -18,14 +19,22 @@ import {
 
 const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL as string) || '';
 
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+  return token
+    ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    : { 'Content-Type': 'application/json' };
+}
+
 async function safeFetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
   try {
+    const authHeaders = await getAuthHeaders();
     const res = await fetch(`${API_BASE}${url}`, {
+      ...init,
       headers: {
-        'Content-Type': 'application/json',
+        ...authHeaders,
         ...(init?.headers || {})
-      },
-      ...init
+      }
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
@@ -121,9 +130,10 @@ export const logisticsOrderApiClient = {
     payload: PodVerificationPayload
   ): Promise<{ ok: boolean; shipment?: ShipmentRecord; escrowReleased?: boolean; error?: string }> {
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch(`${API_BASE}/api/logistics/shipments/${encodeURIComponent(orderId)}/verify-pod`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload)
       });
       const data = await res.json();
