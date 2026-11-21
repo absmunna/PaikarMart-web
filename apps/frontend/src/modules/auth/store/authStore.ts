@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { AppRole } from '@/config/roles.config';
 
-export type UserRole = 'buyer' | 'seller' | 'admin' | 'super_admin' | 'moderator' | 'nearby_shop' | 'service_provider';
+/** @deprecated Prefer AppRole from @/config/roles.config — kept as alias for store consumers */
+export type UserRole = AppRole;
 
 export interface User {
   id: string;
@@ -11,7 +13,7 @@ export interface User {
   phone?: string;
   avatar?: string;
   avatarUrl?: string;
-  role: UserRole;
+  role: AppRole;
   isVerified?: boolean;
   portals?: string[];
 }
