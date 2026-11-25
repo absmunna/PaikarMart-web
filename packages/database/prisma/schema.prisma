@@ -22,15 +22,16 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products      Product[]
-  orders        Order[]       @relation("UserOrders")
-  buyerOrders   Order[]       @relation("BuyerOrders")
-  vendorOrders  Order[]       @relation("VendorOrders")
-  wallet        Wallet?
-  notifications Notification[]
-  fileAssets    FileAsset[]
-  vendorProfile VendorProfile?
-  cartItems     CartItem[]
+  products       Product[]
+  sellerOffers   SellerOffer[]
+  orders         Order[]         @relation("UserOrders")
+  buyerOrders    Order[]         @relation("BuyerOrders")
+  vendorOrders   Order[]         @relation("VendorOrders")
+  wallet         Wallet?
+  notifications  Notification[]
+  fileAssets     FileAsset[]
+  vendorProfile  VendorProfile?
+  cartItems      CartItem[]
 }
 
 model VendorProfile {
@@ -42,32 +43,112 @@ model VendorProfile {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products Product[]
-  orders   Order[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products     Product[]
+  sellerOffers SellerOffer[]
+  orders       Order[]
 }
 
-model Product {
-  id            String   @id @default(uuid())
-  title         String
-  description   String
-  price         Float
-  originalPrice Float?
-  categoryId    String?
-  category      String?
-  sellerId      String?
-  vendorId      String?
-  stock         Int      @default(0)
-  moq           Int      @default(1)
-  images        String[]
-  tieredPrices  Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+/// Amazon-style canonical catalog entry (one product identity, many seller offers).
+/// Images are Storage URLs only — never binary blobs (keeps free Postgres small).
+model MasterProduct {
+  id               String   @id @default(uuid())
+  /// Public catalog code e.g. PMIN-B08X9J4M12 (unique like ASIN)
+  pmin             String   @unique
+  barcode          String?  @unique
+  title            String
+  titleBn          String?
+  brand            String   @default("Generic")
+  category         String
+  categoryId       String?
+  description      String?
+  /// Public image URLs from Supabase Storage (not DB blobs)
+  canonicalImages  String[]
+  /// Spec map e.g. { "color": "Black", "weight": "1kg" }
+  specifications   Json?
+  /// Variant axis e.g. [{ "name": "Size", "values": ["S","M","L"] }]
+  variantOptions   Json?
+  isVerified       Boolean  @default(false)
+  createdById      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  seller     User?          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  vendor     VendorProfile? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
-  orderItems OrderItem[]
-  cartItems  CartItem[]
+  offers   SellerOffer[]
+  products Product[]
+
+  @@index([category])
+  @@index([brand])
+  @@index([title])
+}
+
+/// One seller's offer against a MasterProduct (price, stock, MOQ, wholesale tiers).
+model SellerOffer {
+  id               String   @id @default(uuid())
+  masterProductId  String
+  sellerId         String
+  vendorId         String?
+  /// Denormalized for fast lookup / Buy-Box (same as MasterProduct.pmin)
+  pmin             String
+  price            Float
+  originalPrice    Float?
+  stock            Int      @default(0)
+  moq              Int      @default(1)
+  /// retail | wholesale
+  tradeMode        String   @default("retail")
+  /// [{ "minQty": 50, "pricePerUnit": 800 }]
+  wholesaleTiers   Json?
+  /// Seller's own shelf/condition photos (Storage URLs)
+  sellerPhotos     String[]
+  deliveryEta      String?
+  location         String?
+  condition        String   @default("New")
+  fulfillmentType  String   @default("seller_fulfilled")
+  shippingFee      Float    @default(0)
+  isBuyBoxWinner   Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  masterProduct MasterProduct  @relation(fields: [masterProductId], references: [id], onDelete: Restrict)
+  seller        User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  vendor        VendorProfile? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  @@index([masterProductId])
+  @@index([sellerId])
+  @@index([pmin])
+  @@index([isActive, isBuyBoxWinner])
+  @@unique([masterProductId, sellerId])
+}
+
+/// Legacy / direct listing (Phase-1 compatible). Optionally links to MasterProduct.
+model Product {
+  id              String   @id @default(uuid())
+  title           String
+  description     String
+  price           Float
+  originalPrice   Float?
+  categoryId      String?
+  category        String?
+  sellerId        String?
+  vendorId        String?
+  stock           Int      @default(0)
+  moq             Int      @default(1)
+  images          String[]
+  tieredPrices    Json?
+  /// Optional link into master catalog (null = standalone legacy product)
+  masterProductId String?
+  pmin            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  seller        User?          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  vendor        VendorProfile? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  masterProduct MasterProduct? @relation(fields: [masterProductId], references: [id], onDelete: SetNull)
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+
+  @@index([masterProductId])
+  @@index([pmin])
 }
 
 model Order {
