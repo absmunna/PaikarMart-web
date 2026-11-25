@@ -8,7 +8,9 @@ import {
   getCurrentUser, 
   syncUser, 
   refreshToken,
-  getDbStatus 
+  getDbStatus,
+  promoteSeller,
+  promoteCreator,
 } from './auth.controller';
 
 import { verifyFirebaseToken } from '../../middleware/firebaseAuth';
@@ -23,6 +25,8 @@ router.post('/request-otp', sendOtp);
 router.post('/verify-otp', verifyOtp);
 router.post('/refresh', refreshToken);
 router.post('/sync', verifyFirebaseToken, syncUser);
+router.post('/promote-seller', verifyFirebaseToken, promoteSeller);
+router.post('/promote-creator', verifyFirebaseToken, promoteCreator);
 router.get('/db-status', getDbStatus);
 router.get('/me', getCurrentUser);
 
