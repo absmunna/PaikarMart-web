@@ -19,41 +19,94 @@ import {
 } from "firebase/auth";
 import { getFirestore, doc, getDocFromServer } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import firebaseConfig from "@config/firebase-applet-config.json";
+import fallbackConfig from "@config/firebase-applet-config.json";
 
-// 1. Config Validation: Ensure the config is not a placeholder
+/**
+ * Prefer VITE_FIREBASE_* env (Vercel) so public repo does not hard-depend on committed keys.
+ * Fallback to firebase-applet-config.json only when env is incomplete (local/dev migration).
+ * Client apiKey is not a secret, but domain restrictions + App Check + Firestore rules are required.
+ */
+function buildFirebaseConfig() {
+  const fromEnv = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string | undefined,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET as string | undefined,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string | undefined,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID as string | undefined,
+    measurementId: (import.meta.env.VITE_FIREBASE_MEASUREMENT_ID as string | undefined) || "",
+    firestoreDatabaseId:
+      (import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID as string | undefined) ||
+      (fallbackConfig as any).firestoreDatabaseId,
+  };
+
+  const hasEnvCore =
+    Boolean(fromEnv.apiKey) &&
+    Boolean(fromEnv.projectId) &&
+    Boolean(fromEnv.appId) &&
+    Boolean(fromEnv.authDomain);
+
+  if (hasEnvCore) {
+    return {
+      apiKey: fromEnv.apiKey!,
+      authDomain: fromEnv.authDomain!,
+      projectId: fromEnv.projectId!,
+      storageBucket: fromEnv.storageBucket || `${fromEnv.projectId}.appspot.com`,
+      messagingSenderId: fromEnv.messagingSenderId || "",
+      appId: fromEnv.appId!,
+      measurementId: fromEnv.measurementId,
+      firestoreDatabaseId: fromEnv.firestoreDatabaseId,
+    };
+  }
+
+  return {
+    apiKey: (fallbackConfig as any).apiKey,
+    authDomain: (fallbackConfig as any).authDomain,
+    projectId: (fallbackConfig as any).projectId,
+    storageBucket: (fallbackConfig as any).storageBucket,
+    messagingSenderId: (fallbackConfig as any).messagingSenderId,
+    appId: (fallbackConfig as any).appId,
+    measurementId: (fallbackConfig as any).measurementId || "",
+    firestoreDatabaseId: (fallbackConfig as any).firestoreDatabaseId,
+  };
+}
+
+const firebaseConfig = buildFirebaseConfig();
+
 export const isFirebaseConfigValid = (config: any): boolean => {
-  if (!config || !config.projectId || config.projectId.includes('your-project-id') || config.projectId === 'remixed-project-id') {
+  if (
+    !config ||
+    !config.projectId ||
+    String(config.projectId).includes("your-project-id") ||
+    config.projectId === "remixed-project-id"
+  ) {
     return false;
   }
   return true;
 };
 
 if (!isFirebaseConfigValid(firebaseConfig)) {
-  console.warn("⚠️ Firebase configuration is missing or using placeholder values. Authentication will not work correctly.");
+  console.warn(
+    "⚠️ Firebase configuration is missing or using placeholder values. Authentication will not work correctly."
+  );
 }
 
-// 2. Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// 3. Initialize Firestore with Enterprise database ID if provided
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = firebaseConfig.firestoreDatabaseId
+  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
+  : getFirestore(app);
 
-// 4. Initialize Authentication
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
-// 5. Google provider — basic login only (profile + email)
-// Workspace scopes (Drive/Sheets/Docs/Calendar) removed: they break simple login,
-// trigger sensitive Google verification, and are not needed for PaikarMart auth.
 export const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
-googleProvider.addScope('profile');
-googleProvider.addScope('email');
+googleProvider.setCustomParameters({ prompt: "select_account" });
+googleProvider.addScope("profile");
+googleProvider.addScope("email");
 
 export const facebookProvider = new FacebookAuthProvider();
 
-// 6. Re-export Firebase primitives
 export { 
   RecaptchaVerifier, 
   signInWithPhoneNumber, 
@@ -72,13 +125,11 @@ export {
 };
 export type { User };
 
-// 7. Token helpers
 let cachedAccessToken: string | null = null;
 
 export const getAccessToken = async (forceRefresh = false): Promise<string | null> => {
   const user = auth.currentUser;
   if (!user) return null;
-  
   try {
     cachedAccessToken = await user.getIdToken(forceRefresh);
     return cachedAccessToken;
@@ -98,14 +149,13 @@ export const logout = async () => {
   }
 };
 
-// 8. Error Handling
 export enum OperationType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  LIST = 'list',
-  GET = 'get',
-  WRITE = 'write',
+  CREATE = "create",
+  UPDATE = "update",
+  DELETE = "delete",
+  LIST = "list",
+  GET = "get",
+  WRITE = "write",
 }
 
 export interface FirestoreErrorInfo {
@@ -118,16 +168,13 @@ export interface FirestoreErrorInfo {
     emailVerified?: boolean | null;
     isAnonymous?: boolean | null;
     tenantId?: string | null;
-    providerInfo?: {
-      providerId?: string | null;
-      email?: string | null;
-    }[];
+    providerInfo?: { providerId?: string | null; email?: string | null }[];
   };
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
   const errorMessage = error instanceof Error ? error.message : String(error);
-  const errorCode = (error as any)?.code || '';
+  const errorCode = (error as any)?.code || "";
 
   const errInfo: FirestoreErrorInfo = {
     error: errorMessage,
@@ -137,16 +184,17 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
       emailVerified: auth.currentUser?.emailVerified,
       isAnonymous: auth.currentUser?.isAnonymous,
       tenantId: auth.currentUser?.tenantId,
-      providerInfo: auth.currentUser?.providerData?.map((provider) => ({
-        providerId: provider.providerId,
-        email: provider.email,
-      })) || [],
+      providerInfo:
+        auth.currentUser?.providerData?.map((provider) => ({
+          providerId: provider.providerId,
+          email: provider.email,
+        })) || [],
     },
     operationType,
     path,
   };
 
-  if (errorCode === 'unavailable' || errorCode === 'failed-precondition' || errorMessage.includes('offline')) {
+  if (errorCode === "unavailable" || errorCode === "failed-precondition" || errorMessage.includes("offline")) {
     console.warn("Firestore offline mode:", JSON.stringify(errInfo));
     return;
   }
@@ -155,15 +203,13 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// 9. Startup Check
 async function testConnection() {
   if (typeof window !== "undefined" && !navigator.onLine) return;
   if (!isFirebaseConfigValid(firebaseConfig)) return;
-  
   try {
     const connRef = doc(db, "test", "connection");
     await getDocFromServer(connRef).catch(() => null);
-  } catch (e) {
+  } catch {
     console.info("Firestore connection check bypassed or limited.");
   }
 }
