@@ -39,6 +39,7 @@ import { verificationRoutes } from './modules/verification/verification.routes';
 import { adminRoutes } from './modules/admin/admin.routes';
 import { notificationRoutes } from './modules/notification/notification.routes';
 import { wholesaleRoutes } from './modules/wholesale/wholesale.routes';
+import { catalogRoutes } from './modules/catalog/catalog.routes';
 import vendorsRouter from './api/routes/vendors';
 import miscRouter from './api/routes/misc';
 import meRouter from './api/routes/me';
@@ -156,6 +157,7 @@ async function startServer() {
   // API v1 & legacy product routes
   app.use('/api/v1/products', productRoutes);
   app.use('/api/products', productRoutes);
+  app.use('/api/v1/catalog', catalogRoutes);
   app.use('/api/v1/orders', orderRoutes);
   app.use('/api/orders', orderRoutes);
   app.use('/api/v1/demands', demandRoutes);
