@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Plus, Edit3, Image as ImageIcon } from 'lucide-react';
 import { useSellerDashboardStore, SellerProduct } from '@/modules/seller';
+import { catalogApi } from '@/modules/catalog';
 import { toast } from 'sonner';
 
 const productSchema = z.object({
@@ -72,13 +73,13 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
 
     try {
       setIsUploading(true);
-      const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-      const { storage } = await import("@/core/lib/firebase");
-      
+      const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+      const { storage } = await import('@/core/lib/firebase');
+
       const fileRef = ref(storage, `products/PROD-${Date.now()}_${file.name}`);
       const snapshot = await uploadBytes(fileRef, file);
       const url = await getDownloadURL(snapshot.ref);
-      
+
       form.setValue('image', url);
       toast.success('ছবিটি সফলভাবে আপলোড হয়েছে!');
     } catch (error) {
@@ -93,7 +94,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
     if (isEditing && product) {
       form.reset({
         title: product.title,
-        description: '', // Assume description is in a full catalog in real app
+        description: '',
         price: product.price.toString(),
         stock: product.stock.toString(),
         category: 'Fashion',
@@ -117,36 +118,79 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
   const onSubmit = async (values: ProductFormValues) => {
     try {
       setIsLoading(true);
-      // Simulate network request
-      await new Promise(resolve => setTimeout(resolve, 800));
-
       const newStock = Number(values.stock);
+      const price = Number(values.price);
+      const originalPrice = values.originalPrice ? Number(values.originalPrice) : undefined;
+      const image = values.image || 'https://via.placeholder.com/300';
+      const tradeMode = values.portal === 'b2b' ? 'wholesale' : 'retail';
 
       if (isEditing && product) {
         updateProduct(product.id, {
           title: values.title,
-          price: Number(values.price),
-          image: values.image || 'https://via.placeholder.com/300',
+          price,
+          image,
           stock: newStock,
-          status: newStock > 0 ? 'active' : 'out_of_stock'
+          status: newStock > 0 ? 'active' : 'out_of_stock',
         });
         toast.success('Product updated successfully!');
-      } else {
-        addProduct({
-          id: `PROD-${Date.now()}`,
+        onClose();
+        return;
+      }
+
+      // Step 3: Master Catalog + Seller Offer via backend API
+      let pminTag = '';
+      try {
+        const listed = await catalogApi.listNewProduct({
           title: values.title,
-          price: Number(values.price),
-          image: values.image || 'https://via.placeholder.com/300',
-          images: [values.image || 'https://via.placeholder.com/300'],
+          description: values.description,
+          category: values.category || 'General',
+          image: values.image || undefined,
+          price,
+          originalPrice,
+          stock: newStock,
+          moq: tradeMode === 'wholesale' ? 10 : 1,
+          tradeMode,
+        });
+        pminTag = listed.pmin;
+        addProduct({
+          id: listed.offer?.id || `PROD-${Date.now()}`,
+          title: values.title,
+          price,
+          image,
+          images: [image],
           stock: newStock,
           views: 0,
           sales: 0,
           conversion: 0,
           isBoosted: false,
           status: newStock > 0 ? 'active' : 'out_of_stock',
-          sellerId: 'seller-me'
+          sellerId: 'seller-me',
+          // @ts-expect-error optional catalog fields on local dashboard type
+          pmin: listed.pmin,
+          masterProductId: listed.master?.id,
         });
-        toast.success('Product listed successfully!');
+        toast.success(`ক্যাটালগে যুক্ত: ${listed.pmin}`);
+      } catch (apiErr: any) {
+        console.warn('Catalog API failed, using local dashboard only:', apiErr);
+        addProduct({
+          id: `PROD-${Date.now()}`,
+          title: values.title,
+          price,
+          image,
+          images: [image],
+          stock: newStock,
+          views: 0,
+          sales: 0,
+          conversion: 0,
+          isBoosted: false,
+          status: newStock > 0 ? 'active' : 'out_of_stock',
+          sellerId: 'seller-me',
+        });
+        const msg =
+          apiErr?.response?.data?.error ||
+          apiErr?.message ||
+          'Catalog API offline — local list only';
+        toast.message('লোকাল লিস্ট OK', { description: String(msg) });
       }
 
       onClose();
@@ -166,7 +210,9 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
             {isEditing ? 'পণ্য আপডেট করুন (Update Product)' : 'নতুন পণ্য যোগ করুন (List New Product)'}
           </DialogTitle>
           <DialogDescription className="text-zinc-400">
-            {isEditing ? 'আপনার পণ্যের তথ্য পরিবর্তন করুন।' : 'আপনার পণ্যটি আমাদের মার্কেটপ্লেস এবং রিটেইল পোর্টালে প্রকাশ করুন।'}
+            {isEditing
+              ? 'আপনার পণ্যের তথ্য পরিবর্তন করুন।'
+              : 'Master Catalog (PMIN) + Seller Offer তৈরি করে মার্কেটপ্লেসে প্রকাশ হবে।'}
           </DialogDescription>
         </DialogHeader>
 
@@ -218,10 +264,10 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                 <FormItem>
                   <FormLabel className="text-xs uppercase font-bold text-zinc-500">Description</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Product details, materials, and features..." 
-                      className="bg-black/20 border-white/5 min-h-[100px]" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Product details, materials, and features..."
+                      className="bg-black/20 border-white/5 min-h-[100px]"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -301,22 +347,22 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs uppercase font-bold text-zinc-500">Product Image / Video File (ছবি / ভিডিও ফাইল আপলোড)</FormLabel>
+                    <FormLabel className="text-xs uppercase font-bold text-zinc-500">Product Image</FormLabel>
                     <FormControl>
                       <div className="space-y-2">
                         <div className="flex gap-2">
-                          <Input placeholder="পাস করা লিঙ্ক বা অটো-জেনারেটেড লিঙ্ক..." className="bg-black/20 border-white/5" {...field} />
+                          <Input placeholder="Image URL..." className="bg-black/20 border-white/5" {...field} />
                           <label className="shrink-0 flex items-center justify-center p-2.5 rounded-md border border-white/10 hover:bg-white/5 cursor-pointer bg-black/40 text-xs font-bold text-zinc-300">
                             {isUploading ? (
                               <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
                             ) : (
                               <ImageIcon className="w-4 h-4 text-orange-500" />
                             )}
-                            <input 
-                              type="file" 
-                              accept="image/*,video/*" 
-                              onChange={handleFileUpload} 
-                              className="hidden" 
+                            <input
+                              type="file"
+                              accept="image/*,video/*"
+                              onChange={handleFileUpload}
+                              className="hidden"
                               disabled={isUploading}
                             />
                           </label>
@@ -324,8 +370,8 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                         {field.value && (
                           <div className="w-24 h-24 rounded-lg overflow-hidden border border-white/10 bg-black/20 relative group">
                             <img src={field.value} alt="Preview" className="w-full h-full object-cover" />
-                            <button 
-                              type="button" 
+                            <button
+                              type="button"
                               onClick={() => form.setValue('image', '')}
                               className="absolute top-1 right-1 p-1 bg-black/60 rounded text-rose-500 hover:bg-black/80 text-[10px]"
                             >
@@ -345,9 +391,13 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
               <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading} className="text-white">
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                className={isEditing ? "bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 shadow-[0_0_20px_rgba(251,191,36,0.3)]" : "bg-[var(--pm-accent)] hover:bg-[#FF8A00] text-black font-bold px-8 shadow-[0_0_20px_var(--pm-accent)]/30"}
+              <Button
+                type="submit"
+                className={
+                  isEditing
+                    ? 'bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 shadow-[0_0_20px_rgba(251,191,36,0.3)]'
+                    : 'bg-[var(--pm-accent)] hover:bg-[#FF8A00] text-black font-bold px-8 shadow-[0_0_20px_var(--pm-accent)]/30'
+                }
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -355,8 +405,10 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClos
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     {isEditing ? 'Updating...' : 'Publishing...'}
                   </>
+                ) : isEditing ? (
+                  'Save Changes'
                 ) : (
-                  isEditing ? 'Save Changes' : 'List Product Now'
+                  'List Product Now'
                 )}
               </Button>
             </DialogFooter>

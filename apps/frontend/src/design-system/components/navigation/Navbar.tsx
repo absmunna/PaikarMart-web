@@ -87,25 +87,29 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
             <MessageSquare className="w-5 h-5" />
           </button>
 
+          {/* Wallet — all breakpoints (compact on mobile) */}
           <motion.button
             type="button"
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/wallet')}
-            className="hidden xs:flex items-center gap-2 px-2.5 py-1.5 hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer group shrink-0"
+            className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2.5 py-1.5 hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer group shrink-0"
             title="ওয়ালেট ব্যালেন্স"
           >
-            <div className="flex flex-col items-end leading-none">
+            <div className="hidden min-[380px]:flex flex-col items-end leading-none">
               <span className="text-[7px] font-black text-[var(--pm-text-secondary)] uppercase tracking-wider">ব্যালেন্স</span>
               <span className="text-[11px] sm:text-xs font-black text-[var(--pm-text)] tabular-nums group-hover:text-[var(--pm-accent)] transition-colors">
                 ৳{balance ? balance.toLocaleString('bn-BD') : '০'}
               </span>
             </div>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center group-hover:bg-orange-500/20 transition-all">
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center group-hover:bg-orange-500/20 transition-all">
               <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400" />
+              <span className="min-[380px]:hidden absolute -bottom-1 -right-1 max-w-[36px] truncate text-[8px] font-black text-[var(--pm-accent)] bg-[var(--pm-bg)] px-0.5 rounded">
+                ৳{balance ? Math.round(balance) : 0}
+              </span>
             </div>
           </motion.button>
 
-          <div className="shrink-0">
+          <div className="shrink-0 hidden sm:block">
             <LocationPicker />
           </div>
 
