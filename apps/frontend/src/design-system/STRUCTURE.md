@@ -7,7 +7,7 @@ Goal: **one place per concern**. Do not add a second BottomNav / Hub / Root shel
 | Path | Role |
 |---|---|
 | `layouts/RootLayout.tsx` | **Production shell** — desktop + mobile frame, scroll hide nav, mounts PortalHubOverlay |
-| `layouts/MobileLayout.tsx` | Lightweight mobile-only shell |
+| `layouts/MobileLayout.tsx` | Lightweight mobile-only shell (+ PortalHubOverlay) |
 | `layouts/DesktopLayout.tsx` / `MainLayout` / `PortalLayout` / `DashboardLayout` | Specialized wrappers |
 | `layouts/index.ts` | Public exports |
 
@@ -16,10 +16,11 @@ Goal: **one place per concern**. Do not add a second BottomNav / Hub / Root shel
 | Path | Role |
 |---|---|
 | `components/navigation/BottomNav.tsx` | **Canonical** mobile bottom bar (center Hub → `useNavUIStore`) |
-| `components/navigation/Navbar.tsx` | Top bar |
+| `components/navigation/Navbar.tsx` | **Canonical** top bar (search, wallet, cart, messages, account) |
 | `components/navigation/UnifiedSidebar.tsx` | Desktop + mobile drawer sidebar |
 | `components/navigation/CategoryBar.tsx` | Category strip |
 | `components/navigation/index.ts` | Public exports |
+| `components/common/SearchBar.tsx` | Desktop inline search used by Navbar |
 
 ## Layout overlays / chrome helpers
 
@@ -32,9 +33,10 @@ Goal: **one place per concern**. Do not add a second BottomNav / Hub / Root shel
 
 ### Deprecated / re-export only (do not edit logic here)
 
-- `components/layout/BottomNav.tsx` → re-exports navigation BottomNav
+- `components/layout/BottomNav.tsx` → navigation BottomNav
 - `components/layout/AppBottomNav.tsx` → same
-- Prefer **not** using `components/common/navigation/BottomNavigation.tsx` for new code
+- `components/common/navigation/BottomNavigation.tsx` → same
+- `app/AppShell/GlobalTopBar.tsx` → thin adapter around **Navbar** (not mounted by RootLayout)
 
 ## AppShell state (not visual)
 
@@ -42,18 +44,13 @@ Goal: **one place per concern**. Do not add a second BottomNav / Hub / Root shel
 |---|---|
 | `app/AppShell/useNavUIStore.ts` | Hub open/close, sidebar, search, cart flags |
 | `app/AppShell/useNavSettingsStore.ts` | Nav visibility / fixed vs auto-hide |
-| `app/AppShell/GlobalTopBar.tsx` | Alternate top chrome experiments — **RootLayout uses Navbar** |
 
 ## Import rules
 
 ```ts
-// Preferred
 import { RootLayout } from '@/design-system/layouts';
 import { BottomNav, Navbar } from '@/design-system/components/navigation';
 import { PortalHubOverlay, SuperAppHubModal } from '@/design-system/components/layout';
-
-// Path alias used by RootLayout today (keep working)
-import { BottomNav } from '@/components/navigation/BottomNav';
 ```
 
 ## V2 UI contract
@@ -61,4 +58,5 @@ import { BottomNav } from '@/components/navigation/BottomNav';
 1. Mobile: 4 side tabs + elevated center **Hub** button
 2. Hub opens **one** overlay (PortalHubOverlay → SuperAppHubModal)
 3. Desktop: UnifiedSidebar + Navbar + optional right rail (RootLayout)
-4. Auto-hide nav controlled by `useNavSettingsStore` + RootLayout scroll logic
+4. Auto-hide nav: `useNavSettingsStore` + RootLayout scroll logic
+5. **One top bar only** — Navbar (never mount GlobalTopBar + Navbar together)

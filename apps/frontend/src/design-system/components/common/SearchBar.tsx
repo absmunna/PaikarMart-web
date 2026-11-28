@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, X, TrendingUp, History, ChevronDown, Store, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, X, TrendingUp, Store, ArrowRight, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { mockProducts } from '@/lib/workspace-stub';
@@ -17,7 +17,7 @@ const trendingSearches = [
   'জামদানি শাড়ি হোলসেল',
   'স্মার্ট ওয়াচ',
   'চামড়ার জেনুইন ওয়ালেট',
-  'সরিষার তেল পাইকারি'
+  'সরিষার তেল পাইকারি',
 ];
 
 export const SearchBar = () => {
@@ -28,7 +28,6 @@ export const SearchBar = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -40,49 +39,50 @@ export const SearchBar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter products live
-  const matchingProducts = query.trim().length > 0 
-    ? mockProducts.filter((p: any) => {
-        const q = query.toLowerCase();
-        const matchesQuery = 
-          (p.name || p.title || '').toLowerCase().includes(q) ||
-          (p.category || '').toLowerCase().includes(q) ||
-          (p.seller || '').toLowerCase().includes(q);
-        
-        if (selectedCategory === 'all') return matchesQuery;
-        if (selectedCategory === 'wholesale') return matchesQuery && p.portal === 'wholesale';
-        if (selectedCategory === 'retail') return matchesQuery && p.portal === 'b2c';
-        return matchesQuery;
-      }).slice(0, 5)
-    : [];
+  const matchingProducts =
+    query.trim().length > 0
+      ? mockProducts
+          .filter((p: any) => {
+            const q = query.toLowerCase();
+            const matchesQuery =
+              (p.name || p.title || '').toLowerCase().includes(q) ||
+              (p.category || '').toLowerCase().includes(q) ||
+              (p.seller || '').toLowerCase().includes(q);
+
+            if (selectedCategory === 'all') return matchesQuery;
+            if (selectedCategory === 'wholesale') return matchesQuery && p.portal === 'wholesale';
+            if (selectedCategory === 'retail') return matchesQuery && (p.portal === 'b2c' || p.portal === 'retail');
+            return matchesQuery;
+          })
+          .slice(0, 5)
+      : [];
 
   const handleSearchSubmit = (searchWord?: string) => {
-    const term = searchWord !== undefined ? searchWord : query;
-    if (!term.trim()) return;
+    const term = (searchWord !== undefined ? searchWord : query).trim();
+    if (!term) return;
     setIsFocused(false);
     setShowCategoryMenu(false);
+
     if (selectedCategory === 'wholesale') {
       navigate(`/wholesale?q=${encodeURIComponent(term)}`);
-    } else {
-      navigate(`/b2c?q=${encodeURIComponent(term)}`);
+      return;
     }
+    if (selectedCategory === 'retail' || selectedCategory === 'grocery' || selectedCategory === 'electronics') {
+      navigate(`/market?q=${encodeURIComponent(term)}&cat=${selectedCategory}`);
+      return;
+    }
+    navigate(`/search?q=${encodeURIComponent(term)}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearchSubmit();
-    }
+    if (e.key === 'Enter') handleSearchSubmit();
   };
 
-  const currentCategoryLabel = CATEGORY_OPTIONS.find(c => c.id === selectedCategory)?.label || 'সকল ক্যাটাগরি';
+  const currentCategoryLabel = CATEGORY_OPTIONS.find((c) => c.id === selectedCategory)?.label || 'সকল ক্যাটাগরি';
 
   return (
     <div ref={containerRef} className="relative w-full select-none">
-      
-      {/* Search Input Bar with Category Selector */}
       <div className="relative w-full flex items-center bg-[var(--pm-surface-hover)] border border-[var(--pm-border)] rounded-2xl p-1 group focus-within:ring-2 focus-within:ring-[var(--pm-accent)]/30 focus-within:border-[var(--pm-accent)] transition-all duration-300 shadow-inner">
-        
-        {/* Category Dropdown Button (Desktop) */}
         <div className="relative hidden md:block">
           <button
             type="button"
@@ -116,12 +116,11 @@ export const SearchBar = () => {
           )}
         </div>
 
-        {/* Search Input */}
         <div className="flex-1 flex items-center pl-2.5 pr-1">
           <Search className="w-4 h-4 text-[var(--pm-accent)] shrink-0" />
-          <input 
-            type="text" 
-            placeholder="পণ্য, পাইকারি প্রস্তুতকারক বা ব্র্যান্ড খুঁজুন..." 
+          <input
+            type="text"
+            placeholder="পণ্য, পাইকারি প্রস্তুতকারক বা ব্র্যান্ড খুঁজুন..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
@@ -139,7 +138,6 @@ export const SearchBar = () => {
           )}
         </div>
 
-        {/* Submit Search Button */}
         <button
           type="button"
           onClick={() => handleSearchSubmit()}
@@ -149,7 +147,6 @@ export const SearchBar = () => {
         </button>
       </div>
 
-      {/* Live Dropdown Overlay */}
       <AnimatePresence>
         {isFocused && (
           <motion.div
@@ -163,9 +160,10 @@ export const SearchBar = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between pb-2 border-b border-white/5">
                   <span className="text-[10px] font-black text-[var(--pm-text-muted)] uppercase tracking-wider">
-                    লাইভ অনুসন্ধান ফলাফল ({matchingProducts.length})
+                    লাইভ অনুসন্ধান ({matchingProducts.length})
                   </span>
                   <button
+                    type="button"
                     onClick={() => handleSearchSubmit()}
                     className="text-[10px] font-bold text-[var(--pm-accent)] hover:underline flex items-center gap-1"
                   >
@@ -176,7 +174,7 @@ export const SearchBar = () => {
 
                 {matchingProducts.length === 0 ? (
                   <div className="p-4 text-center text-xs text-[var(--pm-text-muted)]">
-                    "{query}" এর সাথে মিল রেখে কোনো পণ্য পাওয়া যায়নি। Enter চাপুন পুরো ক্যাটালগ সার্চ করতে।
+                    "{query}" মিলে কোনো পণ্য নেই — Enter চাপুন পুরো সার্চের জন্য।
                   </div>
                 ) : (
                   <div className="space-y-1.5">
@@ -207,7 +205,7 @@ export const SearchBar = () => {
                           </div>
                         </div>
                         <span className="text-xs font-black text-[var(--pm-accent)] shrink-0">
-                          ৳{prod.price.toLocaleString()}
+                          ৳{Number(prod.price || 0).toLocaleString()}
                         </span>
                       </div>
                     ))}
@@ -216,18 +214,17 @@ export const SearchBar = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                {/* Trending Searches */}
                 <div>
                   <div className="flex items-center gap-1.5 mb-2.5">
                     <TrendingUp className="w-3.5 h-3.5 text-[var(--pm-accent)]" />
                     <span className="text-[10px] font-black text-[var(--pm-text-muted)] uppercase tracking-wider">
-                      জনপ্রিয় ট্রেন্ডিং অনুসন্ধান
+                      জনপ্রিয় ট্রেন্ডিং
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {trendingSearches.map((item, i) => (
-                      <button 
-                        key={i} 
+                      <button
+                        key={i}
                         type="button"
                         className="text-[11px] font-bold text-[var(--pm-text)] bg-white/5 hover:bg-[var(--pm-accent)] hover:text-white border border-[var(--pm-border)] px-3 py-1 rounded-xl transition-all cursor-pointer active:scale-95"
                         onClick={() => {

@@ -10,9 +10,8 @@ import { useWalletStore } from '@/modules/wallet';
 import { motion } from 'framer-motion';
 
 /**
- * Clean & Unified Super App Header.
- * Consolidates features from the legacy HomeHeader to prevent double-header issues.
- * Provides: Search, Location, Cart, Wallet, Notifications, and Video Hub shortcut.
+ * Production Super App header (V2 chrome).
+ * Used by RootLayout / MobileLayout. Do not add a second top bar.
  */
 export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; isVisible?: boolean }) => {
   const totalItems = useCartStore((state) => state.getTotalItems());
@@ -24,7 +23,6 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Don't show some elements on specific routes if needed
   const isSearchPage = location.pathname === '/search';
 
   return (
@@ -34,9 +32,9 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
       }`}
     >
       <nav className="w-full mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center gap-2 sm:gap-3">
-        {/* Left: menu + brand */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <button
+            type="button"
             onClick={onMenuClick}
             className="p-2 -ml-2 text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] active:bg-[var(--pm-surface-hover)] rounded-xl transition-colors cursor-pointer"
             title="Menu"
@@ -50,13 +48,13 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
           </Link>
         </div>
 
-        {/* Center: search (desktop inline, mobile icon) */}
         {!isSearchPage && (
           <>
             <div className="hidden lg:block flex-1 max-w-md xl:max-w-xl mx-auto min-w-0">
               <SearchBar />
             </div>
             <button
+              type="button"
               onClick={() => navigate('/search')}
               className="lg:hidden ml-auto p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] active:scale-95 transition-all rounded-xl cursor-pointer"
               title="Search"
@@ -66,23 +64,31 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
           </>
         )}
 
-        {/* Right: Shortcuts + Wallet + location + cart + notifications + account */}
         <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 ml-auto lg:ml-0">
-          {/* Video Hub Shortcut */}
           <button
+            type="button"
             onClick={() => navigate('/video')}
             className="hidden sm:flex items-center gap-1.5 p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer group"
             title="ভিডিও পোর্টাল"
           >
             <PlayCircle className="w-5 h-5 fill-rose-500/10 group-hover:scale-110 transition-transform" />
             <span className="relative flex h-1.5 w-1.5 -ml-1 mt-[-10px]">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500" />
             </span>
           </button>
 
-          {/* Wallet Balance (Consolidated from HomeHeader) */}
-          <motion.button 
+          <button
+            type="button"
+            onClick={() => navigate('/messages')}
+            className="hidden md:flex p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-accent)] hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer"
+            title="মেসেজ"
+          >
+            <MessageSquare className="w-5 h-5" />
+          </button>
+
+          <motion.button
+            type="button"
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/wallet')}
             className="hidden xs:flex items-center gap-2 px-2.5 py-1.5 hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer group shrink-0"
@@ -104,6 +110,7 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
           </div>
 
           <button
+            type="button"
             onClick={openCart}
             className="relative p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer"
             title="Shopping Cart"
@@ -117,6 +124,7 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
           </button>
 
           <button
+            type="button"
             onClick={() => navigate('/notifications')}
             className="relative p-2 text-[var(--pm-text-muted)] hover:text-[var(--pm-text)] hover:bg-[var(--pm-surface-hover)] rounded-xl transition-all cursor-pointer"
             title="Notifications"
@@ -129,16 +137,16 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
             )}
           </button>
 
-          {/* Account: avatar (signed in) or login pill */}
           {isAuthenticated ? (
             <button
+              type="button"
               onClick={() => navigate('/profile')}
               className="ml-1 shrink-0 cursor-pointer"
               title={user?.fullName || 'Profile'}
             >
-              {user?.avatarUrl || user?.avatar ? (
+              {user?.avatarUrl || (user as { avatar?: string } | null)?.avatar ? (
                 <img
-                  src={user.avatarUrl || user.avatar}
+                  src={user?.avatarUrl || (user as { avatar?: string }).avatar}
                   alt={user?.fullName || 'Profile'}
                   className="w-8 h-8 rounded-full object-cover border border-[var(--pm-border)] hover:border-[var(--pm-accent)] transition-colors"
                 />
@@ -164,4 +172,3 @@ export const Navbar = ({ onMenuClick, isVisible }: { onMenuClick?: () => void; i
 };
 
 export default Navbar;
-
