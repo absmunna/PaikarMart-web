@@ -1,3 +1,4 @@
+/** Page shells — RootLayout is the production default. */
 export * from './DashboardLayout';
 export * from './DesktopLayout';
 export * from './MainLayout';
