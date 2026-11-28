@@ -4,3 +4,5 @@ export { generateASIN, calculateBuyBox } from './services/asinGenerator';
 export { useCatalogStore } from './store/catalogStore';
 export { useCatalogByPmin } from './hooks/useCatalogByPmin';
 export { AmazonBuyBox } from './components/AmazonBuyBox';
+export { loadProductCatalogDetail } from './services/loadProductCatalogDetail';
+export type { CatalogDetailResult } from './services/loadProductCatalogDetail';
